@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>W3C Invited Experts by Group</title>
+  <style>
+    body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial; margin:18px}
+    h1{font-size:18px;margin:0 0 8px}
+    #controls{margin:8px 0 12px}
+    #groups{margin-top:12px}
+    .group{padding:10px;border-bottom:1px solid #eee}
+    .loading{color:#666}
+    .error{color:#900}
+    .small{font-size:13px;color:#444}
+    .clickable{color:#0366d6;cursor:pointer;text-decoration:underline}
+    input[type=text]{width:360px}
+    .note{font-size:12px;color:#666;margin-left:8px}
+    button{margin-right:8px}
+    #popup { position: fixed; top: 20%; left: 50%; transform: translateX(-50%); background: #fff; border: 1px solid #ccc; padding: 12px; box-shadow: 0 0 8px rgba(0,0,0,0.2); display: none; max-height: 60%; overflow-y: auto; z-index: 1000; }
+    #popupClose { display: block; text-align: right; margin-bottom: 8px; cursor: pointer; color: #0366d6; }
+    #popupContent { white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>W3C Invited Experts by Group</h1>
+  <div id="controls">
+    <button id="refresh">Refresh</button>
+    <label><input type="checkbox" id="showNames" /> Show invited experts inline</label>
+    <div id="summary" class="small"></div>
+  </div>
+
+  <div id="status" class="loading">Ready</div>
+  <div id="groups"></div>
+
+  <div id="popup">
+    <div id="popupClose">[Close]</div>
+    <div id="popupContent"></div>
+  </div>
+
+  <script>
+    function escapeHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+
+    function showList(title, arr){
+      const popup = document.getElementById('popup');
+      const content = document.getElementById('popupContent');
+      content.textContent = title + '\n\n' + (arr.length ? arr.join('\n') : '(no items)');
+      popup.style.display = 'block';
+    }
+
+    document.getElementById('popupClose').addEventListener('click', ()=>{ document.getElementById('popup').style.display = 'none'; });
+
+    async function mapInBatches(items, fn, batchSize=10){
+      const out = [];
+      for(let i=0;i<items.length;i+=batchSize){
+        const batch = items.slice(i,i+batchSize).map(fn);
+        const res = await Promise.all(batch);
+        out.push(...res);
+      }
+      return out;
+    }
+
+    async function fetchJSON(url, opts={}){
+      try{
+        const res = await fetch(url, {cache:'no-store', ...opts});
+        if(!res.ok){
+          const err = new Error(res.status + ' – ' + url);
+          err.status = res.status;
+          throw err;
+        }
+        return res.json();
+      }catch(e){
+        if(e instanceof TypeError && e.message==='Failed to fetch'){
+          const err = new Error('Failed to fetch (possibly CORS or network)');
+          err.status = 'N/A';
+          throw err;
+        }
+        throw e;
+      }
+    }
+
+    async function fetchAllParticipations(startUrl){
+      const collected = [];
+      if(!startUrl) return collected;
+      let url = startUrl;
+      while(url){
+        const resp = await fetchJSON(url);
+        const page = Array.isArray(resp.participations) ? resp.participations : (resp._links?.participations || []);
+        collected.push(...page);
+        url = resp._links?.next?.href || null;
+      }
+      return collected;
+    }
+
+    async function fetchAllUsersForGroup(usersUrl){
+      if(!usersUrl) return [];
+      const collected = [];
+      let url = usersUrl;
+      while(url){
+        const resp = await fetchJSON(url);
+        const page = Array.isArray(resp.users) ? resp.users : (Array.isArray(resp) ? resp : []);
+        collected.push(...page.map(u=>u.title||u.href||JSON.stringify(u)));
+        url = resp._links?.next?.href || null;
+      }
+      return collected;
+    }
+
+    async function participationIsInvited(partHref){
+      try{
+        const detail = await fetchJSON(partHref);
+        if(detail['invited-expert']===true || detail['invited-expert']==='true'){
+          return detail._links?.user?.title || detail._links?.user?.href || detail.title || JSON.stringify(detail);
+        }
+      }catch(e){ console.log(e); }
+      return null;
+    }
+
+    let attachedHandler=false;
+    async function loadGroups(){
+      const status = document.getElementById('status');
+      const groupsDiv = document.getElementById('groups');
+      const summary = document.getElementById('summary');
+      groupsDiv.innerHTML='';
+      status.className='loading';
+      status.textContent = 'Fetching Working Groups and Interest Groups...';
+
+      try{
+        const wgResp = await fetchJSON('https://api.w3.org/groups/wg');
+        const igResp = await fetchJSON('https://api.w3.org/groups/ig');
+        const wgList = wgResp._links?.groups || [];
+        const igList = igResp._links?.groups || [];
+        const groupList = [...wgList, ...igList];
+
+        status.textContent = `Fetched ${groupList.length} groups. Fetching participations/users (this may take a while)...`;
+
+        const tasks = groupList.map(g=> (async ()=>{
+          const name = g.title || g.name || g.href || JSON.stringify(g);
+          const partHref = g._links?.participations?.href || (g.href? g.href.replace(/\/$/,'')+'/participations': null);
+          const usersHref = g._links?.users?.href || (g.href? g.href.replace(/\/$/,'')+'/users': null);
+
+          if(!partHref){
+            return {name, participantsCount:0, participantsList:[], usersCount:0, usersList:[], invitedCount:0, invited:[], _error:'no participations url'};
+          }
+
+          try{
+            const parts = await fetchAllParticipations(partHref);
+            const participantsList = parts.map(p=>p.title||p.href||JSON.stringify(p));
+            const participantsCount = parts.length;
+
+            const usersList = await fetchAllUsersForGroup(usersHref);
+            const usersCount = usersList.length;
+
+            const invitedArr = await mapInBatches(parts, async p=> participationIsInvited(p.href), 6);
+            const invited = invitedArr.filter(x=>x);
+
+            return {name, participantsCount, participantsList, usersCount, usersList, invitedCount:invited.length, invited};
+          }catch(e){
+            const msg = e.message || String(e);
+            const httpCode = e.status || 'N/A';
+            return {name, participantsCount:0, participantsList:[], usersCount:0, usersList:[], invitedCount:0, invited:[], _error:`${msg} (HTTP ${httpCode})`};
+          }
+        })());
+
+        const results = await Promise.all(tasks);
+        results.sort((a,b)=> (b.invitedCount||0)-(a.invitedCount||0));
+
+        status.className='';
+        status.textContent = `Loaded groups (${results.length}).`;
+        summary.textContent = `Showing ${results.length} groups — sorted by invited-expert count (largest first). Click counts to see names.`;
+
+        groupsDiv.innerHTML='';
+        for(const g of results){
+          const el = document.createElement('div'); el.className='group';
+          const pButton = `<span class="clickable" data-list='${encodeURIComponent(JSON.stringify(g.participantsList||[]))}'>Participations: <strong>${g.participantsCount||0}</strong></span>`;
+          const uButton = `<span class="clickable" data-list='${encodeURIComponent(JSON.stringify(g.usersList||[]))}'>Users: <strong>${g.usersCount||0}</strong></span>`;
+          const iButton = `<span class="clickable" data-list='${encodeURIComponent(JSON.stringify(g.invited||[]))}'>Invited Experts: <strong>${g.invitedCount||0}</strong></span>`;
+          el.innerHTML = `<div><strong>${escapeHtml(g.name)}</strong></div><div class="small">${pButton} &nbsp; ${uButton} &nbsp; ${iButton} ${g._error? ('<div class="error">(error: '+escapeHtml(g._error)+')</div>') : ''}</div>`;
+          groupsDiv.appendChild(el);
+        }
+
+        if(!attachedHandler){
+          attachedHandler = true;
+          groupsDiv.addEventListener('click', ev=>{
+            const target = ev.target.closest('.clickable');
+            if(!target) return;
+            const encoded = target.getAttribute('data-list')||'[]';
+            let arr = [];
+            try{ arr = JSON.parse(decodeURIComponent(encoded)); }catch(e){ arr = [] }
+            const label = target.textContent.split(':')[0];
+            showList(label, arr);
+          });
+        }
+
+      }catch(e){
+        const msg = e.message || String(e);
+        const httpCode = e.status || 'N/A';
+        status.className='error';
+        status.textContent = `Error loading (HTTP ${httpCode}): ${msg}`;
+        console.error(e);
+      }
+    }
+
+    document.getElementById('refresh').addEventListener('click', ()=> loadGroups());
+    document.getElementById('showNames').addEventListener('change', ()=> loadGroups());
+
+    loadGroups();
+  </script>
+</body>
+</html>
