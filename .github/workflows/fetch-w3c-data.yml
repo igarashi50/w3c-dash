@@ -38,14 +38,6 @@ jobs:
             echo "newly_created=true" >> $GITHUB_OUTPUT
           fi
       
-      - name: Clean up old data files
-        if: steps.check_changes.outputs.newly_created == 'true'
-        run: |
-          cd data
-          # 最新3件を残して削除（日付入りファイルのみ）
-          ls -t w3c_api_2*.json 2>/dev/null | tail -n +4 | xargs -r rm -f || true
-          echo "Kept latest 3 data files"
-      
       - name: Upload to GitHub Release
         if: steps.check_changes.outputs.newly_created == 'true'
         env:
