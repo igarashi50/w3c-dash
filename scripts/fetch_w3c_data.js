@@ -76,8 +76,12 @@ function compareAndWriteJson() {
     
     // シンボリックリンクを作成
     try {
+      // 既存のファイルまたはシンボリックリンクを削除
       if (fs.existsSync(symlinkPath)) {
-        fs.unlinkSync(symlinkPath);
+        const stats = fs.lstatSync(symlinkPath);
+        if (stats.isSymbolicLink() || stats.isFile()) {
+          fs.unlinkSync(symlinkPath);
+        }
       }
       
       const relativePath = `w3c_api_${fetchStartTime}_${durationStr}.json`;
