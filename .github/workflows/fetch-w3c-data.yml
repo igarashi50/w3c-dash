@@ -25,6 +25,13 @@ jobs:
       - name: Create data directory
         run: mkdir -p data
       
+      - name: Remove existing symlink
+        run: |
+          if [ -L "data/w3c_api.json" ] || [ -f "data/w3c_api.json" ]; then
+            rm -f data/w3c_api.json
+            echo "Removed existing w3c_api.json"
+          fi
+      
       - name: Fetch W3C API data
         run: node scripts/fetch_w3c_data.js
       
