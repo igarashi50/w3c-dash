@@ -24,7 +24,8 @@ function extractGroups(apiData) {
   for (const url of urls) {
     const data = findDataByUrl(apiData, url);
     if (!data) {
-      throw new Error(`Failed to find group data for URL: ${url}`);
+      console.warn(`Warning: No data found for URL: ${url}, skipping`);
+      continue;
     }
     const urlGroups = data?._links?.groups || [];
     groups.push(...urlGroups);

@@ -19,6 +19,7 @@ document.getElementById('popupClose').addEventListener('click', () => {
 });
 
 let attachedHandler = false;
+let groupsData = []; // グループデータを保存
 
 async function loadGroups() {
   const status = document.getElementById('status');
@@ -31,18 +32,20 @@ async function loadGroups() {
 
   try {
     const results = await getAllGroupsInfo();
+    groupsData = results; // データを保存
 
     status.className = '';
     status.textContent = `Loaded ${results.length} groups.`;
     summary.textContent = `Showing ${results.length} groups — sorted by invited-expert count (largest first). Click counts to see names.`;
 
     groupsDiv.innerHTML = '';
-    for (const g of results) {
+    for (let i = 0; i < results.length; i++) {
+      const g = results[i];
       const el = document.createElement('div');
       el.className = 'group';
-      const pButton = `<span class="clickable" data-list='${encodeURIComponent(JSON.stringify(g.participantsList || []))}'>Participations: <strong>${g.participantsCount || 0}</strong></span>`;
-      const uButton = `<span class="clickable" data-list='${encodeURIComponent(JSON.stringify(g.usersList || []))}'>Users: <strong>${g.usersCount || 0}</strong></span>`;
-      const iButton = `<span class="clickable" data-list='${encodeURIComponent(JSON.stringify(g.invited || []))}'>Invited Experts: <strong>${g.invitedCount || 0}</strong></span>`;
+      const pButton = `<span class="clickable" data-index="${i}" data-type="participantsList">Participations: <strong>${g.participantsCount || 0}</strong></span>`;
+      const uButton = `<span class="clickable" data-index="${i}" data-type="usersList">Users: <strong>${g.usersCount || 0}</strong></span>`;
+      const iButton = `<span class="clickable" data-index="${i}" data-type="invited">Invited Experts: <strong>${g.invitedCount || 0}</strong></span>`;
       el.innerHTML = `<div><strong>${escapeHtml(g.name)}</strong></div><div class="small">${pButton} &nbsp; ${uButton} &nbsp; ${iButton} ${g._error ? ('<div class="error">(error: ' + escapeHtml(g._error) + ')</div>') : ''}</div>`;
       groupsDiv.appendChild(el);
     }
@@ -52,13 +55,11 @@ async function loadGroups() {
       groupsDiv.addEventListener('click', ev => {
         const target = ev.target.closest('.clickable');
         if (!target) return;
-        const encoded = target.getAttribute('data-list') || '[]';
-        let arr = [];
-        try {
-          arr = JSON.parse(decodeURIComponent(encoded));
-        } catch (e) {
-          arr = [];
-        }
+        const index = parseInt(target.getAttribute('data-index'));
+        const type = target.getAttribute('data-type');
+        if (isNaN(index) || !groupsData[index]) return;
+        
+        const arr = groupsData[index][type] || [];
         const label = target.textContent.split(':')[0];
         showList(label, arr);
       });
