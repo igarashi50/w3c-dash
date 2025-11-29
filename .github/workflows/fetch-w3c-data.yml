@@ -26,7 +26,7 @@ jobs:
         run: mkdir -p data
       
       - name: Fetch W3C API data
-        run: node scripts/fetch_w3c_api.js
+        run: node scripts/fetch_w3c_data.js
       
       - name: Clean up old data files
         run: |
