@@ -1,0 +1,62 @@
+name: Fetch W3C API Data
+
+on:
+  # 毎週日曜日 0:00 UTC に実行（日本時間 9:00）
+  schedule:
+    - cron: '0 0 * * 0'
+  
+  # 手動実行も可能にする
+  workflow_dispatch:
+
+jobs:
+  fetch-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180  # 3時間でタイムアウト
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Create data directory
+        run: mkdir -p data
+      
+      - name: Fetch W3C API data
+        run: node scripts/fetch_w3c_api.js
+      
+      - name: Clean up old data files
+        run: |
+          cd data
+          # 最新3件を残して削除（日付入りファイルのみ）
+          ls -t w3c_api_2*.json 2>/dev/null | tail -n +4 | xargs -r rm -f || true
+          echo "Kept latest 3 data files"
+      
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git add data/
+          if git diff --staged --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Commit and push if changed
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "Update W3C API data - $(date +'%Y-%m-%d')"
+          git push
+      
+      - name: Summary
+        run: |
+          echo "### W3C API Data Fetch Complete :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: Success" >> $GITHUB_STEP_SUMMARY
+          echo "- **Changes**: ${{ steps.check_changes.outputs.has_changes }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Files in data/**: $(ls -1 data/ | wc -l)" >> $GITHUB_STEP_SUMMARY
