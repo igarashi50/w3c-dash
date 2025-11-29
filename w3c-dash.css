@@ -1,0 +1,82 @@
+body {
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
+  margin: 18px;
+}
+
+h1 {
+  font-size: 18px;
+  margin: 0 0 8px;
+}
+
+#controls {
+  margin: 8px 0 12px;
+}
+
+#groups {
+  margin-top: 12px;
+}
+
+.group {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.loading {
+  color: #666;
+}
+
+.error {
+  color: #900;
+}
+
+.small {
+  font-size: 13px;
+  color: #444;
+}
+
+.clickable {
+  color: #0366d6;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+input[type=text] {
+  width: 360px;
+}
+
+.note {
+  font-size: 12px;
+  color: #666;
+  margin-left: 8px;
+}
+
+button {
+  margin-right: 8px;
+}
+
+#popup {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 12px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.2);
+  display: none;
+  max-height: 60%;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+#popupClose {
+  display: block;
+  text-align: right;
+  margin-bottom: 8px;
+  cursor: pointer;
+  color: #0366d6;
+}
+
+#popupContent {
+  white-space: pre-wrap;
+}

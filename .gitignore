@@ -1,0 +1,5 @@
+# 既存の内容...
+
+# 日付入りW3C APIファイルを除外（シンボリックリンクのみコミット）
+data/w3c_api_2*.json
+!data/w3c_api.json
