@@ -1,7 +1,7 @@
 [
   {
     "url": "https://api.w3.org/groups/ig",
-    "fetchedAt": "2025-11-29T13:38:50.451Z",
+    "fetchedAt": "2025-11-29T16:04:31.175Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -75,133 +75,141 @@
     }
   },
   {
-    "url": "https://api.w3.org/groups/ig/chinese-web/participations",
-    "fetchedAt": "2025-11-29T13:38:50.496Z",
+    "url": "https://api.w3.org/groups/ig/exploration/participations",
+    "fetchedAt": "2025-11-29T16:04:31.421Z",
     "data": {
       "page": 1,
       "limit": 100,
       "pages": 1,
-      "total": 22,
+      "total": 24,
       "_links": {
         "up": {
-          "href": "https://api.w3.org/groups/ig/chinese-web"
+          "href": "https://api.w3.org/groups/ig/exploration"
         },
         "participations": [
           {
-            "href": "https://api.w3.org/participations/26723",
+            "href": "https://api.w3.org/participations/45067",
             "title": "Xueyuan Jia"
           },
           {
-            "href": "https://api.w3.org/participations/26726",
-            "title": "Fuqiao Xue"
+            "href": "https://api.w3.org/participations/45068",
+            "title": "British Broadcasting Corporation"
           },
           {
-            "href": "https://api.w3.org/participations/26729",
+            "href": "https://api.w3.org/participations/45070",
+            "title": "Spherical Cow Consulting"
+          },
+          {
+            "href": "https://api.w3.org/participations/45076",
+            "title": "Tzviya Siegman"
+          },
+          {
+            "href": "https://api.w3.org/participations/45077",
             "title": "Institut National de Recherche en Informatique et en Automatique (Inria)"
           },
           {
-            "href": "https://api.w3.org/participations/26735",
+            "href": "https://api.w3.org/participations/45093",
+            "title": "Igalia"
+          },
+          {
+            "href": "https://api.w3.org/participations/45095",
+            "title": "Natural Resources Canada"
+          },
+          {
+            "href": "https://api.w3.org/participations/45103",
             "title": "Huawei"
           },
           {
-            "href": "https://api.w3.org/participations/26740",
-            "title": "Intel Corporation"
+            "href": "https://api.w3.org/participations/45114",
+            "title": "Philippe Le Hegaret"
           },
           {
-            "href": "https://api.w3.org/participations/26784",
-            "title": "Baidu, Inc."
+            "href": "https://api.w3.org/participations/45247",
+            "title": "Walt Disney Company"
           },
           {
-            "href": "https://api.w3.org/participations/26789",
-            "title": "Alibaba Group"
+            "href": "https://api.w3.org/participations/45292",
+            "title": "Mozilla Foundation"
           },
           {
-            "href": "https://api.w3.org/participations/26802",
-            "title": "Zhejiang University"
+            "href": "https://api.w3.org/participations/45299",
+            "title": "Rhonda Weiss Center for Accessible IDEA Data"
           },
           {
-            "href": "https://api.w3.org/participations/26925",
-            "title": "China Academy of Information and Communications Technology (CAICT)"
+            "href": "https://api.w3.org/participations/45302",
+            "title": "Autodesk"
           },
           {
-            "href": "https://api.w3.org/participations/27347",
-            "title": "China Mobile Communications Corporation"
+            "href": "https://api.w3.org/participations/45339",
+            "title": "Apple Inc."
           },
           {
-            "href": "https://api.w3.org/participations/27598",
-            "title": "Shenzhen Institute of Information Technology"
+            "href": "https://api.w3.org/participations/45354",
+            "title": "Depixen"
           },
           {
-            "href": "https://api.w3.org/participations/28731",
-            "title": "Memect Technology Co. Ltd. 北京文因互联科技有限公司"
-          },
-          {
-            "href": "https://api.w3.org/participations/29044",
-            "title": "360"
-          },
-          {
-            "href": "https://api.w3.org/participations/29984",
-            "title": "Google LLC"
-          },
-          {
-            "href": "https://api.w3.org/participations/34178",
-            "title": "Airbnb Inc"
-          },
-          {
-            "href": "https://api.w3.org/participations/34906",
-            "title": "ByteDance"
-          },
-          {
-            "href": "https://api.w3.org/participations/35523",
+            "href": "https://api.w3.org/participations/45400",
             "title": "Microsoft Corporation"
           },
           {
-            "href": "https://api.w3.org/participations/40369",
-            "title": "Ant Group Co., Ltd."
+            "href": "https://api.w3.org/participations/45417",
+            "title": "University of Oxford"
           },
           {
-            "href": "https://api.w3.org/participations/41091",
-            "title": "Xiaoqian Wu"
+            "href": "https://api.w3.org/participations/45520",
+            "title": "Tradeverifyd"
           },
           {
-            "href": "https://api.w3.org/participations/44301",
+            "href": "https://api.w3.org/participations/45536",
+            "title": "Visa"
+          },
+          {
+            "href": "https://api.w3.org/participations/45705",
+            "title": "Samsung Electronics Co., Ltd."
+          },
+          {
+            "href": "https://api.w3.org/participations/45838",
             "title": "Ruoxi Ran"
           },
           {
-            "href": "https://api.w3.org/participations/44682",
-            "title": "Tencent"
+            "href": "https://api.w3.org/participations/45874",
+            "title": "Okta"
           },
           {
-            "href": "https://api.w3.org/participations/45467",
-            "title": "Nanjing University"
+            "href": "https://api.w3.org/participations/46177",
+            "title": "Sarven Capadisli"
+          },
+          {
+            "href": "https://api.w3.org/participations/46451",
+            "title": "WebDINO Japan"
           }
         ],
         "self": {
-          "href": "https://api.w3.org/groups/ig/chinese-web/participations?page=1&items=100"
+          "href": "https://api.w3.org/groups/ig/exploration/participations?page=1&items=100"
         },
         "first": {
-          "href": "https://api.w3.org/groups/ig/chinese-web/participations?page=1&items=100"
+          "href": "https://api.w3.org/groups/ig/exploration/participations?page=1&items=100"
         },
         "last": {
-          "href": "https://api.w3.org/groups/ig/chinese-web/participations?page=1&items=100"
+          "href": "https://api.w3.org/groups/ig/exploration/participations?page=1&items=100"
         }
       }
     }
   },
   {
-    "url": "https://api.w3.org/participations/26723",
-    "fetchedAt": "2025-11-29T13:38:52.551Z",
+    "url": "https://api.w3.org/participations/45067",
+    "fetchedAt": "2025-11-29T16:04:33.691Z",
     "data": {
       "individual": true,
       "invited-expert": false,
-      "created": "2018-09-20 09:34:51",
+      "created": "2025-04-22 09:57:09",
       "_links": {
         "self": {
-          "href": "https://api.w3.org/participations/26723"
+          "href": "https://api.w3.org/participations/45067"
         },
         "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
         },
         "user": {
           "href": "https://api.w3.org/users/ew1dw27jkyok8cwkg4gcosws8k4g48s",
@@ -211,463 +219,488 @@
     }
   },
   {
-    "url": "https://api.w3.org/participations/26726",
-    "fetchedAt": "2025-11-29T13:38:54.601Z",
+    "url": "https://api.w3.org/participations/45068",
+    "fetchedAt": "2025-11-29T16:04:35.970Z",
     "data": {
-      "individual": true,
+      "individual": false,
       "invited-expert": false,
-      "created": "2018-09-20 11:20:54",
+      "created": "2025-04-22 11:12:19",
       "_links": {
         "self": {
-          "href": "https://api.w3.org/participations/26726"
+          "href": "https://api.w3.org/participations/45068"
         },
         "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
         },
-        "user": {
-          "href": "https://api.w3.org/users/2bhyv8h6u2ckc4wwsko88o4s040okok",
-          "title": "Fuqiao Xue"
+        "organization": {
+          "href": "https://api.w3.org/affiliations/1120",
+          "title": "British Broadcasting Corporation"
+        },
+        "participants": {
+          "href": "https://api.w3.org/participations/45068/participants"
         }
       }
     }
   },
   {
-    "url": "https://api.w3.org/participations/26729",
-    "fetchedAt": "2025-11-29T13:38:56.661Z",
+    "url": "https://api.w3.org/participations/45070",
+    "fetchedAt": "2025-11-29T16:04:38.586Z",
     "data": {
       "individual": false,
       "invited-expert": false,
-      "created": "2018-09-20 14:45:40",
+      "created": "2025-04-22 13:08:21",
       "_links": {
         "self": {
-          "href": "https://api.w3.org/participations/26729"
+          "href": "https://api.w3.org/participations/45070"
         },
         "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
+        },
+        "organization": {
+          "href": "https://api.w3.org/affiliations/147028",
+          "title": "Spherical Cow Consulting"
+        },
+        "participants": {
+          "href": "https://api.w3.org/participations/45070/participants"
+        }
+      }
+    }
+  },
+  {
+    "url": "https://api.w3.org/participations/45076",
+    "fetchedAt": "2025-11-29T16:04:40.849Z",
+    "data": {
+      "individual": true,
+      "invited-expert": false,
+      "created": "2025-04-22 15:29:53",
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/participations/45076"
+        },
+        "group": {
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
+        },
+        "user": {
+          "href": "https://api.w3.org/users/jhywkkw0080gg4g8w4gw8ckgcoco40w",
+          "title": "Tzviya Siegman"
+        }
+      }
+    }
+  },
+  {
+    "url": "https://api.w3.org/participations/45077",
+    "fetchedAt": "2025-11-29T16:04:43.529Z",
+    "data": {
+      "individual": false,
+      "invited-expert": false,
+      "created": "2025-04-22 15:29:56",
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/participations/45077"
+        },
+        "group": {
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
         },
         "organization": {
           "href": "https://api.w3.org/affiliations/10894",
           "title": "Institut National de Recherche en Informatique et en Automatique (Inria)"
         },
         "participants": {
-          "href": "https://api.w3.org/participations/26729/participants"
+          "href": "https://api.w3.org/participations/45077/participants"
         }
       }
     }
   },
   {
-    "url": "https://api.w3.org/participations/26735",
-    "fetchedAt": "2025-11-29T13:38:58.715Z",
+    "url": "https://api.w3.org/participations/45093",
+    "fetchedAt": "2025-11-29T16:04:45.788Z",
     "data": {
       "individual": false,
       "invited-expert": false,
-      "created": "2018-09-21 11:25:17",
+      "created": "2025-04-24 13:25:43",
       "_links": {
         "self": {
-          "href": "https://api.w3.org/participations/26735"
+          "href": "https://api.w3.org/participations/45093"
         },
         "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
+        },
+        "organization": {
+          "href": "https://api.w3.org/affiliations/62028",
+          "title": "Igalia"
+        },
+        "participants": {
+          "href": "https://api.w3.org/participations/45093/participants"
+        }
+      }
+    }
+  },
+  {
+    "url": "https://api.w3.org/participations/45095",
+    "fetchedAt": "2025-11-29T16:04:48.389Z",
+    "data": {
+      "individual": false,
+      "invited-expert": false,
+      "created": "2025-04-24 16:58:10",
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/participations/45095"
+        },
+        "group": {
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
+        },
+        "organization": {
+          "href": "https://api.w3.org/affiliations/80863",
+          "title": "Natural Resources Canada"
+        },
+        "participants": {
+          "href": "https://api.w3.org/participations/45095/participants"
+        }
+      }
+    }
+  },
+  {
+    "url": "https://api.w3.org/participations/45103",
+    "fetchedAt": "2025-11-29T16:04:50.664Z",
+    "data": {
+      "individual": false,
+      "invited-expert": false,
+      "created": "2025-04-27 23:59:11",
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/participations/45103"
+        },
+        "group": {
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
         },
         "organization": {
           "href": "https://api.w3.org/affiliations/49753",
           "title": "Huawei"
         },
         "participants": {
-          "href": "https://api.w3.org/participations/26735/participants"
+          "href": "https://api.w3.org/participations/45103/participants"
         }
       }
     }
   },
   {
-    "url": "https://api.w3.org/participations/26740",
-    "fetchedAt": "2025-11-29T13:39:00.765Z",
+    "url": "https://api.w3.org/participations/45114",
+    "fetchedAt": "2025-11-29T16:04:52.934Z",
+    "data": {
+      "individual": true,
+      "invited-expert": false,
+      "created": "2025-04-30 14:07:42",
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/participations/45114"
+        },
+        "group": {
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
+        },
+        "user": {
+          "href": "https://api.w3.org/users/bhwxjqwlrjksk8go8sgwsok0cc00sg8",
+          "title": "Philippe Le Hegaret"
+        }
+      }
+    }
+  },
+  {
+    "url": "https://api.w3.org/participations/45247",
+    "fetchedAt": "2025-11-29T16:04:55.220Z",
     "data": {
       "individual": false,
       "invited-expert": false,
-      "created": "2018-09-21 18:34:06",
+      "created": "2025-05-15 19:24:59",
       "_links": {
         "self": {
-          "href": "https://api.w3.org/participations/26740"
+          "href": "https://api.w3.org/participations/45247"
         },
         "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
         },
         "organization": {
-          "href": "https://api.w3.org/affiliations/9829",
-          "title": "Intel Corporation"
+          "href": "https://api.w3.org/affiliations/37883",
+          "title": "Walt Disney Company"
         },
         "participants": {
-          "href": "https://api.w3.org/participations/26740/participants"
+          "href": "https://api.w3.org/participations/45247/participants"
         }
       }
     }
   },
   {
-    "url": "https://api.w3.org/participations/26784",
-    "fetchedAt": "2025-11-29T13:39:02.817Z",
+    "url": "https://api.w3.org/participations/45292",
+    "fetchedAt": "2025-11-29T16:04:57.557Z",
     "data": {
       "individual": false,
       "invited-expert": false,
-      "created": "2018-09-27 03:25:18",
+      "created": "2025-05-21 22:40:37",
       "_links": {
         "self": {
-          "href": "https://api.w3.org/participations/26784"
+          "href": "https://api.w3.org/participations/45292"
         },
         "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
         },
         "organization": {
-          "href": "https://api.w3.org/affiliations/49669",
-          "title": "Baidu, Inc."
+          "href": "https://api.w3.org/affiliations/35507",
+          "title": "Mozilla Foundation"
         },
         "participants": {
-          "href": "https://api.w3.org/participations/26784/participants"
+          "href": "https://api.w3.org/participations/45292/participants"
         }
       }
     }
   },
   {
-    "url": "https://api.w3.org/participations/26789",
-    "fetchedAt": "2025-11-29T13:39:04.891Z",
+    "url": "https://api.w3.org/participations/45299",
+    "fetchedAt": "2025-11-29T16:04:59.824Z",
     "data": {
       "individual": false,
       "invited-expert": false,
-      "created": "2018-09-27 14:13:26",
+      "created": "2025-05-23 13:56:04",
       "_links": {
         "self": {
-          "href": "https://api.w3.org/participations/26789"
+          "href": "https://api.w3.org/participations/45299"
         },
         "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
         },
         "organization": {
-          "href": "https://api.w3.org/affiliations/76452",
-          "title": "Alibaba Group"
+          "href": "https://api.w3.org/affiliations/143583",
+          "title": "Rhonda Weiss Center for Accessible IDEA Data"
         },
         "participants": {
-          "href": "https://api.w3.org/participations/26789/participants"
+          "href": "https://api.w3.org/participations/45299/participants"
         }
       }
     }
   },
   {
-    "url": "https://api.w3.org/participations/26802",
-    "fetchedAt": "2025-11-29T13:39:06.943Z",
+    "url": "https://api.w3.org/participations/45302",
+    "fetchedAt": "2025-11-29T16:05:02.433Z",
     "data": {
       "individual": false,
       "invited-expert": false,
-      "created": "2018-09-29 12:17:18",
+      "created": "2025-05-23 16:48:40",
       "_links": {
         "self": {
-          "href": "https://api.w3.org/participations/26802"
+          "href": "https://api.w3.org/participations/45302"
         },
         "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
         },
         "organization": {
-          "href": "https://api.w3.org/affiliations/44690",
-          "title": "Zhejiang University"
+          "href": "https://api.w3.org/affiliations/1086",
+          "title": "Autodesk"
         },
         "participants": {
-          "href": "https://api.w3.org/participations/26802/participants"
+          "href": "https://api.w3.org/participations/45302/participants"
         }
       }
     }
   },
   {
-    "url": "https://api.w3.org/participations/26925",
-    "fetchedAt": "2025-11-29T13:39:08.998Z",
+    "url": "https://api.w3.org/participations/45339",
+    "fetchedAt": "2025-11-29T16:05:04.706Z",
     "data": {
       "individual": false,
       "invited-expert": false,
-      "created": "2018-10-12 05:47:51",
+      "created": "2025-05-30 22:09:27",
       "_links": {
         "self": {
-          "href": "https://api.w3.org/participations/26925"
+          "href": "https://api.w3.org/participations/45339"
         },
         "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
         },
         "organization": {
-          "href": "https://api.w3.org/affiliations/53821",
-          "title": "China Academy of Information and Communications Technology (CAICT)"
+          "href": "https://api.w3.org/affiliations/1202",
+          "title": "Apple Inc."
         },
         "participants": {
-          "href": "https://api.w3.org/participations/26925/participants"
+          "href": "https://api.w3.org/participations/45339/participants"
         }
       }
     }
   },
   {
-    "url": "https://api.w3.org/participations/27347",
-    "fetchedAt": "2025-11-29T13:39:11.058Z",
+    "url": "https://api.w3.org/participations/45354",
+    "fetchedAt": "2025-11-29T16:05:06.969Z",
     "data": {
       "individual": false,
       "invited-expert": false,
-      "created": "2018-11-18 04:29:17",
+      "created": "2025-06-04 14:50:40",
       "_links": {
         "self": {
-          "href": "https://api.w3.org/participations/27347"
+          "href": "https://api.w3.org/participations/45354"
         },
         "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
         },
         "organization": {
-          "href": "https://api.w3.org/affiliations/72139",
-          "title": "China Mobile Communications Corporation"
+          "href": "https://api.w3.org/affiliations/156228",
+          "title": "Depixen"
         },
         "participants": {
-          "href": "https://api.w3.org/participations/27347/participants"
+          "href": "https://api.w3.org/participations/45354/participants"
         }
       }
     }
   },
   {
-    "url": "https://api.w3.org/participations/27598",
-    "fetchedAt": "2025-11-29T13:39:13.129Z",
+    "url": "https://api.w3.org/participations/45400",
+    "fetchedAt": "2025-11-29T16:05:09.241Z",
     "data": {
       "individual": false,
       "invited-expert": false,
-      "created": "2018-12-31 03:14:06",
+      "created": "2025-06-09 20:02:58",
       "_links": {
         "self": {
-          "href": "https://api.w3.org/participations/27598"
+          "href": "https://api.w3.org/participations/45400"
         },
         "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
-        },
-        "organization": {
-          "href": "https://api.w3.org/affiliations/111912",
-          "title": "Shenzhen Institute of Information Technology"
-        },
-        "participants": {
-          "href": "https://api.w3.org/participations/27598/participants"
-        }
-      }
-    }
-  },
-  {
-    "url": "https://api.w3.org/participations/28731",
-    "fetchedAt": "2025-11-29T13:39:15.195Z",
-    "data": {
-      "individual": false,
-      "invited-expert": false,
-      "created": "2019-05-13 13:49:09",
-      "_links": {
-        "self": {
-          "href": "https://api.w3.org/participations/28731"
-        },
-        "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
-        },
-        "organization": {
-          "href": "https://api.w3.org/affiliations/90070",
-          "title": "Memect Technology Co. Ltd. 北京文因互联科技有限公司"
-        },
-        "participants": {
-          "href": "https://api.w3.org/participations/28731/participants"
-        }
-      }
-    }
-  },
-  {
-    "url": "https://api.w3.org/participations/29044",
-    "fetchedAt": "2025-11-29T13:39:17.259Z",
-    "data": {
-      "individual": false,
-      "invited-expert": false,
-      "created": "2019-06-14 07:02:20",
-      "_links": {
-        "self": {
-          "href": "https://api.w3.org/participations/29044"
-        },
-        "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
-        },
-        "organization": {
-          "href": "https://api.w3.org/affiliations/52052",
-          "title": "360"
-        },
-        "participants": {
-          "href": "https://api.w3.org/participations/29044/participants"
-        }
-      }
-    }
-  },
-  {
-    "url": "https://api.w3.org/participations/29984",
-    "fetchedAt": "2025-11-29T13:39:19.309Z",
-    "data": {
-      "individual": false,
-      "invited-expert": false,
-      "created": "2019-10-31 22:50:12",
-      "_links": {
-        "self": {
-          "href": "https://api.w3.org/participations/29984"
-        },
-        "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
-        },
-        "organization": {
-          "href": "https://api.w3.org/affiliations/35662",
-          "title": "Google LLC"
-        },
-        "participants": {
-          "href": "https://api.w3.org/participations/29984/participants"
-        }
-      }
-    }
-  },
-  {
-    "url": "https://api.w3.org/participations/34178",
-    "fetchedAt": "2025-11-29T13:39:21.357Z",
-    "data": {
-      "individual": false,
-      "invited-expert": false,
-      "created": "2021-03-31 16:26:00",
-      "_links": {
-        "self": {
-          "href": "https://api.w3.org/participations/34178"
-        },
-        "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
-        },
-        "organization": {
-          "href": "https://api.w3.org/affiliations/97591",
-          "title": "Airbnb Inc"
-        },
-        "participants": {
-          "href": "https://api.w3.org/participations/34178/participants"
-        }
-      }
-    }
-  },
-  {
-    "url": "https://api.w3.org/participations/34906",
-    "fetchedAt": "2025-11-29T13:39:23.416Z",
-    "data": {
-      "individual": false,
-      "invited-expert": false,
-      "created": "2021-06-20 09:41:53",
-      "_links": {
-        "self": {
-          "href": "https://api.w3.org/participations/34906"
-        },
-        "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
-        },
-        "organization": {
-          "href": "https://api.w3.org/affiliations/114837",
-          "title": "ByteDance"
-        },
-        "participants": {
-          "href": "https://api.w3.org/participations/34906/participants"
-        }
-      }
-    }
-  },
-  {
-    "url": "https://api.w3.org/participations/35523",
-    "fetchedAt": "2025-11-29T13:39:25.466Z",
-    "data": {
-      "individual": false,
-      "invited-expert": false,
-      "created": "2021-09-08 17:06:18",
-      "_links": {
-        "self": {
-          "href": "https://api.w3.org/participations/35523"
-        },
-        "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
         },
         "organization": {
           "href": "https://api.w3.org/affiliations/1066",
           "title": "Microsoft Corporation"
         },
         "participants": {
-          "href": "https://api.w3.org/participations/35523/participants"
+          "href": "https://api.w3.org/participations/45400/participants"
         }
       }
     }
   },
   {
-    "url": "https://api.w3.org/participations/40369",
-    "fetchedAt": "2025-11-29T13:39:27.536Z",
+    "url": "https://api.w3.org/participations/45417",
+    "fetchedAt": "2025-11-29T16:05:11.518Z",
     "data": {
       "individual": false,
       "invited-expert": false,
-      "created": "2023-07-06 09:50:22",
+      "created": "2025-06-10 19:15:57",
       "_links": {
         "self": {
-          "href": "https://api.w3.org/participations/40369"
+          "href": "https://api.w3.org/participations/45417"
         },
         "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
         },
         "organization": {
-          "href": "https://api.w3.org/affiliations/143173",
-          "title": "Ant Group Co., Ltd."
+          "href": "https://api.w3.org/affiliations/41719",
+          "title": "University of Oxford"
         },
         "participants": {
-          "href": "https://api.w3.org/participations/40369/participants"
+          "href": "https://api.w3.org/participations/45417/participants"
         }
       }
     }
   },
   {
-    "url": "https://api.w3.org/participations/41091",
-    "fetchedAt": "2025-11-29T13:39:29.584Z",
+    "url": "https://api.w3.org/participations/45520",
+    "fetchedAt": "2025-11-29T16:05:13.785Z",
     "data": {
-      "individual": true,
+      "individual": false,
       "invited-expert": false,
-      "created": "2023-10-20 05:23:22",
+      "created": "2025-06-26 20:23:53",
       "_links": {
         "self": {
-          "href": "https://api.w3.org/participations/41091"
+          "href": "https://api.w3.org/participations/45520"
         },
         "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
         },
-        "user": {
-          "href": "https://api.w3.org/users/eu2fc67zs60c8sck8gok4ccs444wo4o",
-          "title": "Xiaoqian Wu"
+        "organization": {
+          "href": "https://api.w3.org/affiliations/130635",
+          "title": "Tradeverifyd"
+        },
+        "participants": {
+          "href": "https://api.w3.org/participations/45520/participants"
         }
       }
     }
   },
   {
-    "url": "https://api.w3.org/participations/44301",
-    "fetchedAt": "2025-11-29T13:39:31.639Z",
+    "url": "https://api.w3.org/participations/45536",
+    "fetchedAt": "2025-11-29T16:05:16.066Z",
+    "data": {
+      "individual": false,
+      "invited-expert": false,
+      "created": "2025-06-30 06:09:44",
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/participations/45536"
+        },
+        "group": {
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
+        },
+        "organization": {
+          "href": "https://api.w3.org/affiliations/76927",
+          "title": "Visa"
+        },
+        "participants": {
+          "href": "https://api.w3.org/participations/45536/participants"
+        }
+      }
+    }
+  },
+  {
+    "url": "https://api.w3.org/participations/45705",
+    "fetchedAt": "2025-11-29T16:05:18.313Z",
+    "data": {
+      "individual": false,
+      "invited-expert": false,
+      "created": "2025-07-30 11:21:17",
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/participations/45705"
+        },
+        "group": {
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
+        },
+        "organization": {
+          "href": "https://api.w3.org/affiliations/40030",
+          "title": "Samsung Electronics Co., Ltd."
+        },
+        "participants": {
+          "href": "https://api.w3.org/participations/45705/participants"
+        }
+      }
+    }
+  },
+  {
+    "url": "https://api.w3.org/participations/45838",
+    "fetchedAt": "2025-11-29T16:05:20.960Z",
     "data": {
       "individual": true,
       "invited-expert": false,
-      "created": "2025-01-21 07:40:28",
+      "created": "2025-08-22 08:50:31",
       "_links": {
         "self": {
-          "href": "https://api.w3.org/participations/44301"
+          "href": "https://api.w3.org/participations/45838"
         },
         "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
         },
         "user": {
           "href": "https://api.w3.org/users/7u0azic9fv0o84sosgw4840c0sg8ok8",
@@ -677,166 +710,173 @@
     }
   },
   {
-    "url": "https://api.w3.org/participations/44682",
-    "fetchedAt": "2025-11-29T13:39:33.691Z",
+    "url": "https://api.w3.org/participations/45874",
+    "fetchedAt": "2025-11-29T16:05:23.215Z",
     "data": {
       "individual": false,
       "invited-expert": false,
-      "created": "2025-03-04 09:13:30",
+      "created": "2025-08-27 19:42:38",
       "_links": {
         "self": {
-          "href": "https://api.w3.org/participations/44682"
+          "href": "https://api.w3.org/participations/45874"
         },
         "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
         },
         "organization": {
-          "href": "https://api.w3.org/affiliations/52054",
-          "title": "Tencent"
+          "href": "https://api.w3.org/affiliations/131353",
+          "title": "Okta"
         },
         "participants": {
-          "href": "https://api.w3.org/participations/44682/participants"
+          "href": "https://api.w3.org/participations/45874/participants"
         }
       }
     }
   },
   {
-    "url": "https://api.w3.org/participations/45467",
-    "fetchedAt": "2025-11-29T13:39:35.739Z",
+    "url": "https://api.w3.org/participations/46177",
+    "fetchedAt": "2025-11-29T16:05:25.498Z",
     "data": {
-      "individual": false,
-      "invited-expert": false,
-      "created": "2025-06-19 07:03:52",
+      "individual": true,
+      "invited-expert": true,
+      "created": "2025-10-09 12:26:52",
       "_links": {
         "self": {
-          "href": "https://api.w3.org/participations/45467"
+          "href": "https://api.w3.org/participations/46177"
         },
         "group": {
-          "href": "https://api.w3.org/groups/ig/chinese-web",
-          "title": "Chinese Web Interest Group"
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
         },
-        "organization": {
-          "href": "https://api.w3.org/affiliations/59420",
-          "title": "Nanjing University"
-        },
-        "participants": {
-          "href": "https://api.w3.org/participations/45467/participants"
+        "user": {
+          "href": "https://api.w3.org/users/d3sh0ism2z488wcoo4gs8g0g0s0ws8k",
+          "title": "Sarven Capadisli"
         }
       }
     }
   },
   {
-    "url": "https://api.w3.org/groups/ig/chinese-web/users",
-    "fetchedAt": "2025-11-29T13:39:37.795Z",
+    "url": "https://api.w3.org/participations/46451",
+    "fetchedAt": "2025-11-29T16:05:27.754Z",
+    "data": {
+      "individual": false,
+      "invited-expert": false,
+      "created": "2025-11-12 06:45:10",
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/participations/46451"
+        },
+        "group": {
+          "href": "https://api.w3.org/groups/ig/exploration",
+          "title": "Exploration Interest Group"
+        },
+        "organization": {
+          "href": "https://api.w3.org/affiliations/147824",
+          "title": "WebDINO Japan"
+        },
+        "participants": {
+          "href": "https://api.w3.org/participations/46451/participants"
+        }
+      }
+    }
+  },
+  {
+    "url": "https://api.w3.org/groups/ig/exploration/users",
+    "fetchedAt": "2025-11-29T16:05:30.017Z",
     "data": {
       "page": 1,
       "limit": 100,
       "pages": 1,
-      "total": 62,
+      "total": 30,
       "_links": {
         "up": {
-          "href": "https://api.w3.org/groups/ig/chinese-web"
+          "href": "https://api.w3.org/groups/ig/exploration"
         },
         "users": [
           {
-            "href": "https://api.w3.org/users/43yiumucw56ow888g0okcswkcgooc0g",
-            "title": "Songpu Ai",
+            "href": "https://api.w3.org/users/tgecmwnj0gg84k804kc40g4kwkoso0w",
+            "title": "Martin Alvarez-Espinar",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/a9zh37vbdzc4o0wowsgog0g0gwcocks",
-            "title": "Qing An",
+            "href": "https://api.w3.org/users/guk8w5oiam0w0kskwg00gsg0c4okccs",
+            "title": "Daniel Appelquist",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/ez06npz1esgg804coc08wowg4wkcogw",
-            "title": "Jie Bao",
+            "href": "https://api.w3.org/users/rhto9w197dc8soscgo8444owgwosw8c",
+            "title": "Tomoya Asai",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/1ykw8sb9a1lw8so44gs4cc0goow4wo4",
-            "title": "bdrtc bdrtc",
+            "href": "https://api.w3.org/users/opek2ik7vtccwgw40gc4gco4wckcs80",
+            "title": "Suha Atay",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/rd4byxnacu80okkw8ck8o0skgcsg8ks",
-            "title": "Shuhao Cai",
+            "href": "https://api.w3.org/users/rqjspzlmiq8c0kk8goos4c480w8wccs",
+            "title": "Matthew Atkinson",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/d2oe3m4brl4og8004ocs8cwk08g84wc",
-            "title": "yajun chen",
+            "href": "https://api.w3.org/users/gdxj9vsyu1w04g8wwk8sco4s0ssgg00",
+            "title": "Baran Bacak",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/4ey1nw5b0g000kggokgc08wsgsc0o00",
-            "title": "Airing Deng",
+            "href": "https://api.w3.org/users/qhttlzshlu8cwk4sogwkc48gc800k44",
+            "title": "Dustin Boston",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/9ms4widbf8cggg8s8g8s8gckssc88oo",
-            "title": "Ji Dong",
+            "href": "https://api.w3.org/users/d3sh0ism2z488wcoo4gs8g0g0s0ws8k",
+            "title": "Sarven Capadisli",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/ojo2an89zxw8o48cwsg488sogwss4wc",
-            "title": "Chenjie Fang",
+            "href": "https://api.w3.org/users/gn0lltmbnw0scsks88k8kocgocgkcg0",
+            "title": "Tim Cappalli",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/bqb6r8r97sgskskogk44804owck0cc0",
-            "title": "Yanling Feng",
+            "href": "https://api.w3.org/users/pj0d7ozwcw0wgok4sow4088c0k4ck8c",
+            "title": "Jet Ding",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/ba5n6oitwg84gc8oog0s00wsokwk40s",
-            "title": "Chan Gong",
+            "href": "https://api.w3.org/users/eabszyz4oqgw8sk0w48004c0wgws8kc",
+            "title": "Wei Ding",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/hvkb4er93a8kskkc4s0wg0g88ko4sc8",
-            "title": "Yang Gu",
+            "href": "https://api.w3.org/users/6wiml6ohlyos0cocw4c0k04wcw0co4g",
+            "title": "Fred Edora",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/eimw93zzn6gcgckg0kgksgwok8w8k4o",
-            "title": "Yiling Gu",
+            "href": "https://api.w3.org/users/41r0rf2468ysow8k48c8c8sw84ogwog",
+            "title": "Henrik Edstrom",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/eufqnbenydc0gkcw8cwcwgo88s484co",
-            "title": "Peipei Guo",
+            "href": "https://api.w3.org/users/5dohyrkzuwco4ksww84wo4swcsg0ow4",
+            "title": "Heather Flanagan",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/bpqrfbvejfw4sko4c04osogco8w4c08",
-            "title": "Dongran He",
+            "href": "https://api.w3.org/users/1ebxwvxr95y8c00kc88osw00048k84k",
+            "title": "Fabien Gandon",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/ebbwuuh5xhc0g804ssccwgkokgkscko",
-            "title": "Feifei He",
+            "href": "https://api.w3.org/users/bdraeh576wgsc040swsk08w8go4wsw0",
+            "title": "Jay Huang",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/6xp214pi75ogow8w48gwcgwk44ws444",
-            "title": "Jihu Hou",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/pddmsiuskasg4g4k4ckks0kwcoo4kok",
-            "title": "Peng Hou",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/2boq0zodjjggws80kgsgkgw8skgwoc8",
-            "title": "Wei Hu",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/rsca126o35csw08c84cg8gs8888gcg0",
-            "title": "ting huang",
+            "href": "https://api.w3.org/users/rsp7hrrq0fko80c48w8k4ossk0s8c0s",
+            "title": "Michael Jackson",
             "former": false
           },
           {
@@ -845,63 +885,23 @@
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/qw0kvhva2f4ww40ggkw0w884gscwooo",
-            "title": "troy kang",
+            "href": "https://api.w3.org/users/o2ivu908vms0gckcssc8cwk48kk00ww",
+            "title": "Brian Kardell",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/8dgxi7n72xs0o0scws4k4000wos0wsw",
-            "title": "Jonathan Lee",
+            "href": "https://api.w3.org/users/bhwxjqwlrjksk8go8sgwsok0cc00sg8",
+            "title": "Philippe Le Hegaret",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/qebxbe11yogcc80cs4g8o0o8s4c0gow",
-            "title": "Changhao Li",
+            "href": "https://api.w3.org/users/syiwl2l7ppckgsksc848c4cowc0w4w0",
+            "title": "Chris Needham",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/1mkpk93ufl6skgc0wocs8cgkocw8osc",
-            "title": "lin li",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/e3erndxuu1c88k0kcokggsgccgk4kwg",
-            "title": "yuan liang",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/m4ttie98zhso0gcs0008wks8000s44k",
-            "title": "Che Lin",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/6l3b5qp62ps0k0ccgccg0wwgwwg0oo4",
-            "title": "Wanming Lin",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/qsno523t5748s4ggockcsg4sgossso8",
-            "title": "LingLing Liu",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/lx5gyxdkor4cgcc8wgcgw804cg0k8cc",
-            "title": "Linco Ma",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/r1hz7yh9mwgookkoc8o8k4sws4sw4kc",
-            "title": "Chunhui Mo",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/e1w6inkjwdckg884s0cwgkksww800g0",
-            "title": "dapeng nie",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/7o4ri7skneccs0k0cg40occww408ok0",
-            "title": "Jim Peng",
+            "href": "https://api.w3.org/users/k44qkt1rntww0wcwwgksk8w4o4o0ksg",
+            "title": "Theresa O'Connor",
             "former": false
           },
           {
@@ -910,154 +910,49 @@
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/dneppiq1au8g0ws4ks48cssw04ocoko",
-            "title": "Huaqi Shan",
+            "href": "https://api.w3.org/users/9dsz49upbv8c8k080kog44cko0gwcgc",
+            "title": "Peter Rushforth",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/2ls23jhrxqg4ko40g840g4sscsso8ws",
-            "title": "nan shang",
+            "href": "https://api.w3.org/users/4i1a1brdkxogsc8o0g8wcgcwg4sw00w",
+            "title": "Gavin Shenker",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/kf8nlab008gocskogcwkgg0wco8g08k",
-            "title": "Jie Song",
+            "href": "https://api.w3.org/users/jhywkkw0080gg4g8w4gw8ckgcoco40w",
+            "title": "Tzviya Siegman",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/f4y1fu83ocg00880oooskc484g0ggws",
-            "title": "Jianqiang Sun",
+            "href": "https://api.w3.org/users/16j8r76fd6pwgo00gk4ww0wwwc4888w",
+            "title": "Ben Tillyer",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/hvgcmyexol4woowgcwoggks00wo84k8",
-            "title": "mancang sun",
+            "href": "https://api.w3.org/users/b39dpa6cki88csg4ko0scgc0w8oc884",
+            "title": "Jesse Wright",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/pkh0l794ppw84cwcsocoggcgs40gs4g",
-            "title": "Xuhui Tu",
+            "href": "https://api.w3.org/users/f56pdzfygrw44osooc00kwscwswc08",
+            "title": "Brent Zundel",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/peyiz4i8gjk4gksw0o4kc4gwc08kcsw",
-            "title": "Jia Wang",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/4xhwg5m7b8080os4goowgc480cs0c4w",
-            "title": "Wilson Wang",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/saihuudonms0ogowkoww08gks8400o0",
-            "title": "Zitao Wang",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/e9ra8hka5v4sgksg8csgwcw0gogwosc",
-            "title": "Jiaxun Wei",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/c3g3zjyvac084wc8s4wc4gs8w808kkg",
-            "title": "Silun Wu",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/eu2fc67zs60c8sck8gok4ccs444wo4o",
-            "title": "Xiaoqian Wu",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/mf8i76m48tw800gkow0k8ockog88o40",
-            "title": "YEFENG XIA",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/nfaebkmghm8o480s4gk04s8gs48wccw",
-            "title": "Song XU",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/2bhyv8h6u2ckc4wwsko88o4s040okok",
-            "title": "Fuqiao Xue",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/ciyy5lk8jvccc84s4oo88owgow8gs8w",
-            "title": "changqing yan",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/8g4encnll1gk8s0okgksow0swckcosk",
-            "title": "Jun Yang",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/gbfnrz7ooo8ocskckcww4so0k8s0oss",
-            "title": "Zihan Yang",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/jz8q705ln5wk4o0kg8wkgsc0kogggcw",
-            "title": "Wei Yao",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/gvrfgfsfzyo8koc8kwwo8co4wsc40gs",
-            "title": "Yang Yu",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/hzxs63esz8gkoook4w08ksw4csw4gc4",
-            "title": "Zhiqiang Yu",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/g9c86oy3x5kccggcs04kc840gc4g8k4",
-            "title": "Belem Zhang",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/gsnj8r35lj40c8csokwo888404ksw0g",
-            "title": "cottom zhang",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/ggsrsfv9cjs480ss04cwk0wwgc0okgs",
-            "title": "Kaidong Zhang",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/64kutzjlpgsowwogk44coowwc0ccgc8",
-            "title": "Lei Zhao",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/rd0us9cl5zk8k0skc0k4gscw8ccc0gc",
-            "title": "论 李",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/ailu9qs0ee8ggsos8kwwg8wo4ggkos8",
-            "title": "嘉晟 武",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/o35qnl8qiio4okk0gk0o4skwkk8c8gs",
-            "title": "聪聪 潘",
+            "href": "https://api.w3.org/users/2iiqijs7crggkwg8wccs0g8kok8gssc",
+            "title": "Tantek Çelik",
             "former": false
           }
         ],
         "self": {
-          "href": "https://api.w3.org/groups/ig/chinese-web/users?page=1&items=100"
+          "href": "https://api.w3.org/groups/ig/exploration/users?page=1&items=100"
         },
         "first": {
-          "href": "https://api.w3.org/groups/ig/chinese-web/users?page=1&items=100"
+          "href": "https://api.w3.org/groups/ig/exploration/users?page=1&items=100"
         },
         "last": {
-          "href": "https://api.w3.org/groups/ig/chinese-web/users?page=1&items=100"
+          "href": "https://api.w3.org/groups/ig/exploration/users?page=1&items=100"
         }
       }
     }
