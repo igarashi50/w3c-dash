@@ -74,21 +74,18 @@ function compareAndWriteJson() {
     fs.writeFileSync(datedFile, newContent, 'utf8');
     console.log(`\n✓ Data written to: ${datedFile}`);
     
-    // シンボリックリンクを作成
+    // w3c_api.json を最新ファイルのコピーとして作成（シンボリックリンクの代わり）
     try {
-      // 既存のファイルまたはシンボリックリンクを削除
+      // 既存のファイルを削除
       if (fs.existsSync(symlinkPath)) {
-        const stats = fs.lstatSync(symlinkPath);
-        if (stats.isSymbolicLink() || stats.isFile()) {
-          fs.unlinkSync(symlinkPath);
-        }
+        fs.unlinkSync(symlinkPath);
       }
       
-      const relativePath = `w3c_api_${fetchStartTime}_${durationStr}.json`;
-      fs.symlinkSync(relativePath, symlinkPath);
-      console.log(`✓ Created symlink: ${symlinkPath} -> ${relativePath}`);
+      // ファイルをコピー
+      fs.copyFileSync(datedFile, symlinkPath);
+      console.log(`✓ Copied to: ${symlinkPath}`);
     } catch (e) {
-      console.error(`Failed to create symlink: ${e.message}`);
+      console.error(`Failed to copy file: ${e.message}`);
     }
     
     return true;
