@@ -16,13 +16,20 @@ async function loadW3CApiData() {
 
 // WG と IG のグループリストを取得
 function extractGroups(apiData) {
-  const wgData = findDataByUrl(apiData, 'https://api.w3.org/groups/wg');
-  const igData = findDataByUrl(apiData, 'https://api.w3.org/groups/ig');
-  
-  const wgGroups = wgData?._links?.groups || [];
-  const igGroups = igData?._links?.groups || [];
-  
-  return [...wgGroups, ...igGroups];
+  let groups = [];
+  const urls = [
+    'https://api.w3.org/groups/wg',
+    'https://api.w3.org/groups/ig'
+  ];
+  for (const url of urls) {
+    const data = findDataByUrl(apiData, url);
+    if (!data) {
+      throw new Error(`Failed to find group data for URL: ${url}`);
+    }
+    const urlGroups = data?._links?.groups || [];
+    groups.push(...urlGroups);
+  }
+  return groups;
 }
 
 // グループの participations データを取得

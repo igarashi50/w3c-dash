@@ -264,6 +264,7 @@ async function processGroupCategory(categoryUrl) {
 
     let processedCount = 0;
     for (let i = 0; i < groups.length; i++) {
+      if (i == 1) break; // --- TESTING LIMIT ---
       const g = groups[i];
       const groupName = g.title || g.name || g.id || 'unknown';
       console.log(`[${i + 1}/${groups.length}] Processing: ${groupName}`);
@@ -330,8 +331,8 @@ async function main() {
   fs.mkdirSync('data', { recursive: true });
 
   // Process WG first
-  await processGroupCategory('https://api.w3.org/groups/wg');
-  await sleep(REQUEST_INTERVAL);
+  //await processGroupCategory('https://api.w3.org/groups/wg');
+  //await sleep(REQUEST_INTERVAL);
 
   // Then process IG
   await processGroupCategory('https://api.w3.org/groups/ig');
