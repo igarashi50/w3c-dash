@@ -7,8 +7,8 @@ function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 // 統一されたリクエスト間隔
 // W3C API制限: 6000 requests per IP every 10 minutes
-// 2秒間隔 = 30 requests/min = 300 requests/10min (制限の5%使用)
-const REQUEST_INTERVAL = 2000;
+// 0.5秒間隔 = 120 requests/min = 1200 requests/10min (制限の20%使用)
+const REQUEST_INTERVAL = 500;
 
 let collectedData = {}; // メモリ上にデータを蓄積（Dictionary形式）
 let fetchStartTime = ''; // 取得開始時刻（表示用）
