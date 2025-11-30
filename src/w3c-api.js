@@ -1,27 +1,25 @@
-// data/w3c_api.json から URL でデータを検索する関数
+// data/w3c_groups.json から URL でデータを検索する関数
 function findDataByUrl(apiData, targetUrl) {
-  if (!Array.isArray(apiData)) return null;
-  const record = apiData.find(r => r.url === targetUrl);
-  return record ? record.data : null;
+  if (!apiData || typeof apiData !== 'object') return null;
+  return apiData[targetUrl]?.data || null;
 }
 
-// data/w3c_api.json を読み込む
+// data/w3c_groups.json を読み込む
 async function loadW3CApiData() {
-  const response = await fetch('../data/w3c_api.json');
+  const response = await fetch('../data/w3c_groups.json');
   if (!response.ok) {
-    throw new Error(`Failed to load w3c_api.json: ${response.status}`);
+    throw new Error(`Failed to load w3c_groups.json: ${response.status}`);
   }
   return response.json();
 }
 
-// WG と IG のグループリストを取得
+// WG, IG, CG, TF, Other のグループリストを取得
 function extractGroups(apiData) {
   let groups = [];
-  const urls = [
-    'https://api.w3.org/groups/wg',
-    'https://api.w3.org/groups/ig'
-  ];
-  for (const url of urls) {
+  const types = ['wg', 'ig', 'cg', 'tf', 'other'];
+  
+  for (const type of types) {
+    const url = `https://api.w3.org/groups/${type}`;
     const data = findDataByUrl(apiData, url);
     if (!data) {
       console.warn(`Warning: No data found for URL: ${url}, skipping`);
@@ -39,19 +37,8 @@ function getParticipationsForGroup(apiData, group) {
   if (!groupHref) return [];
   
   const partHref = groupHref.replace(/\/$/, '') + '/participations';
-  const participations = [];
-  
-  // participations のページデータを探す（ページネーション対応）
-  for (const record of apiData) {
-    if (record.url && record.url.startsWith(partHref)) {
-      const pageData = record.data;
-      if (pageData?._links?.participations) {
-        participations.push(...pageData._links.participations);
-      }
-    }
-  }
-  
-  return participations;
+  const data = findDataByUrl(apiData, partHref);
+  return data?._links?.participations || [];
 }
 
 // グループの users データを取得
@@ -60,19 +47,8 @@ function getUsersForGroup(apiData, group) {
   if (!groupHref) return [];
   
   const usersHref = groupHref.replace(/\/$/, '') + '/users';
-  const users = [];
-  
-  // users のページデータを探す（ページネーション対応）
-  for (const record of apiData) {
-    if (record.url && record.url.startsWith(usersHref)) {
-      const pageData = record.data;
-      if (pageData?._links?.users) {
-        users.push(...pageData._links.users);
-      }
-    }
-  }
-  
-  return users;
+  const data = findDataByUrl(apiData, usersHref);
+  return data?._links?.users || [];
 }
 
 // participation の詳細データを取得

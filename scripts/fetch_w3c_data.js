@@ -10,16 +10,15 @@ function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 // 2秒間隔 = 30 requests/min = 300 requests/10min (制限の5%使用)
 const REQUEST_INTERVAL = 2000;
 
-let collectedData = []; // メモリ上にデータを蓄積
+let collectedData = {}; // メモリ上にデータを蓄積（Dictionary形式）
 let fetchStartTime = ''; // 取得開始時刻（表示用）
 let fetchStartTimestamp = 0; // 取得開始時刻（タイムスタンプ）
 
 function addToCollection(url, data) {
-  collectedData.push({
-    url: url,
+  collectedData[url] = {
     fetchedAt: new Date().toISOString(),
     data: data
-  });
+  };
 }
 
 function formatDuration(ms) {
@@ -41,22 +40,29 @@ function compareAndWriteJson() {
   const duration = Date.now() - fetchStartTimestamp;
   const durationStr = formatDuration(duration);
   
-  const datedFile = `data/w3c_api_${fetchStartTime}_${durationStr}.json`;
-  const symlinkPath = 'data/w3c_api.json';
+  const datedFile = `data/w3c_groups_${fetchStartTime}_${durationStr}.json`;
+  const groupDataPath = 'data/w3c_groups.json';
   
   const newContent = JSON.stringify(collectedData, null, 2);
   
-  // 既存のw3c_api.jsonと比較
+  // 既存のw3c_groups.jsonと比較
   let hasChanges = true;
-  if (fs.existsSync(symlinkPath)) {
+  if (fs.existsSync(groupDataPath)) {
     try {
-      const existingContent = fs.readFileSync(symlinkPath, 'utf8');
+      const existingContent = fs.readFileSync(groupDataPath, 'utf8');
       const existingData = JSON.parse(existingContent);
       const newData = JSON.parse(newContent);
       
       // データの比較（fetchedAt を除外して比較）
-      const existingDataWithoutTimestamp = existingData.map(item => ({ url: item.url, data: item.data }));
-      const newDataWithoutTimestamp = newData.map(item => ({ url: item.url, data: item.data }));
+      const existingDataWithoutTimestamp = {};
+      const newDataWithoutTimestamp = {};
+      
+      for (const url in existingData) {
+        existingDataWithoutTimestamp[url] = existingData[url].data;
+      }
+      for (const url in newData) {
+        newDataWithoutTimestamp[url] = newData[url].data;
+      }
       
       if (JSON.stringify(existingDataWithoutTimestamp) === JSON.stringify(newDataWithoutTimestamp)) {
         hasChanges = false;
@@ -74,16 +80,16 @@ function compareAndWriteJson() {
     fs.writeFileSync(datedFile, newContent, 'utf8');
     console.log(`\n✓ Data written to: ${datedFile}`);
     
-    // w3c_api.json を最新ファイルのコピーとして作成（シンボリックリンクの代わり）
+    // w3c_groups.json を最新ファイルのコピーとして作成（シンボリックリンクの代わり）
     try {
       // 既存のファイルを削除
-      if (fs.existsSync(symlinkPath)) {
-        fs.unlinkSync(symlinkPath);
+      if (fs.existsSync(groupDataPath)) {
+        fs.unlinkSync(groupDataPath);
       }
       
       // ファイルをコピー
-      fs.copyFileSync(datedFile, symlinkPath);
-      console.log(`✓ Copied to: ${symlinkPath}`);
+      fs.copyFileSync(datedFile, groupDataPath);
+      console.log(`✓ Copied to: ${groupDataPath}`);
     } catch (e) {
       console.error(`Failed to copy file: ${e.message}`);
     }
@@ -251,21 +257,22 @@ async function fetchData(startUrl) {
   return pages;
 }
 
-async function processGroupCategory(categoryUrl) {
-  const categoryName = categoryUrl.includes('/wg') ? 'WG' : 'IG';
-  console.log(`\n========== Processing ${categoryName} ==========`);
+async function processGroupType(typeUrl) {
+  const typeMatch = typeUrl.match(/\/groups\/([^/?]+)/);
+  const typeName = typeMatch ? typeMatch[1].toUpperCase() : 'UNKNOWN';
+  console.log(`\n========== Processing ${typeName} ==========`);
   
   try {
-    const categoryResp = await fetchJson(categoryUrl, 6, 5000, 120000);
-    addToCollection(categoryUrl, categoryResp);
-    console.log(`✓ Fetched ${categoryName} list`);
+    const typeResp = await fetchJson(typeUrl, 6, 5000, 120000);
+    addToCollection(typeUrl, typeResp);
+    console.log(`✓ Fetched ${typeName} list`);
     
-    const groups = categoryResp._links?.groups || [];
-    console.log(`Found ${groups.length} ${categoryName} groups\n`);
+    const groups = typeResp._links?.groups || [];
+    console.log(`Found ${groups.length} ${typeName} groups\n`);
 
     let processedCount = 0;
     for (let i = 0; i < groups.length; i++) {
-      //if (i != 1) continue; // --- TESTING LIMIT ---
+      if (i > 1) break; // --- TESTING LIMIT ---
       const g = groups[i];
       const groupName = g.title || g.name || g.id || 'unknown';
       console.log(`[${i + 1}/${groups.length}] Processing: ${groupName}`);
@@ -312,9 +319,9 @@ async function processGroupCategory(categoryUrl) {
       }
     }
 
-    console.log(`✓ Completed ${categoryName}: Processed ${processedCount}/${groups.length} groups`);
+    console.log(`✓ Completed ${typeName}: Processed ${processedCount}/${groups.length} groups`);
   } catch (e) {
-    console.error(`Failed to fetch ${categoryName}: ${e.message}`);
+    console.error(`Failed to fetch ${typeName}: ${e.message}`);
   }
 }
 
@@ -331,16 +338,22 @@ async function main() {
   
   fs.mkdirSync('data', { recursive: true });
 
-  // Process WG first
-  await processGroupCategory('https://api.w3.org/groups/wg');
-  await sleep(REQUEST_INTERVAL);
-
-  // Then process IG
-  await processGroupCategory('https://api.w3.org/groups/ig');
+  // Process all group types
+  const groupTypes = ['wg', 'ig', 'cg', 'tf', 'other'];
+  
+  for (let i = 0; i < groupTypes.length; i++) {
+    const type = groupTypes[i];
+    await processGroupType(`https://api.w3.org/groups/${type}`);
+    
+    // Wait between types (except after the last one)
+    if (i < groupTypes.length - 1) {
+      await sleep(REQUEST_INTERVAL);
+    }
+  }
 
   const duration = Date.now() - fetchStartTimestamp;
   console.log(`\n========== Done ==========`);
-  console.log(`Total collected items: ${collectedData.length}`);
+  console.log(`Total collected items: ${Object.keys(collectedData).length}`);
   console.log(`Total duration: ${formatDuration(duration)}`);
   
   // 最後に比較して書き込み

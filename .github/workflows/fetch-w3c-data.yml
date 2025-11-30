@@ -44,12 +44,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           # 最新の日付付きファイルを取得
-          LATEST_FILE=$(ls -t data/w3c_api_2*.json 2>/dev/null | head -n 1)
+          LATEST_FILE=$(ls -t data/w3c_groups_2*.json 2>/dev/null | head -n 1)
           if [ -n "$LATEST_FILE" ]; then
             TAG_NAME="data-$(date +'%Y-%m-%d-%H%M%S')"
             gh release create "$TAG_NAME" "$LATEST_FILE" \
-              --title "W3C API Data - $(date +'%Y-%m-%d %H:%M:%S')" \
-              --notes "Automated W3C API data snapshot"
+              --title "W3C Groups Data - $(date +'%Y-%m-%d %H:%M:%S')" \
+              --notes "Automated W3C groups data snapshot"
             echo "Uploaded $LATEST_FILE to release $TAG_NAME"
           fi
       
@@ -58,12 +58,12 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git commit -m "Update W3C API data - $(date +'%Y-%m-%d')"
+          git commit -m "Update W3C groups data - $(date +'%Y-%m-%d')"
           git push
       
       - name: Summary
         run: |
-          echo "### W3C API Data Fetch Complete :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "### W3C Groups Data Fetch Complete :rocket:" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Status**: Success" >> $GITHUB_STEP_SUMMARY
           echo "- **Newly Created**: ${{ steps.check_changes.outputs.newly_created }}" >> $GITHUB_STEP_SUMMARY
