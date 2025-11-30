@@ -6,7 +6,7 @@ function findDataByUrl(apiData, targetUrl) {
 
 // data/w3c-groups.json を読み込む
 async function loadW3CApiData() {
-  const response = await fetch('../data/w3c-groups.json');
+  const response = await fetch('data/w3c-groups.json');
   if (!response.ok) {
     throw new Error(`Failed to load w3c-groups.json: ${response.status}`);
   }
