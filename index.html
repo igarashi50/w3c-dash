@@ -11,10 +11,18 @@
   <div id="controls">
     <button id="refresh">Refresh</button>
     <label><input type="checkbox" id="showNames" /> Show invited experts inline</label>
+    <select id="sortBy" style="display: none;">
+      <option value="invited">Invited Experts ↓</option>
+      <option value="participants">Participants ↓</option>
+      <option value="users">Users ↓</option>
+      <option value="members">Members ↓</option>
+      <option value="individuals">Individuals ↓</option>
+    </select>
     <div id="summary" class="small"></div>
   </div>
 
   <div id="status" class="loading">Ready</div>
+  <div id="legend"></div>
   <div id="groups"></div>
 
   <div id="popup">
@@ -22,6 +30,8 @@
     <div id="popupContent"></div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
   <script src="w3c-api.js"></script>
   <script src="w3c-dash.js"></script>
 </body>

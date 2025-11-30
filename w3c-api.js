@@ -26,6 +26,8 @@ function extractGroups(apiData) {
       continue;
     }
     const urlGroups = data?._links?.groups || [];
+    // 各グループにtype情報を追加
+    urlGroups.forEach(g => g.groupType = type);
     groups.push(...urlGroups);
   }
   return groups;
@@ -59,6 +61,7 @@ function getParticipationDetail(apiData, participationHref) {
 // グループごとの集計情報を取得
 function extractGroupInfo(apiData, group) {
   const name = group.title || group.name || 'Unknown Group';
+  const groupType = group.groupType || 'unknown';
   
   // participations を取得
   const participations = getParticipationsForGroup(apiData, group);
@@ -70,31 +73,48 @@ function extractGroupInfo(apiData, group) {
   
   // invited experts を抽出（participation 詳細から）
   const invited = [];
+  const individuals = [];
   for (const part of participations) {
     const partHref = part.href;
     if (!partHref) continue;
     
     const detail = getParticipationDetail(apiData, partHref);
-    if (detail && detail['invited-expert'] === true) {
+    if (detail) {
       // user 情報を取得
       const userName = detail._links?.user?.title || 
                       detail._links?.organization?.title || 
                       part.title || 
                       'Unknown';
-      invited.push(userName);
+      
+      if (detail['invited-expert'] === true) {
+        invited.push(userName);
+      } else if (detail['individual'] === true) {
+        individuals.push(userName);
+      }
     }
   }
   
   const uniqInvited = Array.from(new Set(invited));
+  const uniqIndividuals = Array.from(new Set(individuals));
+  
+  // Members = Participations - Invited Experts - Individuals
+  const membersCount = participantsList.length - uniqInvited.length - uniqIndividuals.length;
+  // Participants = Users + Invited Experts + Individuals
+  const totalParticipantsCount = usersList.length + uniqInvited.length + uniqIndividuals.length;
   
   return {
     name,
+    groupType,
     participantsCount: participantsList.length,
     participantsList,
     usersCount: usersList.length,
     usersList,
     invitedCount: uniqInvited.length,
-    invited: uniqInvited
+    invited: uniqInvited,
+    individualsCount: uniqIndividuals.length,
+    individuals: uniqIndividuals,
+    membersCount,
+    totalParticipantsCount
   };
 }
 
@@ -109,12 +129,17 @@ async function getAllGroupsInfo() {
     } catch (e) {
       return {
         name: group.title || 'Unknown',
+        groupType: group.groupType || 'unknown',
         participantsCount: 0,
         participantsList: [],
         usersCount: 0,
         usersList: [],
         invitedCount: 0,
         invited: [],
+        individualsCount: 0,
+        individuals: [],
+        membersCount: 0,
+        totalParticipantsCount: 0,
         _error: e.message || String(e)
       };
     }
