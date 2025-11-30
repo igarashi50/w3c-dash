@@ -272,7 +272,7 @@ async function processGroupType(typeUrl) {
 
     let processedCount = 0;
     for (let i = 0; i < groups.length; i++) {
-      if (i > 1) break; // --- TESTING LIMIT ---
+      // if (i >= 1) break; // --- TESTING LIMIT ---
       const g = groups[i];
       const groupName = g.title || g.name || g.id || 'unknown';
       console.log(`[${i + 1}/${groups.length}] Processing: ${groupName}`);
