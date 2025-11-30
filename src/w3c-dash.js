@@ -28,7 +28,7 @@ async function loadGroups() {
   
   groupsDiv.innerHTML = '';
   status.className = 'loading';
-  status.textContent = 'Loading group data from w3c_groups.json...';
+  status.textContent = 'Loading group data from w3c-groups.json...';
 
   try {
     const results = await getAllGroupsInfo();

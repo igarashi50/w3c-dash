@@ -26,7 +26,7 @@ jobs:
         run: mkdir -p data
       
       - name: Fetch W3C API data
-        run: node scripts/fetch_w3c_data.js
+        run: node scripts/fetch-w3c-data.js
       
       - name: Check for newly created
         id: check_changes
@@ -44,7 +44,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           # 最新の日付付きファイルを取得
-          LATEST_FILE=$(ls -t data/w3c_groups_2*.json 2>/dev/null | head -n 1)
+          LATEST_FILE=$(ls -t data/w3c-groups-2*.json 2>/dev/null | head -n 1)
           if [ -n "$LATEST_FILE" ]; then
             TAG_NAME="data-$(date +'%Y-%m-%d-%H%M%S')"
             gh release create "$TAG_NAME" "$LATEST_FILE" \

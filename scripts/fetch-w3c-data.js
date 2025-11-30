@@ -40,12 +40,12 @@ function compareAndWriteJson() {
   const duration = Date.now() - fetchStartTimestamp;
   const durationStr = formatDuration(duration);
   
-  const datedFile = `data/w3c_groups_${fetchStartTime}_${durationStr}.json`;
-  const groupDataPath = 'data/w3c_groups.json';
+  const datedFile = `data/w3c-groups-${fetchStartTime}-${durationStr}.json`;
+  const groupDataPath = 'data/w3c-groups.json';
   
   const newContent = JSON.stringify(collectedData, null, 2);
   
-  // 既存のw3c_groups.jsonと比較
+  // 既存のw3c-groups.jsonと比較
   let hasChanges = true;
   if (fs.existsSync(groupDataPath)) {
     try {
@@ -80,7 +80,7 @@ function compareAndWriteJson() {
     fs.writeFileSync(datedFile, newContent, 'utf8');
     console.log(`\n✓ Data written to: ${datedFile}`);
     
-    // w3c_groups.json を最新ファイルのコピーとして作成（シンボリックリンクの代わり）
+    // w3c-groups.json を最新ファイルのコピーとして作成（シンボリックリンクの代わり）
     try {
       // 既存のファイルを削除
       if (fs.existsSync(groupDataPath)) {

@@ -1,14 +1,14 @@
-// data/w3c_groups.json から URL でデータを検索する関数
+// data/w3c-groups.json から URL でデータを検索する関数
 function findDataByUrl(apiData, targetUrl) {
   if (!apiData || typeof apiData !== 'object') return null;
   return apiData[targetUrl]?.data || null;
 }
 
-// data/w3c_groups.json を読み込む
+// data/w3c-groups.json を読み込む
 async function loadW3CApiData() {
-  const response = await fetch('../data/w3c_groups.json');
+  const response = await fetch('../data/w3c-groups.json');
   if (!response.ok) {
-    throw new Error(`Failed to load w3c_groups.json: ${response.status}`);
+    throw new Error(`Failed to load w3c-groups.json: ${response.status}`);
   }
   return response.json();
 }
