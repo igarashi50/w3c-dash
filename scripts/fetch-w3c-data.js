@@ -305,9 +305,22 @@ async function processGroupType(typeUrl) {
         const groupData = groupPages[0];
 
         if (groupData?._links?.participations?.href) {
-          console.log(`  → Fetching participations...`);
-          await fetchData(groupData._links.participations.href);
+          console.log(`  → Fetching participations list...`);
+          const participationsPages = await fetchData(groupData._links.participations.href);
+          const participationsData = participationsPages[0];
           await sleep(REQUEST_INTERVAL);
+          
+          // Fetch each participation detail
+          const participations = participationsData?._links?.participations || [];
+          if (participations.length > 0) {
+            console.log(`  → Fetching ${participations.length} participation details...`);
+            for (const p of participations) {
+              if (p.href) {
+                await fetchData(p.href);
+                await sleep(REQUEST_INTERVAL);
+              }
+            }
+          }
         }
 
         if (groupData?._links?.users?.href) {
