@@ -575,12 +575,13 @@ Usage:
     console.log('\n========== PHASE 1: Fetching Groups, Participations Lists, and Users ==========\n');
     
     if (isTestMode) {
-      console.log('Running in TEST mode - fetching only 5 sample groups\n');
+      console.log('Running in TEST mode - fetching 6 sample groups\n');
       
       // Test with one group from each type
       const testGroups = [
       { type: 'wg', shortname: 'css' },
       { type: 'ig', shortname: 'i18n' },
+      { type: 'ig', shortname: 'web-and-ai' },
       { type: 'cg', shortname: 'global-inclusion' },
       { type: 'tf', shortname: 'ab-elected' },
       { type: 'other', shortname: 'ab' }
