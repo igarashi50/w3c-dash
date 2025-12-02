@@ -41,7 +41,11 @@ jobs:
             echo "No changes detected"
           else
             echo "has_changes=true" >> $GITHUB_OUTPUT
-            echo "Changes detected in data files"
+            echo "Changes detected in these files:"
+            git diff --staged --name-only
+            echo ""
+            echo "Change statistics:"
+            git diff --staged --stat
           fi
       
       - name: Create Release with data files
@@ -50,13 +54,29 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           TAG_NAME="data-$(date +'%Y-%m-%d-%H%M%S')"
+          TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
+          
+          echo "=== Creating release with tag: $TAG_NAME ==="
+          echo ""
+          
+          # ファイルを日付付きファイル名でコピー
+          echo "Preparing files with timestamps..."
+          cp data/w3c-groups.json data/w3c-groups-${TIMESTAMP}.json
+          cp data/w3c-participations.json data/w3c-participations-${TIMESTAMP}.json
+          cp data/w3c-users.json data/w3c-users-${TIMESTAMP}.json
+          cp data/w3c-affiliations.json data/w3c-affiliations-${TIMESTAMP}.json
+          
+          echo "Files to release:"
+          ls -lh data/w3c-*-${TIMESTAMP}.json
+          echo ""
           
           # メインのJSONファイルをリリース
+          echo "Creating release..."
           gh release create "$TAG_NAME" \
-            data/w3c-groups.json \
-            data/w3c-participations.json \
-            data/w3c-users.json \
-            data/w3c-affiliations.json \
+            data/w3c-groups-${TIMESTAMP}.json \
+            data/w3c-participations-${TIMESTAMP}.json \
+            data/w3c-users-${TIMESTAMP}.json \
+            data/w3c-affiliations-${TIMESTAMP}.json \
             --title "W3C API Data Snapshot - $(date +'%Y-%m-%d %H:%M:%S')" \
             --notes "Automated W3C API data snapshot. Each file contains \`_metadata\` with:
           - **filename**: File name
@@ -66,12 +86,19 @@ jobs:
           - **itemCount**: Number of items in the file
           
           Files included:
-          - **w3c-groups.json**: Groups, participations lists, users lists
-          - **w3c-participations.json**: Participation details
-          - **w3c-users.json**: User details (IE and organization participants)
-          - **w3c-affiliations.json**: Affiliation details"
+          - **w3c-groups-${TIMESTAMP}.json**: Groups, participations lists, users lists
+          - **w3c-participations-${TIMESTAMP}.json**: Participation details
+          - **w3c-users-${TIMESTAMP}.json**: User details (IE and organization participants)
+          - **w3c-affiliations-${TIMESTAMP}.json**: Affiliation details"
           
-          echo "Created release $TAG_NAME"
+          echo ""
+          echo "✓ Release created: $TAG_NAME"
+          echo ""
+          echo "Release assets:"
+          gh release view "$TAG_NAME" --json assets --jq '.assets[].name'
+          
+          # 一時ファイルを削除
+          rm -f data/w3c-*-${TIMESTAMP}.json
       
       - name: Commit and push if changed
         if: steps.check_changes.outputs.has_changes == 'true'
