@@ -200,16 +200,136 @@ function extractGroupInfo(apiData, group) {
     }
   }
   
-  // participationsが空の場合、usersエンドポイントからデータを取得
+  // ========== EXCEPTION HANDLING START ==========
+  // participations=0でusers>0の場合、usersエンドポイントのaffiliationsから分類
+  // Note: IG, AB/TAG/BoD(other)などに適用。otherは個人参加なのでMembersは抽出しない。
+  // TODO: この例外処理は、全グループでparticipationsデータが正しく取得できるようになった場合に削除可能
   let finalUsers = usersFromParticipations;
+  let finalMembers = members;
+  const finalMembersMap = { ...membersMap }; // 例外処理用のmembersMapコピー
+  
   if (participations.length === 0 && users.length > 0) {
-    finalUsers = users.map(u => u.title || u.name || 'Unknown').filter(Boolean);
+    console.log(`[Exception] Group "${name}" has participations=0 but users=${users.length}, using affiliations-based classification`);
+    
+    // usersエンドポイントから各ユーザーの詳細を取得して分類
+    const { groupsData, participationsData, usersData, affiliationsData } = apiData;
+    const organizationsSet = new Set(); // 組織を収集
+    const orgToUsersMap = {}; // 組織 -> ユーザーのマッピング
+    
+    let affDataMissingCount = 0;
+    let affEmptyCount = 0;
+    let processedCount = 0;
+    
+    for (const userLink of users) {
+      const userHref = userLink.href;
+      const userTitle = userLink.title || userLink.name || 'Unknown';
+      processedCount++;
+      
+      // affiliationsを取得してW3C staffかチェック
+      const affiliationsHref = userHref ? userHref + '/affiliations' : null;
+      let isW3CStaff = false;
+      let isInvitedExpert = false;
+      
+      if (affiliationsHref) {
+        const affiliationsEntry = affiliationsData[affiliationsHref];
+        if (affiliationsEntry?.data?._links?.affiliations) {
+          const affs = affiliationsEntry.data._links.affiliations;
+          
+          // 全ユーザーのaffiliationsを出力
+          console.log(`  [Debug] User #${processedCount} "${userTitle}": affiliations=${JSON.stringify(affs.map(a => a.title))}`);
+          
+          if (affs.length === 0) {
+            affEmptyCount++;
+            console.log(`  [Debug] User #${processedCount} "${userTitle}": EMPTY affiliations`);
+          }
+            
+            // W3C staffかチェック
+            isW3CStaff = affs.some(aff => aff.title === 'W3C');
+            
+            // Invited Expertかチェック（affiliationに"Invited Expert"があるか）
+            isInvitedExpert = affs.some(aff => 
+              aff.title?.toLowerCase().includes('invited expert') || 
+              aff.href?.includes('invited-expert')
+            );
+            
+            // 組織を収集（W3C以外、Invited Expert以外）
+            // Note: otherタイプ(AB/TAG/BoD)は個人参加なので組織は収集しない
+            let orgCount = 0;
+            if (groupType !== 'other') {
+              affs.forEach(aff => {
+                const affTitle = aff.title;
+                if (affTitle && affTitle !== 'W3C' && !affTitle.toLowerCase().includes('invited expert')) {
+                  organizationsSet.add(affTitle);
+                  orgCount++;
+                  
+                  // orgToUsersMapに追加
+                  if (!orgToUsersMap[affTitle]) {
+                    orgToUsersMap[affTitle] = [];
+                  }
+                  orgToUsersMap[affTitle].push({
+                    name: userTitle,
+                    userHref: userHref
+                  });
+                }
+              });
+            }
+            
+          console.log(`  [Debug] User #${processedCount} "${userTitle}": IE=${isInvitedExpert}, Staff=${isW3CStaff}, OrgCount=${orgCount}, TotalOrgs=${organizationsSet.size}`);
+        } else {
+          affDataMissingCount++;
+          console.log(`  [Debug] User #${processedCount} "${userTitle}": No affiliations data`);
+        }
+      } else {
+        console.log(`  [Debug] User #${processedCount} "${userTitle}": No affiliations href`);
+      }
+      
+      // 分類
+      if (isInvitedExpert) {
+        invited.push(userTitle);
+      } else if (isW3CStaff) {
+        staffs.push(userTitle);
+      } else {
+        // organization affiliationがあるかチェック
+        if (affiliationsHref) {
+          const affiliationsEntry2 = affiliationsData[affiliationsHref];
+          let hasOrgAffiliation = false;
+          
+          if (affiliationsEntry2?.data?._links?.affiliations) {
+            const affs = affiliationsEntry2.data._links.affiliations;
+            // W3C以外の組織があればUsers、なければIndividuals
+            hasOrgAffiliation = affs.some(aff => aff.title !== 'W3C' && !aff.title?.toLowerCase().includes('invited expert'));
+          }
+          
+          if (hasOrgAffiliation) {
+            finalUsers.push(userTitle);
+          } else {
+            individuals.push(userTitle);
+          }
+        } else {
+          // affiliations hrefがない場合はIndividuals
+          individuals.push(userTitle);
+        }
+      }
+    }    console.log(`[Exception] Group "${name}": Processed ${processedCount} users`);
+    
+    // 組織をMembersとして設定
+    finalMembers = Array.from(organizationsSet);
+    
+    // membersMapを構築（組織 -> ユーザーリスト）
+    for (const org of finalMembers) {
+      finalMembersMap[org] = orgToUsersMap[org] || [];
+    }
+    
+    console.log(`[Exception] Group "${name}": Found M=${finalMembers.length}, U=${finalUsers.length}, IE=${invited.length}, S=${staffs.length}, Ind=${individuals.length}`);
+    console.log(`[Exception] Group "${name}" Members:`, finalMembers);
+    console.log(`[Exception] Group "${name}" Data status: Users=${users.length}, Affiliations missing=${affDataMissingCount}, Affiliations empty=${affEmptyCount}`);
   }
+  // ========== EXCEPTION HANDLING END ==========
   
   const uniqInvited = Array.from(new Set(invited));
   const uniqIndividuals = Array.from(new Set(individuals));
   const uniqStaffs = Array.from(new Set(staffs));
-  const uniqMembers = Array.from(new Set(members));
+  const uniqMembers = Array.from(new Set(finalMembers));
   const uniqUsers = Array.from(new Set(finalUsers));
   
   // Members = Participations - Invited Experts - Individuals - Staffs
@@ -224,7 +344,7 @@ function extractGroupInfo(apiData, group) {
     groupType,
     participantsCount: participations.length,
     participantsList: uniqMembers,
-    membersMap, // メンバー組織 -> participants のマッピング
+    membersMap: finalMembersMap, // 例外処理でも対応したmembersMapを使用
     usersCount: uniqUsers.length,
     usersList: uniqUsers,
     invitedCount: uniqInvited.length,

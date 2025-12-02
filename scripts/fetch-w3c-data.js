@@ -479,6 +479,18 @@ async function fetchAllUsers() {
     }
   }
   
+  // 3. groupsの_links.usersからもユーザーを抽出（participations=0のグループ対応）
+  for (const url in collectedGroupsData) {
+    const data = collectedGroupsData[url].data;
+    if (data._links?.users) {
+      for (const user of data._links.users) {
+        if (user.href) {
+          allUsers.add(user.href);
+        }
+      }
+    }
+  }
+  
   const allUsersArray = Array.from(allUsers);
   console.log(`Found ${allUsersArray.length} unique users to fetch\n`);
   
