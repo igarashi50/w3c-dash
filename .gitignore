@@ -1,7 +1,11 @@
 # 既存の内容...
 
-# 日付入りW3C Groupsファイルを除外（最新ファイルのみコミット）
-data/w3c-groups-2*.json
+# 日付入りファイルを除外（最新ファイルのみコミット）
+data/w3c-groups-*.json
+data/w3c-users-*.json
+data/w3c-affiliations-*.json
 !data/w3c-groups.json
+!data/w3c-users.json
+!data/w3c-affiliations.json
 .DS_Store
 .vscode

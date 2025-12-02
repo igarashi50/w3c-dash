@@ -74,6 +74,7 @@ function extractGroupInfo(apiData, group) {
   // invited experts を抽出（participation 詳細から）
   const invited = [];
   const individuals = [];
+  const members = [];
   for (const part of participations) {
     const partHref = part.href;
     if (!partHref) continue;
@@ -90,23 +91,29 @@ function extractGroupInfo(apiData, group) {
         invited.push(userName);
       } else if (detail['individual'] === true) {
         individuals.push(userName);
+      } else if (detail['individual'] === false) {
+        // individual が false = メンバー組織
+        members.push(userName);
       }
     }
   }
   
   const uniqInvited = Array.from(new Set(invited));
   const uniqIndividuals = Array.from(new Set(individuals));
+  const uniqMembers = Array.from(new Set(members));
   
   // Members = Participations - Invited Experts - Individuals
-  const membersCount = participantsList.length - uniqInvited.length - uniqIndividuals.length;
+  const membersCount = uniqMembers.length;
   // Participants = Users + Invited Experts + Individuals
   const totalParticipantsCount = usersList.length + uniqInvited.length + uniqIndividuals.length;
+  // Participants のリスト (Users + Invited Experts + Individuals)
+  const totalParticipantsList = [...usersList, ...uniqInvited, ...uniqIndividuals];
   
   return {
     name,
     groupType,
     participantsCount: participantsList.length,
-    participantsList,
+    participantsList: uniqMembers,
     usersCount: usersList.length,
     usersList,
     invitedCount: uniqInvited.length,
@@ -114,7 +121,8 @@ function extractGroupInfo(apiData, group) {
     individualsCount: uniqIndividuals.length,
     individuals: uniqIndividuals,
     membersCount,
-    totalParticipantsCount
+    totalParticipantsCount,
+    totalParticipantsList
   };
 }
 
@@ -140,6 +148,7 @@ async function getAllGroupsInfo() {
         individuals: [],
         membersCount: 0,
         totalParticipantsCount: 0,
+        totalParticipantsList: [],
         _error: e.message || String(e)
       };
     }

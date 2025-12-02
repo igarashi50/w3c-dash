@@ -73,15 +73,16 @@ h1 {
   background: #e9ecef;
 }
 
-.groups-table th.sorted {
-  background: #fff3cd;
-  color: #000;
-}
-
 .groups-table th .sort-icon {
   margin-left: 4px;
   font-size: 11px;
   color: #666;
+}
+
+.groups-table th.sorted .sort-icon,
+.groups-table th.sorted div .sort-icon {
+  color: #d97706;
+  font-weight: bold;
 }
 
 .filter-btn {

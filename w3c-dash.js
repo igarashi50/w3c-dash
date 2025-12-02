@@ -10,7 +10,8 @@ function escapeHtml(s) {
 function showList(title, arr) {
   const popup = document.getElementById('popup');
   const content = document.getElementById('popupContent');
-  content.textContent = title + '\n\n' + (arr.length ? arr.join('\n') : '(no items)');
+  const sortedArr = arr.length ? [...arr].sort() : [];
+  content.textContent = title + '\n\n' + (sortedArr.length ? sortedArr.join('\n') : '(no items)');
   popup.style.display = 'block';
 }
 
@@ -46,6 +47,15 @@ async function loadGroups() {
     let sortedResults;
     
     switch(sortBy) {
+      case 'name':
+        console.log('Sorting by name (A-Z)');
+        sortedResults = [...filteredResults].sort((a, b) => {
+          const nameA = (a.name || '').toLowerCase();
+          const nameB = (b.name || '').toLowerCase();
+          return nameA.localeCompare(nameB);
+        });
+        console.log('First 3 groups:', sortedResults.slice(0, 3).map(g => g.name));
+        break;
       case 'participants':
         sortedResults = [...filteredResults].sort((a, b) => (b.totalParticipantsCount || 0) - (a.totalParticipantsCount || 0));
         break;
@@ -115,7 +125,7 @@ async function loadGroups() {
     const headerRow = document.createElement('tr');
     
     const columns = [
-      { key: 'name', label: 'Group Name', sortable: false },
+      { key: 'name', label: 'Group Name', sortable: true },
       { key: 'members', label: 'M', sortable: true },
       { key: 'participants', label: 'P', sortable: true },
       { key: 'users', label: 'U', sortable: true },
@@ -127,10 +137,14 @@ async function loadGroups() {
     columns.forEach(col => {
       const th = document.createElement('th');
       if (col.key === 'name') {
-        // Group Nameカラムにフィルターボタンを追加
+        // Group Nameカラムにソートとフィルターボタンを追加
+        th.style.cursor = 'pointer';
+        th.className = sortBy === 'name' ? 'sorted' : '';
         th.innerHTML = `
           <div style="display: flex; flex-direction: column; gap: 4px;">
-            <div>${col.label}</div>
+            <div onclick="document.getElementById('sortBy').value='name';loadGroups();" style="cursor: pointer;">
+              ${col.label}<span class="sort-icon">↓</span>
+            </div>
             <div id="groupTypeFilter" style="display: flex; gap: 4px; flex-wrap: wrap;">
               <button class="filter-btn" data-type="wg">WG</button>
               <button class="filter-btn" data-type="ig">IG</button>
@@ -150,10 +164,8 @@ async function loadGroups() {
         };
         th.innerHTML = `${col.label}<span class="sort-icon">↓</span>`;
       } else {
-        if (col.key !== 'name') {
-          th.textContent = col.label;
-          th.style.cursor = 'default';
-        }
+        th.textContent = col.label;
+        th.style.cursor = 'default';
       }
       headerRow.appendChild(th);
     });
@@ -207,7 +219,7 @@ async function loadGroups() {
       
       // Participants (Users + Invited Experts)
       const participantsCell = document.createElement('td');
-      participantsCell.innerHTML = `${g.totalParticipantsCount || 0}`;
+      participantsCell.innerHTML = `<span class="clickable" data-index="${originalIndex}" data-type="totalParticipantsList">${g.totalParticipantsCount || 0}</span>`;
       row.appendChild(participantsCell);
       
       // Users
@@ -261,13 +273,35 @@ async function loadGroups() {
     // チャートを描画
     const maxMembers = Math.max(...sortedResults.map(g => g.membersCount || 0));
     const maxTotal = Math.max(...sortedResults.map(g => g.totalParticipantsCount || 0));
+    // 両方のチャートで同じスケールを使用
+    const maxScale = Math.max(maxMembers, maxTotal);
+    
+    console.log('Chart Debug:', {
+      maxMembers,
+      maxTotal,
+      maxScale,
+      firstGroup: {
+        name: sortedResults[0]?.name,
+        membersCount: sortedResults[0]?.membersCount,
+        totalParticipantsCount: sortedResults[0]?.totalParticipantsCount
+      }
+    });
     
     for (let i = 0; i < sortedResults.length; i++) {
       const g = sortedResults[i];
       
+      console.log(`Creating chart ${i} for`, g.name);
+      
       // Members Chart
       const membersCanvas = document.getElementById(`members-chart-${i}`);
+      console.log(`  members-chart-${i}:`, membersCanvas);
       if (membersCanvas) {
+        // 既存のチャートを破棄
+        const existingChart = Chart.getChart(membersCanvas);
+        if (existingChart) {
+          existingChart.destroy();
+        }
+        
         new Chart(membersCanvas, {
           type: 'bar',
           data: {
@@ -301,7 +335,9 @@ async function loadGroups() {
               x: {
                 display: false,
                 beginAtZero: true,
-                max: maxMembers
+                min: 0,
+                max: maxScale,
+                suggestedMax: maxScale
               },
               y: { 
                 display: true,
@@ -317,6 +353,12 @@ async function loadGroups() {
       // Participants Chart (Stacked: Users + Invited + Individuals)
       const participantsCanvas = document.getElementById(`participants-chart-${i}`);
       if (participantsCanvas) {
+        // 既存のチャートを破棄
+        const existingChart = Chart.getChart(participantsCanvas);
+        if (existingChart) {
+          existingChart.destroy();
+        }
+        
         new Chart(participantsCanvas, {
           type: 'bar',
           data: {
@@ -365,7 +407,9 @@ async function loadGroups() {
                 stacked: true,
                 display: false,
                 beginAtZero: true,
-                max: maxTotal
+                min: 0,
+                max: maxScale,
+                suggestedMax: maxScale
               },
               y: {
                 stacked: true,

@@ -7,8 +7,8 @@ function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 // 統一されたリクエスト間隔
 // W3C API制限: 6000 requests per IP every 10 minutes
-// 0.25秒間隔 = 240 requests/min = 2400 requests/10min (制限の40%使用)
-const REQUEST_INTERVAL = 250;
+// 200ms間隔 = 5 requests/sec = 300 requests/min = 3000 requests/10min (制限の50%使用)
+const REQUEST_INTERVAL = 200;
 
 let collectedData = {}; // メモリ上にデータを蓄積（Dictionary形式）
 let fetchStartTime = ''; // 取得開始時刻（表示用）
@@ -180,21 +180,24 @@ async function fetchData(startUrl) {
   const pages = [];
   let url = startUrl;
   
+  // グループタイプを抽出（例: /groups/wg, /groups/ig, /groups/cg など）
+  const groupTypeMatch = startUrl.match(/\/groups\/(wg|ig|cg|tf|other)(?:\/|$)/);
+  const groupType = groupTypeMatch ? groupTypeMatch[1] : null;
+  
   // すべてのページを取得
   while (url) {
     console.warn(`request for ${url}`);
     try {
       const r = await fetchJson(url, 6, 5000, 120000);
       pages.push(r);
-      console.log(`  → Page ${pages.length}: received ${r.total || 'unknown'} total, page ${r.page || '?'}/${r.pages || '?'}`);
-      console.log(`  → Items in this page: ${r._links ? Object.keys(r._links).map(k => Array.isArray(r._links[k]) ? `${k}:${r._links[k].length}` : k).join(', ') : 'none'}`);
       url = r?._links?.next?.href || null;
-      if (url) {
-        console.log(`  → Next page found: ${url}`);
-        await sleep(REQUEST_INTERVAL);
-      } else {
-        console.log(`  → No more pages`);
+      
+      // nextリンクにグループタイプが含まれていない場合、追加する
+      if (url && groupType && !url.includes(`/groups/${groupType}`)) {
+        url = url.replace(/\/groups\?/, `/groups/${groupType}?`);
       }
+      
+      if (url) await sleep(REQUEST_INTERVAL);
     } catch (e) {
       console.warn(`error fetching ${url}: ${e.message}, skipping`);
       const errObj = { error: String(e) };
@@ -202,8 +205,6 @@ async function fetchData(startUrl) {
       break;
     }
   }
-  
-  console.log(`\nTotal pages fetched: ${pages.length}`);
   
   // ページが1つだけの場合、コレクションに追加
   if (pages.length === 1) {
@@ -272,67 +273,61 @@ async function processGroupType(typeUrl) {
   console.log(`\n========== Processing ${typeName} ==========`);
   
   try {
-    // fetchData を使用してすべてのページを取得・マージ
-    console.log(`Fetching ${typeName} list (may have multiple pages)...`);
+    // Fetch all pages for this group type
+    console.log(`Fetching ${typeName} list pages...`);
     const typePages = await fetchData(typeUrl);
+    console.log(`✓ Fetched ${typeName} list (${typePages.length} page(s) merged)`);
     
-    if (!typePages || typePages.length === 0) {
-      console.error(`No data returned for ${typeName}`);
-      return;
-    }
-    
-    const typeResp = typePages[0]; // マージされたデータ
-    console.log(`✓ Fetched ${typeName} list`);
-    
-    const groups = typeResp._links?.groups || [];
+    // Extract groups from the merged result
+    const groups = typePages[0]?._links?.groups || [];
     console.log(`Found ${groups.length} ${typeName} groups\n`);
 
     let processedCount = 0;
     for (let i = 0; i < groups.length; i++) {
+      // if (i >= 1) break; // --- TESTING LIMIT ---
       const g = groups[i];
       const groupName = g.title || g.name || g.id || 'unknown';
       console.log(`[${i + 1}/${groups.length}] Processing: ${groupName}`);
 
       try {
-        const groupUrl = g.href;
-        if (!groupUrl) {
-          console.error(`  Group has no href`);
-          continue;
-        }
+        const partHref = g._links?.participations?.href || (g.href ? g.href.replace(/\/$/, '') + '/participations' : null);
+        const usersHref = g._links?.users?.href || (g.href ? g.href.replace(/\/$/, '') + '/users' : null);
 
-        console.log(`  → Fetching group details...`);
-        const groupPages = await fetchData(groupUrl);
-        const groupData = groupPages[0];
+        // Fetch all participations pages
+        if (partHref) {
+          console.log(`  → Fetching participations pages from ${partHref}`);
+          const participationsPages = await fetchData(partHref);
+          console.log(`    ✓ Fetched and merged participations (${participationsPages.length} page(s) merged)`);
 
-        if (groupData?._links?.participations?.href) {
-          console.log(`  → Fetching participations list...`);
-          const participationsPages = await fetchData(groupData._links.participations.href);
-          const participationsData = participationsPages[0];
-          await sleep(REQUEST_INTERVAL);
-          
           // Fetch each participation detail
-          const participations = participationsData?._links?.participations || [];
-          if (participations.length > 0) {
-            console.log(`  → Fetching ${participations.length} participation details...`);
-            for (const p of participations) {
-              if (p.href) {
-                await fetchData(p.href);
+          for (const page of participationsPages) {
+            const items = Array.isArray(page) ? page : (page._links?.participations || []);
+            for (const it of items) {
+              const href = it?.href || it?.url || null;
+              if (!href) continue;
+              try {
                 await sleep(REQUEST_INTERVAL);
+                console.log(`    → Fetching participation detail: ${href}`);
+                const detailPages = await fetchData(href);
+                console.log(`      ✓ Fetched ${detailPages.length} page(s)`);
+              } catch (e) {
+                console.warn(`    error fetching participation ${href}: ${e.message}, skipping`);
               }
             }
           }
         }
 
-        if (groupData?._links?.users?.href) {
-          console.log(`  → Fetching users...`);
-          await fetchData(groupData._links.users.href);
+        // Fetch all users pages
+        if (usersHref) {
           await sleep(REQUEST_INTERVAL);
+          console.log(`  → Fetching users pages from ${usersHref}`);
+          const usersPages = await fetchData(usersHref);
+          console.log(`    ✓ Fetched and merged users (${usersPages.length} page(s) merged)`);
         }
 
-        console.log(`  ✓ Completed`);
         processedCount++;
       } catch (e) {
-        console.error(`  Error processing group ${groupName}: ${e.message}`);
+        console.error(`  Unexpected error processing group ${groupName}: ${e.message}`);
       }
     }
 
@@ -347,24 +342,115 @@ async function main() {
   fetchStartTimestamp = Date.now();
   const now = new Date(fetchStartTimestamp);
   fetchStartTime = now.toISOString()
-    .replace(/T/, '_')
-    .replace(/:/g, '-')
-    .split('.')[0]; // 2025-11-29_13-45-30
+    .replace(/[-:]/g, '')
+    .replace(/T/, '-')
+    .split('.')[0]; // 20251202-044759
   
   console.log(`Fetch started at: ${fetchStartTime}`);
   
   fs.mkdirSync('data', { recursive: true });
 
-  // Process all group types
-  const groupTypes = ['wg', 'ig', 'cg', 'tf', 'other'];
+  // Check for --test mode
+  const isTestMode = process.argv.includes('--test');
   
-  for (let i = 0; i < groupTypes.length; i++) {
-    const type = groupTypes[i];
-    await processGroupType(`https://api.w3.org/groups/${type}`);
+  if (isTestMode) {
+    console.log('Running in TEST mode - fetching only 5 sample groups\n');
     
-    // Wait between types (except after the last one)
-    if (i < groupTypes.length - 1) {
-      await sleep(REQUEST_INTERVAL);
+    // Test with one group from each type
+    const testGroups = [
+      { type: 'wg', shortname: 'css' },
+      { type: 'ig', shortname: 'i18n' },
+      { type: 'cg', shortname: 'global-inclusion' },
+      { type: 'tf', shortname: 'ab-elected' },
+      { type: 'other', shortname: 'ab' }
+    ];
+    
+    for (let i = 0; i < testGroups.length; i++) {
+      const { type, shortname } = testGroups[i];
+      const typeUrl = `https://api.w3.org/groups/${type}`;
+      
+      console.log(`\n========== Processing ${type.toUpperCase()} (test mode) ==========`);
+      
+      // Fetch the type list
+      const typePages = await fetchData(typeUrl);
+      const groups = typePages[0]?._links?.groups || [];
+      console.log(`Found ${groups.length} ${type.toUpperCase()} groups (filtering for ${type}/${shortname})\n`);
+      
+      // Find the specific test group
+      const testGroup = groups.find(g => g.href && g.href.includes(`/${type}/${shortname}`));
+      
+      if (testGroup) {
+        const groupName = testGroup.title || testGroup.name || 'unknown';
+        console.log(`[1/1] Processing: ${groupName}`);
+        
+        // Process this single group
+        const groupHref = testGroup.href;
+        
+        try {
+          const partHref = testGroup._links?.participations?.href || (groupHref ? groupHref.replace(/\/$/, '') + '/participations' : null);
+          const usersHref = testGroup._links?.users?.href || (groupHref ? groupHref.replace(/\/$/, '') + '/users' : null);
+          
+          // Fetch group details
+          await sleep(REQUEST_INTERVAL);
+          await fetchData(groupHref);
+          
+          // Fetch participations
+          if (partHref) {
+            console.log(`  → Fetching participations pages from ${partHref}`);
+            const participationsPages = await fetchData(partHref);
+            console.log(`    ✓ Fetched and merged participations (${participationsPages.length} page(s) merged)`);
+            
+            // Fetch participation details
+            for (const page of participationsPages) {
+              const items = Array.isArray(page) ? page : (page._links?.participations || []);
+              for (const it of items) {
+                const href = it?.href || it?.url || null;
+                if (!href) continue;
+                try {
+                  await sleep(REQUEST_INTERVAL);
+                  console.log(`    → Fetching participation detail: ${href}`);
+                  const detailPages = await fetchData(href);
+                  console.log(`      ✓ Fetched ${detailPages.length} page(s)`);
+                } catch (e) {
+                  console.warn(`    error fetching participation ${href}: ${e.message}, skipping`);
+                }
+              }
+            }
+          }
+          
+          // Fetch users
+          if (usersHref) {
+            await sleep(REQUEST_INTERVAL);
+            console.log(`  → Fetching users pages from ${usersHref}`);
+            const usersPages = await fetchData(usersHref);
+            console.log(`    ✓ Fetched and merged users (${usersPages.length} page(s) merged)`);
+          }
+          
+          console.log(`✓ Completed ${type.toUpperCase()}: Processed 1/1 groups`);
+        } catch (e) {
+          console.error(`  Unexpected error processing group ${groupName}: ${e.message}`);
+        }
+      } else {
+        console.warn(`⚠ Test group ${type}/${shortname} not found`);
+      }
+      
+      // Wait between types (except after the last one)
+      if (i < testGroups.length - 1) {
+        await sleep(REQUEST_INTERVAL);
+      }
+    }
+  } else {
+    // Process all group types
+    const groupTypes = ['wg', 'ig', 'cg', 'tf', 'other'];
+    
+    for (let i = 0; i < groupTypes.length; i++) {
+      const type = groupTypes[i];
+      await processGroupType(`https://api.w3.org/groups/${type}`);
+      
+      // Wait between types (except after the last one)
+      if (i < groupTypes.length - 1) {
+        await sleep(REQUEST_INTERVAL);
+      }
     }
   }
 
