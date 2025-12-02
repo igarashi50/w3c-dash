@@ -1,13 +1,13 @@
 {
   "_metadata": {
     "filename": "w3c-groups",
-    "lastChecked": "2025-12-02T12:51:43.924Z",
-    "fetchStartTime": "20251202-125143",
-    "duration": "4s",
-    "itemCount": 15
+    "lastChecked": "2025-12-02T13:04:24.474Z",
+    "fetchStartTime": "20251202-130424",
+    "duration": "3s",
+    "itemCount": 17
   },
   "https://api.w3.org/groups/cg": {
-    "fetchedAt": "2025-12-02T12:51:46.426Z",
+    "fetchedAt": "2025-12-02T13:04:26.990Z",
     "data": {
       "page": 1,
       "limit": 161,
@@ -673,7 +673,7 @@
     }
   },
   "https://api.w3.org/groups/cg/global-inclusion/participations": {
-    "fetchedAt": "2025-12-02T12:51:46.512Z",
+    "fetchedAt": "2025-12-02T13:04:27.037Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -946,7 +946,7 @@
     }
   },
   "https://api.w3.org/groups/cg/global-inclusion/users": {
-    "fetchedAt": "2025-12-02T12:51:46.821Z",
+    "fetchedAt": "2025-12-02T13:04:27.273Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -1261,7 +1261,7 @@
     }
   },
   "https://api.w3.org/groups/ig": {
-    "fetchedAt": "2025-12-02T12:51:45.878Z",
+    "fetchedAt": "2025-12-02T13:04:25.976Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -1335,13 +1335,13 @@
     }
   },
   "https://api.w3.org/groups/ig/i18n/participations": {
-    "fetchedAt": "2025-12-02T12:51:45.371Z",
+    "fetchedAt": "2025-12-02T13:04:25.454Z",
     "data": {
       "error": "Error: 404 https://api.w3.org/groups/ig/i18n/participations"
     }
   },
   "https://api.w3.org/groups/ig/i18n/users": {
-    "fetchedAt": "2025-12-02T12:51:45.644Z",
+    "fetchedAt": "2025-12-02T13:04:25.729Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -1770,8 +1770,227 @@
       }
     }
   },
+  "https://api.w3.org/groups/ig/webai/participations": {
+    "fetchedAt": "2025-12-02T13:04:26.115Z",
+    "data": {
+      "page": 1,
+      "limit": 100,
+      "pages": 1,
+      "total": 16,
+      "_links": {
+        "up": {
+          "href": "https://api.w3.org/groups/ig/webai"
+        },
+        "participations": [
+          {
+            "href": "https://api.w3.org/participations/46639",
+            "title": "Ruoxi Ran"
+          },
+          {
+            "href": "https://api.w3.org/participations/46640",
+            "title": "German Research Center for Artificial Intelligence (DFKI) Gmbh"
+          },
+          {
+            "href": "https://api.w3.org/participations/46641",
+            "title": "Dominique Hazaël-Massieux"
+          },
+          {
+            "href": "https://api.w3.org/participations/46642",
+            "title": "Institut National de Recherche en Informatique et en Automatique (Inria)"
+          },
+          {
+            "href": "https://api.w3.org/participations/46643",
+            "title": "Institut Mines-Télécom"
+          },
+          {
+            "href": "https://api.w3.org/participations/46644",
+            "title": "WU (Wirschaftsuniversität Wien) - Vienna University of Economics and Business"
+          },
+          {
+            "href": "https://api.w3.org/participations/46647",
+            "title": "DAISY Consortium"
+          },
+          {
+            "href": "https://api.w3.org/participations/46648",
+            "title": "NIC.br - Brazilian Network Information Center"
+          },
+          {
+            "href": "https://api.w3.org/participations/46653",
+            "title": "LG Electronics"
+          },
+          {
+            "href": "https://api.w3.org/participations/46658",
+            "title": "TetraLogical Services Ltd"
+          },
+          {
+            "href": "https://api.w3.org/participations/46662",
+            "title": "Capital One Financial"
+          },
+          {
+            "href": "https://api.w3.org/participations/46665",
+            "title": "The News Corporation"
+          },
+          {
+            "href": "https://api.w3.org/participations/46667",
+            "title": "Merchant Advisory Group"
+          },
+          {
+            "href": "https://api.w3.org/participations/46668",
+            "title": "FIME"
+          },
+          {
+            "href": "https://api.w3.org/participations/46671",
+            "title": "Tzviya Siegman"
+          },
+          {
+            "href": "https://api.w3.org/participations/46677",
+            "title": "ByteDance"
+          }
+        ],
+        "self": {
+          "href": "https://api.w3.org/groups/ig/webai/participations?page=1&items=100"
+        },
+        "first": {
+          "href": "https://api.w3.org/groups/ig/webai/participations?page=1&items=100"
+        },
+        "last": {
+          "href": "https://api.w3.org/groups/ig/webai/participations?page=1&items=100"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/groups/ig/webai/users": {
+    "fetchedAt": "2025-12-02T13:04:26.479Z",
+    "data": {
+      "page": 1,
+      "limit": 100,
+      "pages": 1,
+      "total": 21,
+      "_links": {
+        "up": {
+          "href": "https://api.w3.org/groups/ig/webai"
+        },
+        "users": [
+          {
+            "href": "https://api.w3.org/users/r6jh3u8p9wgkco4gog0gssks8gwwsgs",
+            "title": "Craig Abbott",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/soauq0fye00kc4w00kswgsscsk4kkk4",
+            "title": "Haoli Chen",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/frz2wf4cjs8o4oowcskwc8w8w0o0c84",
+            "title": "Andrei Ciortea",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/g0xhdprh1s8444swsw04g0oocsow8gk",
+            "title": "Diogo Cortiz",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/f4pnapdthtkwkccwsswkkg8s40g4ks8",
+            "title": "Vagner Diniz",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/szv8llvlksg0wwkowok0so0kcks8sws",
+            "title": "Daniil Dobriy",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/8p57uafem4wssgccgwo4444ks0gswgw",
+            "title": "Steve Faulkner",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/1ebxwvxr95y8c00kc88osw00048k84k",
+            "title": "Fabien Gandon",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/dom10edkqtk40w0k8w444kck0c00ooc",
+            "title": "Max Gendler",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/ltb258eue0gs0ko0soo4wgwg8k0o4cc",
+            "title": "Dominique Hazaël-Massieux",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/92l30aedq40s88g8k8skkso408gosk4",
+            "title": "Ahmet Kokcam",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/7u0azic9fv0o84sosgw4840c0sg8ok8",
+            "title": "Ruoxi Ran",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/q5o5n9zixg0cwc84s044c88wgss84cg",
+            "title": "Georg Rehm",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/9eluxiuk4g84gk8gk8s4ws8co48csk0",
+            "title": "Vagner Santana",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/jhywkkw0080gg4g8w4gw8ckgcoco40w",
+            "title": "Tzviya Siegman",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/mj2homng83k00g4s4skks8408w4kowo",
+            "title": "Avneesh Singh",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/21jv414hnjq8oo88cw80k8g8g8s8wo4",
+            "title": "Hyojin Song",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/2gs3drwloask8ksg88k480ks0sgsgc4",
+            "title": "Jordan Spivack",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/5tjttn29dkcokk0cgcko80k8os0o4ko",
+            "title": "Henny Swan",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/ladv9x6f1sgcwc88o80k08w8gco84cg",
+            "title": "Raphaël Troncy",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/p1yfz5si72ocs8w480ggs4wgok84cgk",
+            "title": "Léonie Watson",
+            "former": false
+          }
+        ],
+        "self": {
+          "href": "https://api.w3.org/groups/ig/webai/users?page=1&items=100"
+        },
+        "first": {
+          "href": "https://api.w3.org/groups/ig/webai/users?page=1&items=100"
+        },
+        "last": {
+          "href": "https://api.w3.org/groups/ig/webai/users?page=1&items=100"
+        }
+      }
+    }
+  },
   "https://api.w3.org/groups/other": {
-    "fetchedAt": "2025-12-02T12:51:47.729Z",
+    "fetchedAt": "2025-12-02T13:04:28.100Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -1809,13 +2028,13 @@
     }
   },
   "https://api.w3.org/groups/other/ab/participations": {
-    "fetchedAt": "2025-12-02T12:51:47.813Z",
+    "fetchedAt": "2025-12-02T13:04:28.201Z",
     "data": {
       "error": "Error: 404 https://api.w3.org/groups/other/ab/participations"
     }
   },
   "https://api.w3.org/groups/other/ab/users": {
-    "fetchedAt": "2025-12-02T12:51:48.084Z",
+    "fetchedAt": "2025-12-02T13:04:28.430Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -1920,7 +2139,7 @@
     }
   },
   "https://api.w3.org/groups/tf": {
-    "fetchedAt": "2025-12-02T12:51:47.113Z",
+    "fetchedAt": "2025-12-02T13:04:27.522Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -2178,13 +2397,13 @@
     }
   },
   "https://api.w3.org/groups/tf/ab-elected/participations": {
-    "fetchedAt": "2025-12-02T12:51:47.201Z",
+    "fetchedAt": "2025-12-02T13:04:27.638Z",
     "data": {
       "error": "Error: 404 https://api.w3.org/groups/tf/ab-elected/participations"
     }
   },
   "https://api.w3.org/groups/tf/ab-elected/users": {
-    "fetchedAt": "2025-12-02T12:51:47.469Z",
+    "fetchedAt": "2025-12-02T13:04:27.870Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -2264,7 +2483,7 @@
     }
   },
   "https://api.w3.org/groups/wg": {
-    "fetchedAt": "2025-12-02T12:51:44.282Z",
+    "fetchedAt": "2025-12-02T13:04:24.594Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -2466,7 +2685,7 @@
     }
   },
   "https://api.w3.org/groups/wg/css/participations": {
-    "fetchedAt": "2025-12-02T12:51:44.393Z",
+    "fetchedAt": "2025-12-02T13:04:24.628Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -2683,7 +2902,7 @@
     }
   },
   "https://api.w3.org/groups/wg/css/users": {
-    "fetchedAt": "2025-12-02T12:51:44.976Z",
+    "fetchedAt": "2025-12-02T13:04:25.122Z",
     "data": {
       "page": 1,
       "limit": 183,
