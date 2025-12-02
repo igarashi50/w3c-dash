@@ -581,7 +581,7 @@ Usage:
       const testGroups = [
       { type: 'wg', shortname: 'css' },
       { type: 'ig', shortname: 'i18n' },
-      { type: 'ig', shortname: 'web-and-ai' },
+      { type: 'ig', shortname: 'webai' },
       { type: 'cg', shortname: 'global-inclusion' },
       { type: 'tf', shortname: 'ab-elected' },
       { type: 'other', shortname: 'ab' }
