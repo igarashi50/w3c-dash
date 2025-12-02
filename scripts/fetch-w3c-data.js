@@ -130,11 +130,6 @@ function compareAndWriteJson(filename, collectedData) {
   
   return hasChanges;
 }
-    console.log(`✓ Main file updated with metadata only: ${mainFile}`);
-  }
-  
-  return hasChanges;
-}
 
 function fetchJson(url, retries = 6, backoffMs = 5000, timeoutMs = 180000, redirects = 5) {
   return new Promise((resolve, reject) => {
