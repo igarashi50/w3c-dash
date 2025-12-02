@@ -9,14 +9,162 @@ function escapeHtml(s) {
 
 function showList(title, arr) {
   const popup = document.getElementById('popup');
+  const titleEl = document.getElementById('popupTitle');
   const content = document.getElementById('popupContent');
   const sortedArr = arr.length ? [...arr].sort() : [];
-  content.textContent = title + '\n\n' + (sortedArr.length ? sortedArr.join('\n') : '(no items)');
+  titleEl.textContent = title;
+  content.textContent = sortedArr.length ? sortedArr.join('\n') : '(no items)';
   popup.style.display = 'block';
+}
+
+async function showMembersPopup(groupData, groupName) {
+  const popup = document.getElementById('membersPopup');
+  const title = document.getElementById('membersPopupTitle');
+  const membersListContent = document.getElementById('membersListContent');
+  const participantsListContent = document.getElementById('participantsListContent');
+  const userDetailsContent = document.getElementById('userDetailsContent');
+  
+  title.textContent = groupName;
+  
+  // メンバーリストを表示（名前でソート）
+  membersListContent.innerHTML = '';
+  const members = groupData.participantsList || [];
+  const sortedMembers = [...members].sort((a, b) => a.localeCompare(b));
+  
+  sortedMembers.forEach((member, index) => {
+    const div = document.createElement('div');
+    div.className = 'member-item';
+    div.textContent = member;
+    div.dataset.member = member;
+    div.dataset.index = index;
+    div.addEventListener('click', async () => {
+      // 選択状態を更新
+      document.querySelectorAll('.member-item').forEach(el => el.classList.remove('selected'));
+      div.classList.add('selected');
+      
+      // このメンバーのparticipationsを取得
+      await showParticipantsForMember(groupData, member);
+    });
+    membersListContent.appendChild(div);
+  });
+  
+  // デフォルトで最初のmemberを選択
+  if (sortedMembers.length > 0) {
+    const firstMember = membersListContent.querySelector('.member-item');
+    if (firstMember) {
+      firstMember.classList.add('selected');
+      await showParticipantsForMember(groupData, sortedMembers[0]);
+    }
+  } else {
+    participantsListContent.innerHTML = '<p style="padding: 12px; color: #666; font-style: italic;">No members available</p>';
+    userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
+  }
+  
+  popup.style.display = 'flex';
+}
+
+async function showParticipantsForMember(groupData, memberOrg) {
+  const participantsListContent = document.getElementById('participantsListContent');
+  const userDetailsContent = document.getElementById('userDetailsContent');
+  
+  participantsListContent.innerHTML = '';
+  userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
+  
+  // membersMapから該当する組織のparticipantsを取得
+  const membersMap = groupData.membersMap || {};
+  console.log('membersMap keys:', Object.keys(membersMap));
+  console.log('Looking for member:', memberOrg);
+  console.log('Found participants:', membersMap[memberOrg]);
+  
+  const participants = membersMap[memberOrg] || [];
+  
+  if (participants.length === 0) {
+    participantsListContent.innerHTML = '<p style="padding: 12px; color: #666; font-style: italic;">No participants data available for this organization</p>';
+    return;
+  }
+  
+  // 名前でソート
+  const sortedParticipants = [...participants].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  
+  sortedParticipants.forEach(participant => {
+    const div = document.createElement('div');
+    div.className = 'participant-item';
+    div.textContent = participant.name;
+    if (participant.userHref) {
+      div.addEventListener('click', async () => {
+        document.querySelectorAll('.participant-item').forEach(el => el.classList.remove('selected'));
+        div.classList.add('selected');
+        await showUserDetails(participant.userHref, participant.name);
+      });
+    }
+    participantsListContent.appendChild(div);
+  });
+}
+
+async function showUserDetails(userHref, userName) {
+  const userDetailsContent = document.getElementById('userDetailsContent');
+  
+  if (!userHref) {
+    userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">No user data available</p>';
+    return;
+  }
+  
+  userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Loading...</p>';
+  
+  try {
+    // w3c-users.jsonから取得
+    const usersData = await (await fetch('data/w3c-users.json')).json();
+    const userData = usersData[userHref];
+    
+    if (!userData || !userData.data) {
+      // ユーザー詳細データが無い場合は基本情報のみ表示
+      const dl = document.createElement('dl');
+      dl.style.padding = '12px';
+      dl.innerHTML = `<dt>Name</dt><dd>${escapeHtml(userName || 'Unknown')}</dd>`;
+      dl.innerHTML += `<dt>User URL</dt><dd><a href="${escapeHtml(userHref)}" target="_blank">${escapeHtml(userHref)}</a></dd>`;
+      dl.innerHTML += `<p style="margin-top: 12px; color: #999; font-size: 0.9em;">Detailed user information not available (member organization participant)</p>`;
+      userDetailsContent.innerHTML = '';
+      userDetailsContent.appendChild(dl);
+      return;
+    }
+    
+    const user = userData.data;
+    const dl = document.createElement('dl');
+    dl.style.padding = '12px';
+    
+    if (user.name) {
+      dl.innerHTML += `<dt>Name</dt><dd>${escapeHtml(user.name)}</dd>`;
+    }
+    if (user.given) {
+      dl.innerHTML += `<dt>Given Name</dt><dd>${escapeHtml(user.given)}</dd>`;
+    }
+    if (user.family) {
+      dl.innerHTML += `<dt>Family Name</dt><dd>${escapeHtml(user.family)}</dd>`;
+    }
+    if (user['connected-accounts'] && user['connected-accounts'].length > 0) {
+      dl.innerHTML += `<dt>Connected Accounts</dt>`;
+      user['connected-accounts'].forEach(account => {
+        dl.innerHTML += `<dd>${escapeHtml(account.service || 'Unknown')}: ${escapeHtml(account.name || account.id || 'N/A')}</dd>`;
+      });
+    }
+    if (user.description) {
+      dl.innerHTML += `<dt>Description</dt><dd>${escapeHtml(user.description)}</dd>`;
+    }
+    
+    userDetailsContent.innerHTML = '';
+    userDetailsContent.appendChild(dl);
+    
+  } catch (e) {
+    userDetailsContent.innerHTML = `<p style="padding: 12px; color: #900;">Error: ${e.message}</p>`;
+  }
 }
 
 document.getElementById('popupClose').addEventListener('click', () => {
   document.getElementById('popup').style.display = 'none';
+});
+
+document.getElementById('membersPopupClose').addEventListener('click', () => {
+  document.getElementById('membersPopup').style.display = 'none';
 });
 
 let attachedHandler = false;
@@ -433,9 +581,15 @@ async function loadGroups() {
         const type = target.getAttribute('data-type');
         if (isNaN(index) || !groupsData[index]) return;
         
-        const arr = groupsData[index][type] || [];
-        const label = target.textContent.split(':')[0];
-        showList(label, arr);
+        // Membersの場合は特別な3ペインポップアップを表示
+        if (type === 'participantsList') {
+          showMembersPopup(groupsData[index], groupsData[index].name);
+        } else {
+          // その他は通常のポップアップ
+          const arr = groupsData[index][type] || [];
+          const label = target.textContent.split(':')[0];
+          showList(label, arr);
+        }
       });
     }
 

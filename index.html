@@ -27,8 +27,34 @@
   <div id="groups"></div>
 
   <div id="popup">
-    <div id="popupClose">[Close]</div>
-    <div id="popupContent"></div>
+    <div id="popupHeader">
+      <div id="popupTitle"></div>
+      <div id="popupClose">[Close]</div>
+    </div>
+    <div id="popupBody">
+      <div id="popupContent"></div>
+    </div>
+  </div>
+
+  <div id="membersPopup">
+    <div id="membersPopupHeader">
+      <div id="membersPopupTitle"></div>
+      <div id="membersPopupClose">[Close]</div>
+    </div>
+    <div id="membersPopupBody">
+      <div id="membersList" class="pane">
+        <h3>Members</h3>
+        <div id="membersListContent"></div>
+      </div>
+      <div id="participantsList" class="pane">
+        <h3>Participants</h3>
+        <div id="participantsListContent"></div>
+      </div>
+      <div id="userDetails" class="pane">
+        <h3>User Details</h3>
+        <div id="userDetailsContent"></div>
+      </div>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
