@@ -28,93 +28,57 @@ jobs:
       - name: Fetch W3C API data
         run: node scripts/fetch-w3c-data.js --test
       
-      - name: Check for newly created
+      - name: Check for changes
         id: check_changes
         run: |
-          echo "=== Checking for timestamped files ==="
+          echo "=== Checking for file changes ==="
           ls -la data/
           echo ""
           
-          # 今回の実行で新規作成されたファイルを検出
-          LATEST_GROUPS=""
-          LATEST_PARTICIPATIONS=""
-          LATEST_USERS=""
-          LATEST_AFFILIATIONS=""
-          
-          # git statusで新規作成されたファイルを取得
-          for file in $(git status --porcelain data/ | grep '^??' | awk '{print $2}'); do
-            case "$file" in
-              data/w3c-groups-2*.json)
-                LATEST_GROUPS="$file"
-                ;;
-              data/w3c-participations-2*.json)
-                LATEST_PARTICIPATIONS="$file"
-                ;;
-              data/w3c-users-2*.json)
-                LATEST_USERS="$file"
-                ;;
-              data/w3c-affiliations-2*.json)
-                LATEST_AFFILIATIONS="$file"
-                ;;
-            esac
-          done
-          
-          echo "Newly created files:"
-          echo "  Groups: $LATEST_GROUPS"
-          echo "  Participations: $LATEST_PARTICIPATIONS"
-          echo "  Users: $LATEST_USERS"
-          echo "  Affiliations: $LATEST_AFFILIATIONS"
-          
           git add data/
           if git diff --staged --quiet; then
-            echo "newly_created=false" >> $GITHUB_OUTPUT
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes detected"
           else
-            echo "newly_created=true" >> $GITHUB_OUTPUT
-            echo "latest_groups=$LATEST_GROUPS" >> $GITHUB_OUTPUT
-            echo "latest_participations=$LATEST_PARTICIPATIONS" >> $GITHUB_OUTPUT
-            echo "latest_users=$LATEST_USERS" >> $GITHUB_OUTPUT
-            echo "latest_affiliations=$LATEST_AFFILIATIONS" >> $GITHUB_OUTPUT
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected in data files"
           fi
       
-      - name: Upload to GitHub Release
-        if: steps.check_changes.outputs.newly_created == 'true'
+      - name: Create Release with data files
+        if: steps.check_changes.outputs.has_changes == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           TAG_NAME="data-$(date +'%Y-%m-%d-%H%M%S')"
           
-          # 存在するファイルのみをアップロード
-          FILES=""
-          [ -n "${{ steps.check_changes.outputs.latest_groups }}" ] && FILES="$FILES ${{ steps.check_changes.outputs.latest_groups }}"
-          [ -n "${{ steps.check_changes.outputs.latest_participations }}" ] && FILES="$FILES ${{ steps.check_changes.outputs.latest_participations }}"
-          [ -n "${{ steps.check_changes.outputs.latest_users }}" ] && FILES="$FILES ${{ steps.check_changes.outputs.latest_users }}"
-          [ -n "${{ steps.check_changes.outputs.latest_affiliations }}" ] && FILES="$FILES ${{ steps.check_changes.outputs.latest_affiliations }}"
-          
-          echo "Files to upload: $FILES"
-          
-          if [ -z "$FILES" ]; then
-            echo "No files to upload"
-            exit 0
-          fi
-          
-          # タイムスタンプ付きJSONファイルを個別にアップロード
+          # メインのJSONファイルをリリース
           gh release create "$TAG_NAME" \
-            $FILES \
+            data/w3c-groups.json \
+            data/w3c-participations.json \
+            data/w3c-users.json \
+            data/w3c-affiliations.json \
             --title "W3C API Data Snapshot - $(date +'%Y-%m-%d %H:%M:%S')" \
-            --notes "Automated W3C API data snapshot including:
-          - **w3c-groups-*.json**: Groups, participations lists, users lists
-          - **w3c-participations-*.json**: Participation details
-          - **w3c-users-*.json**: User details (IE and organization participants)
-          - **w3c-affiliations-*.json**: Affiliation details"
+            --notes "Automated W3C API data snapshot. Each file contains \`_metadata\` with:
+          - **filename**: File name
+          - **lastChecked**: ISO timestamp of the check
+          - **fetchStartTime**: Start time in YYYYMMDD-HHMMSS format
+          - **duration**: Duration of the fetch operation
+          - **itemCount**: Number of items in the file
           
-          echo "Uploaded data files to release $TAG_NAME"
+          Files included:
+          - **w3c-groups.json**: Groups, participations lists, users lists
+          - **w3c-participations.json**: Participation details
+          - **w3c-users.json**: User details (IE and organization participants)
+          - **w3c-affiliations.json**: Affiliation details"
+          
+          echo "Created release $TAG_NAME"
       
       - name: Commit and push if changed
-        if: steps.check_changes.outputs.newly_created == 'true'
+        if: steps.check_changes.outputs.has_changes == 'true'
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git commit -m "Update W3C groups data - $(date +'%Y-%m-%d')"
+          git commit -m "Update W3C API data - $(date +'%Y-%m-%d')"
           git push
       
       - name: Summary
@@ -122,13 +86,13 @@ jobs:
           echo "### W3C API Data Fetch Complete :rocket:" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Status**: Success" >> $GITHUB_STEP_SUMMARY
-          echo "- **Newly Created**: ${{ steps.check_changes.outputs.newly_created }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Files in data/**: $(ls -1 data/ | wc -l)" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ steps.check_changes.outputs.newly_created }}" == "true" ]; then
+          echo "- **Has Changes**: ${{ steps.check_changes.outputs.has_changes }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Files in data/**: $(ls -1 data/*.json | wc -l)" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.check_changes.outputs.has_changes }}" == "true" ]; then
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "#### Released Files (timestamped versions):" >> $GITHUB_STEP_SUMMARY
-            echo "- w3c-groups-*.json" >> $GITHUB_STEP_SUMMARY
-            echo "- w3c-participations-*.json" >> $GITHUB_STEP_SUMMARY
-            echo "- w3c-users-*.json" >> $GITHUB_STEP_SUMMARY
-            echo "- w3c-affiliations-*.json" >> $GITHUB_STEP_SUMMARY
+            echo "#### Updated Files:" >> $GITHUB_STEP_SUMMARY
+            echo "- w3c-groups.json" >> $GITHUB_STEP_SUMMARY
+            echo "- w3c-participations.json" >> $GITHUB_STEP_SUMMARY
+            echo "- w3c-users.json" >> $GITHUB_STEP_SUMMARY
+            echo "- w3c-affiliations.json" >> $GITHUB_STEP_SUMMARY
           fi

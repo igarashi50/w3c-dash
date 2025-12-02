@@ -64,7 +64,6 @@ function compareAndWriteJson(filename, collectedData) {
   const duration = Date.now() - fetchStartTimestamp;
   const durationStr = formatDuration(duration);
   
-  const datedFile = `data/${filename}-${fetchStartTime}-${durationStr}.json`;
   const mainFile = `data/${filename}.json`;
   
   // URLでソートしてからJSON化
@@ -113,7 +112,7 @@ function compareAndWriteJson(filename, collectedData) {
       
       if (JSON.stringify(existingDataWithoutTimestamp) === JSON.stringify(newDataWithoutTimestamp)) {
         hasChanges = false;
-        console.log(`\n✓ No data changes detected in ${filename}, creating snapshot with updated metadata.`);
+        console.log(`\n✓ No data changes detected in ${filename}, updating metadata only.`);
       }
     } catch (e) {
       console.warn(`Warning: Could not compare with existing file: ${e.message}`);
@@ -121,15 +120,16 @@ function compareAndWriteJson(filename, collectedData) {
     }
   }
   
-  // 常に日付時刻＋所要時間入りファイルを作成（変更の有無に関わらず）
-  fs.writeFileSync(datedFile, newContent, 'utf8');
-  console.log(`✓ Snapshot written to: ${datedFile}`);
-  
-  // メインファイルも常に更新（メタデータが変わるため）
+  // メインファイルを常に更新（メタデータが変わるため）
   fs.writeFileSync(mainFile, newContent, 'utf8');
   if (hasChanges) {
     console.log(`✓ Main file updated with data changes: ${mainFile}`);
   } else {
+    console.log(`✓ Main file updated with metadata only: ${mainFile}`);
+  }
+  
+  return hasChanges;
+}
     console.log(`✓ Main file updated with metadata only: ${mainFile}`);
   }
   
