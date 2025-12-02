@@ -40,22 +40,52 @@ h1 {
 
 #groups {
   margin-top: 12px;
-  max-height: calc(100vh - 250px);
-  overflow-y: auto;
   border: 1px solid #ddd;
   border-radius: 4px;
+  overflow: hidden;
+}
+
+.table-header-container {
+  background: #f6f8fa;
+  border-bottom: 2px solid #ddd;
+}
+
+.table-body-container {
+  max-height: calc(100vh - 280px);
+  overflow-y: scroll;
 }
 
 .groups-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.groups-table-header {
+  width: calc(100% - 0px);
+}
+
+.groups-table-body {
+  width: 100%;
+}
+
+.groups-table-header thead,
+.groups-table-body tbody {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
 }
 
 .groups-table thead {
-  position: sticky;
-  top: 0;
   background: #f6f8fa;
-  z-index: 10;
+}
+
+.groups-table thead tr:first-child th {
+  background: #f6f8fa;
+}
+
+.groups-table thead tr:last-child th {
+  background: #f6f8fa;
 }
 
 .groups-table th {
@@ -67,6 +97,50 @@ h1 {
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
+}
+
+/* 列幅の指定 - ヘッダーとボディの両方に適用 */
+.groups-table-header th:nth-child(1),
+.groups-table-body td:nth-child(1) {
+  width: auto;
+  min-width: 250px;
+}
+
+.groups-table-header th:nth-child(2),
+.groups-table-header th:nth-child(3),
+.groups-table-header th:nth-child(4),
+.groups-table-header th:nth-child(5),
+.groups-table-header th:nth-child(6),
+.groups-table-header th:nth-child(7),
+.groups-table-body td:nth-child(2),
+.groups-table-body td:nth-child(3),
+.groups-table-body td:nth-child(4),
+.groups-table-body td:nth-child(5),
+.groups-table-body td:nth-child(6),
+.groups-table-body td:nth-child(7) {
+  width: 50px;
+  min-width: 50px;
+  max-width: 50px;
+  text-align: center;
+  padding: 8px 4px;
+  box-sizing: border-box;
+}
+
+.groups-table-header th:nth-child(2),
+.groups-table-header th:nth-child(3),
+.groups-table-header th:nth-child(4),
+.groups-table-header th:nth-child(5),
+.groups-table-header th:nth-child(6),
+.groups-table-header th:nth-child(7) {
+  padding: 10px 4px;
+}
+
+.groups-table-header th:nth-child(8),
+.groups-table-body td:nth-child(8) {
+  width: 250px;
+  min-width: 250px;
+  max-width: 250px;
+  box-sizing: border-box;
 }
 
 .groups-table th:hover {
@@ -241,6 +315,10 @@ button {
 
 #popupContent {
   white-space: pre-wrap;
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
 }
 
 #membersPopup {
@@ -316,6 +394,10 @@ button {
   flex: 1;
   overflow-y: auto;
   padding: 8px;
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
 }
 
 .member-item,

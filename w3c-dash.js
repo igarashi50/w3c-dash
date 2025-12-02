@@ -213,6 +213,9 @@ async function loadGroups() {
       case 'members':
         sortedResults = [...filteredResults].sort((a, b) => (b.membersCount || 0) - (a.membersCount || 0));
         break;
+      case 'staffs':
+        sortedResults = [...filteredResults].sort((a, b) => (b.staffsCount || 0) - (a.staffsCount || 0));
+        break;
       case 'individuals':
         sortedResults = [...filteredResults].sort((a, b) => (b.individualsCount || 0) - (a.individualsCount || 0));
         break;
@@ -222,87 +225,149 @@ async function loadGroups() {
         break;
     }
 
-    status.className = '';
-    status.textContent = `Loaded ${filteredResults.length} of ${results.length} groups (${filterType.toUpperCase()}).`;
-    summary.textContent = `Showing ${filteredResults.length} groups — sorted by ${sortBy}. Click counts to see names.`;
-
-    // レジェンドを一度だけ表示
-    if (legendDiv.innerHTML === '') {
-      legendDiv.innerHTML = `
-        <div class="legend-item">
-          <div class="legend-color" style="background-color: #0969da;"></div>
-          <span><strong>M</strong> = Members</span>
-        </div>
-        <div class="legend-item">
-          <span><strong>P</strong> = Participants = U + IE + Ind</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-color" style="background-color: #1f883d;"></div>
-          <span><strong>U</strong> = Users</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-color" style="background-color: #bf8700;"></div>
-          <span><strong>IE</strong> = Invited Experts</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-color" style="background-color: #8250df;"></div>
-          <span><strong>Ind</strong> = Individuals</span>
-        </div>
-      `;
-      legendDiv.style.display = 'flex';
-    }
-
-    // ステータスとサマリーを更新
-    status.textContent = `Loaded ${sortedResults.length} groups`;
-    status.className = '';
+    // 全体統計を計算（重複を除く）
+    const allMembers = new Set();
+    const allUsers = new Set();
+    const allInvitedExperts = new Set();
+    const allStaffs = new Set();
+    const allIndividuals = new Set();
+    const allParticipants = new Set();
     
-    let totalInvited = 0;
-    sortedResults.forEach(g => {
-      totalInvited += (g.invitedCount || 0);
+    results.forEach(group => {
+      // Members
+      if (group.participantsList) {
+        group.participantsList.forEach(member => allMembers.add(member));
+      }
+      // Users
+      if (group.usersList) {
+        group.usersList.forEach(user => {
+          allUsers.add(user);
+          allParticipants.add(user);
+        });
+      }
+      // Invited Experts
+      if (group.invited) {
+        group.invited.forEach(ie => {
+          allInvitedExperts.add(ie);
+          allParticipants.add(ie);
+        });
+      }
+      // Staffs
+      if (group.staffs) {
+        group.staffs.forEach(staff => {
+          allStaffs.add(staff);
+          allParticipants.add(staff);
+        });
+      }
+      // Individuals
+      if (group.individuals) {
+        group.individuals.forEach(ind => {
+          allIndividuals.add(ind);
+          allParticipants.add(ind);
+        });
+      }
     });
-    summary.innerHTML = `<strong>Total Invited Experts: ${totalInvited}</strong>`;
+
+    status.className = '';
+    status.textContent = '';
+    
+    // Summary情報を表示
+    summary.innerHTML = `
+      <section style="border: 1px solid #ddd; border-radius: 4px; padding: 12px; background: #f8f9fa; margin-bottom: 12px;">
+        <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Summary</div>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.95em;">
+          <span>Groups: ${results.length}</span>
+          <span>Members (M): ${allMembers.size}</span>
+          <span>Participants (P): ${allParticipants.size}</span>
+          <span>Users (U): ${allUsers.size}</span>
+          <span>Invited Experts (IE): ${allInvitedExperts.size}</span>
+          <span>Staffs (S): ${allStaffs.size}</span>
+          <span>Individuals (Ind): ${allIndividuals.size}</span>
+        </div>
+      </section>
+    `;
 
     groupsDiv.innerHTML = '';
     
-    // テーブルを作成
-    const table = document.createElement('table');
-    table.className = 'groups-table';
+    // ヘッダーコンテナを作成
+    const headerContainer = document.createElement('div');
+    headerContainer.className = 'table-header-container';
     
-    // テーブルヘッダー
-    const thead = document.createElement('thead');
-    const headerRow = document.createElement('tr');
+    // テーブル（ヘッダー用）を作成
+    const headerTable = document.createElement('table');
+    headerTable.className = 'groups-table groups-table-header';
     
+    // カラム定義
+    const filterTypeLabels = {
+      'wg': 'Working Groups',
+      'ig': 'Interest Groups',
+      'cg': 'Community Groups',
+      'tf': 'Task Force Groups',
+      'other': 'Other Groups',
+      'all': 'All Groups'
+    };
+    const filterTypeLabel = filterTypeLabels[filterType] || 'Groups';
     const columns = [
-      { key: 'name', label: 'Group Name', sortable: true },
+      { key: 'name', label: `${filterTypeLabel}: ${sortedResults.length}`, sortable: true },
       { key: 'members', label: 'M', sortable: true },
       { key: 'participants', label: 'P', sortable: true },
       { key: 'users', label: 'U', sortable: true },
       { key: 'invited', label: 'IE', sortable: true },
+      { key: 'staffs', label: 'S', sortable: true },
       { key: 'individuals', label: 'Ind', sortable: true },
       { key: 'charts', label: 'Charts', sortable: false }
     ];
     
-    columns.forEach(col => {
+    // フィルター行を別要素として作成
+    const filterBar = document.createElement('div');
+    filterBar.className = 'filter-bar';
+    filterBar.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; background: #f6f8fa; border-bottom: 1px solid #ddd;">
+        <span style="font-size: 18px; font-weight: 600;">Groups</span>
+        <span style="font-size: 14px; color: #57606a; margin-left: 8px;">Type:</span>
+        <div id="groupTypeFilter" style="display: flex; gap: 4px; flex-wrap: wrap;">
+          <button class="filter-btn" data-type="wg">WG</button>
+          <button class="filter-btn" data-type="ig">IG</button>
+          <button class="filter-btn" data-type="cg">CG</button>
+          <button class="filter-btn" data-type="tf">TF</button>
+          <button class="filter-btn" data-type="other">Other</button>
+          <button class="filter-btn" data-type="all">All</button>
+        </div>
+      </div>
+    `;
+    headerContainer.appendChild(filterBar);
+    
+    // テーブルヘッダー
+    const thead = document.createElement('thead');
+    
+    // Column headers
+    const headerRow = document.createElement('tr');
+    
+    columns.forEach((col, index) => {
       const th = document.createElement('th');
+      
+      // 列幅を明示的に設定
+      if (index === 0) {
+        th.style.width = 'auto';
+      } else if (index >= 1 && index <= 6) {
+        th.style.width = '50px';
+        th.style.minWidth = '50px';
+        th.style.maxWidth = '50px';
+      } else if (index === 7) {
+        th.style.width = '250px';
+        th.style.minWidth = '250px';
+        th.style.maxWidth = '250px';
+      }
+      
       if (col.key === 'name') {
-        // Group Nameカラムにソートとフィルターボタンを追加
+        // Group Name列のヘッダー
         th.style.cursor = 'pointer';
         th.className = sortBy === 'name' ? 'sorted' : '';
-        th.innerHTML = `
-          <div style="display: flex; flex-direction: column; gap: 4px;">
-            <div onclick="document.getElementById('sortBy').value='name';loadGroups();" style="cursor: pointer;">
-              ${col.label}<span class="sort-icon">↓</span>
-            </div>
-            <div id="groupTypeFilter" style="display: flex; gap: 4px; flex-wrap: wrap;">
-              <button class="filter-btn" data-type="wg">WG</button>
-              <button class="filter-btn" data-type="ig">IG</button>
-              <button class="filter-btn" data-type="cg">CG</button>
-              <button class="filter-btn" data-type="tf">TF</button>
-              <button class="filter-btn" data-type="other">Other</button>
-              <button class="filter-btn" data-type="all">All</button>
-            </div>
-          </div>
-        `;
+        th.onclick = () => {
+          document.getElementById('sortBy').value = 'name';
+          loadGroups();
+        };
+        th.innerHTML = `${col.label}<span class="sort-icon">↓</span>`;
       } else if (col.sortable) {
         th.style.cursor = 'pointer';
         th.className = sortBy === col.key ? 'sorted' : '';
@@ -311,6 +376,40 @@ async function loadGroups() {
           loadGroups();
         };
         th.innerHTML = `${col.label}<span class="sort-icon">↓</span>`;
+      } else if (col.key === 'charts') {
+        // ChartsカラムにLegendを統合
+        th.innerHTML = `
+          <div style="font-size: 0.75em; line-height: 1.3;">
+            <div style="font-weight: bold; margin-bottom: 4px;">Charts</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 3px;">
+                <div style="width: 10px; height: 10px; background-color: #0969da;"></div>
+                <span>M</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 3px;">
+                <div style="width: 10px; height: 10px; background-color: #1f883d;"></div>
+                <span>U</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 3px;">
+                <div style="width: 10px; height: 10px; background-color: #bf8700;"></div>
+                <span>IE</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 3px;">
+                <div style="width: 10px; height: 10px; background-color: #cf222e;"></div>
+                <span>S</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 3px;">
+                <div style="width: 10px; height: 10px; background-color: #8250df;"></div>
+                <span>Ind</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 3px;">
+                <div style="width: 10px; height: 10px; border: 1px solid #000;"></div>
+                <span>P = U+IE+S+Ind</span>
+              </div>
+            </div>
+          </div>
+        `;
+        th.style.cursor = 'default';
       } else {
         th.textContent = col.label;
         th.style.cursor = 'default';
@@ -319,7 +418,17 @@ async function loadGroups() {
     });
     
     thead.appendChild(headerRow);
-    table.appendChild(thead);
+    headerTable.appendChild(thead);
+    headerContainer.appendChild(headerTable);
+    groupsDiv.appendChild(headerContainer);
+    
+    // ボディコンテナを作成
+    const bodyContainer = document.createElement('div');
+    bodyContainer.className = 'table-body-container';
+    
+    // テーブル（ボディ用）を作成
+    const bodyTable = document.createElement('table');
+    bodyTable.className = 'groups-table groups-table-body';
     
     // フィルターボタンのイベントリスナー（テーブル再作成のたびに設定）
     setTimeout(() => {
@@ -362,35 +471,60 @@ async function loadGroups() {
       
       // Members
       const membersCell = document.createElement('td');
+      membersCell.style.width = '50px';
+      membersCell.style.minWidth = '50px';
+      membersCell.style.maxWidth = '50px';
       membersCell.innerHTML = `<span class="clickable" data-index="${originalIndex}" data-type="participantsList">${g.membersCount || 0}</span>`;
       row.appendChild(membersCell);
       
       // Participants (Users + Invited Experts)
       const participantsCell = document.createElement('td');
+      participantsCell.style.width = '50px';
+      participantsCell.style.minWidth = '50px';
+      participantsCell.style.maxWidth = '50px';
       participantsCell.innerHTML = `<span class="clickable" data-index="${originalIndex}" data-type="totalParticipantsList">${g.totalParticipantsCount || 0}</span>`;
       row.appendChild(participantsCell);
       
       // Users
       const usersCell = document.createElement('td');
+      usersCell.style.width = '50px';
+      usersCell.style.minWidth = '50px';
+      usersCell.style.maxWidth = '50px';
       usersCell.innerHTML = `<span class="clickable" data-index="${originalIndex}" data-type="usersList">${g.usersCount || 0}</span>`;
       row.appendChild(usersCell);
       
       // Invited Experts
       const invitedCell = document.createElement('td');
+      invitedCell.style.width = '50px';
+      invitedCell.style.minWidth = '50px';
+      invitedCell.style.maxWidth = '50px';
       invitedCell.innerHTML = `<span class="clickable" data-index="${originalIndex}" data-type="invited">${g.invitedCount || 0}</span>`;
       if (g._error) {
         invitedCell.innerHTML += '<div class="error">(err)</div>';
       }
       row.appendChild(invitedCell);
       
+      // Staffs
+      const staffsCell = document.createElement('td');
+      staffsCell.style.width = '50px';
+      staffsCell.style.minWidth = '50px';
+      staffsCell.style.maxWidth = '50px';
+      staffsCell.innerHTML = `<span class="clickable" data-index="${originalIndex}" data-type="staffs">${g.staffsCount || 0}</span>`;
+      row.appendChild(staffsCell);
+      
       // Individuals
       const individualsCell = document.createElement('td');
+      individualsCell.style.width = '50px';
+      individualsCell.style.minWidth = '50px';
+      individualsCell.style.maxWidth = '50px';
       individualsCell.innerHTML = `<span class="clickable" data-index="${originalIndex}" data-type="individuals">${g.individualsCount || 0}</span>`;
       row.appendChild(individualsCell);
       
       // Charts Cell (上下配置)
       const chartsCell = document.createElement('td');
-      chartsCell.style.width = '180px';
+      chartsCell.style.width = '250px';
+      chartsCell.style.minWidth = '250px';
+      chartsCell.style.maxWidth = '250px';
       chartsCell.style.padding = '4px';
       
       // Members Chart
@@ -415,8 +549,9 @@ async function loadGroups() {
       tbody.appendChild(row);
     }
     
-    table.appendChild(tbody);
-    groupsDiv.appendChild(table);
+    bodyTable.appendChild(tbody);
+    bodyContainer.appendChild(bodyTable);
+    groupsDiv.appendChild(bodyContainer);
     
     // チャートを描画
     const maxMembers = Math.max(...sortedResults.map(g => g.membersCount || 0));
@@ -525,6 +660,12 @@ async function loadGroups() {
                 barThickness: 20
               },
               {
+                label: 'W3C Staffs',
+                data: [g.staffsCount || 0],
+                backgroundColor: '#cf222e',
+                barThickness: 20
+              },
+              {
                 label: 'Individuals',
                 data: [g.individualsCount || 0],
                 backgroundColor: '#8250df',
@@ -601,8 +742,6 @@ async function loadGroups() {
   }
 }
 
-document.getElementById('refresh').addEventListener('click', () => loadGroups());
-document.getElementById('showNames').addEventListener('change', () => loadGroups());
 document.getElementById('sortBy').addEventListener('change', () => loadGroups());
 
 // 初回ロード

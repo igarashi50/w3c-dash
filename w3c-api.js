@@ -94,7 +94,9 @@ function getParticipationsForGroup(apiData, group) {
   
   const partHref = groupHref.replace(/\/$/, '') + '/participations';
   const data = findDataByUrl(groupsData, participationsData, usersData, affiliationsData, partHref);
-  return data?._links?.participations || [];
+  const participations = data?._links?.participations || [];
+  
+  return participations;
 }
 
 // グループの users データを取得
@@ -121,16 +123,16 @@ function extractGroupInfo(apiData, group) {
   
   // participations を取得
   const participations = getParticipationsForGroup(apiData, group);
-  const participantsList = participations.map(p => p.title || p.href || 'Unknown').filter(Boolean);
   
-  // users を取得
+  // participationsが空の場合、usersエンドポイントを使用
   const users = getUsersForGroup(apiData, group);
-  const usersList = users.map(u => u.title || u.name || u.href || 'Unknown').filter(Boolean);
   
   // invited experts を抽出（participation 詳細から）
   const invited = [];
   const individuals = [];
+  const staffs = [];
   const members = [];
+  const usersFromParticipations = []; // メンバー組織の参加者（individual=false）
   const membersMap = {}; // メンバー組織 -> participants のマッピング
   
   for (const part of participations) {
@@ -140,16 +142,33 @@ function extractGroupInfo(apiData, group) {
     const detail = getParticipationDetail(apiData, partHref);
     if (detail) {
       // user 情報を取得
-      const userTitle = detail._links?.user?.title || 'Unknown';
-      const orgTitle = detail._links?.organization?.title || part.title || 'Unknown';
       const userHref = detail._links?.user?.href;
+      const userTitle = detail._links?.user?.title || userHref || 'Unknown';
+      const orgTitle = detail._links?.organization?.title || part.title || 'Unknown';
       
       if (detail['invited-expert'] === true) {
         invited.push(userTitle);
       } else if (detail['individual'] === true) {
-        individuals.push(userTitle);
+        // Check if this is W3C staff by looking at affiliations
+        const { affiliationsData } = apiData;
+        const affiliationsHref = userHref ? userHref + '/affiliations' : null;
+        let isW3CStaff = false;
+        
+        if (affiliationsHref) {
+          const affiliationsEntry = affiliationsData[affiliationsHref];
+          if (affiliationsEntry?.data?._links?.affiliations) {
+            const affs = affiliationsEntry.data._links.affiliations;
+            isW3CStaff = affs.some(aff => aff.title === 'W3C');
+          }
+        }
+        
+        if (isW3CStaff) {
+          staffs.push(userTitle);
+        } else {
+          individuals.push(userTitle);
+        }
       } else if (detail['individual'] === false) {
-        // individual が false = メンバー組織
+        // individual が false = メンバー組織の参加者
         const orgName = orgTitle; // detail._links.organization.title を使用
         members.push(orgName);
         
@@ -168,6 +187,7 @@ function extractGroupInfo(apiData, group) {
             for (const pItem of participantItems) {
               // pItemには既にユーザー情報が含まれている
               if (pItem.href && pItem.title) {
+                usersFromParticipations.push(pItem.title); // Usersリストに追加
                 membersMap[orgName].push({
                   name: pItem.title,
                   userHref: pItem.href
@@ -180,30 +200,40 @@ function extractGroupInfo(apiData, group) {
     }
   }
   
+  // participationsが空の場合、usersエンドポイントからデータを取得
+  let finalUsers = usersFromParticipations;
+  if (participations.length === 0 && users.length > 0) {
+    finalUsers = users.map(u => u.title || u.name || 'Unknown').filter(Boolean);
+  }
+  
   const uniqInvited = Array.from(new Set(invited));
   const uniqIndividuals = Array.from(new Set(individuals));
+  const uniqStaffs = Array.from(new Set(staffs));
   const uniqMembers = Array.from(new Set(members));
+  const uniqUsers = Array.from(new Set(finalUsers));
   
-  // Members = Participations - Invited Experts - Individuals
+  // Members = Participations - Invited Experts - Individuals - Staffs
   const membersCount = uniqMembers.length;
-  // Participants = Users + Invited Experts + Individuals
-  const totalParticipantsCount = usersList.length + uniqInvited.length + uniqIndividuals.length;
-  // Participants のリスト (Users + Invited Experts + Individuals)
-  const totalParticipantsList = [...usersList, ...uniqInvited, ...uniqIndividuals];
+  // Participants = Users + Invited Experts + Individuals + Staffs
+  const totalParticipantsCount = uniqUsers.length + uniqInvited.length + uniqIndividuals.length + uniqStaffs.length;
+  // Participants のリスト (Users + Invited Experts + Individuals + Staffs)
+  const totalParticipantsList = [...uniqUsers, ...uniqInvited, ...uniqIndividuals, ...uniqStaffs];
   
   return {
     name,
     groupType,
-    participantsCount: participantsList.length,
+    participantsCount: participations.length,
     participantsList: uniqMembers,
     membersMap, // メンバー組織 -> participants のマッピング
-    usersCount: usersList.length,
-    usersList,
+    usersCount: uniqUsers.length,
+    usersList: uniqUsers,
     invitedCount: uniqInvited.length,
     invited: uniqInvited,
     individualsCount: uniqIndividuals.length,
     individuals: uniqIndividuals,
-    membersCount,
+    staffsCount: uniqStaffs.length,
+    staffs: uniqStaffs,
+    membersCount: uniqMembers.length,
     totalParticipantsCount,
     totalParticipantsList
   };
@@ -230,6 +260,8 @@ async function getAllGroupsInfo() {
         invited: [],
         individualsCount: 0,
         individuals: [],
+        staffsCount: 0,
+        staffs: [],
         membersCount: 0,
         totalParticipantsCount: 0,
         totalParticipantsList: [],

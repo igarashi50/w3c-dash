@@ -89,11 +89,15 @@ function compareAndWriteJson(filename, collectedData) {
   
   // 既存のファイルと比較（メタデータを除外）
   let hasChanges = true;
+  let existingMetadata = null;
   if (fs.existsSync(mainFile)) {
     try {
       const existingContent = fs.readFileSync(mainFile, 'utf8');
       const existingData = JSON.parse(existingContent);
       const newData = JSON.parse(newContent);
+      
+      // 既存のメタデータを保存
+      existingMetadata = existingData._metadata;
       
       // メタデータとfetchedAtを除外して比較
       const existingDataWithoutTimestamp = {};
@@ -112,7 +116,14 @@ function compareAndWriteJson(filename, collectedData) {
       
       if (JSON.stringify(existingDataWithoutTimestamp) === JSON.stringify(newDataWithoutTimestamp)) {
         hasChanges = false;
-        console.log(`\n✓ No data changes detected in ${filename}, updating metadata only.`);
+        console.log(`\n✓ No data changes detected in ${filename}, preserving existing timestamps and metadata.`);
+        
+        // データが変わっていない場合、既存のfetchedAtを新データにコピー
+        for (const url in newData) {
+          if (url !== '_metadata' && existingData[url]) {
+            sortedData[url].fetchedAt = existingData[url].fetchedAt;
+          }
+        }
       }
     } catch (e) {
       console.warn(`Warning: Could not compare with existing file: ${e.message}`);
@@ -120,8 +131,22 @@ function compareAndWriteJson(filename, collectedData) {
     }
   }
   
+  // データが変わっていない場合は既存のメタデータとfetchedAtを使用、変わった場合は新しいメタデータ
+  const finalDataWithMetadata = {
+    _metadata: hasChanges ? {
+      filename: filename,
+      lastChecked: new Date(fetchStartTimestamp).toISOString(),
+      fetchStartTime: fetchStartTime,
+      duration: durationStr,
+      itemCount: Object.keys(sortedData).length
+    } : existingMetadata,
+    ...sortedData
+  };
+  
+  const finalContent = JSON.stringify(finalDataWithMetadata, null, 2);
+  
   // メインファイルを常に更新（メタデータが変わるため）
-  fs.writeFileSync(mainFile, newContent, 'utf8');
+  fs.writeFileSync(mainFile, finalContent, 'utf8');
   if (hasChanges) {
     console.log(`✓ Main file updated with data changes: ${mainFile}`);
   } else {
@@ -575,11 +600,12 @@ Usage:
     console.log('\n========== PHASE 1: Fetching Groups, Participations Lists, and Users ==========\n');
     
     if (isTestMode) {
-      console.log('Running in TEST mode - fetching 6 sample groups\n');
+      console.log('Running in TEST mode - fetching 7 sample groups\n');
       
       // Test with one group from each type
       const testGroups = [
       { type: 'wg', shortname: 'css' },
+      { type: 'wg', shortname: 'miniapps' },
       { type: 'ig', shortname: 'i18n' },
       { type: 'ig', shortname: 'webai' },
       { type: 'cg', shortname: 'global-inclusion' },

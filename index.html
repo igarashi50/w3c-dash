@@ -3,27 +3,25 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>W3C Invited Experts by Group</title>
+  <title>W3C Dash</title>
   <link rel="stylesheet" href="w3c-dash.css" />
 </head>
 <body>
-  <h1>W3C Invited Experts by Group</h1>
+  <h1>W3C Dash</h1>
   <div id="controls">
-    <button id="refresh">Refresh</button>
-    <label><input type="checkbox" id="showNames" /> Show invited experts inline</label>
     <select id="sortBy" style="display: none;">
       <option value="name">Group Name ↑</option>
       <option value="invited">Invited Experts ↓</option>
       <option value="participants">Participants ↓</option>
       <option value="users">Users ↓</option>
       <option value="members">Members ↓</option>
+      <option value="staffs">Staffs ↓</option>
       <option value="individuals">Individuals ↓</option>
     </select>
     <div id="summary" class="small"></div>
   </div>
 
   <div id="status" class="loading">Ready</div>
-  <div id="legend"></div>
   <div id="groups"></div>
 
   <div id="popup">
