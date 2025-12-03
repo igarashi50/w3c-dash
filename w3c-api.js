@@ -163,9 +163,9 @@ function extractGroupInfo(apiData, group) {
         }
         
         if (isW3CStaff) {
-          staffs.push(userTitle);
+          staffs.push({ name: userTitle, userHref });
         } else {
-          individuals.push(userTitle);
+          individuals.push({ name: userTitle, userHref });
         }
       } else if (detail['individual'] === false) {
         // individual が false = メンバー組織の参加者
@@ -287,7 +287,7 @@ function extractGroupInfo(apiData, group) {
       if (isInvitedExpert) {
         invited.push({ name: userTitle, userHref });
       } else if (isW3CStaff) {
-        staffs.push(userTitle);
+        staffs.push({ name: userTitle, userHref });
       } else {
         // organization affiliationがあるかチェック
         if (affiliationsHref) {
@@ -303,11 +303,11 @@ function extractGroupInfo(apiData, group) {
           if (hasOrgAffiliation) {
             finalUsers.push(userTitle);
           } else {
-            individuals.push(userTitle);
+            individuals.push({ name: userTitle, userHref });
           }
         } else {
           // affiliations hrefがない場合はIndividuals
-          individuals.push(userTitle);
+          individuals.push({ name: userTitle, userHref });
         }
       }
     }    console.log(`[Exception] Group "${name}": Processed ${processedCount} users`);
@@ -328,8 +328,8 @@ function extractGroupInfo(apiData, group) {
   
   // invited配列は{name, userHref}形式のまま返す
   const uniqInvited = invited.filter((v, i, arr) => arr.findIndex(x => x.name === v.name && x.userHref === v.userHref) === i);
-  const uniqIndividuals = Array.from(new Set(individuals));
-  const uniqStaffs = Array.from(new Set(staffs));
+  const uniqIndividuals = individuals.filter((v, i, arr) => arr.findIndex(x => x.name === v.name && x.userHref === v.userHref) === i);
+  const uniqStaffs = staffs.filter((v, i, arr) => arr.findIndex(x => x.name === v.name && x.userHref === v.userHref) === i);
   const uniqMembers = Array.from(new Set(finalMembers));
   const uniqUsers = Array.from(new Set(finalUsers));
   
@@ -341,8 +341,8 @@ function extractGroupInfo(apiData, group) {
   const totalParticipantsList = [
     ...uniqUsers,
     ...uniqInvited.map(v => v.name),
-    ...uniqIndividuals,
-    ...uniqStaffs
+    ...uniqIndividuals.map(v => v.name),
+    ...uniqStaffs.map(v => v.name)
   ];
   
   return {

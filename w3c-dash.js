@@ -74,30 +74,37 @@ async function showMembersPopup(groupData, groupName) {
       div.addEventListener('click', async () => {
         document.querySelectorAll('.member-item').forEach(el => el.classList.remove('selected'));
         div.classList.add('selected');
+        const participantsListContent = document.getElementById('participantsListContent');
+        const userDetailsContent = document.getElementById('userDetailsContent');
+        participantsListContent.innerHTML = '';
+        userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
+        let list = [];
+        let emptyMsg = '';
         if (type.key === 'invited') {
-          // Invited Expertsを選択した場合、中央ペインにGroupのInvited Experts名一覧を表示
-          const participantsListContent = document.getElementById('participantsListContent');
-          const userDetailsContent = document.getElementById('userDetailsContent');
-          participantsListContent.innerHTML = '';
-          userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
-          const invitedList = groupData.invited || [];
-          if (invitedList.length === 0) {
-            participantsListContent.innerHTML = '<p style="padding: 12px; color: #666; font-style: italic;">No Invited Experts available</p>';
-          } else {
-            invitedList.sort((a, b) => (a.name || '').localeCompare(b.name || '')).forEach(inv => {
-              const pDiv = document.createElement('div');
-              pDiv.className = 'participant-item';
-              pDiv.textContent = inv.name;
-              pDiv.addEventListener('click', async () => {
-                document.querySelectorAll('.participant-item').forEach(el => el.classList.remove('selected'));
-                pDiv.classList.add('selected');
-                await showUserDetails(inv.userHref, inv.name);
-              });
-              participantsListContent.appendChild(pDiv);
-            });
-          }
+          list = groupData.invited || [];
+          emptyMsg = 'No Invited Experts available';
+        } else if (type.key === 'staffs') {
+          list = groupData.staffs || [];
+          emptyMsg = 'No Staffs available';
+        } else if (type.key === 'individuals') {
+          list = groupData.individuals || [];
+          emptyMsg = 'No Individuals available';
         }
-        // ...他のspecialTypesは現状維持...
+        if (list.length === 0) {
+          participantsListContent.innerHTML = `<p style="padding: 12px; color: #666; font-style: italic;">${emptyMsg}</p>`;
+        } else {
+          list.sort((a, b) => (a.name || '').localeCompare(b.name || '')).forEach(item => {
+            const pDiv = document.createElement('div');
+            pDiv.className = 'participant-item';
+            pDiv.textContent = item.name;
+            pDiv.addEventListener('click', async () => {
+              document.querySelectorAll('.participant-item').forEach(el => el.classList.remove('selected'));
+              pDiv.classList.add('selected');
+              await showUserDetails(item.userHref, item.name);
+            });
+            participantsListContent.appendChild(pDiv);
+          });
+        }
       });
       membersListContent.appendChild(div);
     });
