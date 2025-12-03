@@ -26,88 +26,213 @@ async function showMembersPopup(groupData, groupName) {
   
   title.textContent = groupName;
   
-  // メンバーリストを表示（名前でソート）
-  membersListContent.innerHTML = '';
-  const members = groupData.participantsList || [];
-  const sortedMembers = [...members].sort((a, b) => a.localeCompare(b));
+  // 初期タイトル設定
+  const affiliationsTitle = document.querySelector('#membersList h3');
+  const participantsTitle = document.querySelector('#participantsList h3');
+  affiliationsTitle.textContent = 'Affiliations';
+  participantsTitle.textContent = 'Participants';
   
-  sortedMembers.forEach((member, index) => {
-    const div = document.createElement('div');
-    div.className = 'member-item';
-    div.textContent = member;
-    div.dataset.member = member;
-    div.dataset.index = index;
-    div.addEventListener('click', async () => {
-      // 選択状態を更新
-      document.querySelectorAll('.member-item').forEach(el => el.classList.remove('selected'));
-      div.classList.add('selected');
-      
-      // このメンバーのparticipationsを取得
-      await showParticipantsForMember(groupData, member);
-    });
-    membersListContent.appendChild(div);
-  });
+  // フィルター状態
+  let currentFilter = 'members';
   
-  // デフォルトで最初のmemberを選択
-  if (sortedMembers.length > 0) {
-    const firstMember = membersListContent.querySelector('.member-item');
-    if (firstMember) {
-      firstMember.classList.add('selected');
-      await showParticipantsForMember(groupData, sortedMembers[0]);
+  // リストをフィルターして表示する関数
+  async function renderFilteredList() {
+    membersListContent.innerHTML = '';
+    // Affiliationsペインの幅を固定
+    membersListContent.style.minWidth = '200px';
+    
+    const affiliationsTitle = document.querySelector('#membersList h3');
+    const participantsTitle = document.querySelector('#participantsList h3');
+    
+    // フィルターボタンのアクティブ状態を更新
+    const filterButtons = document.querySelectorAll('#participationsFilter .filter-btn');
+    filterButtons.forEach(b => b.classList.remove('active'));
+    const activeButton = document.querySelector(`#participationsFilter .filter-btn[data-filter="${currentFilter}"]`);
+    if (activeButton) {
+      activeButton.classList.add('active');
     }
-  } else {
-    participantsListContent.innerHTML = '<p style="padding: 12px; color: #666; font-style: italic;">No members available</p>';
-    userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
-  }
-  
-    // 最後にInvited Experts, Staffs, Individualsを追加
+    
+    if (currentFilter === 'participants') {
+      // Pが選択された場合：Participationsペインに"M+IE+Staff+Indv"を表示し、Participantsペインにすべてを表示
+      membersListContent.innerHTML = '<div class="member-item selected">M+IE+Staff+Indv</div>';
+      participantsListContent.innerHTML = '';
+      userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
+      
+      // すべての参加者を集める（個人ユーザーのみ）
+      const allParticipants = [];
+      
+      // Users (membersMapから取得した個人ユーザー)
+      if (groupData.membersMap) {
+        Object.values(groupData.membersMap).forEach(memberParticipants => {
+          if (memberParticipants) {
+            memberParticipants.forEach(participant => {
+              allParticipants.push({ name: participant.name, type: 'user', userHref: participant.userHref });
+            });
+          }
+        });
+      }
+      
+      // Invited Experts
+      if (groupData.invited) {
+        groupData.invited.forEach(ie => {
+          allParticipants.push({ name: ie.name, type: 'invited', userHref: ie.userHref });
+        });
+      }
+      
+      // Staffs
+      if (groupData.staffs) {
+        groupData.staffs.forEach(staff => {
+          allParticipants.push({ name: staff.name, type: 'staff', userHref: staff.userHref });
+        });
+      }
+      
+      // Individuals
+      if (groupData.individuals) {
+        groupData.individuals.forEach(ind => {
+          allParticipants.push({ name: ind.name, type: 'individual', userHref: ind.userHref });
+        });
+      }
+      
+      // 名前でソート
+      const sortedAllParticipants = allParticipants.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      
+      sortedAllParticipants.forEach(participant => {
+        const div = document.createElement('div');
+        div.className = 'participant-item';
+        div.textContent = participant.name;
+        if (participant.userHref) {
+          div.addEventListener('click', async () => {
+            document.querySelectorAll('.participant-item').forEach(el => el.classList.remove('selected'));
+            div.classList.add('selected');
+            await showUserDetails(participant.userHref, participant.name);
+          });
+        }
+        participantsListContent.appendChild(div);
+      });
+      
+      // タイトル更新
+      affiliationsTitle.textContent = `Affiliations: 1`;
+      participantsTitle.textContent = `Participants: ${sortedAllParticipants.length}`;
+      
+      return;
+    }
+    
+    // Members (participantsList)
+    if (currentFilter === 'all' || currentFilter === 'members') {
+      const members = groupData.participantsList || [];
+      const sortedMembers = [...members].sort((a, b) => a.localeCompare(b));
+      
+      sortedMembers.forEach((member, index) => {
+        const div = document.createElement('div');
+        div.className = 'member-item';
+        div.textContent = member;
+        div.dataset.member = member;
+        div.dataset.index = index;
+        div.addEventListener('click', async () => {
+          // 選択状態を更新
+          document.querySelectorAll('.member-item').forEach(el => el.classList.remove('selected'));
+          div.classList.add('selected');
+          
+          // このメンバーのparticipationsを取得
+          await showParticipantsForMember(groupData, member);
+        });
+        membersListContent.appendChild(div);
+      });
+      
+      // タイトル更新（Membersの場合）
+      affiliationsTitle.textContent = `Affiliations: ${sortedMembers.length}`;
+    }
+    
+    // Special types
     const specialTypes = [
       { key: 'invited', label: 'Invited Experts' },
       { key: 'staffs', label: 'Staffs' },
       { key: 'individuals', label: 'Individuals' }
     ];
+    
     specialTypes.forEach(type => {
-      const div = document.createElement('div');
-      div.className = 'member-item special-affiliation';
-      div.textContent = type.label;
-      div.dataset.afftype = type.key;
-      div.addEventListener('click', async () => {
-        document.querySelectorAll('.member-item').forEach(el => el.classList.remove('selected'));
-        div.classList.add('selected');
-        const participantsListContent = document.getElementById('participantsListContent');
-        const userDetailsContent = document.getElementById('userDetailsContent');
-        participantsListContent.innerHTML = '';
-        userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
-        let list = [];
-        let emptyMsg = '';
-        if (type.key === 'invited') {
-          list = groupData.invited || [];
-          emptyMsg = 'No Invited Experts available';
-        } else if (type.key === 'staffs') {
-          list = groupData.staffs || [];
-          emptyMsg = 'No Staffs available';
-        } else if (type.key === 'individuals') {
-          list = groupData.individuals || [];
-          emptyMsg = 'No Individuals available';
-        }
-        if (list.length === 0) {
-          participantsListContent.innerHTML = `<p style="padding: 12px; color: #666; font-style: italic;">${emptyMsg}</p>`;
-        } else {
-          list.sort((a, b) => (a.name || '').localeCompare(b.name || '')).forEach(item => {
-            const pDiv = document.createElement('div');
-            pDiv.className = 'participant-item';
-            pDiv.textContent = item.name;
-            pDiv.addEventListener('click', async () => {
-              document.querySelectorAll('.participant-item').forEach(el => el.classList.remove('selected'));
-              pDiv.classList.add('selected');
-              await showUserDetails(item.userHref, item.name);
+      if (currentFilter === 'all' || currentFilter === type.key) {
+        const div = document.createElement('div');
+        div.className = 'member-item special-affiliation';
+        div.textContent = type.label;
+        div.dataset.afftype = type.key;
+        div.addEventListener('click', async () => {
+          document.querySelectorAll('.member-item').forEach(el => el.classList.remove('selected'));
+          div.classList.add('selected');
+          const participantsListContent = document.getElementById('participantsListContent');
+          const userDetailsContent = document.getElementById('userDetailsContent');
+          participantsListContent.innerHTML = '';
+          userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
+          let list = [];
+          let emptyMsg = '';
+          if (type.key === 'invited') {
+            list = groupData.invited || [];
+            emptyMsg = 'No Invited Experts available';
+          } else if (type.key === 'staffs') {
+            list = groupData.staffs || [];
+            emptyMsg = 'No Staffs available';
+          } else if (type.key === 'individuals') {
+            list = groupData.individuals || [];
+            emptyMsg = 'No Individuals available';
+          }
+          if (list.length === 0) {
+            participantsListContent.innerHTML = `<p style="padding: 12px; color: #666; font-style: italic;">${emptyMsg}</p>`;
+            // タイトル更新（特殊タイプの場合）
+            participantsTitle.textContent = `Participants: 0`;
+          } else {
+            list.sort((a, b) => (a.name || '').localeCompare(b.name || '')).forEach(item => {
+              const pDiv = document.createElement('div');
+              pDiv.className = 'participant-item';
+              pDiv.textContent = item.name;
+              pDiv.addEventListener('click', async () => {
+                document.querySelectorAll('.participant-item').forEach(el => el.classList.remove('selected'));
+                pDiv.classList.add('selected');
+                await showUserDetails(item.userHref, item.name);
+              });
+              participantsListContent.appendChild(pDiv);
             });
-            participantsListContent.appendChild(pDiv);
-          });
-        }
-      });
-      membersListContent.appendChild(div);
+            // タイトル更新（特殊タイプの場合）
+            participantsTitle.textContent = `Participants: ${list.length}`;
+          }
+        });
+        membersListContent.appendChild(div);
+        
+        // タイトル更新（特殊タイプの場合、Affiliationsは1）
+        affiliationsTitle.textContent = `Affiliations: 1`;
+      }
     });
+    
+    // デフォルトで最初の項目を選択
+    const firstItem = membersListContent.querySelector('.member-item');
+    if (firstItem) {
+      firstItem.classList.add('selected');
+      if (firstItem.dataset.member) {
+        await showParticipantsForMember(groupData, firstItem.dataset.member);
+      } else if (firstItem.dataset.afftype) {
+        // Special typeの場合、クリックイベントをトリガー
+        firstItem.click();
+      }
+    } else {
+      participantsListContent.innerHTML = '<p style="padding: 12px; color: #666; font-style: italic;">No items available</p>';
+      userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
+    }
+  }
+  
+  // フィルターボタンのイベントリスナー
+  const filterButtons = document.querySelectorAll('#participationsFilter .filter-btn');
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // アクティブクラスを更新
+      filterButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      currentFilter = btn.dataset.filter;
+      renderFilteredList();
+    });
+  });
+  
+  // 初期リストを表示
+  await renderFilteredList();
   
   popup.style.display = 'flex';
 }
@@ -129,6 +254,9 @@ async function showParticipantsForMember(groupData, memberOrg) {
   
   if (participants.length === 0) {
     participantsListContent.innerHTML = '<p style="padding: 12px; color: #666; font-style: italic;">No participants data available for this organization</p>';
+    // タイトル更新
+    const participantsTitle = document.querySelector('#participantsList h3');
+    participantsTitle.textContent = `Participants: 0`;
     return;
   }
   
@@ -148,6 +276,10 @@ async function showParticipantsForMember(groupData, memberOrg) {
     }
     participantsListContent.appendChild(div);
   });
+  
+  // タイトル更新
+  const participantsTitle = document.querySelector('#participantsList h3');
+  participantsTitle.textContent = `Participants: ${sortedParticipants.length}`;
 }
 
 async function showUserDetails(userHref, userName) {
