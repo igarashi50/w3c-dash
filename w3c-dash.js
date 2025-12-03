@@ -35,7 +35,8 @@ function drawBarChart(container, values, colors, maxValue) {
       barContainer.appendChild(bar);
     }
   } else {
-    // スタックバーの場合（Pチャートの合計幅内で各スタックを分割）
+    // スタックバーの場合（Pチャートの合計幅内で各スタックを分割）]
+    totalBarWidthPercent = totalValue / maxValue * 100;
     let currentX = 0;
     values.forEach((value, index) => {
       if (value > 0) {
@@ -54,16 +55,14 @@ function drawBarChart(container, values, colors, maxValue) {
         bar.style.fontSize = '8px';
         bar.style.fontWeight = 'bold';
         // バー幅が十分広い場合のみ数字を表示
-        if (barWidthPercent >= 8) {
+        if (value/maxValue >= 0.05) {
           bar.textContent = value;
         }
         barContainer.appendChild(bar);
         currentX += barWidthPercent;
       }
     });
-    let total = values.reduce((sum, val) => sum + val, 0);
-    const barWidthPercent = total / maxValue * 100;
-    totalBarWidthPercent = barWidthPercent;
+
   }
   
   // バーコンテナの幅をバーの実際の幅に設定（ピクセル単位）
