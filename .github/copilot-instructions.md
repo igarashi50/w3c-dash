@@ -17,7 +17,7 @@ W3C Dash is a **client-side web dashboard** for visualizing W3C group participat
   - `extractGroupInfo()`: Computes derived metrics (invited experts, members, participants)
   
 - **`w3c-dash.js`**: UI logic and event handling
-  - `loadGroups()`: Main rendering function - builds sortable table with charts
+  - `renderData()`: Main rendering function - builds sortable table with charts
   - `showMembersPopup()`: Three-pane popup (Members → Participants → User Details)
   - Chart.js integration: Dual horizontal bar charts per group (Members + Participants stacked)
 
@@ -35,7 +35,7 @@ W3C Dash is a **client-side web dashboard** for visualizing W3C group participat
 
 Participation types:
 - **Members (M)**: Organizations participating (derived from `individual: false`)
-- **Users (U)**: Member organization participants
+- **Member Participants (MP)**: Member participants
 - **Invited Experts (IE)**: `invited-expert: true`
 - **Staffs (S)**: `individual: true` + W3C affiliation
 - **Individuals (Ind)**: `individual: true` (non-staff)
@@ -67,8 +67,8 @@ node scripts/fetch-w3c-data.js --participations   # Phase 2 only (requires exist
 - **Chart.js chart destruction**: Always call `Chart.getChart(canvas).destroy()` before creating new charts
 
 ### UI Interactions
-1. **Sorting**: Click column headers → updates `sortBy` value → calls `loadGroups()`
-2. **Filtering**: Group type buttons set `localStorage.groupTypeFilter` → calls `loadGroups()`
+1. **Sorting**: Click column headers → updates `sortBy` value → calls `renderData()`
+2. **Filtering**: Group type buttons set `localStorage.groupTypeFilter` → calls `renderData()`
 3. **Clickable counts**: Click any count cell → shows popup with names list
 4. **Members drill-down**: Click "M" count → opens 3-pane popup with org → participants → user details flow
 

@@ -38,16 +38,16 @@ async function showMembersPopup(groupData, groupName, initialFilter = 'members')
   // MPフィルターボタンを追加
   const filterBar = document.getElementById('participationsFilter');
   if (filterBar && !filterBar.querySelector('[data-filter="mp"]')) {
-    const pBtn = filterBar.querySelector('[data-filter="participants"]');
+    const mBtn = filterBar.querySelector('[data-filter="members"]');
     const mpBtn = document.createElement('button');
     mpBtn.className = 'filter-btn';
     mpBtn.setAttribute('data-filter', 'mp');
     mpBtn.textContent = 'MP';
-    if (pBtn) {
-      const buttonContainer = pBtn.parentNode;
-      buttonContainer.insertBefore(mpBtn, pBtn.nextSibling);
+    if (mBtn) {
+      const buttonContainer = mBtn.parentNode;
+      buttonContainer.insertBefore(mpBtn, mBtn.nextSibling);
     } else {
-      // Fallback, but P button should exist
+      // Fallback
       const buttonContainer = filterBar.querySelector('.filter-btn')?.parentNode || filterBar;
       buttonContainer.appendChild(mpBtn);
     }
@@ -520,11 +520,11 @@ async function renderData() {
         <div style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.95em;">
           <span>Groups: ${groupsData.length}</span>
           <span>Members (M): <span class="clickable" data-summary-type="members">${allMembers.size}</span></span>
-          <span>Participants (P): <span class="clickable" data-summary-type="participants">${allParticipants.size}</span></span>
           <span>Member Participants (MP): <span class="clickable" data-summary-type="users">${allUsers.size}</span></span>
           <span>Invited Experts (IE): <span class="clickable" data-summary-type="invited">${allInvitedExperts.size}</span></span>
           <span>Staffs (S): <span class="clickable" data-summary-type="staffs">${allStaffs.size}</span></span>
           <span>Individuals (Ind): <span class="clickable" data-summary-type="individuals">${allIndividuals.size}</span></span>
+          <span>Participants (P): <span class="clickable" data-summary-type="participants">${allParticipants.size}</span></span>
         </div>
       </section>
     `;
@@ -552,11 +552,11 @@ async function renderData() {
     const columns = [
       { key: 'name', label: `${filterTypeLabel}: ${sortedResults.length}`, sortable: true },
       { key: 'members', label: 'M', sortable: true },
-      { key: 'participants', label: 'P', sortable: true },
       { key: 'users', label: 'MP', sortable: true },
       { key: 'invited', label: 'IE', sortable: true },
       { key: 'staffs', label: 'S', sortable: true },
       { key: 'individuals', label: 'Ind', sortable: true },
+      { key: 'participants', label: 'P', sortable: true },
       { key: 'charts', label: 'Charts', sortable: false }
     ];
     
@@ -719,14 +719,6 @@ async function renderData() {
       membersCell.innerHTML = `<span class="clickable" data-index="${originalIndex}" data-type="participantsList">${g.membersCount || 0}</span>`;
       row.appendChild(membersCell);
       
-      // Participants (Users + Invited Experts)
-      const participantsCell = document.createElement('td');
-      participantsCell.style.width = '50px';
-      participantsCell.style.minWidth = '50px';
-      participantsCell.style.maxWidth = '50px';
-      participantsCell.innerHTML = `<span class="clickable" data-index="${originalIndex}" data-type="totalParticipantsList">${g.totalParticipantsCount || 0}</span>`;
-      row.appendChild(participantsCell);
-      
       // Users
       const usersCell = document.createElement('td');
       usersCell.style.width = '50px';
@@ -761,6 +753,14 @@ async function renderData() {
       individualsCell.style.maxWidth = '50px';
       individualsCell.innerHTML = `<span class="clickable" data-index="${originalIndex}" data-type="individuals">${g.individualsCount || 0}</span>`;
       row.appendChild(individualsCell);
+      
+      // Participants (Users + Invited Experts)
+      const participantsCell = document.createElement('td');
+      participantsCell.style.width = '50px';
+      participantsCell.style.minWidth = '50px';
+      participantsCell.style.maxWidth = '50px';
+      participantsCell.innerHTML = `<span class="clickable" data-index="${originalIndex}" data-type="totalParticipantsList">${g.totalParticipantsCount || 0}</span>`;
+      row.appendChild(participantsCell);
       
       // Charts Cell (上下配置)
       const chartsCell = document.createElement('td');
