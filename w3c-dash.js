@@ -168,41 +168,44 @@ document.getElementById('membersPopupClose').addEventListener('click', () => {
 });
 
 let attachedHandler = false;
-let groupsData = []; // グループデータを保存
+let groupsData = null; // 初回のみロード
+let groupsInfoLoaded = false;
 
 async function loadGroups() {
   const status = document.getElementById('status');
   const groupsDiv = document.getElementById('groups');
   const summary = document.getElementById('summary');
   const legendDiv = document.getElementById('legend');
-  
+
   groupsDiv.innerHTML = '';
   status.className = 'loading';
   status.textContent = 'Loading group data from w3c-groups.json...';
 
   try {
-    const results = await getAllGroupsInfo();
-    groupsData = results; // データを保存
-    
-    // グループタイプでフィルター
+    // 初回のみロード
+    if (!groupsInfoLoaded) {
+      const results = await getAllGroupsInfo();
+      groupsData = results;
+      groupsInfoLoaded = true;
+    }
+
+    // フィルター・ソートはgroupsDataのみ参照
     const filterType = localStorage.getItem('groupTypeFilter') || 'wg';
-    const filteredResults = filterType === 'all' 
-      ? results 
-      : results.filter(g => g.groupType === filterType);
-    
+    const filteredResults = filterType === 'all'
+      ? groupsData
+      : groupsData.filter(g => g.groupType === filterType);
+
     // ソート基準を取得
     const sortBy = document.getElementById('sortBy').value;
     let sortedResults;
-    
+
     switch(sortBy) {
       case 'name':
-        console.log('Sorting by name (A-Z)');
         sortedResults = [...filteredResults].sort((a, b) => {
           const nameA = (a.name || '').toLowerCase();
           const nameB = (b.name || '').toLowerCase();
           return nameA.localeCompare(nameB);
         });
-        console.log('First 3 groups:', sortedResults.slice(0, 3).map(g => g.name));
         break;
       case 'participants':
         sortedResults = [...filteredResults].sort((a, b) => (b.totalParticipantsCount || 0) - (a.totalParticipantsCount || 0));
@@ -232,8 +235,8 @@ async function loadGroups() {
     const allStaffs = new Set();
     const allIndividuals = new Set();
     const allParticipants = new Set();
-    
-    results.forEach(group => {
+
+    groupsData.forEach(group => {
       // Members
       if (group.participantsList) {
         group.participantsList.forEach(member => allMembers.add(member));
@@ -276,7 +279,7 @@ async function loadGroups() {
       <section style="border: 1px solid #ddd; border-radius: 4px; padding: 12px; background: #f8f9fa; margin-bottom: 12px;">
         <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Summary</div>
         <div style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.95em;">
-          <span>Groups: ${results.length}</span>
+          <span>Groups: ${groupsData.length}</span>
           <span>Members (M): ${allMembers.size}</span>
           <span>Participants (P): ${allParticipants.size}</span>
           <span>Users (U): ${allUsers.size}</span>
@@ -461,7 +464,7 @@ async function loadGroups() {
       const row = document.createElement('tr');
       
       // 元のインデックスを保存
-      const originalIndex = results.indexOf(g);
+      const originalIndex = groupsData.indexOf(g);
       
       // グループ名
       const nameCell = document.createElement('td');
