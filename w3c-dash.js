@@ -60,6 +60,48 @@ async function showMembersPopup(groupData, groupName) {
     userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
   }
   
+    // 最後にInvited Experts, Staffs, Individualsを追加
+    const specialTypes = [
+      { key: 'invited', label: 'Invited Experts' },
+      { key: 'staffs', label: 'Staffs' },
+      { key: 'individuals', label: 'Individuals' }
+    ];
+    specialTypes.forEach(type => {
+      const div = document.createElement('div');
+      div.className = 'member-item special-affiliation';
+      div.textContent = type.label;
+      div.dataset.afftype = type.key;
+      div.addEventListener('click', async () => {
+        document.querySelectorAll('.member-item').forEach(el => el.classList.remove('selected'));
+        div.classList.add('selected');
+        if (type.key === 'invited') {
+          // Invited Expertsを選択した場合、中央ペインにGroupのInvited Experts名一覧を表示
+          const participantsListContent = document.getElementById('participantsListContent');
+          const userDetailsContent = document.getElementById('userDetailsContent');
+          participantsListContent.innerHTML = '';
+          userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
+          const invitedList = groupData.invited || [];
+          if (invitedList.length === 0) {
+            participantsListContent.innerHTML = '<p style="padding: 12px; color: #666; font-style: italic;">No Invited Experts available</p>';
+          } else {
+            invitedList.sort((a, b) => (a.name || '').localeCompare(b.name || '')).forEach(inv => {
+              const pDiv = document.createElement('div');
+              pDiv.className = 'participant-item';
+              pDiv.textContent = inv.name;
+              pDiv.addEventListener('click', async () => {
+                document.querySelectorAll('.participant-item').forEach(el => el.classList.remove('selected'));
+                pDiv.classList.add('selected');
+                await showUserDetails(inv.userHref, inv.name);
+              });
+              participantsListContent.appendChild(pDiv);
+            });
+          }
+        }
+        // ...他のspecialTypesは現状維持...
+      });
+      membersListContent.appendChild(div);
+    });
+  
   popup.style.display = 'flex';
 }
 

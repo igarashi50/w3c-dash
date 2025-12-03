@@ -147,7 +147,7 @@ function extractGroupInfo(apiData, group) {
       const orgTitle = detail._links?.organization?.title || part.title || 'Unknown';
       
       if (detail['invited-expert'] === true) {
-        invited.push(userTitle);
+        invited.push({ name: userTitle, userHref });
       } else if (detail['individual'] === true) {
         // Check if this is W3C staff by looking at affiliations
         const { affiliationsData } = apiData;
@@ -285,7 +285,7 @@ function extractGroupInfo(apiData, group) {
       
       // 分類
       if (isInvitedExpert) {
-        invited.push(userTitle);
+        invited.push({ name: userTitle, userHref });
       } else if (isW3CStaff) {
         staffs.push(userTitle);
       } else {
@@ -326,7 +326,8 @@ function extractGroupInfo(apiData, group) {
   }
   // ========== EXCEPTION HANDLING END ==========
   
-  const uniqInvited = Array.from(new Set(invited));
+  // invited配列は{name, userHref}形式のまま返す
+  const uniqInvited = invited.filter((v, i, arr) => arr.findIndex(x => x.name === v.name && x.userHref === v.userHref) === i);
   const uniqIndividuals = Array.from(new Set(individuals));
   const uniqStaffs = Array.from(new Set(staffs));
   const uniqMembers = Array.from(new Set(finalMembers));
@@ -337,7 +338,12 @@ function extractGroupInfo(apiData, group) {
   // Participants = Users + Invited Experts + Individuals + Staffs
   const totalParticipantsCount = uniqUsers.length + uniqInvited.length + uniqIndividuals.length + uniqStaffs.length;
   // Participants のリスト (Users + Invited Experts + Individuals + Staffs)
-  const totalParticipantsList = [...uniqUsers, ...uniqInvited, ...uniqIndividuals, ...uniqStaffs];
+  const totalParticipantsList = [
+    ...uniqUsers,
+    ...uniqInvited.map(v => v.name),
+    ...uniqIndividuals,
+    ...uniqStaffs
+  ];
   
   return {
     name,
