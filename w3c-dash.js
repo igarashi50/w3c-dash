@@ -463,7 +463,7 @@ async function renderData() {
           <span>Groups: ${groupsData.length}</span>
           <span>Members (M): ${allMembers.size}</span>
           <span>Participants (P): ${allParticipants.size}</span>
-          <span>Users (U): ${allUsers.size}</span>
+          <span>Member Participants (MP): ${allUsers.size}</span>
           <span>Invited Experts (IE): ${allInvitedExperts.size}</span>
           <span>Staffs (S): ${allStaffs.size}</span>
           <span>Individuals (Ind): ${allIndividuals.size}</span>
@@ -495,7 +495,7 @@ async function renderData() {
       { key: 'name', label: `${filterTypeLabel}: ${sortedResults.length}`, sortable: true },
       { key: 'members', label: 'M', sortable: true },
       { key: 'participants', label: 'P', sortable: true },
-      { key: 'users', label: 'U', sortable: true },
+      { key: 'users', label: 'MP', sortable: true },
       { key: 'invited', label: 'IE', sortable: true },
       { key: 'staffs', label: 'S', sortable: true },
       { key: 'individuals', label: 'Ind', sortable: true },
@@ -572,7 +572,7 @@ async function renderData() {
               </div>
               <div style="display: flex; align-items: center; gap: 3px;">
                 <div style="width: 10px; height: 10px; background-color: #1f883d;"></div>
-                <span>U</span>
+                <span>MP</span>
               </div>
               <div style="display: flex; align-items: center; gap: 3px;">
                 <div style="width: 10px; height: 10px; background-color: #bf8700;"></div>
@@ -588,7 +588,7 @@ async function renderData() {
               </div>
               <div style="display: flex; align-items: center; gap: 3px;">
                 <div style="width: 10px; height: 10px; border: 1px solid #000;"></div>
-                <span>P = U+IE+S+Ind</span>
+                <span>P = MP+IE+S+Ind</span>
               </div>
             </div>
           </div>
@@ -841,7 +841,7 @@ async function renderData() {
             labels: ['P'],
             datasets: [
               {
-                label: 'Users',
+                label: 'Member Participants',
                 data: [g.usersCount || 0],
                 backgroundColor: '#1f883d',
                 barThickness: 20
@@ -877,10 +877,10 @@ async function renderData() {
                 callbacks: {
                   title: () => '',
                   label: function(context) {
-                    // 各バーごとに"U:10 P:20"など表示
+                    // 各バーごとに"MP:10 P:20"など表示
                     let key = '';
                     switch (context.dataset.label) {
-                      case 'Users': key = 'U'; break;
+                      case 'Member Participants': key = 'MP'; break;
                       case 'Invited Experts': key = 'IE'; break;
                       case 'Staffs': key = 'S'; break;
                       case 'Individuals': key = 'Ind'; break;
