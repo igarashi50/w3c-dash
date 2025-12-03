@@ -368,7 +368,7 @@ async function getAllGroupsInfo() {
   const apiData = await loadData();
   const groups = extractGroups(apiData);
   
-  return groups.map(group => {
+  const result = groups.map(group => {
     try {
       return extractGroupInfo(apiData, group);
     } catch (e) {
@@ -393,4 +393,9 @@ async function getAllGroupsInfo() {
       };
     }
   }).sort((a, b) => (b.invitedCount || 0) - (a.invitedCount || 0));
+  
+  // _metadataを追加
+  result._metadata = apiData.groupsData._metadata;
+  
+  return result;
 }

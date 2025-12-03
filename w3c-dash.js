@@ -346,9 +346,6 @@ async function showParticipantsForMember(groupData, memberOrg) {
   
   // membersMapから該当する組織のparticipantsを取得
   const membersMap = groupData.membersMap || {};
-  console.log('membersMap keys:', Object.keys(membersMap));
-  console.log('Looking for member:', memberOrg);
-  console.log('Found participants:', membersMap[memberOrg]);
   
   const participants = membersMap[memberOrg] || [];
   
@@ -574,18 +571,32 @@ async function renderData() {
     status.textContent = '';
     
     // Summary情報を表示
+    const lastChecked = groupsData._metadata?.lastChecked;
+    let dateStr = '';
+    if (lastChecked) {
+      const date = new Date(lastChecked);
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const month = monthNames[date.getUTCMonth()];
+      const day = date.getUTCDate();
+      const year = date.getUTCFullYear();
+      dateStr = `as of ${month} ${day}, ${year}`;
+    }
     summary.innerHTML = `
-      <section style="border: 1px solid #ddd; border-radius: 4px; padding: 12px; background: #f8f9fa; margin-bottom: 12px;">
-        <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Summary</div>
-        <div style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.95em;">
-          <span>Groups: ${groupsData.length}</span>
-          <span>Members (M): <span class="clickable" data-summary-type="members">${allMembers.size}</span></span>
-          <span>Member Participants (MP): <span class="clickable" data-summary-type="users">${allUsers.size}</span></span>
-          <span>Invited Experts (IE): <span class="clickable" data-summary-type="invited">${allInvitedExperts.size}</span></span>
-          <span>Staffs (S): <span class="clickable" data-summary-type="staffs">${allStaffs.size}</span></span>
-          <span>Individuals (Ind): <span class="clickable" data-summary-type="individuals">${allIndividuals.size}</span></span>
-          <span>Participants (P): <span class="clickable" data-summary-type="participants">${allParticipants.size}</span></span>
+      <section style="border: 1px solid #ddd; border-radius: 4px; padding: 12px; background: #f8f9fa; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+          <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Summary</div>
+          <div style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 1em;">
+            <span>Groups: ${groupsData.length}</span>
+            <span>Members (M): <span class="clickable" data-summary-type="members">${allMembers.size}</span></span>
+            <span>Member Participants (MP): <span class="clickable" data-summary-type="users">${allUsers.size}</span></span>
+            <span>Invited Experts (IE): <span class="clickable" data-summary-type="invited">${allInvitedExperts.size}</span></span>
+            <span>Staffs (S): <span class="clickable" data-summary-type="staffs">${allStaffs.size}</span></span>
+            <span>Individuals (Ind): <span class="clickable" data-summary-type="individuals">${allIndividuals.size}</span></span>
+            <span>Participants (P): <span class="clickable" data-summary-type="participants">${allParticipants.size}</span></span>
+            <span style="font-size: 1em; color: #666;">Note: P=MP+IE+S+Ind</span>
+          </div>
         </div>
+        <div style="font-size: 0.9em; color: #666; white-space: nowrap;">${dateStr}</div>
       </section>
     `;
 
@@ -625,7 +636,7 @@ async function renderData() {
     filterBar.className = 'filter-bar';
     filterBar.innerHTML = `
       <div style="display: flex; flex-direction: column; gap: 8px; padding: 8px 12px; background: #f6f8fa; border-bottom: 1px solid #ddd;">
-        <span style="font-size: 18px; font-weight: 600;">Groups</span>
+        <div style="font-size: 1em; font-weight: 600;">Groups</div>
         <div id="groupTypeFilter" style="display: flex; gap: 4px; flex-wrap: wrap;">
           <button class="filter-btn" data-type="wg">WG</button>
           <button class="filter-btn" data-type="ig">IG</button>
@@ -871,25 +882,11 @@ async function renderData() {
     // 両方のチャートで同じスケールを使用
     const maxScale = Math.max(maxMembers, maxTotal);
     
-    console.log('Chart Debug:', {
-      maxMembers,
-      maxTotal,
-      maxScale,
-      firstGroup: {
-        name: sortedResults[0]?.name,
-        membersCount: sortedResults[0]?.membersCount,
-        totalParticipantsCount: sortedResults[0]?.totalParticipantsCount
-      }
-    });
-    
     for (let i = 0; i < sortedResults.length; i++) {
       const g = sortedResults[i];
       
-      console.log(`Creating chart ${i} for`, g.name);
-      
       // Members Chart
       const membersCanvas = document.getElementById(`members-chart-${i}`);
-      console.log(`  members-chart-${i}:`, membersCanvas);
       if (membersCanvas) {
         // 既存のチャートを破棄
         const existingChart = Chart.getChart(membersCanvas);
