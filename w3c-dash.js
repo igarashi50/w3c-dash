@@ -41,6 +41,9 @@ async function showMembersPopup(groupData, groupName, initialFilter = 'members')
   const affiliationsTitle = document.querySelector('#membersList h3');
   const participantsTitle = document.querySelector('#participantsList h3');
   affiliationsTitle.textContent = 'Affiliations';
+  if (groupData.isException) {
+    affiliationsTitle.classList.add('exception');
+  }
   participantsTitle.textContent = 'Participants';
   
   // フィルター状態
@@ -64,6 +67,9 @@ async function showMembersPopup(groupData, groupName, initialFilter = 'members')
       filters.forEach(filter => {
         const btn = document.createElement('button');
         btn.className = 'filter-btn';
+        if (groupData.isException && (filter === 'members' || filter === 'mp' || filter === 'invited' || filter === 'individuals')) {
+          btn.classList.add('exception');
+        }
         btn.setAttribute('data-filter', filter);
         btn.textContent = `${filterLabels[filter]}: ${counts[filter]}`;
         buttonContainer.appendChild(btn);
@@ -90,7 +96,13 @@ async function showMembersPopup(groupData, groupName, initialFilter = 'members')
     
     if (currentFilter === 'mp') {
       // MPが選択された場合：Affiliationsペインに"All Members"を表示し、Participantsペインに全ユーザー（member organizationの参加者）を表示
-      membersListContent.innerHTML = '<div class="member-item selected">All Members</div>';
+      const div = document.createElement('div');
+      div.className = 'member-item selected';
+      if (groupData.isException) {
+        div.classList.add('exception');
+      }
+      div.textContent = 'All Members';
+      membersListContent.appendChild(div);
       participantsListContent.innerHTML = '';
       userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
       
@@ -130,7 +142,13 @@ async function showMembersPopup(groupData, groupName, initialFilter = 'members')
     
     if (currentFilter === 'participants') {
       // Pが選択された場合：Participationsペインに"M+IE+Staff+Indv"を表示し、Participantsペインにすべてを表示
-      membersListContent.innerHTML = '<div class="member-item selected">All Members+IE+Staff+Indv</div>';
+      const div = document.createElement('div');
+      div.className = 'member-item selected';
+      if (groupData.isException) {
+        div.classList.add('exception');
+      }
+      div.textContent = 'All Members+IE+S+Ind';
+      membersListContent.appendChild(div);
       participantsListContent.innerHTML = '';
       userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
       
@@ -201,6 +219,9 @@ async function showMembersPopup(groupData, groupName, initialFilter = 'members')
       sortedMembers.forEach((member, index) => {
         const div = document.createElement('div');
         div.className = 'member-item';
+        if (groupData.isException) {
+          div.classList.add('exception');
+        }
         div.textContent = member;
         div.dataset.member = member;
         div.dataset.index = index;
@@ -230,6 +251,9 @@ async function showMembersPopup(groupData, groupName, initialFilter = 'members')
       if (currentFilter === 'all' || currentFilter === type.key) {
         const div = document.createElement('div');
         div.className = 'member-item special-affiliation';
+        if (groupData.isException) {
+          div.classList.add('exception');
+        }
         div.textContent = type.label;
         div.dataset.afftype = type.key;
         div.addEventListener('click', async () => {
@@ -762,7 +786,7 @@ async function renderData() {
       membersCell.style.width = '50px';
       membersCell.style.minWidth = '50px';
       membersCell.style.maxWidth = '50px';
-      membersCell.innerHTML = `<span class="clickable" data-index="${originalIndex}" data-type="participantsList">${g.membersCount || 0}</span>`;
+      membersCell.innerHTML = `<span class="clickable ${g.isException ? 'exception' : ''}" data-index="${originalIndex}" data-type="participantsList">${g.membersCount || 0}</span>`;
       row.appendChild(membersCell);
       
       // Users
@@ -770,7 +794,7 @@ async function renderData() {
       usersCell.style.width = '50px';
       usersCell.style.minWidth = '50px';
       usersCell.style.maxWidth = '50px';
-      usersCell.innerHTML = `<span class="clickable" data-index="${originalIndex}" data-type="usersList">${g.usersCount || 0}</span>`;
+      usersCell.innerHTML = `<span class="clickable ${g.isException ? 'exception' : ''}" data-index="${originalIndex}" data-type="usersList">${g.usersCount || 0}</span>`;
       row.appendChild(usersCell);
       
       // Invited Experts
@@ -778,7 +802,7 @@ async function renderData() {
       invitedCell.style.width = '50px';
       invitedCell.style.minWidth = '50px';
       invitedCell.style.maxWidth = '50px';
-      invitedCell.innerHTML = `<span class="clickable" data-index="${originalIndex}" data-type="invited">${g.invitedCount || 0}</span>`;
+      invitedCell.innerHTML = `<span class="clickable ${g.isException ? 'exception' : ''}" data-index="${originalIndex}" data-type="invited">${g.invitedCount || 0}</span>`;
       if (g._error) {
         invitedCell.innerHTML += '<div class="error">(err)</div>';
       }
@@ -797,7 +821,7 @@ async function renderData() {
       individualsCell.style.width = '50px';
       individualsCell.style.minWidth = '50px';
       individualsCell.style.maxWidth = '50px';
-      individualsCell.innerHTML = `<span class="clickable" data-index="${originalIndex}" data-type="individuals">${g.individualsCount || 0}</span>`;
+      individualsCell.innerHTML = `<span class="clickable ${g.isException ? 'exception' : ''}" data-index="${originalIndex}" data-type="individuals">${g.individualsCount || 0}</span>`;
       row.appendChild(individualsCell);
       
       // Participants (Users + Invited Experts)

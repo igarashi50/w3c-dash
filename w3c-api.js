@@ -202,8 +202,7 @@ function extractGroupInfo(apiData, group) {
   
   // ========== EXCEPTION HANDLING START ==========
   // participations=0でusers>0の場合、usersエンドポイントのaffiliationsから分類
-  // Note: IG, AB/TAG/BoD(other)などに適用。otherは個人参加なのでMembersは抽出しない。
-  // TODO: この例外処理は、全グループでparticipationsデータが正しく取得できるようになった場合に削除可能
+  // Note: IG, AB/TAG/BoD(other)などに適用。
   let finalUsers = usersFromParticipations;
   let finalMembers = members;
   const finalMembersMap = { ...membersMap }; // 例外処理用のmembersMapコピー
@@ -252,28 +251,26 @@ function extractGroupInfo(apiData, group) {
               aff.href?.includes('invited-expert')
             );
             
-            // 組織を収集（W3C以外、Invited Expert以外）
-            // Note: otherタイプ(AB/TAG/BoD)は個人参加なので組織は収集しない
-            let orgCount = 0;
-            if (groupType !== 'other') {
-              affs.forEach(aff => {
-                const affTitle = aff.title;
-                if (affTitle && affTitle !== 'W3C' && !affTitle.toLowerCase().includes('invited expert')) {
-                  organizationsSet.add(affTitle);
-                  orgCount++;
-                  
-                  // orgToUsersMapに追加
-                  if (!orgToUsersMap[affTitle]) {
-                    orgToUsersMap[affTitle] = [];
-                  }
-                  orgToUsersMap[affTitle].push({
-                    name: userTitle,
-                    userHref: userHref
-                  });
+          // 組織を収集
+          let orgCount = 0;
+
+            affs.forEach(aff => {
+              const affTitle = aff.title;
+              if (affTitle && affTitle !== 'W3C' && !affTitle.toLowerCase().includes('invited expert')) {
+                organizationsSet.add(affTitle);
+                orgCount++;
+                
+                // orgToUsersMapに追加
+                if (!orgToUsersMap[affTitle]) {
+                  orgToUsersMap[affTitle] = [];
                 }
-              });
-            }
-            
+                orgToUsersMap[affTitle].push({
+                  name: userTitle,
+                  userHref: userHref
+                });
+              }
+            });
+          
           console.log(`  [Debug] User #${processedCount} "${userTitle}": IE=${isInvitedExpert}, Staff=${isW3CStaff}, OrgCount=${orgCount}, TotalOrgs=${organizationsSet.size}`);
         } else {
           affDataMissingCount++;
@@ -361,7 +358,8 @@ function extractGroupInfo(apiData, group) {
     staffs: uniqStaffs,
     membersCount: uniqMembers.length,
     totalParticipantsCount,
-    totalParticipantsList
+    totalParticipantsList,
+    isException: participations.length === 0 && users.length > 0
   };
 }
 
