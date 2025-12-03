@@ -1,3 +1,12 @@
+// HTMLエスケープ関数
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 // 棒グラフを描画する関数
 function drawBarChart(container, values, colors, maxValue) {
   container.innerHTML = '';
@@ -490,26 +499,72 @@ async function showUserDetails(userHref, userName) {
     const user = userData.data;
     const dl = document.createElement('dl');
     dl.style.padding = '0 12px 12px 12px';
-    
-    if (user.name) {
-      dl.innerHTML += `<dt>Name:</dt><dd>${escapeHtml(user.name)}</dd>`;
-    }
-    if (user.given) {
-      dl.innerHTML += `<dt>Given Name:</dt><dd>${escapeHtml(user.given)}</dd>`;
-    }
-    if (user.family) {
-      dl.innerHTML += `<dt>Family Name:</dt><dd>${escapeHtml(user.family)}</dd>`;
-    }
+
+    // 基本情報
+    if (user.name) dl.innerHTML += `<dt>Name:</dt><dd>${escapeHtml(user.name)}</dd>`;
+    if (user.given) dl.innerHTML += `<dt>Given Name:</dt><dd>${escapeHtml(user.given)}</dd>`;
+    if (user.family) dl.innerHTML += `<dt>Family Name:</dt><dd>${escapeHtml(user.family)}</dd>`;
+    if (user.email) dl.innerHTML += `<dt>Email:</dt><dd>${escapeHtml(user.email)}</dd>`;
+    if (user['work-title']) dl.innerHTML += `<dt>Work Title:</dt><dd>${escapeHtml(user['work-title'])}</dd>`;
+    if (user.biography) dl.innerHTML += `<dt>Biography:</dt><dd>${escapeHtml(user.biography)}</dd>`;
+    if (user['country-code']) dl.innerHTML += `<dt>Country:</dt><dd>${escapeHtml(user['country-code'])}</dd>`;
+    if (user['country-division']) dl.innerHTML += `<dt>Division:</dt><dd>${escapeHtml(user['country-division'])}</dd>`;
+    if (user.city) dl.innerHTML += `<dt>City:</dt><dd>${escapeHtml(user.city)}</dd>`;
+
+    // Connected Accounts
     if (user['connected-accounts'] && user['connected-accounts'].length > 0) {
       dl.innerHTML += `<dt>Connected Accounts:</dt>`;
       user['connected-accounts'].forEach(account => {
-        dl.innerHTML += `<dd>${escapeHtml(account.service || 'Unknown')}: ${escapeHtml(account.name || account.id || 'N/A')}</dd>`;
+        let icon = '';
+        if (account.service === 'github' && account['profile-picture']) {
+          icon = `<img src='${escapeHtml(account['profile-picture'])}' alt='github' style='height:16px;vertical-align:middle;margin-right:4px;'>`;
+        }
+        dl.innerHTML += `<dd>${icon}<a href="${escapeHtml(account.href)}" target="_blank">${escapeHtml(account.nickname || account.name || account.id || 'N/A')}</a> (${escapeHtml(account.service || 'Unknown')})</dd>`;
       });
     }
+
+    // Description
     if (user.description) {
       dl.innerHTML += `<dt>Description:</dt><dd>${escapeHtml(user.description)}</dd>`;
     }
-    
+
+
+
+    // Affiliations名取得（個別JSONからtitle取得）
+    let affiliationsList = [];
+    if (user._links && user._links.affiliations && user._links.affiliations.href) {
+      try {
+        // API URLをローカルJSONパスに変換
+        const affLocalPath = 'data/w3c-users/' + userHref.split('/').pop() + '/affiliations.json';
+        const affApiRes = await (await fetch(affLocalPath)).json();
+        if (affApiRes._links && Array.isArray(affApiRes._links.affiliations)) {
+          affiliationsList = affApiRes._links.affiliations.map(a => a.title || a.href);
+        }
+      } catch {}
+    }
+    if (affiliationsList.length > 0) {
+      dl.innerHTML += `<dt>Affiliations:</dt><dd>${affiliationsList.map(a => escapeHtml(a)).join(', ')}</dd>`;
+    }
+
+    // Groups名取得（data/w3c-groups.jsonから参照）
+    let groupsList = [];
+    if (user._links && user._links.groups && user._links.groups.href) {
+      try {
+        const grpData = await (await fetch('data/w3c-groups.json')).json();
+        // groups APIのレスポンス例からhrefリストを取得
+        const grpApiRes = await (await fetch(user._links.groups.href)).json();
+        if (grpApiRes._links && Array.isArray(grpApiRes._links.groups)) {
+          groupsList = grpApiRes._links.groups.map(g => {
+            const groupObj = grpData[g.href];
+            return groupObj && groupObj.data && groupObj.data.title ? groupObj.data.title : (g.title || g.href);
+          });
+        }
+      } catch {}
+    }
+    if (groupsList.length > 0) {
+      dl.innerHTML += `<dt>Groups:</dt><dd>${groupsList.map(g => escapeHtml(g)).join(', ')}</dd>`;
+    }
+
     userDetailsContent.innerHTML = '';
     userDetailsContent.appendChild(dl);
     
