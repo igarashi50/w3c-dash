@@ -519,12 +519,12 @@ async function renderData() {
         <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Summary</div>
         <div style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.95em;">
           <span>Groups: ${groupsData.length}</span>
-          <span>Members (M): ${allMembers.size}</span>
-          <span>Participants (P): ${allParticipants.size}</span>
-          <span>Member Participants (MP): ${allUsers.size}</span>
-          <span>Invited Experts (IE): ${allInvitedExperts.size}</span>
-          <span>Staffs (S): ${allStaffs.size}</span>
-          <span>Individuals (Ind): ${allIndividuals.size}</span>
+          <span>Members (M): <span class="clickable" data-summary-type="members">${allMembers.size}</span></span>
+          <span>Participants (P): <span class="clickable" data-summary-type="participants">${allParticipants.size}</span></span>
+          <span>Member Participants (MP): <span class="clickable" data-summary-type="users">${allUsers.size}</span></span>
+          <span>Invited Experts (IE): <span class="clickable" data-summary-type="invited">${allInvitedExperts.size}</span></span>
+          <span>Staffs (S): <span class="clickable" data-summary-type="staffs">${allStaffs.size}</span></span>
+          <span>Individuals (Ind): <span class="clickable" data-summary-type="individuals">${allIndividuals.size}</span></span>
         </div>
       </section>
     `;
@@ -985,9 +985,68 @@ async function renderData() {
 
     if (!attachedHandler) {
       attachedHandler = true;
+      
+      function showSummaryPopup(type) {
+        let groupData = {};
+        let groupName = 'Summary';
+        let initialFilter = type;
+        
+        switch(type) {
+          case 'members':
+            groupData.participantsList = Array.from(allMembers);
+            break;
+          case 'participants':
+            groupData.membersMap = {};
+            groupData.invited = Array.from(allInvitedExperts);
+            groupData.staffs = Array.from(allStaffs);
+            groupData.individuals = Array.from(allIndividuals);
+            groupData.usersList = Array.from(allUsers);
+            break;
+          case 'users': // MP
+            groupData.membersMap = {};
+            groupsData.forEach(g => {
+              if (g.membersMap) {
+                Object.keys(g.membersMap).forEach(org => {
+                  if (!groupData.membersMap[org]) {
+                    groupData.membersMap[org] = [];
+                  }
+                  groupData.membersMap[org].push(...g.membersMap[org]);
+                });
+              }
+            });
+            break;
+          case 'invited':
+            groupData.invited = Array.from(allInvitedExperts);
+            break;
+          case 'staffs':
+            groupData.staffs = Array.from(allStaffs);
+            break;
+          case 'individuals':
+            groupData.individuals = Array.from(allIndividuals);
+            break;
+        }
+        
+        showMembersPopup(groupData, groupName, initialFilter);
+      }
+      
+      // Summaryのクリックイベント
+      summary.addEventListener('click', ev => {
+        const target = ev.target.closest('.clickable');
+        if (!target) return;
+        const summaryType = target.getAttribute('data-summary-type');
+        if (summaryType) {
+          showSummaryPopup(summaryType);
+        }
+      });
+      
       groupsDiv.addEventListener('click', ev => {
         const target = ev.target.closest('.clickable');
         if (!target) return;
+        const summaryType = target.getAttribute('data-summary-type');
+        if (summaryType) {
+          showSummaryPopup(summaryType);
+          return;
+        }
         const index = parseInt(target.getAttribute('data-index'));
         const type = target.getAttribute('data-type');
         if (isNaN(index) || !groupsData[index]) return;
