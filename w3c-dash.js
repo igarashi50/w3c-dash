@@ -75,6 +75,7 @@ function drawBarChart(container, values, colors, maxValue) {
   if (totalValue > 0) {
     const label = document.createElement('div');
     label.style.marginLeft = '4px';
+    label.style.marginRight = '8px'; // 右側にマージン追加
     label.style.color = '#000';
     label.style.fontSize = '8px';
     label.style.fontWeight = 'bold';
@@ -1014,16 +1015,31 @@ async function renderData() {
       if (membersDiv) {
         drawBarChart(membersDiv, [g.membersCount || 0], ['#0969da'], maxScale);
       }
-      
-      // Participants Chart (Stacked: Users + Invited + Individuals)
+
+      // Participants Chart (Stacked: MP, IE, S, Ind, ソート順に応じて並び替え)
       const participantsDiv = document.getElementById(`participants-chart-${i}`);
       if (participantsDiv) {
-        drawBarChart(participantsDiv, [
-          g.usersCount || 0,
-          g.invitedCount || 0,
-          g.staffsCount || 0,
-          g.individualsCount || 0
-        ], ['#1f883d', '#bf8700', '#cf222e', '#8250df'], maxScale);
+        // デフォルト順
+        let stackOrder = [
+          { key: 'users', value: g.usersCount || 0, color: '#1f883d' },
+          { key: 'invited', value: g.invitedCount || 0, color: '#bf8700' },
+          { key: 'staffs', value: g.staffsCount || 0, color: '#cf222e' },
+          { key: 'individuals', value: g.individualsCount || 0, color: '#8250df' }
+        ];
+        // 現在のsortByに応じて先頭に持ってくる
+        const sortBy = document.getElementById('sortBy').value;
+        const idx = stackOrder.findIndex(s => s.key === sortBy);
+        if (idx > 0) {
+          // 先頭に移動
+          const [item] = stackOrder.splice(idx, 1);
+          stackOrder.unshift(item);
+        }
+        drawBarChart(
+          participantsDiv,
+          stackOrder.map(s => s.value),
+          stackOrder.map(s => s.color),
+          maxScale
+        );
       }
     }
 
