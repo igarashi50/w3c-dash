@@ -26,7 +26,10 @@ jobs:
         run: mkdir -p data
       
       - name: Fetch W3C API data
-        run: node scripts/fetch-w3c-data.js --test
+        # 本番は全グループ取得のみ。--testは絶対に使わない。
+        run: |
+          echo "[INFO] Fetching ALL W3C groups (production mode)"
+          node scripts/fetch-w3c-data.js
       
       - name: Check for changes
         id: check_changes
