@@ -17,7 +17,7 @@ function showList(title, arr) {
   popup.style.display = 'block';
 }
 
-async function showMembersPopup(groupData, groupName) {
+async function showMembersPopup(groupData, groupName, initialFilter = 'members') {
   const popup = document.getElementById('membersPopup');
   const title = document.getElementById('membersPopupTitle');
   const membersListContent = document.getElementById('membersListContent');
@@ -33,7 +33,7 @@ async function showMembersPopup(groupData, groupName) {
   participantsTitle.textContent = 'Participants';
   
   // フィルター状態
-  let currentFilter = 'members';
+  let currentFilter = initialFilter;
   
   // MPフィルターボタンを追加
   const filterBar = document.getElementById('participationsFilter');
@@ -112,7 +112,7 @@ async function showMembersPopup(groupData, groupName) {
     
     if (currentFilter === 'participants') {
       // Pが選択された場合：Participationsペインに"M+IE+Staff+Indv"を表示し、Participantsペインにすべてを表示
-      membersListContent.innerHTML = '<div class="member-item selected">M+IE+Staff+Indv</div>';
+      membersListContent.innerHTML = '<div class="member-item selected">All Members+IE+Staff+Indv</div>';
       participantsListContent.innerHTML = '';
       userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
       
@@ -358,7 +358,7 @@ async function showUserDetails(userHref, userName) {
     if (!userData || !userData.data) {
       // ユーザー詳細データが無い場合は基本情報のみ表示
       const dl = document.createElement('dl');
-      dl.style.padding = '12px';
+      dl.style.padding = '0 12px 12px 12px';
       dl.innerHTML = `<dt>Name</dt><dd>${escapeHtml(userName || 'Unknown')}</dd>`;
       dl.innerHTML += `<dt>User URL</dt><dd><a href="${escapeHtml(userHref)}" target="_blank">${escapeHtml(userHref)}</a></dd>`;
       dl.innerHTML += `<p style="margin-top: 12px; color: #999; font-size: 0.9em;">Detailed user information not available (member organization participant)</p>`;
@@ -369,25 +369,25 @@ async function showUserDetails(userHref, userName) {
     
     const user = userData.data;
     const dl = document.createElement('dl');
-    dl.style.padding = '12px';
+    dl.style.padding = '0 12px 12px 12px';
     
     if (user.name) {
-      dl.innerHTML += `<dt>Name</dt><dd>${escapeHtml(user.name)}</dd>`;
+      dl.innerHTML += `<dt>Name:</dt><dd>${escapeHtml(user.name)}</dd>`;
     }
     if (user.given) {
-      dl.innerHTML += `<dt>Given Name</dt><dd>${escapeHtml(user.given)}</dd>`;
+      dl.innerHTML += `<dt>Given Name:</dt><dd>${escapeHtml(user.given)}</dd>`;
     }
     if (user.family) {
-      dl.innerHTML += `<dt>Family Name</dt><dd>${escapeHtml(user.family)}</dd>`;
+      dl.innerHTML += `<dt>Family Name:</dt><dd>${escapeHtml(user.family)}</dd>`;
     }
     if (user['connected-accounts'] && user['connected-accounts'].length > 0) {
-      dl.innerHTML += `<dt>Connected Accounts</dt>`;
+      dl.innerHTML += `<dt>Connected Accounts:</dt>`;
       user['connected-accounts'].forEach(account => {
         dl.innerHTML += `<dd>${escapeHtml(account.service || 'Unknown')}: ${escapeHtml(account.name || account.id || 'N/A')}</dd>`;
       });
     }
     if (user.description) {
-      dl.innerHTML += `<dt>Description</dt><dd>${escapeHtml(user.description)}</dd>`;
+      dl.innerHTML += `<dt>Description:</dt><dd>${escapeHtml(user.description)}</dd>`;
     }
     
     userDetailsContent.innerHTML = '';
@@ -993,14 +993,21 @@ async function renderData() {
         if (isNaN(index) || !groupsData[index]) return;
         
         // Membersの場合は特別な3ペインポップアップを表示
+        let initialFilter = 'members';
         if (type === 'participantsList') {
-          showMembersPopup(groupsData[index], groupsData[index].name);
-        } else {
-          // その他は通常のポップアップ
-          const arr = groupsData[index][type] || [];
-          const label = target.textContent.split(':')[0];
-          showList(label, arr);
+          initialFilter = 'members';
+        } else if (type === 'totalParticipantsList') {
+          initialFilter = 'participants';
+        } else if (type === 'usersList') {
+          initialFilter = 'mp';
+        } else if (type === 'invited') {
+          initialFilter = 'invited';
+        } else if (type === 'staffs') {
+          initialFilter = 'staffs';
+        } else if (type === 'individuals') {
+          initialFilter = 'individuals';
         }
+        showMembersPopup(groupsData[index], groupsData[index].name, initialFilter);
       });
     }
 
