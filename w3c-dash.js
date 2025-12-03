@@ -189,15 +189,15 @@ async function renderData() {
       groupsInfoLoaded = true;
     }
 
-    // フィルター・ソートはgroupsDataのみ参照（再ロード・再集計なし）
+    // フィルター・ソートはgroupsDataのみ参照
     const filterType = localStorage.getItem('groupTypeFilter') || 'wg';
-    let filteredResults = filterType === 'all'
+    const filteredResults = filterType === 'all'
       ? groupsData
       : groupsData.filter(g => g.groupType === filterType);
 
     // ソート基準を取得
     const sortBy = document.getElementById('sortBy').value;
-    let sortedResults = filteredResults;
+    let sortedResults;
 
     switch(sortBy) {
       case 'name':
@@ -605,7 +605,16 @@ async function renderData() {
             maintainAspectRatio: false,
             plugins: {
               legend: { display: false },
-              tooltip: { enabled: true },
+              tooltip: {
+                enabled: true,
+                callbacks: {
+                  title: () => '',
+                  label: function(context) {
+                      // 1行表示（M:10）
+                      return `M: ${context.parsed.x}`;
+                  }
+                }
+              },
               datalabels: {
                 color: '#fff',
                 font: {
@@ -663,7 +672,7 @@ async function renderData() {
                 barThickness: 20
               },
               {
-                label: 'W3C Staffs',
+                label: 'Staffs',
                 data: [g.staffsCount || 0],
                 backgroundColor: '#cf222e',
                 barThickness: 20
@@ -682,7 +691,26 @@ async function renderData() {
             maintainAspectRatio: false,
             plugins: {
               legend: { display: false },
-              tooltip: { enabled: true },
+              tooltip: {
+                enabled: true,
+                callbacks: {
+                  title: () => '',
+                  label: function(context) {
+                    // 各バーごとに"U:10 P:20"など表示
+                    let key = '';
+                    switch (context.dataset.label) {
+                      case 'Users': key = 'U'; break;
+                      case 'Invited Experts': key = 'IE'; break;
+                      case 'Staffs': key = 'S'; break;
+                      case 'Individuals': key = 'Ind'; break;
+                      default: key = context.dataset.label;
+                    }
+                    const total = context.chart.data.datasets.reduce((sum, ds) => sum + ds.data[0], 0);
+                    return `${key}:${context.parsed.x} P:${total}`;
+                  },
+                  footer: () => ''
+                }
+              },
               datalabels: {
                 color: '#fff',
                 font: {
