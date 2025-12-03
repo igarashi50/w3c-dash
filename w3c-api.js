@@ -26,7 +26,7 @@ function findDataByUrl(groupsData, participationsData, usersData, affiliationsDa
 }
 
 // data/w3c-*.json を読み込む
-async function loadW3CApiData() {
+async function loadData() {
   const [groupsResponse, participationsResponse, usersResponse, affiliationsResponse] = await Promise.all([
     fetch('data/w3c-groups.json'),
     fetch('data/w3c-participations.json'),
@@ -45,21 +45,21 @@ async function loadW3CApiData() {
   if (participationsResponse.ok) {
     participationsData = await participationsResponse.json();
   } else {
-    console.warn('w3c-participations.json not found');
+    throw new Error(`Failed to load w3c-participations.json: ${participationsResponse.status}`);
   }
   
   let usersData = {};
   if (usersResponse.ok) {
     usersData = await usersResponse.json();
   } else {
-    console.warn('w3c-users.json not found');
+    throw new Error(`Failed to load w3c-users.json: ${usersResponse.status}`);
   }
   
   let affiliationsData = {};
   if (affiliationsResponse.ok) {
     affiliationsData = await affiliationsResponse.json();
   } else {
-    console.warn('w3c-affiliations.json not found');
+    throw new Error(`Failed to load w3c-affiliations.json: ${affiliationsResponse.status}`);
   }
   
   return { groupsData, participationsData, usersData, affiliationsData };
@@ -361,7 +361,7 @@ function extractGroupInfo(apiData, group) {
 
 // すべてのグループ情報を取得（メイン関数）
 async function getAllGroupsInfo() {
-  const apiData = await loadW3CApiData();
+  const apiData = await loadData();
   const groups = extractGroups(apiData);
   
   return groups.map(group => {
