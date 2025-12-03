@@ -35,6 +35,24 @@ async function showMembersPopup(groupData, groupName) {
   // フィルター状態
   let currentFilter = 'members';
   
+  // MPフィルターボタンを追加
+  const filterBar = document.getElementById('participationsFilter');
+  if (filterBar && !filterBar.querySelector('[data-filter="mp"]')) {
+    const pBtn = filterBar.querySelector('[data-filter="participants"]');
+    const mpBtn = document.createElement('button');
+    mpBtn.className = 'filter-btn';
+    mpBtn.setAttribute('data-filter', 'mp');
+    mpBtn.textContent = 'MP';
+    if (pBtn) {
+      const buttonContainer = pBtn.parentNode;
+      buttonContainer.insertBefore(mpBtn, pBtn.nextSibling);
+    } else {
+      // Fallback, but P button should exist
+      const buttonContainer = filterBar.querySelector('.filter-btn')?.parentNode || filterBar;
+      buttonContainer.appendChild(mpBtn);
+    }
+  }
+  
   // リストをフィルターして表示する関数
   async function renderFilteredList() {
     membersListContent.innerHTML = '';
@@ -50,6 +68,46 @@ async function showMembersPopup(groupData, groupName) {
     const activeButton = document.querySelector(`#participationsFilter .filter-btn[data-filter="${currentFilter}"]`);
     if (activeButton) {
       activeButton.classList.add('active');
+    }
+    
+    if (currentFilter === 'mp') {
+      // MPが選択された場合：Affiliationsペインに"All Members"を表示し、Participantsペインに全ユーザー（member organizationの参加者）を表示
+      membersListContent.innerHTML = '<div class="member-item selected">All Members</div>';
+      participantsListContent.innerHTML = '';
+      userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
+      
+      // groupData.membersMap から全ユーザーを集計
+      const allMPs = [];
+      if (groupData.membersMap) {
+        Object.values(groupData.membersMap).forEach(memberParticipants => {
+          if (memberParticipants) {
+            memberParticipants.forEach(participant => {
+              allMPs.push({ name: participant.name, type: 'user', userHref: participant.userHref });
+            });
+          }
+        });
+      }
+      // 名前でソート
+      const sortedMPs = allMPs.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      sortedMPs.forEach(participant => {
+        const div = document.createElement('div');
+        div.className = 'participant-item';
+        div.textContent = participant.name;
+        if (participant.userHref) {
+          div.addEventListener('click', async () => {
+            document.querySelectorAll('.participant-item').forEach(el => el.classList.remove('selected'));
+            div.classList.add('selected');
+            await showUserDetails(participant.userHref, participant.name);
+          });
+        }
+        participantsListContent.appendChild(div);
+      });
+      
+      // タイトル更新
+      affiliationsTitle.textContent = `Affiliations: 1`;
+      participantsTitle.textContent = `Participants: ${sortedMPs.length}`;
+      
+      return;
     }
     
     if (currentFilter === 'participants') {
