@@ -824,7 +824,17 @@ async function renderData() {
       // グループ名
       const nameCell = document.createElement('td');
       nameCell.className = 'group-name';
-      nameCell.textContent = g.name;
+      if (g.homepage) {
+        const link = document.createElement('a');
+        link.href = g.homepage;
+        link.target = '_blank';
+        link.textContent = g.name;
+        link.style.color = '#0366d6';
+        link.style.textDecoration = 'none';
+        nameCell.appendChild(link);
+      } else {
+        nameCell.textContent = g.name;
+      }
       row.appendChild(nameCell);
       
       // Members

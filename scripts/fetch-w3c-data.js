@@ -362,6 +362,14 @@ async function processGroupType(typeUrl) {
       console.log(`[${i + 1}/${groups.length}] Processing: ${groupName}`);
 
       try {
+        // Fetch group details
+        const groupHref = g.href;
+        if (groupHref) {
+          console.log(`  → Fetching group details from ${groupHref}`);
+          await fetchData(groupHref, 'groups');
+          console.log(`    ✓ Fetched group details`);
+        }
+
         const partHref = g._links?.participations?.href || (g.href ? g.href.replace(/\/$/, '') + '/participations' : null);
         const usersHref = g._links?.users?.href || (g.href ? g.href.replace(/\/$/, '') + '/users' : null);
 
@@ -482,10 +490,17 @@ async function fetchAllUsers() {
   // 3. groupsの_links.usersからもユーザーを抽出（participations=0のグループ対応）
   for (const url in collectedGroupsData) {
     const data = collectedGroupsData[url].data;
-    if (data._links?.users) {
-      for (const user of data._links.users) {
-        if (user.href) {
-          allUsers.add(user.href);
+    if (data._links?.users && typeof data._links.users === 'object' && !Array.isArray(data._links.users)) {
+      // グループの _links.users はユーザーリストのURLオブジェクト
+      const usersListUrl = data._links.users.href;
+      if (usersListUrl) {
+        const usersListData = collectedGroupsData[usersListUrl];
+        if (usersListData && usersListData.data && usersListData.data._links?.users && Array.isArray(usersListData.data._links.users)) {
+          for (const user of usersListData.data._links.users) {
+            if (user.href) {
+              allUsers.add(user.href);
+            }
+          }
         }
       }
     }
@@ -647,6 +662,13 @@ Usage:
         const groupHref = testGroup.href;
         
         try {
+          // Fetch group details
+          if (groupHref) {
+            console.log(`  → Fetching group details from ${groupHref}`);
+            await fetchData(groupHref, 'groups');
+            console.log(`    ✓ Fetched group details`);
+          }
+
           const partHref = testGroup._links?.participations?.href || (groupHref ? groupHref.replace(/\/$/, '') + '/participations' : null);
           const usersHref = testGroup._links?.users?.href || (groupHref ? groupHref.replace(/\/$/, '') + '/users' : null);
           

@@ -1,13 +1,13 @@
 {
   "_metadata": {
     "filename": "w3c-groups",
-    "lastChecked": "2025-12-02T13:41:09.090Z",
-    "fetchStartTime": "20251202-134109",
-    "duration": "11s",
-    "itemCount": 19
+    "lastChecked": "2025-12-03T14:50:19.290Z",
+    "fetchStartTime": "20251203-145019",
+    "duration": "12s",
+    "itemCount": 26
   },
   "https://api.w3.org/groups/cg": {
-    "fetchedAt": "2025-12-02T13:41:16.152Z",
+    "fetchedAt": "2025-12-03T14:50:26.824Z",
     "data": {
       "page": 1,
       "limit": 161,
@@ -672,8 +672,45 @@
       }
     }
   },
+  "https://api.w3.org/groups/cg/global-inclusion": {
+    "fetchedAt": "2025-12-03T14:50:27.142Z",
+    "data": {
+      "id": 154193,
+      "name": "Accessibility Internationalization Community Group",
+      "is_closed": false,
+      "creation-date": "2024-03-15",
+      "description": "The mission of the Accessibility Internationalization Community Group is to improve the internationalization of:\r\n<ul>\r\n<li>The Cognitive and Learning Disabilities Accessibility (COGA) Task Force</li>\r\n<li>The Accessibility Guidelines Working Group (AG)</li>\r\n</ul>\r\n\r\nScope\r\nThe Accessibility Internationalization Community Group will include the following efforts:\r\n<ul>\r\n<li>Improve the internationalization of COGA  and AG publications.</li>\r\n<li>Develop criteria and tests for easy-to-understand language in different languages.</li>\r\n<li>Develop criteria and tests for text appearance and semantics in different writing systems</li>\r\n<li>Develop criteria and tests for additional guidance that changes based on additional language, writing system, or culture.</li>\r\n</ul>\r\n\r\nThe community group’s initial focus is to help internationalize two accessibility resources that are currently in development:\r\n<ul>\r\n<li>The next version of Making Content Usable for People with Cognitive and Learning Disabilities </li>\r\n<li>WCAG 3.0, with two guidelines as the top priorities: “Clear Language” and “Text Appearance and Semantics,” which will have tests and criteria in different languages.</li>\r\n</ul>",
+      "shortname": "global-inclusion",
+      "spec-publisher": true,
+      "discr": "w3cgroup",
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/groups/cg/global-inclusion"
+        },
+        "homepage": {
+          "href": "https://www.w3.org/community/global-inclusion/"
+        },
+        "users": {
+          "href": "https://api.w3.org/groups/cg/global-inclusion/users"
+        },
+        "services": {
+          "href": "https://api.w3.org/groups/cg/global-inclusion/services"
+        },
+        "chairs": {
+          "href": "https://api.w3.org/groups/cg/global-inclusion/chairs"
+        },
+        "join": {
+          "href": "https://www.w3.org/community/global-inclusion/join"
+        },
+        "participations": {
+          "href": "https://api.w3.org/groups/cg/global-inclusion/participations"
+        }
+      },
+      "type": "community group"
+    }
+  },
   "https://api.w3.org/groups/cg/global-inclusion/participations": {
-    "fetchedAt": "2025-12-02T13:41:16.445Z",
+    "fetchedAt": "2025-12-03T14:50:27.768Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -946,7 +983,7 @@
     }
   },
   "https://api.w3.org/groups/cg/global-inclusion/users": {
-    "fetchedAt": "2025-12-02T13:41:17.071Z",
+    "fetchedAt": "2025-12-03T14:50:28.484Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -1261,7 +1298,7 @@
     }
   },
   "https://api.w3.org/groups/ig": {
-    "fetchedAt": "2025-12-02T13:41:14.419Z",
+    "fetchedAt": "2025-12-03T14:50:24.739Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -1334,14 +1371,57 @@
       }
     }
   },
+  "https://api.w3.org/groups/ig/i18n": {
+    "fetchedAt": "2025-12-03T14:50:23.707Z",
+    "data": {
+      "id": 72665,
+      "name": "Internationalization Interest Group",
+      "is_closed": false,
+      "description": "The mission of the Internationalization (I18n) Interest Group, part of the Internationalization Activity, is to help the Working Groups within the Internationalization Activity and provide a forum to discuss issues related to the internationalization of the Web.",
+      "shortname": "i18n",
+      "discr": "w3cgroup",
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/groups/ig/i18n"
+        },
+        "homepage": {
+          "href": "https://www.w3.org/International/i18n-activity/i18n-ig/"
+        },
+        "users": {
+          "href": "https://api.w3.org/groups/ig/i18n/users"
+        },
+        "services": {
+          "href": "https://api.w3.org/groups/ig/i18n/services"
+        },
+        "specifications": {
+          "href": "https://api.w3.org/groups/ig/i18n/specifications"
+        },
+        "chairs": {
+          "href": "https://api.w3.org/groups/ig/i18n/chairs"
+        },
+        "team-contacts": {
+          "href": "https://api.w3.org/groups/ig/i18n/teamcontacts"
+        },
+        "charters": {
+          "href": "https://api.w3.org/groups/ig/i18n/charters"
+        },
+        "active-charter": {
+          "href": "https://api.w3.org/groups/ig/i18n/charters/518"
+        }
+      },
+      "type": "interest group",
+      "start-date": "1998-02-12",
+      "end-date": "2027-10-16"
+    }
+  },
   "https://api.w3.org/groups/ig/i18n/participations": {
-    "fetchedAt": "2025-12-02T13:41:13.683Z",
+    "fetchedAt": "2025-12-03T14:50:23.981Z",
     "data": {
       "error": "Error: 404 https://api.w3.org/groups/ig/i18n/participations"
     }
   },
   "https://api.w3.org/groups/ig/i18n/users": {
-    "fetchedAt": "2025-12-02T13:41:14.165Z",
+    "fetchedAt": "2025-12-03T14:50:24.459Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -1770,13 +1850,66 @@
       }
     }
   },
+  "https://api.w3.org/groups/ig/webai": {
+    "fetchedAt": "2025-12-03T14:50:25.053Z",
+    "data": {
+      "id": 172982,
+      "name": "Web & AI Interest Group",
+      "is_closed": false,
+      "creation-date": "2025-11-27",
+      "description": "The mission of the Web & AI Interest Group is to provide a forum to explore and discuss how emerging Artificial Intelligence (AI) related technologies are impacting and intersecting with Web technologies and consider how the community could collaborate to shape these evolutions for the benefit of web users.",
+      "shortname": "webai",
+      "discr": "w3cgroup",
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/groups/ig/webai"
+        },
+        "homepage": {
+          "href": "https://www.w3.org/groups/ig/webai/"
+        },
+        "users": {
+          "href": "https://api.w3.org/groups/ig/webai/users"
+        },
+        "services": {
+          "href": "https://api.w3.org/groups/ig/webai/services"
+        },
+        "specifications": {
+          "href": "https://api.w3.org/groups/ig/webai/specifications"
+        },
+        "chairs": {
+          "href": "https://api.w3.org/groups/ig/webai/chairs"
+        },
+        "team-contacts": {
+          "href": "https://api.w3.org/groups/ig/webai/teamcontacts"
+        },
+        "charters": {
+          "href": "https://api.w3.org/groups/ig/webai/charters"
+        },
+        "active-charter": {
+          "href": "https://api.w3.org/groups/ig/webai/charters/546"
+        },
+        "join": {
+          "href": "https://www.w3.org/groups/ig/webai/join"
+        },
+        "pp-status": {
+          "href": "https://www.w3.org/groups/ig/webai/ipr"
+        },
+        "participations": {
+          "href": "https://api.w3.org/groups/ig/webai/participations"
+        }
+      },
+      "type": "interest group",
+      "start-date": "2025-11-27",
+      "end-date": "2027-11-27"
+    }
+  },
   "https://api.w3.org/groups/ig/webai/participations": {
-    "fetchedAt": "2025-12-02T13:41:14.712Z",
+    "fetchedAt": "2025-12-03T14:50:25.333Z",
     "data": {
       "page": 1,
       "limit": 100,
       "pages": 1,
-      "total": 16,
+      "total": 17,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/ig/webai"
@@ -1845,6 +1978,10 @@
           {
             "href": "https://api.w3.org/participations/46677",
             "title": "ByteDance"
+          },
+          {
+            "href": "https://api.w3.org/participations/46687",
+            "title": "Huawei"
           }
         ],
         "self": {
@@ -1860,12 +1997,12 @@
     }
   },
   "https://api.w3.org/groups/ig/webai/users": {
-    "fetchedAt": "2025-12-02T13:41:15.181Z",
+    "fetchedAt": "2025-12-03T14:50:25.870Z",
     "data": {
       "page": 1,
       "limit": 100,
       "pages": 1,
-      "total": 21,
+      "total": 22,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/ig/webai"
@@ -1975,6 +2112,11 @@
             "href": "https://api.w3.org/users/p1yfz5si72ocs8w480ggs4wgok84cgk",
             "title": "Léonie Watson",
             "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/l5leef1d7twww8k0k4o8koks0ckcowg",
+            "title": "michael zhou",
+            "former": false
           }
         ],
         "self": {
@@ -1990,7 +2132,7 @@
     }
   },
   "https://api.w3.org/groups/other": {
-    "fetchedAt": "2025-12-02T13:41:19.390Z",
+    "fetchedAt": "2025-12-03T14:50:30.557Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -2027,14 +2169,45 @@
       }
     }
   },
+  "https://api.w3.org/groups/other/ab": {
+    "fetchedAt": "2025-12-03T14:50:30.823Z",
+    "data": {
+      "id": 7756,
+      "name": "Advisory Board",
+      "is_closed": false,
+      "description": "The <a href=\"https://www.w3.org/policies/process/#AB\">Advisory Board</a> provides ongoing guidance to the Team on issues of strategy, management, legal matters, process, and conflict resolution.",
+      "shortname": "ab",
+      "discr": "group",
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/groups/other/ab"
+        },
+        "homepage": {
+          "href": "https://www.w3.org/Member/Board/"
+        },
+        "users": {
+          "href": "https://api.w3.org/groups/other/ab/users"
+        },
+        "services": {
+          "href": "https://api.w3.org/groups/other/ab/services"
+        },
+        "chairs": {
+          "href": "https://api.w3.org/groups/other/ab/chairs"
+        },
+        "team-contacts": {
+          "href": "https://api.w3.org/groups/other/ab/teamcontacts"
+        }
+      }
+    }
+  },
   "https://api.w3.org/groups/other/ab/participations": {
-    "fetchedAt": "2025-12-02T13:41:19.731Z",
+    "fetchedAt": "2025-12-03T14:50:31.070Z",
     "data": {
       "error": "Error: 404 https://api.w3.org/groups/other/ab/participations"
     }
   },
   "https://api.w3.org/groups/other/ab/users": {
-    "fetchedAt": "2025-12-02T13:41:20.193Z",
+    "fetchedAt": "2025-12-03T14:50:31.762Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -2139,7 +2312,7 @@
     }
   },
   "https://api.w3.org/groups/tf": {
-    "fetchedAt": "2025-12-02T13:41:17.758Z",
+    "fetchedAt": "2025-12-03T14:50:28.959Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -2396,14 +2569,72 @@
       }
     }
   },
+  "https://api.w3.org/groups/tf/ab-elected": {
+    "fetchedAt": "2025-12-03T14:50:29.243Z",
+    "data": {
+      "id": 147348,
+      "name": "Advisory Board Elected Members",
+      "is_closed": false,
+      "creation-date": "2023-08-21",
+      "description": "Elected members of the Advisory Board",
+      "shortname": "ab-elected",
+      "members": [
+        {
+          "id": 7756,
+          "name": "Advisory Board",
+          "is_closed": false,
+          "description": "The <a href=\"https://www.w3.org/policies/process/#AB\">Advisory Board</a> provides ongoing guidance to the Team on issues of strategy, management, legal matters, process, and conflict resolution.",
+          "shortname": "ab",
+          "discr": "group",
+          "_links": {
+            "self": {
+              "href": "https://api.w3.org/groups/other/ab"
+            },
+            "homepage": {
+              "href": "https://www.w3.org/Member/Board/"
+            },
+            "users": {
+              "href": "https://api.w3.org/groups/other/ab/users"
+            },
+            "services": {
+              "href": "https://api.w3.org/groups/other/ab/services"
+            },
+            "chairs": {
+              "href": "https://api.w3.org/groups/other/ab/chairs"
+            },
+            "team-contacts": {
+              "href": "https://api.w3.org/groups/other/ab/teamcontacts"
+            }
+          }
+        }
+      ],
+      "internal": false,
+      "participants_list_public": true,
+      "discr": "tf",
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/groups/tf/ab-elected"
+        },
+        "users": {
+          "href": "https://api.w3.org/groups/tf/ab-elected/users"
+        },
+        "services": {
+          "href": "https://api.w3.org/groups/tf/ab-elected/services"
+        },
+        "chairs": {
+          "href": "https://api.w3.org/groups/tf/ab-elected/chairs"
+        }
+      }
+    }
+  },
   "https://api.w3.org/groups/tf/ab-elected/participations": {
-    "fetchedAt": "2025-12-02T13:41:18.022Z",
+    "fetchedAt": "2025-12-03T14:50:29.500Z",
     "data": {
       "error": "Error: 404 https://api.w3.org/groups/tf/ab-elected/participations"
     }
   },
   "https://api.w3.org/groups/tf/ab-elected/users": {
-    "fetchedAt": "2025-12-02T13:41:18.912Z",
+    "fetchedAt": "2025-12-03T14:50:30.068Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -2483,7 +2714,7 @@
     }
   },
   "https://api.w3.org/groups/wg": {
-    "fetchedAt": "2025-12-02T13:41:12.122Z",
+    "fetchedAt": "2025-12-03T14:50:21.469Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -2684,8 +2915,60 @@
       }
     }
   },
+  "https://api.w3.org/groups/wg/css": {
+    "fetchedAt": "2025-12-03T14:50:19.928Z",
+    "data": {
+      "id": 32061,
+      "name": "Cascading Style Sheets (CSS) Working Group",
+      "is_closed": false,
+      "description": "The mission of the group is to develop and maintain CSS.",
+      "shortname": "css",
+      "discr": "w3cgroup",
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/groups/wg/css"
+        },
+        "homepage": {
+          "href": "https://www.w3.org/groups/wg/css/"
+        },
+        "users": {
+          "href": "https://api.w3.org/groups/wg/css/users"
+        },
+        "services": {
+          "href": "https://api.w3.org/groups/wg/css/services"
+        },
+        "specifications": {
+          "href": "https://api.w3.org/groups/wg/css/specifications"
+        },
+        "chairs": {
+          "href": "https://api.w3.org/groups/wg/css/chairs"
+        },
+        "team-contacts": {
+          "href": "https://api.w3.org/groups/wg/css/teamcontacts"
+        },
+        "charters": {
+          "href": "https://api.w3.org/groups/wg/css/charters"
+        },
+        "active-charter": {
+          "href": "https://api.w3.org/groups/wg/css/charters/533"
+        },
+        "join": {
+          "href": "https://www.w3.org/groups/wg/css/join"
+        },
+        "pp-status": {
+          "href": "https://www.w3.org/groups/wg/css/ipr"
+        },
+        "participations": {
+          "href": "https://api.w3.org/groups/wg/css/participations"
+        }
+      },
+      "type": "working group",
+      "start-date": "1997-02-28",
+      "end-date": "2027-03-17"
+    }
+  },
   "https://api.w3.org/groups/wg/css/participations": {
-    "fetchedAt": "2025-12-02T13:41:10.760Z",
+    "fetchedAt": "2025-12-03T14:50:20.197Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -2902,7 +3185,7 @@
     }
   },
   "https://api.w3.org/groups/wg/css/users": {
-    "fetchedAt": "2025-12-02T13:41:11.725Z",
+    "fetchedAt": "2025-12-03T14:50:21.221Z",
     "data": {
       "page": 1,
       "limit": 183,
@@ -3841,8 +4124,61 @@
       }
     }
   },
+  "https://api.w3.org/groups/wg/miniapps": {
+    "fetchedAt": "2025-12-03T14:50:21.762Z",
+    "data": {
+      "id": 128558,
+      "name": "MiniApps Working Group",
+      "is_closed": false,
+      "creation-date": "2021-01-08",
+      "description": "The mission of the MiniApps Working Group is to produce specifications that facilitate the development of interoperable and robust MiniApps.",
+      "shortname": "miniapps",
+      "discr": "w3cgroup",
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/groups/wg/miniapps"
+        },
+        "homepage": {
+          "href": "https://www.w3.org/groups/wg/miniapps/"
+        },
+        "users": {
+          "href": "https://api.w3.org/groups/wg/miniapps/users"
+        },
+        "services": {
+          "href": "https://api.w3.org/groups/wg/miniapps/services"
+        },
+        "specifications": {
+          "href": "https://api.w3.org/groups/wg/miniapps/specifications"
+        },
+        "chairs": {
+          "href": "https://api.w3.org/groups/wg/miniapps/chairs"
+        },
+        "team-contacts": {
+          "href": "https://api.w3.org/groups/wg/miniapps/teamcontacts"
+        },
+        "charters": {
+          "href": "https://api.w3.org/groups/wg/miniapps/charters"
+        },
+        "active-charter": {
+          "href": "https://api.w3.org/groups/wg/miniapps/charters/488"
+        },
+        "join": {
+          "href": "https://www.w3.org/groups/wg/miniapps/join"
+        },
+        "pp-status": {
+          "href": "https://www.w3.org/groups/wg/miniapps/ipr"
+        },
+        "participations": {
+          "href": "https://api.w3.org/groups/wg/miniapps/participations"
+        }
+      },
+      "type": "working group",
+      "start-date": "2021-01-19",
+      "end-date": "2026-04-12"
+    }
+  },
   "https://api.w3.org/groups/wg/miniapps/participations": {
-    "fetchedAt": "2025-12-02T13:41:12.461Z",
+    "fetchedAt": "2025-12-03T14:50:22.499Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -3907,7 +4243,7 @@
     }
   },
   "https://api.w3.org/groups/wg/miniapps/users": {
-    "fetchedAt": "2025-12-02T13:41:12.934Z",
+    "fetchedAt": "2025-12-03T14:50:22.973Z",
     "data": {
       "page": 1,
       "limit": 100,

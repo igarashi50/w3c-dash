@@ -121,6 +121,10 @@ function extractGroupInfo(apiData, group) {
   const name = group.title || group.name || 'Unknown Group';
   const groupType = group.groupType || 'unknown';
   
+  // グループの詳細データを取得
+  const groupDetail = findDataByUrl(apiData.groupsData, apiData.participationsData, apiData.usersData, apiData.affiliationsData, group.href);
+  const homepage = groupDetail?._links?.homepage?.href;
+  
   // participations を取得
   const participations = getParticipationsForGroup(apiData, group);
   
@@ -359,7 +363,8 @@ function extractGroupInfo(apiData, group) {
     membersCount: uniqMembers.length,
     totalParticipantsCount,
     totalParticipantsList,
-    isException: participations.length === 0 && users.length > 0
+    isException: participations.length === 0 && users.length > 0,
+    homepage
   };
 }
 
