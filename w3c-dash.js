@@ -171,7 +171,7 @@ let attachedHandler = false;
 let groupsData = null; // 初回のみロード
 let groupsInfoLoaded = false;
 
-async function loadGroups() {
+async function renderData() {
   const status = document.getElementById('status');
   const groupsDiv = document.getElementById('groups');
   const summary = document.getElementById('summary');
@@ -179,7 +179,7 @@ async function loadGroups() {
 
   groupsDiv.innerHTML = '';
   status.className = 'loading';
-  status.textContent = 'Loading group data from w3c-groups.json...';
+  status.textContent = 'Loading W3C API data...';
 
   try {
     // 初回のみロード
@@ -189,15 +189,15 @@ async function loadGroups() {
       groupsInfoLoaded = true;
     }
 
-    // フィルター・ソートはgroupsDataのみ参照
+    // フィルター・ソートはgroupsDataのみ参照（再ロード・再集計なし）
     const filterType = localStorage.getItem('groupTypeFilter') || 'wg';
-    const filteredResults = filterType === 'all'
+    let filteredResults = filterType === 'all'
       ? groupsData
       : groupsData.filter(g => g.groupType === filterType);
 
     // ソート基準を取得
     const sortBy = document.getElementById('sortBy').value;
-    let sortedResults;
+    let sortedResults = filteredResults;
 
     switch(sortBy) {
       case 'name':
@@ -305,7 +305,7 @@ async function loadGroups() {
       'wg': 'Working Groups',
       'ig': 'Interest Groups',
       'cg': 'Community Groups',
-      'tf': 'Task Force Groups',
+      'tf': 'Task Forces',
       'other': 'Other Groups',
       'all': 'All Groups'
     };
@@ -368,7 +368,7 @@ async function loadGroups() {
         th.className = sortBy === 'name' ? 'sorted' : '';
         th.onclick = () => {
           document.getElementById('sortBy').value = 'name';
-          loadGroups();
+          renderData();
         };
         th.innerHTML = `${col.label}<span class="sort-icon">↓</span>`;
       } else if (col.sortable) {
@@ -376,7 +376,7 @@ async function loadGroups() {
         th.className = sortBy === col.key ? 'sorted' : '';
         th.onclick = () => {
           document.getElementById('sortBy').value = col.key;
-          loadGroups();
+          renderData();
         };
         th.innerHTML = `${col.label}<span class="sort-icon">↓</span>`;
       } else if (col.key === 'charts') {
@@ -450,7 +450,7 @@ async function loadGroups() {
             e.stopPropagation();
             const type = btn.dataset.type;
             localStorage.setItem('groupTypeFilter', type);
-            loadGroups();
+            renderData();
           });
         });
       }
@@ -745,7 +745,7 @@ async function loadGroups() {
   }
 }
 
-document.getElementById('sortBy').addEventListener('change', () => loadGroups());
+document.getElementById('sortBy').addEventListener('change', () => renderData());
 
 // 初回ロード
-loadGroups();
+renderData();
