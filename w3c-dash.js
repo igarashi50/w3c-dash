@@ -9,16 +9,19 @@ function escapeHtml(s) {
 
 function showList(title, arr) {
   const popup = document.getElementById('popup');
+  const overlay = document.getElementById('popupOverlay');
   const titleEl = document.getElementById('popupTitle');
   const content = document.getElementById('popupContent');
   const sortedArr = arr.length ? [...arr].sort() : [];
   titleEl.textContent = title;
   content.textContent = sortedArr.length ? sortedArr.join('\n') : '(no items)';
   popup.style.display = 'block';
+  overlay.style.display = 'block';
 }
 
 async function showMembersPopup(groupData, groupName, initialFilter = 'members') {
   const popup = document.getElementById('membersPopup');
+  const overlay = document.getElementById('membersPopupOverlay');
   const title = document.getElementById('membersPopupTitle');
   const membersListContent = document.getElementById('membersListContent');
   const participantsListContent = document.getElementById('participantsListContent');
@@ -335,6 +338,7 @@ async function showMembersPopup(groupData, groupName, initialFilter = 'members')
   await renderFilteredList();
   
   popup.style.display = 'flex';
+  overlay.style.display = 'block';
 }
 
 async function showParticipantsForMember(groupData, memberOrg) {
@@ -439,10 +443,41 @@ async function showUserDetails(userHref, userName) {
 
 document.getElementById('popupClose').addEventListener('click', () => {
   document.getElementById('popup').style.display = 'none';
+  document.getElementById('popupOverlay').style.display = 'none';
+});
+
+document.getElementById('popupOverlay').addEventListener('click', () => {
+  document.getElementById('popup').style.display = 'none';
+  document.getElementById('popupOverlay').style.display = 'none';
 });
 
 document.getElementById('membersPopupClose').addEventListener('click', () => {
   document.getElementById('membersPopup').style.display = 'none';
+  document.getElementById('membersPopupOverlay').style.display = 'none';
+});
+
+document.getElementById('membersPopupOverlay').addEventListener('click', () => {
+  document.getElementById('membersPopup').style.display = 'none';
+  document.getElementById('membersPopupOverlay').style.display = 'none';
+});
+
+// ESCキーでポップアップを閉じる
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const popup = document.getElementById('popup');
+    const popupOverlay = document.getElementById('popupOverlay');
+    const membersPopup = document.getElementById('membersPopup');
+    const membersPopupOverlay = document.getElementById('membersPopupOverlay');
+    
+    if (popup.style.display === 'block') {
+      popup.style.display = 'none';
+      popupOverlay.style.display = 'none';
+    }
+    if (membersPopup.style.display === 'flex') {
+      membersPopup.style.display = 'none';
+      membersPopupOverlay.style.display = 'none';
+    }
+  }
 });
 
 let attachedHandler = false;
