@@ -470,9 +470,9 @@ async function renderData() {
     // 全体統計を計算（重複を除く）
     const allMembers = new Set();
     const allUsers = new Set();
-    const allInvitedExperts = new Set();
-    const allStaffs = new Set();
-    const allIndividuals = new Set();
+    const allInvitedExperts = new Map();
+    const allStaffs = new Map();
+    const allIndividuals = new Map();
     const allParticipants = new Set();
 
     groupsData.forEach(group => {
@@ -490,21 +490,21 @@ async function renderData() {
       // Invited Experts
       if (group.invited) {
         group.invited.forEach(ie => {
-          allInvitedExperts.add(ie);
+          allInvitedExperts.set(ie.name, ie);
           allParticipants.add(ie);
         });
       }
       // Staffs
       if (group.staffs) {
         group.staffs.forEach(staff => {
-          allStaffs.add(staff);
+          allStaffs.set(staff.name, staff);
           allParticipants.add(staff);
         });
       }
       // Individuals
       if (group.individuals) {
         group.individuals.forEach(ind => {
-          allIndividuals.add(ind);
+          allIndividuals.set(ind.name, ind);
           allParticipants.add(ind);
         });
       }
@@ -994,12 +994,18 @@ async function renderData() {
         switch(type) {
           case 'members':
             groupData.participantsList = Array.from(allMembers);
+            groupData.membersMap = {};
+            groupsData.forEach(g => {
+              if (g.membersMap) {
+                Object.assign(groupData.membersMap, g.membersMap);
+              }
+            });
             break;
           case 'participants':
             groupData.membersMap = {};
-            groupData.invited = Array.from(allInvitedExperts);
-            groupData.staffs = Array.from(allStaffs);
-            groupData.individuals = Array.from(allIndividuals);
+            groupData.invited = Array.from(allInvitedExperts.values());
+            groupData.staffs = Array.from(allStaffs.values());
+            groupData.individuals = Array.from(allIndividuals.values());
             groupData.usersList = Array.from(allUsers);
             break;
           case 'users': // MP
@@ -1016,13 +1022,13 @@ async function renderData() {
             });
             break;
           case 'invited':
-            groupData.invited = Array.from(allInvitedExperts);
+            groupData.invited = Array.from(allInvitedExperts.values());
             break;
           case 'staffs':
-            groupData.staffs = Array.from(allStaffs);
+            groupData.staffs = Array.from(allStaffs.values());
             break;
           case 'individuals':
-            groupData.individuals = Array.from(allIndividuals);
+            groupData.individuals = Array.from(allIndividuals.values());
             break;
         }
         
