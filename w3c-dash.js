@@ -26,6 +26,17 @@ async function showMembersPopup(groupData, groupName, initialFilter = 'members')
   
   title.textContent = groupName;
   
+  // 各フィルターのカウントを計算
+  const counts = {
+    members: groupData.participantsList ? groupData.participantsList.length : 0,
+    mp: groupData.usersList ? groupData.usersList.length : 0,
+    invited: groupData.invited ? groupData.invited.length : 0,
+    staffs: groupData.staffs ? groupData.staffs.length : 0,
+    individuals: groupData.individuals ? groupData.individuals.length : 0,
+    participants: 0
+  };
+  counts.participants = counts.mp + counts.invited + counts.staffs + counts.individuals;
+  
   // 初期タイトル設定
   const affiliationsTitle = document.querySelector('#membersList h3');
   const participantsTitle = document.querySelector('#participantsList h3');
@@ -37,19 +48,26 @@ async function showMembersPopup(groupData, groupName, initialFilter = 'members')
   
   // MPフィルターボタンを追加
   const filterBar = document.getElementById('participationsFilter');
-  if (filterBar && !filterBar.querySelector('[data-filter="mp"]')) {
-    const mBtn = filterBar.querySelector('[data-filter="members"]');
-    const mpBtn = document.createElement('button');
-    mpBtn.className = 'filter-btn';
-    mpBtn.setAttribute('data-filter', 'mp');
-    mpBtn.textContent = 'MP';
-    if (mBtn) {
-      const buttonContainer = mBtn.parentNode;
-      buttonContainer.insertBefore(mpBtn, mBtn.nextSibling);
-    } else {
-      // Fallback
-      const buttonContainer = filterBar.querySelector('.filter-btn')?.parentNode || filterBar;
-      buttonContainer.appendChild(mpBtn);
+  if (filterBar) {
+    const buttonContainer = document.getElementById('participationsButtonContainer');
+    if (buttonContainer) {
+      buttonContainer.innerHTML = ''; // 既存のボタンをクリア
+      const filters = ['members', 'mp', 'invited', 'staffs', 'individuals', 'participants'];
+      const filterLabels = {
+        'members': 'Members',
+        'mp': 'Member Participants',
+        'invited': 'Invited Experts',
+        'staffs': 'Staffs',
+        'individuals': 'Individuals',
+        'participants': 'Participants'
+      };
+      filters.forEach(filter => {
+        const btn = document.createElement('button');
+        btn.className = 'filter-btn';
+        btn.setAttribute('data-filter', filter);
+        btn.textContent = `${filterLabels[filter]}: ${counts[filter]}`;
+        buttonContainer.appendChild(btn);
+      });
     }
   }
   
@@ -428,6 +446,24 @@ async function renderData() {
       groupsInfoLoaded = true;
     }
 
+    // 各タイプのグループ数を計算
+    const counts = {
+      wg: 0,
+      ig: 0,
+      cg: 0,
+      tf: 0,
+      other: 0,
+      all: groupsData.length
+    };
+    groupsData.forEach(g => {
+      const type = g.groupType;
+      if (counts.hasOwnProperty(type)) {
+        counts[type]++;
+      } else {
+        counts.other++;
+      }
+    });
+
     // フィルター・ソートはgroupsDataのみ参照
     const filterType = localStorage.getItem('groupTypeFilter') || 'wg';
     const filteredResults = filterType === 'all'
@@ -564,9 +600,8 @@ async function renderData() {
     const filterBar = document.createElement('div');
     filterBar.className = 'filter-bar';
     filterBar.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; background: #f6f8fa; border-bottom: 1px solid #ddd;">
+      <div style="display: flex; flex-direction: column; gap: 8px; padding: 8px 12px; background: #f6f8fa; border-bottom: 1px solid #ddd;">
         <span style="font-size: 18px; font-weight: 600;">Groups</span>
-        <span style="font-size: 14px; color: #57606a; margin-left: 8px;">Type:</span>
         <div id="groupTypeFilter" style="display: flex; gap: 4px; flex-wrap: wrap;">
           <button class="filter-btn" data-type="wg">WG</button>
           <button class="filter-btn" data-type="ig">IG</button>
@@ -674,10 +709,21 @@ async function renderData() {
     
     // フィルターボタンのイベントリスナー（テーブル再作成のたびに設定）
     setTimeout(() => {
+      const filterTypeLabels = {
+        'wg': 'Working Groups',
+        'ig': 'Interest Groups',
+        'cg': 'Community Groups',
+        'tf': 'Task Forces',
+        'other': 'Other Groups',
+        'all': 'All Groups'
+      };
       const groupTypeFilter = document.getElementById('groupTypeFilter');
       if (groupTypeFilter) {
         const currentFilterType = localStorage.getItem('groupTypeFilter') || 'wg';
         groupTypeFilter.querySelectorAll('.filter-btn').forEach(btn => {
+          const type = btn.dataset.type;
+          const label = filterTypeLabels[type] || type.toUpperCase();
+          btn.textContent = `${label}: ${counts[type]}`;
           // アクティブクラスを設定
           if (btn.dataset.type === currentFilterType) {
             btn.classList.add('active');
