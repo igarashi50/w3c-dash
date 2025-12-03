@@ -1,10 +1,87 @@
-function escapeHtml(s) {
-  return String(s || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+// 棒グラフを描画する関数
+function drawBarChart(container, values, colors, maxValue) {
+  container.innerHTML = '';
+  container.style.height = '16px';
+  container.style.width = '100%';
+  container.style.position = 'relative';
+  container.style.background = '#f5f5f5';
+  container.style.border = '1px solid #ddd';
+  container.style.borderRadius = '2px';
+  container.style.overflow = 'hidden';
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  
+  const isSingleBar = values.length === 1;
+  const totalValue = values.reduce((sum, val) => sum + val, 0);
+  
+  // バーコンテナ
+  const barContainer = document.createElement('div');
+  barContainer.style.height = '100%';
+  barContainer.style.position = 'relative';
+  container.appendChild(barContainer);
+  
+  let totalBarWidthPercent = 0;
+  
+  if (isSingleBar) {
+    // 単一バーの場合
+    const value = values[0];
+    if (value > 0) {
+      const bar = document.createElement('div');
+      const barWidthPercent = value / maxValue * 100;
+      totalBarWidthPercent = barWidthPercent;
+      bar.style.height = '100%';
+      bar.style.width = '100%';
+      bar.style.background = colors[0];
+      barContainer.appendChild(bar);
+    }
+  } else {
+    // スタックバーの場合（Pチャートの合計幅内で各スタックを分割）
+    let currentX = 0;
+    values.forEach((value, index) => {
+      if (value > 0) {
+        const bar = document.createElement('div');
+        // Pチャートの合計幅内で各スタックの幅を計算
+        const barWidthPercent = value / totalValue * 100;
+        bar.style.height = '100%';
+        bar.style.width = barWidthPercent + '%';
+        bar.style.background = colors[index];
+        bar.style.position = 'absolute';
+        bar.style.left = currentX + '%';
+        bar.style.display = 'flex';
+        bar.style.alignItems = 'center';
+        bar.style.justifyContent = 'center';
+        bar.style.color = 'white';
+        bar.style.fontSize = '8px';
+        bar.style.fontWeight = 'bold';
+        // バー幅が十分広い場合のみ数字を表示
+        if (barWidthPercent >= 8) {
+          bar.textContent = value;
+        }
+        barContainer.appendChild(bar);
+        currentX += barWidthPercent;
+      }
+    });
+    let total = values.reduce((sum, val) => sum + val, 0);
+    const barWidthPercent = total / maxValue * 100;
+    totalBarWidthPercent = barWidthPercent;
+  }
+  
+  // バーコンテナの幅をバーの実際の幅に設定（ピクセル単位）
+  const containerWidth = container.offsetWidth;
+  const barWidthPx = totalBarWidthPercent / 100 * containerWidth;
+  barContainer.style.width = barWidthPx + 'px';
+  
+  // 右側に合計数を表示（バーコンテナのすぐ右側）
+  if (totalValue > 0) {
+    const label = document.createElement('div');
+    label.style.marginLeft = '4px';
+    label.style.color = '#000';
+    label.style.fontSize = '8px';
+    label.style.fontWeight = 'bold';
+    label.style.flexShrink = '0';
+    label.textContent = totalValue;
+    container.appendChild(label);
+  }
 }
 
 function showList(title, arr) {
@@ -893,23 +970,25 @@ async function renderData() {
       chartsCell.style.width = '250px';
       chartsCell.style.minWidth = '250px';
       chartsCell.style.maxWidth = '250px';
-      chartsCell.style.padding = '4px';
+      chartsCell.style.padding = '2px';
       
       // Members Chart
       const membersChartDiv = document.createElement('div');
-      membersChartDiv.style.height = '35px';
+      membersChartDiv.style.height = '16px';
       membersChartDiv.style.marginBottom = '0';
-      const membersCanvas = document.createElement('canvas');
-      membersCanvas.id = `members-chart-${i}`;
-      membersChartDiv.appendChild(membersCanvas);
+      const membersDiv = document.createElement('div');
+      membersDiv.id = `members-chart-${i}`;
+      membersDiv.className = 'chart-bar';
+      membersChartDiv.appendChild(membersDiv);
       chartsCell.appendChild(membersChartDiv);
       
       // Participants Chart
       const participantsChartDiv = document.createElement('div');
-      participantsChartDiv.style.height = '35px';
-      const participantsCanvas = document.createElement('canvas');
-      participantsCanvas.id = `participants-chart-${i}`;
-      participantsChartDiv.appendChild(participantsCanvas);
+      participantsChartDiv.style.height = '16px';
+      const participantsDiv = document.createElement('div');
+      participantsDiv.id = `participants-chart-${i}`;
+      participantsDiv.className = 'chart-bar';
+      participantsChartDiv.appendChild(participantsDiv);
       chartsCell.appendChild(participantsChartDiv);
       
       row.appendChild(chartsCell);
@@ -923,175 +1002,28 @@ async function renderData() {
     
     // チャートを描画
     const maxMembers = Math.max(...sortedResults.map(g => g.membersCount || 0));
-    const maxTotal = Math.max(...sortedResults.map(g => g.totalParticipantsCount || 0));
+    const maxParticipants = Math.max(...sortedResults.map(g => g.totalParticipantsCount || 0));
     // 両方のチャートで同じスケールを使用
-    const maxScale = Math.max(maxMembers, maxTotal);
+    const maxScale = Math.max(maxMembers, maxParticipants);
     
     for (let i = 0; i < sortedResults.length; i++) {
       const g = sortedResults[i];
       
       // Members Chart
-      const membersCanvas = document.getElementById(`members-chart-${i}`);
-      if (membersCanvas) {
-        // 既存のチャートを破棄
-        const existingChart = Chart.getChart(membersCanvas);
-        if (existingChart) {
-          existingChart.destroy();
-        }
-        
-        new Chart(membersCanvas, {
-          type: 'bar',
-          data: {
-            labels: ['M'],
-            datasets: [{
-              label: 'Members',
-              data: [g.membersCount || 0],
-              backgroundColor: '#0969da',
-              barThickness: 20
-            }]
-          },
-          options: {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                enabled: true,
-                callbacks: {
-                  title: () => '',
-                  label: function(context) {
-                      // 1行表示（M:10）
-                      return `M: ${context.parsed.x}`;
-                  }
-                }
-              },
-              datalabels: {
-                color: '#fff',
-                font: {
-                  weight: 'bold',
-                  size: 10
-                },
-                formatter: (value) => value > 0 ? value : '',
-                anchor: 'center',
-                align: 'center'
-              }
-            },
-            scales: {
-              x: {
-                display: false,
-                beginAtZero: true,
-                min: 0,
-                max: maxScale,
-                suggestedMax: maxScale
-              },
-              y: { 
-                display: true,
-                ticks: {
-                  font: { size: 10, weight: 'bold' }
-                }
-              }
-            }
-          }
-        });
+      const membersDiv = document.getElementById(`members-chart-${i}`);
+      if (membersDiv) {
+        drawBarChart(membersDiv, [g.membersCount || 0], ['#0969da'], maxScale);
       }
       
       // Participants Chart (Stacked: Users + Invited + Individuals)
-      const participantsCanvas = document.getElementById(`participants-chart-${i}`);
-      if (participantsCanvas) {
-        // 既存のチャートを破棄
-        const existingChart = Chart.getChart(participantsCanvas);
-        if (existingChart) {
-          existingChart.destroy();
-        }
-        
-        new Chart(participantsCanvas, {
-          type: 'bar',
-          data: {
-            labels: ['P'],
-            datasets: [
-              {
-                label: 'Member Participants',
-                data: [g.usersCount || 0],
-                backgroundColor: '#1f883d',
-                barThickness: 20
-              },
-              {
-                label: 'Invited Experts',
-                data: [g.invitedCount || 0],
-                backgroundColor: '#bf8700',
-                barThickness: 20
-              },
-              {
-                label: 'Staffs',
-                data: [g.staffsCount || 0],
-                backgroundColor: '#cf222e',
-                barThickness: 20
-              },
-              {
-                label: 'Individuals',
-                data: [g.individualsCount || 0],
-                backgroundColor: '#8250df',
-                barThickness: 20
-              }
-            ]
-          },
-          options: {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                enabled: true,
-                callbacks: {
-                  title: () => '',
-                  label: function(context) {
-                    // 各バーごとに"MP:10 P:20"など表示
-                    let key = '';
-                    switch (context.dataset.label) {
-                      case 'Member Participants': key = 'MP'; break;
-                      case 'Invited Experts': key = 'IE'; break;
-                      case 'Staffs': key = 'S'; break;
-                      case 'Individuals': key = 'Ind'; break;
-                      default: key = context.dataset.label;
-                    }
-                    const total = context.chart.data.datasets.reduce((sum, ds) => sum + ds.data[0], 0);
-                    return `${key}:${context.parsed.x} P:${total}`;
-                  },
-                  footer: () => ''
-                }
-              },
-              datalabels: {
-                color: '#fff',
-                font: {
-                  weight: 'bold',
-                  size: 10
-                },
-                formatter: (value) => value > 0 ? value : '',
-                anchor: 'center',
-                align: 'center'
-              }
-            },
-            scales: {
-              x: {
-                stacked: true,
-                display: false,
-                beginAtZero: true,
-                min: 0,
-                max: maxScale,
-                suggestedMax: maxScale
-              },
-              y: {
-                stacked: true,
-                display: true,
-                ticks: {
-                  font: { size: 10, weight: 'bold' }
-                }
-              }
-            }
-          }
-        });
+      const participantsDiv = document.getElementById(`participants-chart-${i}`);
+      if (participantsDiv) {
+        drawBarChart(participantsDiv, [
+          g.usersCount || 0,
+          g.invitedCount || 0,
+          g.staffsCount || 0,
+          g.individualsCount || 0
+        ], ['#1f883d', '#bf8700', '#cf222e', '#8250df'], maxScale);
       }
     }
 
