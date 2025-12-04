@@ -1,13 +1,13 @@
 {
   "_metadata": {
     "filename": "w3c-groups",
-    "lastChecked": "2025-12-03T14:50:19.290Z",
-    "fetchStartTime": "20251203-145019",
-    "duration": "12s",
+    "lastChecked": "2025-12-04T00:27:50.696Z",
+    "fetchStartTime": "20251204-002750",
+    "duration": "11s",
     "itemCount": 26
   },
   "https://api.w3.org/groups/cg": {
-    "fetchedAt": "2025-12-03T14:50:26.824Z",
+    "fetchedAt": "2025-12-04T00:27:58.104Z",
     "data": {
       "page": 1,
       "limit": 161,
@@ -673,7 +673,7 @@
     }
   },
   "https://api.w3.org/groups/cg/global-inclusion": {
-    "fetchedAt": "2025-12-03T14:50:27.142Z",
+    "fetchedAt": "2025-12-04T00:27:58.382Z",
     "data": {
       "id": 154193,
       "name": "Accessibility Internationalization Community Group",
@@ -710,7 +710,7 @@
     }
   },
   "https://api.w3.org/groups/cg/global-inclusion/participations": {
-    "fetchedAt": "2025-12-03T14:50:27.768Z",
+    "fetchedAt": "2025-12-04T00:27:58.636Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -983,7 +983,7 @@
     }
   },
   "https://api.w3.org/groups/cg/global-inclusion/users": {
-    "fetchedAt": "2025-12-03T14:50:28.484Z",
+    "fetchedAt": "2025-12-04T00:27:59.124Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -1298,7 +1298,7 @@
     }
   },
   "https://api.w3.org/groups/ig": {
-    "fetchedAt": "2025-12-03T14:50:24.739Z",
+    "fetchedAt": "2025-12-04T00:27:55.995Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -1372,7 +1372,7 @@
     }
   },
   "https://api.w3.org/groups/ig/i18n": {
-    "fetchedAt": "2025-12-03T14:50:23.707Z",
+    "fetchedAt": "2025-12-04T00:27:55.028Z",
     "data": {
       "id": 72665,
       "name": "Internationalization Interest Group",
@@ -1415,13 +1415,13 @@
     }
   },
   "https://api.w3.org/groups/ig/i18n/participations": {
-    "fetchedAt": "2025-12-03T14:50:23.981Z",
+    "fetchedAt": "2025-12-04T00:27:55.274Z",
     "data": {
       "error": "Error: 404 https://api.w3.org/groups/ig/i18n/participations"
     }
   },
   "https://api.w3.org/groups/ig/i18n/users": {
-    "fetchedAt": "2025-12-03T14:50:24.459Z",
+    "fetchedAt": "2025-12-04T00:27:55.749Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -1851,7 +1851,7 @@
     }
   },
   "https://api.w3.org/groups/ig/webai": {
-    "fetchedAt": "2025-12-03T14:50:25.053Z",
+    "fetchedAt": "2025-12-04T00:27:56.260Z",
     "data": {
       "id": 172982,
       "name": "Web & AI Interest Group",
@@ -1904,12 +1904,12 @@
     }
   },
   "https://api.w3.org/groups/ig/webai/participations": {
-    "fetchedAt": "2025-12-03T14:50:25.333Z",
+    "fetchedAt": "2025-12-04T00:27:56.569Z",
     "data": {
       "page": 1,
       "limit": 100,
       "pages": 1,
-      "total": 17,
+      "total": 18,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/ig/webai"
@@ -1982,6 +1982,10 @@
           {
             "href": "https://api.w3.org/participations/46687",
             "title": "Huawei"
+          },
+          {
+            "href": "https://api.w3.org/participations/46689",
+            "title": "NextRoll"
           }
         ],
         "self": {
@@ -1997,12 +2001,12 @@
     }
   },
   "https://api.w3.org/groups/ig/webai/users": {
-    "fetchedAt": "2025-12-03T14:50:25.870Z",
+    "fetchedAt": "2025-12-04T00:27:57.073Z",
     "data": {
       "page": 1,
       "limit": 100,
       "pages": 1,
-      "total": 22,
+      "total": 23,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/ig/webai"
@@ -2056,6 +2060,11 @@
           {
             "href": "https://api.w3.org/users/ltb258eue0gs0ko0soo4wgwg8k0o4cc",
             "title": "Dominique Hazaël-Massieux",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/hgg0toxys5wsw8cccc8k080kkkgk8wg",
+            "title": "James Kelly",
             "former": false
           },
           {
@@ -2132,7 +2141,7 @@
     }
   },
   "https://api.w3.org/groups/other": {
-    "fetchedAt": "2025-12-03T14:50:30.557Z",
+    "fetchedAt": "2025-12-04T00:28:01.145Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -2170,7 +2179,7 @@
     }
   },
   "https://api.w3.org/groups/other/ab": {
-    "fetchedAt": "2025-12-03T14:50:30.823Z",
+    "fetchedAt": "2025-12-04T00:28:01.386Z",
     "data": {
       "id": 7756,
       "name": "Advisory Board",
@@ -2201,13 +2210,13 @@
     }
   },
   "https://api.w3.org/groups/other/ab/participations": {
-    "fetchedAt": "2025-12-03T14:50:31.070Z",
+    "fetchedAt": "2025-12-04T00:28:01.631Z",
     "data": {
       "error": "Error: 404 https://api.w3.org/groups/other/ab/participations"
     }
   },
   "https://api.w3.org/groups/other/ab/users": {
-    "fetchedAt": "2025-12-03T14:50:31.762Z",
+    "fetchedAt": "2025-12-04T00:28:02.113Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -2312,7 +2321,7 @@
     }
   },
   "https://api.w3.org/groups/tf": {
-    "fetchedAt": "2025-12-03T14:50:28.959Z",
+    "fetchedAt": "2025-12-04T00:27:59.620Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -2570,7 +2579,7 @@
     }
   },
   "https://api.w3.org/groups/tf/ab-elected": {
-    "fetchedAt": "2025-12-03T14:50:29.243Z",
+    "fetchedAt": "2025-12-04T00:27:59.885Z",
     "data": {
       "id": 147348,
       "name": "Advisory Board Elected Members",
@@ -2628,13 +2637,13 @@
     }
   },
   "https://api.w3.org/groups/tf/ab-elected/participations": {
-    "fetchedAt": "2025-12-03T14:50:29.500Z",
+    "fetchedAt": "2025-12-04T00:28:00.194Z",
     "data": {
       "error": "Error: 404 https://api.w3.org/groups/tf/ab-elected/participations"
     }
   },
   "https://api.w3.org/groups/tf/ab-elected/users": {
-    "fetchedAt": "2025-12-03T14:50:30.068Z",
+    "fetchedAt": "2025-12-04T00:28:00.674Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -2714,7 +2723,7 @@
     }
   },
   "https://api.w3.org/groups/wg": {
-    "fetchedAt": "2025-12-03T14:50:21.469Z",
+    "fetchedAt": "2025-12-04T00:27:52.883Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -2916,7 +2925,7 @@
     }
   },
   "https://api.w3.org/groups/wg/css": {
-    "fetchedAt": "2025-12-03T14:50:19.928Z",
+    "fetchedAt": "2025-12-04T00:27:51.397Z",
     "data": {
       "id": 32061,
       "name": "Cascading Style Sheets (CSS) Working Group",
@@ -2968,7 +2977,7 @@
     }
   },
   "https://api.w3.org/groups/wg/css/participations": {
-    "fetchedAt": "2025-12-03T14:50:20.197Z",
+    "fetchedAt": "2025-12-04T00:27:51.696Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -3185,7 +3194,7 @@
     }
   },
   "https://api.w3.org/groups/wg/css/users": {
-    "fetchedAt": "2025-12-03T14:50:21.221Z",
+    "fetchedAt": "2025-12-04T00:27:52.634Z",
     "data": {
       "page": 1,
       "limit": 183,
@@ -4125,7 +4134,7 @@
     }
   },
   "https://api.w3.org/groups/wg/miniapps": {
-    "fetchedAt": "2025-12-03T14:50:21.762Z",
+    "fetchedAt": "2025-12-04T00:27:53.141Z",
     "data": {
       "id": 128558,
       "name": "MiniApps Working Group",
@@ -4178,7 +4187,7 @@
     }
   },
   "https://api.w3.org/groups/wg/miniapps/participations": {
-    "fetchedAt": "2025-12-03T14:50:22.499Z",
+    "fetchedAt": "2025-12-04T00:27:53.417Z",
     "data": {
       "page": 1,
       "limit": 100,
@@ -4243,7 +4252,7 @@
     }
   },
   "https://api.w3.org/groups/wg/miniapps/users": {
-    "fetchedAt": "2025-12-03T14:50:22.973Z",
+    "fetchedAt": "2025-12-04T00:27:53.874Z",
     "data": {
       "page": 1,
       "limit": 100,
