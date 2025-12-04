@@ -1,14 +1,10 @@
+// 先頭でデータ用変数を宣言
 const https = require('https');
 const http = require('http');
 const zlib = require('zlib');
 const fs = require('fs');
-
-function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
-
-// 統一されたリクエスト間隔
-// W3C API制限: 6000 requests per IP every 10 minutes
-// 200ms間隔 = 5 requests/sec = 300 requests/min = 3000 requests/10min (制限の50%使用)
-const REQUEST_INTERVAL = 200;
+const argv = require('minimist')(process.argv.slice(2));
+const VERBOSE = !!argv.verbose;
 
 let collectedGroupsData = {}; // グループ関連データ
 let collectedParticipationsData = {}; // participation詳細データ
@@ -16,6 +12,59 @@ let collectedUsersData = {}; // ユーザー詳細データ
 let collectedAffiliationsData = {}; // affiliations データ
 let fetchStartTime = ''; // 取得開始時刻（表示用）
 let fetchStartTimestamp = 0; // 取得開始時刻（タイムスタンプ）
+
+// データ初期化はrequire宣言の後に
+if (Object.keys(collectedGroupsData).length === 0 && fs.existsSync('data/w3c-groups.json')) {
+  try {
+    const groupsContent = fs.readFileSync('data/w3c-groups.json', 'utf8');
+    collectedGroupsData = JSON.parse(groupsContent);
+    if (VERBOSE) console.log('[INFO] Loaded groups data from w3c-groups.json (phase3)');
+  } catch (e) {
+    console.error(`[ERROR] Failed to load w3c-groups.json in phase3: ${e.message}`);
+  }
+}
+if (Object.keys(collectedGroupsData).length === 0 && fs.existsSync('data/w3c-groups.json')) {
+  try {
+    const groupsContent = fs.readFileSync('data/w3c-groups.json', 'utf8');
+    collectedGroupsData = JSON.parse(groupsContent);
+    if (VERBOSE) console.log('[INFO] Loaded groups data from w3c-groups.json');
+  } catch (e) {
+    console.error(`[ERROR] Failed to load w3c-groups.json: ${e.message}`);
+  }
+}
+if (Object.keys(collectedParticipationsData).length === 0 && fs.existsSync('data/w3c-participations.json')) {
+  try {
+    const participationsContent = fs.readFileSync('data/w3c-participations.json', 'utf8');
+    collectedParticipationsData = JSON.parse(participationsContent);
+    if (VERBOSE) console.log('[INFO] Loaded participations data from w3c-participations.json');
+  } catch (e) {
+    console.error(`[ERROR] Failed to load w3c-participations.json: ${e.message}`);
+  }
+}
+if (Object.keys(collectedUsersData).length === 0 && fs.existsSync('data/w3c-users.json')) {
+  try {
+    const usersContent = fs.readFileSync('data/w3c-users.json', 'utf8');
+    collectedUsersData = JSON.parse(usersContent);
+    if (VERBOSE) console.log('[INFO] Loaded users data from w3c-users.json');
+  } catch (e) {
+    console.error(`[ERROR] Failed to load w3c-users.json: ${e.message}`);
+  }
+}
+if (Object.keys(collectedAffiliationsData).length === 0 && fs.existsSync('data/w3c-affiliations.json')) {
+  try {
+    const affiliationsContent = fs.readFileSync('data/w3c-affiliations.json', 'utf8');
+    collectedAffiliationsData = JSON.parse(affiliationsContent);
+    if (VERBOSE) console.log('[INFO] Loaded affiliations data from w3c-affiliations.json');
+  } catch (e) {
+    console.error(`[ERROR] Failed to load w3c-affiliations.json: ${e.message}`);
+  }
+}
+function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+// 統一されたリクエスト間隔
+// W3C API制限: 6000 requests per IP every 10 minutes
+// 200ms間隔 = 5 requests/sec = 300 requests/min = 3000 requests/10min (制限の50%使用)
+const REQUEST_INTERVAL = 200;
 
 function addToGroupsCollection(url, data) {
   collectedGroupsData[url] = {
@@ -167,6 +216,7 @@ function fetchJson(url, retries = 6, backoffMs = 5000, timeoutMs = 180000, redir
         'Connection': 'close'
       };
 
+      if (VERBOSE) console.log(`request for ${url}`);
       const req = lib.get(url, { headers, timeout: timeoutMs }, res => {
         if (res.statusCode >= 300 && res.statusCode < 400 && redirects > 0 && res.headers.location) {
           const next = new URL(res.headers.location, url).toString();
@@ -242,7 +292,7 @@ async function fetchData(startUrl, targetCollection = 'groups') {
   
   // すべてのページを取得
   while (url) {
-    console.warn(`request for ${url}`);
+    if (VERBOSE) console.log(`request for ${url}`);
     try {
       const r = await fetchJson(url, 6, 5000, 120000);
       pages.push(r);
@@ -348,7 +398,11 @@ async function processGroupType(typeUrl) {
     // Fetch all pages for this group type
     console.log(`Fetching ${typeName} list pages...`);
     const typePages = await fetchData(typeUrl, 'groups');
-    console.log(`✓ Fetched ${typeName} list (${typePages.length} page(s) merged)`);
+    const entry = collectedParticipationsData[url];
+    if (!entry || !entry.data) {
+      return;
+    }
+    const data = entry.data;
     
     // Extract groups from the merged result
     const groups = typePages[0]?._links?.groups || [];
@@ -360,7 +414,6 @@ async function processGroupType(typeUrl) {
       const g = groups[i];
       const groupName = g.title || g.name || g.id || 'unknown';
       console.log(`[${i + 1}/${groups.length}] Processing: ${groupName}`);
-
       try {
         // Fetch group details
         const groupHref = g.href;
@@ -407,10 +460,12 @@ async function fetchAllParticipationDetails() {
   const allParticipations = [];
   
   for (const url in collectedGroupsData) {
-    const data = collectedGroupsData[url].data;
+    const entry = collectedGroupsData[url];
+    if (!entry || !entry.data) continue;
+    const data = entry.data;
     if (data._links && data._links.participations && Array.isArray(data._links.participations)) {
       for (const part of data._links.participations) {
-        if (part.href && !allParticipations.includes(part.href)) {
+        if (part && part.href && !allParticipations.includes(part.href)) {
           allParticipations.push(part.href);
         }
       }
@@ -464,22 +519,21 @@ async function fetchAllUsers() {
   const allUsers = new Set();
   
   for (const url in collectedParticipationsData) {
-    const data = collectedParticipationsData[url].data;
-    
+    const entry = collectedParticipationsData[url];
+    if (!entry || !entry.data) continue;
+    const data = entry.data;
     // 1. individual=true または invited-expert=true のユーザー
     if ((data.individual === true || data['invited-expert'] === true) && data._links?.user?.href) {
       allUsers.add(data._links.user.href);
     }
-    
     // 2. 組織のparticipants（/participants エンドポイント）からユーザーを抽出
     if (data.individual === false && data._links?.participants) {
       const participantsListHref = url + '/participants';
       const participantsListData = collectedParticipationsData[participantsListHref];
-      
       if (participantsListData && participantsListData.data && participantsListData.data._links?.participants) {
         const participants = participantsListData.data._links.participants;
         for (const participant of participants) {
-          if (participant.href) {
+          if (participant && participant.href) {
             allUsers.add(participant.href);
           }
         }
@@ -489,18 +543,33 @@ async function fetchAllUsers() {
   
   // 3. groupsの_links.usersからもユーザーを抽出（participations=0のグループ対応）
   for (const url in collectedGroupsData) {
+    if (url === '_metadata') continue;
+    if (VERBOSE) {
+      console.log(`[DEBUG] groupsの_links.usersからもユーザーを抽出（group: ${url}`);
+    }
     const data = collectedGroupsData[url].data;
-    if (data._links?.users && typeof data._links.users === 'object' && !Array.isArray(data._links.users)) {
+    if (VERBOSE) {
+      console.log(`[DEBUG] groupsの_links.usersからもユーザーを抽出（data: ${data}`);
+    }
+    if (data && data._links?.users && typeof data._links.users === 'object' && !Array.isArray(data._links.users)) {
       // グループの _links.users はユーザーリストのURLオブジェクト
       const usersListUrl = data._links.users.href;
       if (usersListUrl) {
         const usersListData = collectedGroupsData[usersListUrl];
         if (usersListData && usersListData.data && usersListData.data._links?.users && Array.isArray(usersListData.data._links.users)) {
-          for (const user of usersListData.data._links.users) {
+          const userArr = usersListData.data._links.users;
+          if (VERBOSE) {
+            console.log(`[DEBUG] usersListUrl: ${usersListUrl}`);
+            console.log(`[DEBUG] users count: ${userArr.length}`);
+          }
+          for (const user of userArr) {
+            if (VERBOSE) console.log(`[DEBUG] user href: ${user.href}`);
             if (user.href) {
               allUsers.add(user.href);
             }
           }
+        } else {
+          if (VERBOSE) console.log(`[DEBUG] usersListUrl: ${usersListUrl} has no valid users array`);
         }
       }
     }
@@ -512,24 +581,28 @@ async function fetchAllUsers() {
   let fetchedCount = 0;
   for (let i = 0; i < allUsersArray.length; i++) {
     const userHref = allUsersArray[i];
-    
+    let userFetched = false;
     try {
       await sleep(REQUEST_INTERVAL);
-      console.log(`[${i + 1}/${allUsersArray.length}] Fetching: ${userHref}`);
+      if (VERBOSE) console.log(`[${i + 1}/${allUsersArray.length}] Fetching: ${userHref}`);
       await fetchData(userHref, 'users');
-      
+      userFetched = true;
       fetchedCount++;
-      
-      // 進捗表示（100件ごと）
-      if (fetchedCount % 100 === 0) {
+      // 進捗表示（100件ごと、または最後）
+      if (fetchedCount % 100 === 0 || i === allUsersArray.length - 1) {
         const duration = Date.now() - fetchStartTimestamp;
-        console.log(`\n--- Progress: ${fetchedCount}/${allUsersArray.length} (${formatDuration(duration)}) ---\n`);
+        console.log(`--- Progress: ${fetchedCount}/${allUsersArray.length} user details (${formatDuration(duration)})`);
       }
     } catch (e) {
       console.warn(`error fetching user ${userHref}: ${e.message}, skipping`);
+      // エラーも必ず記録
+      addToUsersCollection(userHref, { _error: String(e) });
+    }
+    // fetchDataが失敗してもaddToUsersCollectionでキーを必ず残す
+    if (!collectedUsersData[userHref]) {
+      addToUsersCollection(userHref, { _error: 'No API response' });
     }
   }
-  
   console.log(`\n✓ Completed: Fetched ${fetchedCount}/${allUsersArray.length} users`);
 }
 
@@ -537,100 +610,36 @@ async function fetchAllAffiliations() {
   console.log('\n========== Fetching User Affiliations ==========');
   
   // usersDataからユーザーのaffiliationsリストを取得
-  const allUsers = Object.keys(collectedUsersData);
+  const allUsers = Object.keys(collectedUsersData).filter(u => u !== '_metadata');
   console.log(`Found ${allUsers.length} users to fetch affiliations\n`);
   
-  let fetchedAffiliationsLists = 0;
-  let fetchedAffiliationDetails = 0;
-  
+  let fetchedAffiliations = 0;
   for (let i = 0; i < allUsers.length; i++) {
     const userHref = allUsers[i];
-    const affiliationsHref = userHref.replace(/\/$/, '') + '/affiliations';
-    
+    const affListHref = userHref + '/affiliations';
     try {
       await sleep(REQUEST_INTERVAL);
-      console.log(`[${i + 1}/${allUsers.length}] Fetching affiliations list: ${affiliationsHref}`);
-      const affiliationsPages = await fetchData(affiliationsHref, 'affiliations');
-      fetchedAffiliationsLists++;
-      
-      // affiliationsリストから各affiliation詳細を取得
-      const affiliationsData = affiliationsPages[0];
-      if (affiliationsData && affiliationsData._links && affiliationsData._links.affiliations) {
-        const affiliationItems = affiliationsData._links.affiliations;
-        for (const affItem of affiliationItems) {
-          const affHref = affItem.href;
-          if (affHref) {
-            try {
-              await sleep(REQUEST_INTERVAL);
-              console.log(`  → Fetching affiliation detail: ${affHref}`);
-              await fetchData(affHref, 'affiliations');
-              fetchedAffiliationDetails++;
-            } catch (e) {
-              console.warn(`  error fetching affiliation ${affHref}: ${e.message}, skipping`);
-            }
-          }
-        }
-      }
-      
-      // 進捗表示（20件ごと）
-      if ((i + 1) % 20 === 0) {
+      if (VERBOSE) console.log(`[${i + 1}/${allUsers.length}] Fetching affiliations list: ${affListHref}`);
+      const affListPages = await fetchData(affListHref, 'affiliations');
+      fetchedAffiliations++;
+      if (fetchedAffiliations % 100 === 0 || i === allUsers.length - 1) {
         const duration = Date.now() - fetchStartTimestamp;
-        console.log(`\n--- Progress: ${i + 1}/${allUsers.length} users, ${fetchedAffiliationDetails} affiliation details (${formatDuration(duration)}) ---\n`);
+        console.log(`--- Progress: ${i + 1}/${allUsers.length} users, ${fetchedAffiliations} affiliation details (${formatDuration(duration)})`);
       }
     } catch (e) {
-      console.warn(`error fetching affiliations ${affiliationsHref}: ${e.message}, skipping`);
+      // ...
     }
   }
-  
-  console.log(`\n✓ Completed: Fetched ${fetchedAffiliationsLists} affiliations lists, ${fetchedAffiliationDetails} affiliation details`);
+  console.log(`\n✓ Completed: Fetched ${fetchedAffiliations}/${allUsers.length} affiliations lists`);
 }
 
-async function main() {
-  // 取得開始時刻を記録
-  fetchStartTimestamp = Date.now();
-  const now = new Date(fetchStartTimestamp);
-  fetchStartTime = now.toISOString()
-    .replace(/[-:]/g, '')
-    .replace(/T/, '-')
-    .split('.')[0]; // 20251202-044759
-  
-  console.log(`Fetch started at: ${fetchStartTime}`);
-  console.log(`
-Usage:
-  node scripts/fetch-w3c-data.js                    # Fetch all data (groups + participations + users + affiliations)
-  node scripts/fetch-w3c-data.js --test             # Test mode (5 sample groups)
-  node scripts/fetch-w3c-data.js --groups           # Fetch only groups, participations lists, users lists
-  node scripts/fetch-w3c-data.js --participations   # Fetch only participation details (requires w3c-groups.json)
-  node scripts/fetch-w3c-data.js --users            # Fetch only user details (requires w3c-participations.json)
-  node scripts/fetch-w3c-data.js --affiliations     # Fetch only affiliations (requires w3c-users.json)
-  node scripts/fetch-w3c-data.js --groups --participations  # Fetch groups and participations
-  `);
-  
-  fs.mkdirSync('data', { recursive: true });
 
-  // Check for mode options
-  const isTestMode = process.argv.includes('--test');
-  const fetchGroups = process.argv.includes('--groups');
-  const fetchParticipations = process.argv.includes('--participations');
-  const fetchUsers = process.argv.includes('--users');
-  const fetchAffiliations = process.argv.includes('--affiliations');
-  
-  // オプション指定がない場合は全て取得
-  const fetchAll = !fetchGroups && !fetchParticipations && !fetchUsers && !fetchAffiliations;
-  const shouldFetchGroups = fetchAll || fetchGroups;
-  const shouldFetchParticipations = fetchAll || fetchParticipations;
-  const shouldFetchUsers = fetchAll || fetchUsers;
-  const shouldFetchAffiliations = fetchAll || fetchAffiliations;
-  
-  // Phase 1: Groups, Participations Lists, Users
-  if (shouldFetchGroups) {
-    console.log('\n========== PHASE 1: Fetching Groups, Participations Lists, and Users ==========\n');
-    
-    if (isTestMode) {
-      console.log('Running in TEST mode - fetching 7 sample groups\n');
-      
-      // Test with one group from each type
-      const testGroups = [
+async function phase1_fetchGroupsParticipationsUsers({isTestMode}) {
+  // shouldFetchGroupsはmainで判定。isTestModeのみ引数で受け取る。
+  console.log('\n========== PHASE 1: Fetching Groups, Participations Lists, and Users ==========\n');
+  if (isTestMode) {
+    console.log('Running in TEST mode - fetching 7 sample groups\n');
+    const testGroups = [
       { type: 'wg', shortname: 'css' },
       { type: 'wg', shortname: 'miniapps' },
       { type: 'ig', shortname: 'i18n' },
@@ -639,54 +648,37 @@ Usage:
       { type: 'tf', shortname: 'ab-elected' },
       { type: 'other', shortname: 'ab' }
     ];
-    
     for (let i = 0; i < testGroups.length; i++) {
       const { type, shortname } = testGroups[i];
       const typeUrl = `https://api.w3.org/groups/${type}`;
-      
       console.log(`\n========== Processing ${type.toUpperCase()} (test mode) ==========`);
-      
-      // Fetch the type list
       const typePages = await fetchData(typeUrl, 'groups');
       const groups = typePages[0]?._links?.groups || [];
       console.log(`Found ${groups.length} ${type.toUpperCase()} groups (filtering for ${type}/${shortname})\n`);
-      
-      // Find the specific test group
       const testGroup = groups.find(g => g.href && g.href.includes(`/${type}/${shortname}`));
-      
       if (testGroup) {
         const groupName = testGroup.title || testGroup.name || 'unknown';
         console.log(`[1/1] Processing: ${groupName}`);
-        
-        // Process this single group
         const groupHref = testGroup.href;
-        
         try {
-          // Fetch group details
           if (groupHref) {
             console.log(`  → Fetching group details from ${groupHref}`);
             await fetchData(groupHref, 'groups');
             console.log(`    ✓ Fetched group details`);
           }
-
           const partHref = testGroup._links?.participations?.href || (groupHref ? groupHref.replace(/\/$/, '') + '/participations' : null);
           const usersHref = testGroup._links?.users?.href || (groupHref ? groupHref.replace(/\/$/, '') + '/users' : null);
-          
-          // Fetch participations list
           if (partHref) {
             console.log(`  → Fetching participations list from ${partHref}`);
             const participationsPages = await fetchData(partHref, 'groups');
             console.log(`    ✓ Fetched and merged participations list (${participationsPages.length} page(s) merged)`);
           }
-          
-          // Fetch users
           if (usersHref) {
             await sleep(REQUEST_INTERVAL);
             console.log(`  → Fetching users pages from ${usersHref}`);
             const usersPages = await fetchData(usersHref, 'groups');
             console.log(`    ✓ Fetched and merged users (${usersPages.length} page(s) merged)`);
           }
-          
           console.log(`✓ Completed ${type.toUpperCase()}: Processed 1/1 groups`);
         } catch (e) {
           console.error(`  Unexpected error processing group ${groupName}: ${e.message}`);
@@ -694,122 +686,154 @@ Usage:
       } else {
         console.warn(`⚠ Test group ${type}/${shortname} not found`);
       }
-      
-      // Wait between types (except after the last one)
       if (i < testGroups.length - 1) {
         await sleep(REQUEST_INTERVAL);
       }
     }
-    } else {
-      // Process all group types
-      const groupTypes = ['wg', 'ig', 'cg', 'tf', 'other'];
-      
-      for (let i = 0; i < groupTypes.length; i++) {
-        const type = groupTypes[i];
-        await processGroupType(`https://api.w3.org/groups/${type}`);
-        
-        // Wait between types (except after the last one)
-        if (i < groupTypes.length - 1) {
-          await sleep(REQUEST_INTERVAL);
-        }
+  } else {
+    const groupTypes = ['wg', 'ig', 'cg', 'tf', 'other'];
+    for (let i = 0; i < groupTypes.length; i++) {
+      const type = groupTypes[i];
+      await processGroupType(`https://api.w3.org/groups/${type}`);
+      if (i < groupTypes.length - 1) {
+        await sleep(REQUEST_INTERVAL);
       }
     }
-    
-    // Phase 1完了 - w3c-groups.jsonを保存
-    console.log(`\n========== PHASE 1 Complete ==========`);
-    console.log(`Total groups data collected: ${Object.keys(collectedGroupsData).length}`);
-    const phase1Written = compareAndWriteJson('w3c-groups', collectedGroupsData);
-    if (phase1Written) {
-      console.log('✓ Groups data successfully saved');
+  }
+  console.log(`\n========== PHASE 1 Complete ==========`);
+  console.log(`Total groups data collected: ${Object.keys(collectedGroupsData).length}`);
+  const phase1Written = compareAndWriteJson('w3c-groups', collectedGroupsData);
+  if (phase1Written) {
+    console.log('✓ Groups data successfully saved');
+  }
+}
+
+async function phase2_fetchParticipations() {
+  console.log('\n========== PHASE 2: Fetching Participation Details ==========\n');
+     if (Object.keys(collectedGroupsData).length === 0) {
+    console.log('Loading w3c-groups.json\n');
+    try {
+      const groupsContent = fs.readFileSync('data/w3c-groups.json', 'utf8');
+      collectedGroupsData = JSON.parse(groupsContent);
+      console.log(`Loaded ${Object.keys(collectedGroupsData).length} items from w3c-groups.json\n`);
+    } catch (e) {
+      console.error(`Error: Cannot load w3c-groups.json: ${e.message}`);
+      console.error('Please run with --groups first to generate w3c-groups.json');
+      process.exit(1);
     }
-  } // end of shouldFetchGroups
-  
-  // Phase 2 - Participation詳細の取得
+  }
+  await fetchAllParticipationDetails();
+  console.log(`\n========== PHASE 2 Complete ==========`);
+  console.log(`Total participations data collected: ${Object.keys(collectedParticipationsData).length}`);
+  const phase2Written = compareAndWriteJson('w3c-participations', collectedParticipationsData);
+  if (phase2Written) {
+    console.log('✓ Participations data successfully saved');
+  }
+}
+
+async function phase3_fetchUsers() {
+  console.log('\n========== PHASE 3: Fetching User Details ==========\n');
+     if (Object.keys(collectedGroupsData).length === 0) {
+    console.log('Loading w3c-groups.json\n');
+    try {
+      const groupsContent = fs.readFileSync('data/w3c-groups.json', 'utf8');
+      collectedGroupsData = JSON.parse(groupsContent);
+      console.log(`Loaded ${Object.keys(collectedGroupsData).length} items from w3c-groups.json\n`);
+    } catch (e) {
+      console.error(`Error: Cannot load w3c-groups.json: ${e.message}`);
+      console.error('Please run with --groups first to generate w3c-groups.json');
+      process.exit(1);
+    }
+  }
+     if (Object.keys(collectedParticipationsData).length === 0) {
+    console.log('Loading w3c-participations.json\n');
+    try {
+      const participationsContent = fs.readFileSync('data/w3c-participations.json', 'utf8');
+      collectedParticipationsData = JSON.parse(participationsContent);
+      console.log(`Loaded ${Object.keys(collectedParticipationsData).length} items from w3c-participations.json\n`);
+    } catch (e) {
+      console.error(`Error: Cannot load w3c-participations.json: ${e.message}`);
+      console.error('Please run with --participations first to generate w3c-participations.json');
+      process.exit(1);
+    }
+  }
+  await fetchAllUsers();
+  console.log(`\n========== PHASE 3 Complete ==========`);
+  console.log(`Total users data collected: ${Object.keys(collectedUsersData).length}`);
+  const phase3Written = compareAndWriteJson('w3c-users', collectedUsersData);
+  if (phase3Written) {
+    console.log('✓ Users data successfully saved');
+  }
+}
+
+async function phase4_fetchAffiliations() {
+  // shouldFetchAffiliationsはmainで判定。shouldFetchUsersのみ引数で受け取る。
+  console.log('\n========== PHASE 4: Fetching Affiliations ==========\n');
+     if (Object.keys(collectedUsersData).length === 0) {
+    console.log('Loading w3c-users.json');
+    try {
+      const usersContent = fs.readFileSync('data/w3c-users.json', 'utf8');
+      collectedUsersData = JSON.parse(usersContent);
+      console.log(`Loaded ${Object.keys(collectedUsersData).length} items from w3c-users.json\n`);
+    } catch (e) {
+      console.error(`Error: Cannot load w3c-users.json: ${e.message}`);
+      console.error('Please run with --users first to generate w3c-users.json');
+      process.exit(1);
+    }
+  }
+  await fetchAllAffiliations();
+  console.log(`\n========== PHASE 4 Complete ==========`);
+  console.log(`Total affiliations data collected: ${Object.keys(collectedAffiliationsData).length}`);
+  const phase4Written = compareAndWriteJson('w3c-affiliations', collectedAffiliationsData);
+  if (phase4Written) {
+    console.log('✓ Affiliations data successfully saved');
+  }
+}
+
+async function main() {
+  fetchStartTimestamp = Date.now();
+  const now = new Date(fetchStartTimestamp);
+  fetchStartTime = now.toISOString()
+    .replace(/[-:]/g, '')
+    .replace(/T/, '-')
+    .split('.')[0];
+  console.log(`Fetch started at: ${fetchStartTime}`);
+  if (process.argv.includes('--help') || process.argv.includes('-h')) {
+    console.log(`\nUsage:
+  node scripts/fetch-w3c-data.js                    # Fetch all data (groups + participations + users + affiliations)
+  node scripts/fetch-w3c-data.js --groups --test     # Test mode (7 sample groups, groups phase only)
+  node scripts/fetch-w3c-data.js --groups           # Fetch only groups, participations lists, users lists
+  node scripts/fetch-w3c-data.js --participations   # Fetch only participation details (requires w3c-groups.json)
+  node scripts/fetch-w3c-data.js --users            # Fetch only user details (requires w3c-participations.json)
+  node scripts/fetch-w3c-data.js --affiliations     # Fetch only affiliations (requires w3c-users.json)
+  node scripts/fetch-w3c-data.js --groups --participations  # Fetch groups and participations
+  node scripts/fetch-w3c-data.js --verbose          # Show detailed fetch logs\n`);
+    process.exit(0);
+  }
+  fs.mkdirSync('data', { recursive: true });
+  const isTestMode = process.argv.includes('--test') && process.argv.includes('--groups');
+  const fetchGroups = process.argv.includes('--groups');
+  const fetchParticipations = process.argv.includes('--participations');
+  const fetchUsers = process.argv.includes('--users');
+  const fetchAffiliations = process.argv.includes('--affiliations');
+  const fetchAll = !fetchGroups && !fetchParticipations && !fetchUsers && !fetchAffiliations;
+  const shouldFetchGroups = fetchAll || fetchGroups;
+  const shouldFetchParticipations = fetchAll || fetchParticipations;
+  const shouldFetchUsers = fetchAll || fetchUsers;
+  const shouldFetchAffiliations = fetchAll || fetchAffiliations;
+
+  if (shouldFetchGroups) {
+    await phase1_fetchGroupsParticipationsUsers({ isTestMode });
+  }
   if (shouldFetchParticipations) {
-    console.log('\n========== PHASE 2: Fetching Participation Details ==========\n');
-    
-    // groupsを取得していない場合、w3c-groups.json を読み込む
-    if (!shouldFetchGroups) {
-      console.log('Loading w3c-groups.json (--groups not specified)\n');
-      try {
-        const groupsContent = fs.readFileSync('data/w3c-groups.json', 'utf8');
-        collectedGroupsData = JSON.parse(groupsContent);
-        console.log(`Loaded ${Object.keys(collectedGroupsData).length} items from w3c-groups.json\n`);
-      } catch (e) {
-        console.error(`Error: Cannot load w3c-groups.json: ${e.message}`);
-        console.error('Please run with --groups first to generate w3c-groups.json');
-        process.exit(1);
-      }
-    }
-    
-    await fetchAllParticipationDetails();
-    
-    // Phase 2完了 - w3c-participations.jsonを保存
-    console.log(`\n========== PHASE 2 Complete ==========`);
-    console.log(`Total participations data collected: ${Object.keys(collectedParticipationsData).length}`);
-    const phase2Written = compareAndWriteJson('w3c-participations', collectedParticipationsData);
-    if (phase2Written) {
-      console.log('✓ Participations data successfully saved');
-    }
-  } // end of shouldFetchParticipations
-  
-  // Phase 3 - Users の取得
+    await phase2_fetchParticipations({ shouldFetchGroups });
+  }
   if (shouldFetchUsers) {
-    console.log('\n========== PHASE 3: Fetching User Details ==========\n');
-    
-    // participationsを読み込む
-    if (!shouldFetchParticipations) {
-      console.log('Loading w3c-participations.json (--participations not specified)\n');
-      try {
-        const participationsContent = fs.readFileSync('data/w3c-participations.json', 'utf8');
-        collectedParticipationsData = JSON.parse(participationsContent);
-        console.log(`Loaded ${Object.keys(collectedParticipationsData).length} items from w3c-participations.json\n`);
-      } catch (e) {
-        console.error(`Error: Cannot load w3c-participations.json: ${e.message}`);
-        console.error('Please run with --participations first to generate w3c-participations.json');
-        process.exit(1);
-      }
-    }
-    
-    await fetchAllUsers();
-    
-    // Phase 3完了 - w3c-users.jsonを保存
-    console.log(`\n========== PHASE 3 Complete ==========`);
-    console.log(`Total users data collected: ${Object.keys(collectedUsersData).length}`);
-    const phase3Written = compareAndWriteJson('w3c-users', collectedUsersData);
-    if (phase3Written) {
-      console.log('✓ Users data successfully saved');
-    }
-  } // end of shouldFetchUsers
-  
-  // Phase 4 - Affiliations の取得
+    await phase3_fetchUsers({ shouldFetchParticipations });
+  }
   if (shouldFetchAffiliations) {
-    console.log('\n========== PHASE 4: Fetching Affiliations ==========\n');
-    
-    // usersを読み込む
-    if (!shouldFetchUsers) {
-      console.log('Loading w3c-users.json (--users not specified)\n');
-      try {
-        const usersContent = fs.readFileSync('data/w3c-users.json', 'utf8');
-        collectedUsersData = JSON.parse(usersContent);
-        console.log(`Loaded ${Object.keys(collectedUsersData).length} items from w3c-users.json\n`);
-      } catch (e) {
-        console.error(`Error: Cannot load w3c-users.json: ${e.message}`);
-        console.error('Please run with --users first to generate w3c-users.json');
-        process.exit(1);
-      }
-    }
-    
-    await fetchAllAffiliations();
-    
-    // Phase 4完了 - w3c-affiliations.jsonを保存
-    console.log(`\n========== PHASE 4 Complete ==========`);
-    console.log(`Total affiliations data collected: ${Object.keys(collectedAffiliationsData).length}`);
-    const phase4Written = compareAndWriteJson('w3c-affiliations', collectedAffiliationsData);
-    if (phase4Written) {
-      console.log('✓ Affiliations data successfully saved');
-    }
-  } // end of shouldFetchAffiliations
+    await phase4_fetchAffiliations({ shouldFetchUsers });
+  }
 
   const duration = Date.now() - fetchStartTimestamp;
   console.log(`\n========== All Done ==========`);
