@@ -37,26 +37,45 @@ async function compareAndWriteJson(filename, collectedData) {
   // 所要時間を計算
   const duration = Date.now() - fetchStartTimestamp;
   const durationStr = formatDuration(duration);
-  
   const mainFile = `data/${filename}.json`;
-  
   let hasChanges = true;
   let sortedData = {};
-  let existingMetadata = {};
   try {
     // 既存ファイルがあれば比較
     if (fs.existsSync(mainFile)) {
       const prevContent = fs.readFileSync(mainFile, 'utf8');
       const prevJson = JSON.parse(prevContent);
       existingMetadata = prevJson._metadata || {};
-      // データ部分のみ比較（_metadata除外）
-      const prevData = Object.assign({}, prevJson);
-      delete prevData._metadata;
+      // データ部分のみ比較（_metadata除外、各エントリのfetchedAt除外）
+      const stripFetchedAt = obj => {
+        if (typeof obj !== 'object' || obj === null) return obj;
+        const newObj = Array.isArray(obj) ? [] : {};
+        for (const k in obj) {
+          if (k === '_metadata') continue;
+          if (obj[k] && typeof obj[k] === 'object' && obj[k] !== null) {
+            // fetchedAtを除外
+            const entry = { ...obj[k] };
+            if ('fetchedAt' in entry) delete entry.fetchedAt;
+            newObj[k] = stripFetchedAt(entry);
+          } else {
+            newObj[k] = obj[k];
+          }
+        }
+        return newObj;
+      };
+      const prevDataStripped = stripFetchedAt(prevJson);
+      const newDataStripped = stripFetchedAt(collectedData);
       // 新データをソート
-      sortedData = {};
-      Object.keys(collectedData).sort().forEach(k => { sortedData[k] = collectedData[k]; });
+      const sortObj = obj => {
+        const sorted = {};
+        Object.keys(obj).sort().forEach(k => { sorted[k] = obj[k]; });
+        return sorted;
+      };
+      const prevSorted = sortObj(prevDataStripped);
+      const newSorted = sortObj(newDataStripped);
       // 差分判定
-      hasChanges = JSON.stringify(prevData) !== JSON.stringify(sortedData);
+      hasChanges = JSON.stringify(prevSorted) !== JSON.stringify(newSorted);
+      sortedData = newSorted;
     } else {
       sortedData = {};
       Object.keys(collectedData).sort().forEach(k => { sortedData[k] = collectedData[k]; });
@@ -65,25 +84,25 @@ async function compareAndWriteJson(filename, collectedData) {
   } catch (e) {
     console.error(`Failed to write ${filename}.json: ${e.message}`);
   }
-  // データが変わっていない場合は既存のメタデータとfetchedAtを使用、変わった場合は新しいメタデータ
+  // データが変わっていない場合はファイル保存を行わない
+  if (!hasChanges) {
+    console.log(`✓ No changes detected: ${mainFile} not updated.`);
+    return false;
+  }
   const finalDataWithMetadata = {
-    _metadata: hasChanges ? {
+    _metadata: {
       filename: filename,
       lastChecked: new Date(fetchStartTimestamp).toISOString(),
       fetchStartTime: fetchStartTime,
       duration: durationStr,
       itemCount: Object.keys(sortedData).length
-    } : existingMetadata,
+    },
     ...sortedData
   };
   const finalContent = JSON.stringify(finalDataWithMetadata, null, 2);
   fs.writeFileSync(mainFile, finalContent, 'utf8');
-  if (hasChanges) {
-    console.log(`✓ Main file updated with data changes: ${mainFile}`);
-  } else {
-    console.log(`✓ Main file updated with metadata only: ${mainFile}`);
-  }
-  return hasChanges;
+  console.log(`✓ Main file updated with data changes: ${mainFile}`);
+  return true;
 }
 
 function fetchJson(url, retries = 6, backoffMs = 5000, timeoutMs = 180000, redirects = 5) {
@@ -92,9 +111,10 @@ function fetchJson(url, retries = 6, backoffMs = 5000, timeoutMs = 180000, redir
       const target = new URL(url);
       const lib = target.protocol === 'http:' ? http : https;
       const headers = {
-        'Accept': 'application/json, text/*;q=0.1',
+        'Accept': 'application/json',
         'Accept-Encoding': 'gzip,deflate',
-        'Connection': 'close'
+        'Connection': 'close',
+        'User-Agent': 'curl/8.0.1'
       };
 
       if (VERBOSE) console.log(`request for ${url}`);
@@ -108,6 +128,10 @@ function fetchJson(url, retries = 6, backoffMs = 5000, timeoutMs = 180000, redir
         let chunks = [];
         res.on('data', chunk => chunks.push(chunk));
         res.on('end', async () => {
+          const raw = Buffer.concat(chunks);
+          const enc = (res.headers['content-encoding'] || '').toLowerCase();
+
+          // HTTPエラー時はレスポンスボディも記録
           if (res.statusCode >= 400) {
             if (res.statusCode === 429 && retries > 0) {
               const ra = parseInt(res.headers['retry-after'], 10);
@@ -116,11 +140,31 @@ function fetchJson(url, retries = 6, backoffMs = 5000, timeoutMs = 180000, redir
               await new Promise(r => setTimeout(r, waitMs));
               return fetchJson(url, retries - 1, Math.round(backoffMs * 1.5), timeoutMs, redirects).then(resolve).catch(reject);
             }
-            return reject(new Error(`${res.statusCode} ${url}`));
+            let bodyText = '';
+            try {
+              if (enc === 'gzip') {
+                bodyText = await new Promise((resolveText, rejectText) => {
+                  zlib.gunzip(raw, (err, out) => err ? rejectText(err) : resolveText(out.toString('utf8')));
+                });
+              } else if (enc === 'deflate') {
+                bodyText = await new Promise((resolveText, rejectText) => {
+                  zlib.inflate(raw, (err, out) => err ? rejectText(err) : resolveText(out.toString('utf8')));
+                });
+              } else {
+                bodyText = raw.toString('utf8');
+              }
+            } catch (decompErr) {
+              bodyText = `[decompression error: ${decompErr}]`;
+            }
+            const errorDetail = {
+              statusCode: res.statusCode,
+              url,
+              headers: res.headers,
+              message: `HTTP error ${res.statusCode}`,
+              body: bodyText
+            };
+            return reject(errorDetail);
           }
-
-          const raw = Buffer.concat(chunks);
-          const enc = (res.headers['content-encoding'] || '').toLowerCase();
 
           const finish = (buf) => {
             try {
@@ -128,14 +172,21 @@ function fetchJson(url, retries = 6, backoffMs = 5000, timeoutMs = 180000, redir
               const data = JSON.parse(text);
               return resolve(data);
             } catch (e) {
-              return reject(e);
+              // パース失敗時はテキストも記録
+              return reject({
+                error: e,
+                url,
+                statusCode: res.statusCode,
+                headers: res.headers,
+                rawText: buf.toString('utf8')
+              });
             }
           };
 
           if (enc === 'gzip') {
-            zlib.gunzip(raw, (err, out) => err ? reject(err) : finish(out));
+            zlib.gunzip(raw, (err, out) => err ? reject({ error: err, url, statusCode: res.statusCode, headers: res.headers }) : finish(out));
           } else if (enc === 'deflate') {
-            zlib.inflate(raw, (err, out) => err ? reject(err) : finish(out));
+            zlib.inflate(raw, (err, out) => err ? reject({ error: err, url, statusCode: res.statusCode, headers: res.headers }) : finish(out));
           } else {
             finish(raw);
           }
@@ -143,13 +194,20 @@ function fetchJson(url, retries = 6, backoffMs = 5000, timeoutMs = 180000, redir
       });
 
       req.on('error', async (err) => {
+        // 詳細なエラー情報をコンソールに出力
+        console.warn(`request error for ${url}: message=${err.message} code=${err.code || ''} stack=${err.stack || ''}`);
         if (retries > 0) {
           const wait = backoffMs;
-          console.warn(`request error for ${url}: ${err.message}. retrying after ${wait}ms (${retries - 1} left)`);
           await new Promise(r => setTimeout(r, wait));
           return fetchJson(url, retries - 1, Math.round(backoffMs * 1.5), timeoutMs, redirects).then(resolve).catch(reject);
         }
-        reject(err);
+        // JSONにも詳細を記録
+        reject({
+          message: err.message,
+          code: err.code,
+          stack: err.stack,
+          url
+        });
       });
 
       req.setTimeout(timeoutMs, () => {
@@ -186,12 +244,28 @@ async function fetchData(startUrl) {
 
       if (url) await sleep(REQUEST_INTERVAL);
     } catch (e) {
-      if (e.message && e.message.startsWith('404')) {
-        console.warn(`[WARN] Not Found: ${url} (${e.message})`);
+      let errorMsg = '';
+      if (typeof e === 'object' && e !== null) {
+        // statusCodeとurlがあれば必ず含める
+        if (e.statusCode && e.url) {
+          errorMsg = `Error: ${e.statusCode} ${e.url}`;
+        } else if (e.message && e.url) {
+          errorMsg = `Error: ${e.message} ${e.url}`;
+        } else if (e.message) {
+          errorMsg = `Error: ${e.message}`;
+        } else if (e.statusCode) {
+          errorMsg = `Error: ${e.statusCode}`;
+        } else {
+          errorMsg = JSON.stringify(e);
+        }
       } else {
-        console.warn(`error fetching ${url}: ${e.message}, skipping`);
+        errorMsg = `${String(e)}`;
       }
-      const errObj = { error: String(e) };
+      if (errorMsg.startsWith('{')) {
+        errorMsg = '[object Object]';
+      }
+      console.warn(`[ERROR] ${errorMsg}`);
+      const errObj = { error: errorMsg };
       pages.push(errObj);
       break;
     }
@@ -355,15 +429,19 @@ async function fetchAllParticipationDetails(collectedGroupsData, collectedPartic
       await sleep(REQUEST_INTERVAL);
       console.log(`[${i + 1}/${allParticipations.length}] Fetching: ${partHref}`);
       const detailPages = await fetchData(partHref, 'participations');
-      // 取得結果をコレクションに追加
       if (detailPages && detailPages[0]) {
         collectedParticipationsData[partHref] = {
           fetchedAt: new Date().toISOString(),
           data: detailPages[0]
         };
+      } else {
+        collectedParticipationsData[partHref] = {
+          fetchedAt: new Date().toISOString(),
+          _error: 'No API response'
+        };
       }
       // Fetch participants for organization participations (individual=false)
-      const detail = detailPages[0];
+      const detail = detailPages && detailPages[0] ? detailPages[0] : null;
       if (detail && detail.individual === false && detail._links?.participants?.href) {
         const participantsHref = detail._links.participants.href;
         try {
@@ -375,10 +453,19 @@ async function fetchAllParticipationDetails(collectedGroupsData, collectedPartic
               fetchedAt: new Date().toISOString(),
               data: participantsPages[0]
             };
+          } else {
+            collectedParticipationsData[participantsHref] = {
+              fetchedAt: new Date().toISOString(),
+              _error: 'No API response'
+            };
           }
           console.log(`    ✓ Fetched ${participantsPages.length} page(s) of participants`);
         } catch (e) {
-          console.warn(`  error fetching participants ${participantsHref}: ${e.message}, skipping`);
+          collectedParticipationsData[participantsHref] = {
+            fetchedAt: new Date().toISOString(),
+            data: { error: String(e) }
+          };
+          console.warn(`  error fetching participants ${participantsHref}: ${String(e)}`);
         }
       }
       fetchedCount++;
@@ -388,10 +475,15 @@ async function fetchAllParticipationDetails(collectedGroupsData, collectedPartic
         console.log(`\n--- Progress: ${fetchedCount}/${allParticipations.length} (${formatDuration(duration)}) ---\n`);
       }
     } catch (e) {
-      console.warn(`error fetching participation ${partHref}: ${e.message}, skipping`);
+      collectedParticipationsData[partHref] = {
+        fetchedAt: new Date().toISOString(),
+        data: { error: String(e) }
+      };
+      console.warn(`error fetching participation ${partHref}: ${String(e)}`);
     }
   }
   console.log(`\n✓ Completed: Fetched ${fetchedCount}/${allParticipations.length} participations`);
+  return collectedParticipationsData;
 }
 
 async function fetchAllUsers(collectedGroupsData, collectedParticipationsData, collectedUsersData) {
@@ -555,7 +647,7 @@ async function phase1_fetchGroupsParticipationsUsers({isTestMode}) {
   console.log(`\n========== PHASE 1 Complete ==========`);
   // 保存
   console.log(`Total groups data collected: ${Object.keys(collectedGroupsData).length}`);
-  const phase1Written = compareAndWriteJson('w3c-groups', collectedGroupsData);
+  const phase1Written = await compareAndWriteJson('w3c-groups', collectedGroupsData);
   if (phase1Written) {
     console.log('✓ Groups data successfully saved');
   }
@@ -577,7 +669,7 @@ async function phase2_fetchParticipations() {
   let collectedParticipationsData = await fetchAllParticipationDetails(collectedGroupsData, {});
   console.log(`\n========== PHASE 2 Complete ==========`);
   console.log(`Total participations data collected: ${Object.keys(collectedParticipationsData).length}`);
-  const phase2Written = compareAndWriteJson('w3c-participations', collectedParticipationsData);
+  const phase2Written = await compareAndWriteJson('w3c-participations', collectedParticipationsData);
   if (phase2Written) {
     console.log('✓ Participations data successfully saved');
   }
@@ -609,14 +701,15 @@ async function phase3_fetchUsers() {
   let collectedUsersData = await fetchAllUsers(collectedGroupsData, collectedParticipationsData, {});
   console.log(`\n========== PHASE 3 Complete ==========`);
   console.log(`Total users data collected: ${Object.keys(collectedUsersData).length}`);
-  const phase3Written = compareAndWriteJson('w3c-users', collectedUsersData);
+  const phase3Written = await compareAndWriteJson('w3c-users', collectedUsersData);
   if (phase3Written) {
     console.log('✓ Users data successfully saved');
   }
 }
 
+// （重複・壊れた定義を削除）
+// PHASE 4: Affiliations
 async function phase4_fetchAffiliations() {
-  // shouldFetchAffiliationsはmainで判定。shouldFetchUsersのみ引数で受け取る。
   console.log('\n========== PHASE 4: Fetching Affiliations ==========\n');
   // usersデータを都度ロード
   let collectedUsersData = {};
@@ -628,11 +721,10 @@ async function phase4_fetchAffiliations() {
     console.error(`Error: Cannot load w3c-users.json: ${e.message}`);
     process.exit(1);
   }
-  // affiliationsデータは空で開始
   let collectedAffiliationsData = await fetchAllAffiliations(collectedUsersData, {});
   console.log(`\n========== PHASE 4 Complete ==========`);
   console.log(`Total affiliations data collected: ${Object.keys(collectedAffiliationsData).length}`);
-  const phase4Written = compareAndWriteJson('w3c-affiliations', collectedAffiliationsData);
+  const phase4Written = await compareAndWriteJson('w3c-affiliations', collectedAffiliationsData);
   if (phase4Written) {
     console.log('✓ Affiliations data successfully saved');
   }
@@ -683,16 +775,16 @@ async function main() {
   const fetchAffiliations = process.argv.includes('--affiliations');
   const fetchAll = !fetchGroups && !fetchParticipations && !fetchUsers && !fetchAffiliations;
 
-  if (fetchAll  || fetchGroups) {
+  if (fetchAll || fetchGroups) {
     await phase1_fetchGroupsParticipationsUsers({ isTestMode });
   }
   if (fetchAll || fetchParticipations) {
-    await phase2_fetchParticipations();
+    await phase2_fetchParticipations({ isTestMode });
   }
   if (fetchAll || fetchUsers) {
-    await phase3_fetchUsers({});
+    await phase3_fetchUsers();
   }
-  if (fetchAll　|| fetchAffiliations) {
+  if (fetchAll || fetchAffiliations) {
     await phase4_fetchAffiliations();
   }
 
@@ -725,7 +817,7 @@ async function main() {
     }
     if (isTestMode) {
       console.log(`Total Groups: ${totalGroupsCount}`);
-      console.log(`Tested Groups: ${testedGroupsCount}`);
+      console.log(`Tested Groups (Test Mode) : ${testedGroupsCount}`);
     } else {
       console.log(`Total Groups: ${totalGroupsCount}`);
     }
@@ -750,5 +842,5 @@ async function main() {
 
 main().catch(e => { 
   console.error('Fatal error:', e);
-  process.exit(1); 
+  process.exit(1);
 });
