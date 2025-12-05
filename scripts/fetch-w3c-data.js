@@ -117,7 +117,7 @@ function fetchJson(url, retries = 6, backoffMs = 5000, timeoutMs = 180000, redir
         'User-Agent': 'curl/8.0.1'
       };
 
-      if (VERBOSE) console.log(`request for ${url}`);
+      if (VERBOSE && !process.env.SUPPRESS_REQUEST_LOG) console.log(`    [REQUEST] ${url}`);
       const req = lib.get(url, { headers, timeout: timeoutMs }, res => {
         if (res.statusCode >= 300 && res.statusCode < 400 && redirects > 0 && res.headers.location) {
           const next = new URL(res.headers.location, url).toString();
@@ -130,6 +130,14 @@ function fetchJson(url, retries = 6, backoffMs = 5000, timeoutMs = 180000, redir
         res.on('end', async () => {
           const raw = Buffer.concat(chunks);
           const enc = (res.headers['content-encoding'] || '').toLowerCase();
+
+          // [RESPONSE] ログ出力（status, content-length, mime-type）
+          if (VERBOSE && !process.env.SUPPRESS_REQUEST_LOG) {
+            const status = res.statusCode;
+            const clen = res.headers['content-length'] || raw.length;
+            const mime = res.headers['content-type'] || '';
+            console.log(`    [RESPONSE] status=${status} content-length=${clen} mime-type=${mime}`);
+          }
 
           // HTTPエラー時はレスポンスボディも記録
           if (res.statusCode >= 400) {
@@ -231,7 +239,6 @@ async function fetchData(startUrl) {
 
   // すべてのページを取得
   while (url) {
-    if (VERBOSE) console.log(`request for ${url}`);
     try {
       const r = await fetchJson(url, 6, 5000, 120000);
       pages.push(r);
@@ -273,7 +280,7 @@ async function fetchData(startUrl) {
 
   const resultObj = {};
 
-  // ページが1つだけの場合、resultObjに格納
+  // ページが1つだけの場合、エラーでも必ずfetchedAt/data形式で格納
   if (pages.length === 1) {
     resultObj[startUrl] = {
       fetchedAt: new Date().toISOString(),
@@ -282,8 +289,9 @@ async function fetchData(startUrl) {
     return resultObj;
   }
 
-  // 複数ページの場合、マージして1つのページ形式にする
-  if (pages.length > 1) {
+  // 複数ページの場合、正常ページのみマージ。全ページエラーならエラーを格納
+  const validPages = pages.filter(p => !p.error);
+  if (validPages.length > 0) {
     const merged = {
       page: 1,
       limit: 0,
@@ -291,14 +299,10 @@ async function fetchData(startUrl) {
       total: 0,
       _links: {}
     };
-
-    // 各ページからデータを集約
+    // ...existing code...
     const allItems = [];
     let dataKey = null;
-
-    for (const page of pages) {
-      if (page.error) continue;
-
+    for (const page of validPages) {
       if (!dataKey && page._links) {
         for (const key of Object.keys(page._links)) {
           if (Array.isArray(page._links[key])) {
@@ -307,37 +311,36 @@ async function fetchData(startUrl) {
           }
         }
       }
-
       if (dataKey && page._links && Array.isArray(page._links[dataKey])) {
         allItems.push(...page._links[dataKey]);
       }
-
       if (page._links) {
         if (page._links.up && !merged._links.up) {
           merged._links.up = page._links.up;
         }
       }
     }
-
     merged.total = allItems.length;
     merged.limit = allItems.length;
-
     if (dataKey) {
       merged._links[dataKey] = allItems;
     }
-
     merged._links.self = { href: startUrl };
     merged._links.first = { href: startUrl };
     merged._links.last = { href: startUrl };
-
     resultObj[startUrl] = {
       fetchedAt: new Date().toISOString(),
       data: merged
     };
     return resultObj;
+  } else {
+    // 全ページエラーの場合、最初のエラーを格納
+    resultObj[startUrl] = {
+      fetchedAt: new Date().toISOString(),
+      data: pages[0]
+    };
+    return resultObj;
   }
-
-  return resultObj;
 }
 
 async function fetchGroups(typeUrl, collectedGroupsData, testGroupShortNames = null) {
@@ -345,16 +348,16 @@ async function fetchGroups(typeUrl, collectedGroupsData, testGroupShortNames = n
   // collectedGroupsData: {} or 既存データ
   const typeMatch = typeUrl.match(/\/groups\/([^/?]+)/);
   const typeName = typeMatch ? typeMatch[1].toUpperCase() : 'UNKNOWN';
-  console.log(`\n========== Processing ${typeName} ==========`);
+  if (VERBOSE) console.log(`\n========== Processing ${typeName} ==========`);
   try {
     // Fetch all pages for this group type
-    console.log(`Fetching ${typeName} list pages...`);
-    const typePagesObj = await fetchData(typeUrl, 'groups');
+    if (VERBOSE) console.log(`Fetching ${typeName} list pages...`);
+    const typePagesObj = await fetchData(typeUrl);
     Object.assign(collectedGroupsData, typePagesObj);
     // Extract groups from the merged result
     const typePagesArr = Object.values(typePagesObj);
     let groups = typePagesArr[0]?.data?._links?.groups || [];
-    console.log(`Found ${groups.length} ${typeName} groups\n`);
+    if (VERBOSE) console.log(`Found ${groups.length} ${typeName} groups\n`);
 
     // テストモードの場合、shortnameでフィルタリング
     if (testGroupShortNames && Array.isArray(testGroupShortNames)) {
@@ -362,43 +365,43 @@ async function fetchGroups(typeUrl, collectedGroupsData, testGroupShortNames = n
         const href = g.href || '';
         return testGroupShortNames.some(shortname => href.includes(`/${typeName.toLowerCase()}/${shortname}`));
       });
-      console.log(`Filtered for testShortNames: ${testGroupShortNames.join(', ')} → ${groups.length} groups`);
+      if (VERBOSE) console.log(`Filtered for testShortNames: ${testGroupShortNames.join(', ')} → ${groups.length} groups`);
     }
 
     let processedCount = 0;
     for (let i = 0; i < groups.length; i++) {
       const g = groups[i];
       const groupName = g.title || g.name || g.id || 'unknown';
-      console.log(`[${i + 1}/${groups.length}] Processing: ${groupName}`);
+      if (VERBOSE) console.log(`[${i + 1}/${groups.length}] Processing: ${groupName}`);
       try {
         // Fetch group details
         const groupHref = g.href;
         if (groupHref) {
-          console.log(`  → Fetching group details from ${groupHref}`);
+          if (VERBOSE) console.log(`  → Fetching group details from ${groupHref}`);
           Object.assign(collectedGroupsData, await fetchData(groupHref));
-          console.log(`    ✓ Fetched group details`);
+          if (VERBOSE) console.log(`    ✓ Fetched group details`);
         }
         const partHref = g._links?.participations?.href || (g.href ? g.href.replace(/\/$/, '') + '/participations' : null);
         const usersHref = g._links?.users?.href || (g.href ? g.href.replace(/\/$/, '') + '/users' : null);
         // Fetch all participations pages (リストのみ、詳細は後で)
         if (partHref) {
-          console.log(`  → Fetching participations list from ${partHref}`);
+          if (VERBOSE) console.log(`  → Fetching participations list from ${partHref}`);
           Object.assign(collectedGroupsData, await fetchData(partHref));
-          console.log(`    ✓ Fetched and merged participations list`);
+          if (VERBOSE) console.log(`    ✓ Fetched and merged participations list`);
         }
         // Fetch all users pages
         if (usersHref) {
           await sleep(REQUEST_INTERVAL);
-          console.log(`  → Fetching users pages from ${usersHref}`);
+          if (VERBOSE) console.log(`  → Fetching users pages from ${usersHref}`);
           Object.assign(collectedGroupsData, await fetchData(usersHref));
-          console.log(`    ✓ Fetched and merged users`);
+          if (VERBOSE) console.log(`    ✓ Fetched and merged users`);
         }
         processedCount++;
       } catch (e) {
         console.error(`  Unexpected error processing group ${groupName}: ${e.message}`);
       }
     }
-    console.log(`✓ Completed ${typeName}: Processed ${processedCount}/${groups.length} groups`);
+    if (VERBOSE) console.log(`✓ Completed ${typeName}: Processed ${processedCount}/${groups.length} groups`);
   } catch (e) {
     console.error(`Failed to fetch ${typeName}: ${e.message}`);
   }
@@ -428,38 +431,35 @@ async function fetchAllParticipationDetails(collectedGroupsData, collectedPartic
     try {
       await sleep(REQUEST_INTERVAL);
       console.log(`[${i + 1}/${allParticipations.length}] Fetching: ${partHref}`);
-      const detailPages = await fetchData(partHref, 'participations');
-      if (detailPages && detailPages[0]) {
-        collectedParticipationsData[partHref] = {
-          fetchedAt: new Date().toISOString(),
-          data: detailPages[0]
-        };
+      const detailPages = await fetchData(partHref);
+      const detailEntry = detailPages[partHref];
+      if (detailEntry) {
+        collectedParticipationsData[partHref] = detailEntry;
       } else {
         collectedParticipationsData[partHref] = {
           fetchedAt: new Date().toISOString(),
-          _error: 'No API response'
+          _error: 'Failed to fetch participation detail'
         };
       }
       // Fetch participants for organization participations (individual=false)
-      const detail = detailPages && detailPages[0] ? detailPages[0] : null;
+      const detail = detailEntry && detailEntry.data ? detailEntry.data : null;
       if (detail && detail.individual === false && detail._links?.participants?.href) {
         const participantsHref = detail._links.participants.href;
         try {
           await sleep(REQUEST_INTERVAL);
-          console.log(`  → Fetching participants: ${participantsHref}`);
-          const participantsPages = await fetchData(participantsHref, 'participations');
-          if (participantsPages && participantsPages[0]) {
-            collectedParticipationsData[participantsHref] = {
-              fetchedAt: new Date().toISOString(),
-              data: participantsPages[0]
-            };
+          // 参加者取得の進捗ログをシンプル化
+          // console.log(`  → Fetching participants: ${participantsHref}`);
+          const participantsPages = await fetchData(participantsHref);
+          const participantsEntry = participantsPages[participantsHref];
+          if (participantsEntry) {
+            collectedParticipationsData[participantsHref] = participantsEntry;
           } else {
             collectedParticipationsData[participantsHref] = {
               fetchedAt: new Date().toISOString(),
               _error: 'No API response'
             };
           }
-          console.log(`    ✓ Fetched ${participantsPages.length} page(s) of participants`);
+          console.log(`    ✓ Participants fetched`);
         } catch (e) {
           collectedParticipationsData[participantsHref] = {
             fetchedAt: new Date().toISOString(),
@@ -549,6 +549,7 @@ async function fetchAllUsers(collectedGroupsData, collectedParticipationsData, c
 
   // ユーザー抽出が完了したら、APIフェッチループを分離して実行
   const allUsersArray = Array.from(allUsers);
+  console.log(`Found ${allUsersArray.length} users to fetch\n`);
   let fetchedCount = 0;
   for (let i = 0; i < allUsersArray.length; i++) {
     const userHref = allUsersArray[i];
@@ -556,7 +557,9 @@ async function fetchAllUsers(collectedGroupsData, collectedParticipationsData, c
       if (VERBOSE) {
         console.log(`[${i + 1}/${allUsersArray.length}] Fetching: ${userHref}`);
       }
-      await fetchData(userHref, 'users');
+        process.env.SUPPRESS_REQUEST_LOG = '1';
+      await fetchData(userHref);
+        process.env.SUPPRESS_REQUEST_LOG = '';
       fetchedCount++;
       // 進捗表示（100件ごと、または最後）
       if (fetchedCount % 100 === 0 || i === allUsersArray.length - 1) {
@@ -575,6 +578,7 @@ async function fetchAllUsers(collectedGroupsData, collectedParticipationsData, c
     // }
   }
   console.log(`\n✓ Completed: Fetched ${fetchedCount}/${allUsersArray.length} users`);
+  return collectedUsersData;
 }
 
 async function fetchAllAffiliations(collectedUsersData, collectedAffiliationsData) {
@@ -589,7 +593,7 @@ async function fetchAllAffiliations(collectedUsersData, collectedAffiliationsDat
     try {
       await sleep(REQUEST_INTERVAL);
       if (VERBOSE) console.log(`[${i + 1}/${allUsers.length}] Fetching affiliations list: ${affListHref}`);
-      const affListPages = await fetchData(affListHref, 'affiliations');
+      const affListPages = await fetchData(affListHref);
       if (affListPages && affListPages[0]) {
         collectedAffiliationsData[affListHref] = {
           fetchedAt: new Date().toISOString(),
