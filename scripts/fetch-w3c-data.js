@@ -10,6 +10,10 @@ const VERBOSE = process.argv.includes('--verbose');
 // グローバル変数廃止。各Phase関数で都度ファイルロード・ローカル変数化。
 let fetchStartTime = ''; // 取得開始時刻（表示用）
 let fetchStartTimestamp = 0; // 取得開始時刻（タイムスタンプ）
+let phaseRequestCount = 0; // 各PhaseのfetchJson呼び出し回数
+let phaseStartTimestamp = 0; // 各Phaseの開始時刻
+let totalRequestCount = 0; // 全体のfetchJson呼び出し回数
+let phaseRequestCounts = []; // 各Phaseごとのリクエスト数
 
 function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
@@ -106,6 +110,8 @@ async function compareAndWriteJson(filename, collectedData) {
 }
 
 function fetchJson(url, retries = 6, backoffMs = 5000, timeoutMs = 180000, redirects = 5) {
+  phaseRequestCount++;
+  totalRequestCount++;
   return new Promise((resolve, reject) => {
     try {
       const target = new URL(url);
@@ -617,6 +623,8 @@ async function fetchAllAffiliations(collectedUsersData, collectedAffiliationsDat
 async function phase1_fetchGroupsParticipationsUsers({isTestMode}) {
   // shouldFetchGroupsはmainで判定。isTestModeのみ引数で受け取る。
   console.log('\n========== PHASE 1: Fetching Groups, Participations Lists, and Users ==========\n');
+  phaseRequestCount = 0;
+  phaseStartTimestamp = Date.now();
   let collectedGroupsData = {};
     let testGroupsShortNamesMap = {};  // テストでのtypeごとのshortname配列を格納するオブジェクト
   if (isTestMode) {
@@ -651,6 +659,10 @@ async function phase1_fetchGroupsParticipationsUsers({isTestMode}) {
   console.log(`\n========== PHASE 1 Complete ==========`);
   // 保存
   console.log(`Total groups data collected: ${Object.keys(collectedGroupsData).length}`);
+  const phaseDurationSec = (Date.now() - phaseStartTimestamp) / 1000;
+  console.log(`Total requests: ${phaseRequestCount}`);
+  console.log(`Average requests/sec: ${(phaseRequestCount / phaseDurationSec).toFixed(2)}`);
+  phaseRequestCounts[0] = phaseRequestCount;
   const phase1Written = await compareAndWriteJson('w3c-groups', collectedGroupsData);
   if (phase1Written) {
     console.log('✓ Groups data successfully saved');
@@ -659,6 +671,8 @@ async function phase1_fetchGroupsParticipationsUsers({isTestMode}) {
 
 async function phase2_fetchParticipations() {
   console.log('\n========== PHASE 2: Fetching Participation Details ==========\n');
+  phaseRequestCount = 0;
+  phaseStartTimestamp = Date.now();
   // groupsデータを都度ロード
   let collectedGroupsData = {};
   try {
@@ -673,6 +687,10 @@ async function phase2_fetchParticipations() {
   let collectedParticipationsData = await fetchAllParticipationDetails(collectedGroupsData, {});
   console.log(`\n========== PHASE 2 Complete ==========`);
   console.log(`Total participations data collected: ${Object.keys(collectedParticipationsData).length}`);
+  const phaseDurationSec = (Date.now() - phaseStartTimestamp) / 1000;
+  console.log(`Total requests: ${phaseRequestCount}`);
+  console.log(`Average requests/sec: ${(phaseRequestCount / phaseDurationSec).toFixed(2)}`);
+  phaseRequestCounts[1] = phaseRequestCount;
   const phase2Written = await compareAndWriteJson('w3c-participations', collectedParticipationsData);
   if (phase2Written) {
     console.log('✓ Participations data successfully saved');
@@ -681,6 +699,8 @@ async function phase2_fetchParticipations() {
 
 async function phase3_fetchUsers() {
   console.log('\n========== PHASE 3: Fetching User Details ==========\n');
+  phaseRequestCount = 0;
+  phaseStartTimestamp = Date.now();
   // groupsデータを都度ロード
   let collectedGroupsData = {};
   try {
@@ -703,8 +723,12 @@ async function phase3_fetchUsers() {
   }
   // usersデータは空で開始
   let collectedUsersData = await fetchAllUsers(collectedGroupsData, collectedParticipationsData, {});
-  console.log(`\n========== PHASE 3 Complete ==========`);
+  console.log(`\n========== PHASE 3 Complete ===========`);
   console.log(`Total users data collected: ${Object.keys(collectedUsersData).length}`);
+  const phaseDurationSec = (Date.now() - phaseStartTimestamp) / 1000;
+  console.log(`Total requests: ${phaseRequestCount}`);
+  console.log(`Average requests/sec: ${(phaseRequestCount / phaseDurationSec).toFixed(2)}`);
+  phaseRequestCounts[2] = phaseRequestCount;
   const phase3Written = await compareAndWriteJson('w3c-users', collectedUsersData);
   if (phase3Written) {
     console.log('✓ Users data successfully saved');
@@ -715,6 +739,8 @@ async function phase3_fetchUsers() {
 // PHASE 4: Affiliations
 async function phase4_fetchAffiliations() {
   console.log('\n========== PHASE 4: Fetching Affiliations ==========\n');
+  phaseRequestCount = 0;
+  phaseStartTimestamp = Date.now();
   // usersデータを都度ロード
   let collectedUsersData = {};
   try {
@@ -728,6 +754,10 @@ async function phase4_fetchAffiliations() {
   let collectedAffiliationsData = await fetchAllAffiliations(collectedUsersData, {});
   console.log(`\n========== PHASE 4 Complete ==========`);
   console.log(`Total affiliations data collected: ${Object.keys(collectedAffiliationsData).length}`);
+  const phaseDurationSec = (Date.now() - phaseStartTimestamp) / 1000;
+  console.log(`Total requests: ${phaseRequestCount}`);
+  console.log(`Average requests/sec: ${(phaseRequestCount / phaseDurationSec).toFixed(2)}`);
+  phaseRequestCounts[3] = phaseRequestCount;
   const phase4Written = await compareAndWriteJson('w3c-affiliations', collectedAffiliationsData);
   if (phase4Written) {
     console.log('✓ Affiliations data successfully saved');
@@ -795,6 +825,10 @@ async function main() {
   const duration = Date.now() - fetchStartTimestamp;
   console.log(`\n========== All Done ==========`);
   console.log(`Total duration: ${formatDuration(duration)}`);
+  // トータルリクエスト数と平均
+  console.log(`Total requests (all phases): ${totalRequestCount}`);
+  const totalDurationSec = duration / 1000;
+  console.log(`Average requests/sec (all phases): ${(totalRequestCount / totalDurationSec).toFixed(2)}`);
   // 各ファイルを都度ロードして件数表示
   try {
     const groupsContent = fs.readFileSync('data/w3c-groups.json', 'utf8');
