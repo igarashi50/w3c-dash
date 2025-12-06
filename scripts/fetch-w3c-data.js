@@ -400,7 +400,8 @@ async function fetchTypeGroups(type, testGroupShortNames = null) {
       // Fetch group details
       try {
         if (VERBOSE) console.log(`  → Fetching group data from ${groupHref}`);
-        groupData = await fetchData(groupHref);
+        const result = await fetchData(groupHref);
+        groupData = result !== undefined ? result : { _error: 'Failed to fetch group detail' };
 
         const partHref = groupData._links?.participations?.href;
         if (partHref) {
@@ -411,7 +412,7 @@ async function fetchTypeGroups(type, testGroupShortNames = null) {
           urls.push(usersHref);
         }
       } catch (e) {
-        data = { "_error": String(e) };
+        groupData = { _error: String(e) };
       }
       collectedTypeGroupsData[groupHref] = {
         fetchedAt: new Date().toISOString(),
@@ -442,7 +443,7 @@ async function fetchTypeGroups(type, testGroupShortNames = null) {
       }
     }
     // 100件ごとにProgress
-    if (fetchCount % 100 === 0 || i === groups.length - 1 ) {
+    if (fetchCount % 100 === 0 || i === groups.length - 1) {
       const duration = Date.now() - fetchStartTimestamp;
       console.log(`--- Progress: ${fetchCount} fetches (${formatDuration(duration)})`);
     }
@@ -471,74 +472,65 @@ async function fetchParticipations(collectedGroupsData, collectedParticipationsD
     }
   }
   const allParticipations = Array.from(allParticipationsSet);
-  const participants = []
-  console.log(`Found ${allParticipations.length} unique participation data to fetch\n`);
+  const participations = []
+  console.log(`Found ${allParticipations.length} participation data to fetch\n`);
   let fetchedCount = 0;
   let errorCount = 0;
   let fetchCount = 0;
   for (let i = 0; i < allParticipations.length; i++) {
     const partHref = allParticipations[i];
-    let detailEntry = undefined;
     fetchCount++;
     if (VERBOSE) console.log(`[${fetchCount}] Fetching: ${partHref}`);
     // 1. リストページ（/groups/.../participations）をfetch
-    const detailData = await fetchData(partHref);
-    collectedParticipationsData[partHref] = {
-      fetchedAt: new Date().toISOString(),
-      data: detailData !== undefined ? detailData : { _error: 'Failed to fetch participations detail' }
-    };
-    // 2. その中の _links.participations から個別participationのhrefを抽出
-    const participationsObj = detailEntry.data && detailEntry.data._links && detailEntry.data._links.participations;
-    if (participationsObj && typeof participationsObj === 'object') {
-      for (const key in participationsObj) {
-        const p = participationsObj[key];
-        if (p && p.href && /^https:\/\/api\.w3\.org\/participations\/.+/.test(p.href)) {
-          try {
-            fetchCount++;
-            const participationDetailData = await fetchData(p.href);
-            collectedParticipationsData[p.href] = {
-              fetchedAt: new Date().toISOString(),
-              data: participationDetailData !== undefined ? participationDetailData : { _error: 'Failed to fetch participation detail' }
-            };
-            const detailData = participationDetailData;
-            if (detailData && detailData.individual === false && detailData._links?.participants?.href) {
-              participants.push(detailData._links.participants.href);
-            }
-          } catch (e) {
-            collectedParticipationsData[p.href] = {
-              fetchedAt: new Date().toISOString(),
-              data: { error: String(e) }
-            };
-            console.warn(`    error fetching participation detail ${p.href}: ${String(e)}`);
-            errorCount++;
-          }
-          // 進捗表示（100件ごと, 最後の1件）
-          if (fetchCount % 100 === 0) {
-            const duration = Date.now() - fetchStartTimestamp;
-            console.log(`\n--- Progress: ${fetchCount} fetches (${formatDuration(duration)}) ---\n`);
+    let detailData = {};
+    try {
+      const result = await fetchData(partHref);
+      detailData = result !== undefined ? result : { _error: 'Failed to fetch participations detail' };
+
+      const participationsObj = detailData && detailData._links && detailData._links.participations;
+      if (participationsObj && typeof participationsObj === 'object') {
+        for (const key in participationsObj) {
+          const p = participationsObj[key];
+          if (p && p.href && /^https:\/\/api\.w3\.org\/participations\/.+/.test(p.href)) {
+            participations.push(p.href);
           }
         }
       }
+    } catch (e) {
+      detailData = { _error: String(e) };
+    }
+    collectedParticipationsData[partHref] = {
+      fetchedAt: new Date().toISOString(),
+      data: detailData
+    };
+    // 進捗表示（100件ごと, 最後の1件）
+    if (i % 100 === 0 || i === allParticipations.length - 1) {
+      const duration = Date.now() - fetchStartTimestamp;
+      console.log(`\n--- Progress: ${fetchCount} fetches (${formatDuration(duration)}) ---\n`);
     }
   }
-  // Fetch participants for organization participations (individual=false)
-  console.log(`Found ${participants.length} unique participants data to fetch\n`);
-  for (const participantsHref of participants) {
+
+  console.log(`Found ${participations.length} participationsto fetch\n`);
+  const participants = [];
+  for (let i = 0; i < participations.length; i++) {
+    const participationHref = participations[i];
     try {
       fetchCount++;
-      const participantsData = await fetchData(participantsHref);
-      collectedParticipationsData[participantsHref] = {
+      const participationData = await fetchData(participationHref);
+      collectedParticipationsData[participationHref] = {
         fetchedAt: new Date().toISOString(),
-        data: participantsData !== undefined ? participantsData : { _error: 'failed to fetch participants data' }
+        data: participationData !== undefined ? participationData : { _error: 'Failed to fetch participation detail' }
       };
-      console.log(`    ✓ Participants data fetched`);
-      fetchedCount++;
+      // 組織参加の場合（individual === false）で _links.participants.href があれば追加
+      if (participationData && participationData.individual === false && participationData._links && participationData._links.participants && typeof participationData._links.participants.href === 'string') {
+        participants.push(participationData._links.participants.href);
+      }
     } catch (e) {
-      collectedParticipationsData[participantsHref] = {
+      collectedParticipationsData[participationHref] = {
         fetchedAt: new Date().toISOString(),
         data: { error: String(e) }
       };
-      console.warn(`  error fetching participant data ${participantsHref}: ${String(e)}`);
+      console.warn(`    error fetching participation detail ${participationHref}: ${String(e)}`);
       errorCount++;
     }
     // 進捗表示（100件ごと, 最後の1件）
@@ -547,7 +539,33 @@ async function fetchParticipations(collectedGroupsData, collectedParticipationsD
       console.log(`\n--- Progress: ${fetchCount} fetches (${formatDuration(duration)}) ---\n`);
     }
   }
-  console.log(`\n✓ Completed: Fetched ${fetchedCount}/${allParticipations.length} participations data (Errors: ${errorCount})`);
+  // Fetch participants for organization participations (individual=false)
+  console.log(`Found ${participants.length} unique participants data to fetch\n`);
+  for (let i = 0; i < participants.length; i++) {
+    const participantsHref = participants[i];
+    fetchCount++;
+    let participantsData = {};
+    try {
+      const result = await fetchData(participantsHref);
+      participantsData = result !== undefined ? result : { _error: 'failed to fetch participants data' };
+      console.log(`    ✓ Participants data fetched`);
+      fetchedCount++;
+    } catch (e) {
+      participantsData = { _error: String(e) };
+      console.warn(`  error fetching participant data ${participantsHref}: ${String(e)}`);
+      errorCount++;
+    }
+    collectedParticipationsData[participantsHref] = {
+      fetchedAt: new Date().toISOString(),
+      data: participantsData
+    };
+    // 進捗表示（100件ごと, 最後の1件）
+    if (i % 100 === 0 || i === participants.length - 1  ) {
+      const duration = Date.now() - fetchStartTimestamp;
+      console.log(`\n--- Progress: ${fetchCount} fetches (${formatDuration(duration)}) ---\n`);
+    }
+  }
+  console.log(`\n✓ Completed: Fetched ${fetchedCount}/${fetchCount} participations data (Errors: ${errorCount})`);
   return collectedParticipationsData;
 }
 
