@@ -111,7 +111,7 @@ async function showMembersPopup(groupData, groupName, initialFilter = 'members')
   const title = document.getElementById('membersPopupTitle');
   const membersListContent = document.getElementById('membersListContent');
   const participantsListContent = document.getElementById('participantsListContent');
-  const userDetailsContent = document.getElementById('userDetailsContent');
+  const userDetailContent = document.getElementById('userDetailContent');
   
   title.textContent = groupName;
   
@@ -193,7 +193,7 @@ async function showMembersPopup(groupData, groupName, initialFilter = 'members')
       div.textContent = 'All Members';
       membersListContent.appendChild(div);
       participantsListContent.innerHTML = '';
-      userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
+      userDetailContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
       
       // groupData.membersMap から全ユーザーを集計
       const allMPs = [];
@@ -216,7 +216,7 @@ async function showMembersPopup(groupData, groupName, initialFilter = 'members')
           div.addEventListener('click', async () => {
             document.querySelectorAll('.participant-item').forEach(el => el.classList.remove('selected'));
             div.classList.add('selected');
-            await showUserDetails(participant.userHref, participant.name);
+            await showUserDetail(participant.userHref, participant.name);
           });
         }
         participantsListContent.appendChild(div);
@@ -239,7 +239,7 @@ async function showMembersPopup(groupData, groupName, initialFilter = 'members')
       div.textContent = 'All Members+IE+S+Ind';
       membersListContent.appendChild(div);
       participantsListContent.innerHTML = '';
-      userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
+      userDetailContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
       
       // すべての参加者を集める（個人ユーザーのみ）
       const allParticipants = [];
@@ -287,7 +287,7 @@ async function showMembersPopup(groupData, groupName, initialFilter = 'members')
           div.addEventListener('click', async () => {
             document.querySelectorAll('.participant-item').forEach(el => el.classList.remove('selected'));
             div.classList.add('selected');
-            await showUserDetails(participant.userHref, participant.name);
+            await showUserDetail(participant.userHref, participant.name);
           });
         }
         participantsListContent.appendChild(div);
@@ -349,9 +349,9 @@ async function showMembersPopup(groupData, groupName, initialFilter = 'members')
           document.querySelectorAll('.member-item').forEach(el => el.classList.remove('selected'));
           div.classList.add('selected');
           const participantsListContent = document.getElementById('participantsListContent');
-          const userDetailsContent = document.getElementById('userDetailsContent');
+          const userDetailContent = document.getElementById('userDetailContent');
           participantsListContent.innerHTML = '';
-          userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
+          userDetailContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
           let list = [];
           let emptyMsg = '';
           if (type.key === 'invited') {
@@ -376,7 +376,7 @@ async function showMembersPopup(groupData, groupName, initialFilter = 'members')
               pDiv.addEventListener('click', async () => {
                 document.querySelectorAll('.participant-item').forEach(el => el.classList.remove('selected'));
                 pDiv.classList.add('selected');
-                await showUserDetails(item.userHref, item.name);
+                await showUserDetail(item.userHref, item.name);
               });
               participantsListContent.appendChild(pDiv);
             });
@@ -403,7 +403,7 @@ async function showMembersPopup(groupData, groupName, initialFilter = 'members')
       }
     } else {
       participantsListContent.innerHTML = '<p style="padding: 12px; color: #666; font-style: italic;">No items available</p>';
-      userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
+      userDetailContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view detail</p>';
     }
   }
   
@@ -429,10 +429,10 @@ async function showMembersPopup(groupData, groupName, initialFilter = 'members')
 
 async function showParticipantsForMember(groupData, memberOrg) {
   const participantsListContent = document.getElementById('participantsListContent');
-  const userDetailsContent = document.getElementById('userDetailsContent');
+  const userDetailContent = document.getElementById('userDetailContent');
   
   participantsListContent.innerHTML = '';
-  userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
+  userDetailContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view detail</p>';
   
   // membersMapから該当する組織のparticipantsを取得
   const membersMap = groupData.membersMap || {};
@@ -458,7 +458,7 @@ async function showParticipantsForMember(groupData, memberOrg) {
       div.addEventListener('click', async () => {
         document.querySelectorAll('.participant-item').forEach(el => el.classList.remove('selected'));
         div.classList.add('selected');
-        await showUserDetails(participant.userHref, participant.name);
+        await showUserDetail(participant.userHref, participant.name);
       });
     }
     participantsListContent.appendChild(div);
@@ -469,34 +469,31 @@ async function showParticipantsForMember(groupData, memberOrg) {
   participantsTitle.textContent = `Participants: ${sortedParticipants.length}`;
 }
 
-async function showUserDetails(userHref, userName) {
-  const userDetailsContent = document.getElementById('userDetailsContent');
+async function showUserDetail(userHref, userName) {
+  const userDetailContent = document.getElementById('userDetailContent');
   
   if (!userHref) {
-    userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">No user data available</p>';
+    userDetailContent.innerHTML = '<p style="padding: 12px; color: #666;">No user data available</p>';
     return;
   }
   
-  userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Loading...</p>';
+  userDetailContent.innerHTML = '<p style="padding: 12px; color: #666;">Loading...</p>';
   
   try {
-    // w3c-users.jsonから取得
-    const usersData = await (await fetch('data/w3c-users.json')).json();
-    const userData = usersData[userHref];
+    let user = window.findByDataUrl ? window.findByDataUrl(userHref) : null;
     
-    if (!userData || !userData.data) {
+    if (!user) {
       // ユーザー詳細データが無い場合は基本情報のみ表示
       const dl = document.createElement('dl');
       dl.style.padding = '0 12px 12px 12px';
       dl.innerHTML = `<dt>Name</dt><dd>${escapeHtml(userName || 'Unknown')}</dd>`;
       dl.innerHTML += `<dt>User URL</dt><dd><a href="${escapeHtml(userHref)}" target="_blank">${escapeHtml(userHref)}</a></dd>`;
       dl.innerHTML += `<p style="margin-top: 12px; color: #999; font-size: 0.9em;">Detailed user information not available (member organization participant)</p>`;
-      userDetailsContent.innerHTML = '';
-      userDetailsContent.appendChild(dl);
+      userDetailContent.innerHTML = '';
+      userDetailContent.appendChild(dl);
       return;
     }
     
-    const user = userData.data;
     const dl = document.createElement('dl');
     dl.style.padding = '0 12px 12px 12px';
 
@@ -511,16 +508,21 @@ async function showUserDetails(userHref, userName) {
     if (user['country-division']) dl.innerHTML += `<dt>Division:</dt><dd>${escapeHtml(user['country-division'])}</dd>`;
     if (user.city) dl.innerHTML += `<dt>City:</dt><dd>${escapeHtml(user.city)}</dd>`;
 
-    // Connected Accounts
-    if (user['connected-accounts'] && user['connected-accounts'].length > 0) {
-      dl.innerHTML += `<dt>Connected Accounts:</dt>`;
-      user['connected-accounts'].forEach(account => {
-        let icon = '';
-        if (account.service === 'github' && account['profile-picture']) {
-          icon = `<img src='${escapeHtml(account['profile-picture'])}' alt='github' style='height:16px;vertical-align:middle;margin-right:4px;'>`;
-        }
-        dl.innerHTML += `<dd>${icon}<a href="${escapeHtml(account.href)}" target="_blank">${escapeHtml(account.nickname || account.name || account.id || 'N/A')}</a> (${escapeHtml(account.service || 'Unknown')})</dd>`;
-      });
+    // Connected Accounts（オブジェクト/配列両対応）
+    if (user['connected-accounts']) {
+      let accounts = user['connected-accounts'];
+      // オブジェクトの場合は配列化
+      if (!Array.isArray(accounts)) accounts = Object.values(accounts);
+      if (accounts.length > 0) {
+        dl.innerHTML += `<dt>Connected Accounts:</dt>`;
+        accounts.forEach(account => {
+          let icon = '';
+          if (account.service === 'github' && account['profile-picture']) {
+            icon = `<img src='${escapeHtml(account['profile-picture'])}' alt='github' style='height:16px;vertical-align:middle;margin-right:4px;'>`;
+          }
+          dl.innerHTML += `<dd>${icon}<a href="${escapeHtml(account.href)}" target="_blank">${escapeHtml(account.nickname || account.name || account.id || 'N/A')}</a> (${escapeHtml(account.service || 'Unknown')})</dd>`;
+        });
+      }
     }
 
     // Description
@@ -528,48 +530,58 @@ async function showUserDetails(userHref, userName) {
       dl.innerHTML += `<dt>Description:</dt><dd>${escapeHtml(user.description)}</dd>`;
     }
 
-
-
-    // Affiliations名取得（個別JSONからtitle取得）
+    // Affiliations名取得（findDataByUrlのみ使用、配列化対応）
     let affiliationsList = [];
     if (user._links && user._links.affiliations && user._links.affiliations.href) {
       try {
-        // API URLをローカルJSONパスに変換
-        const affLocalPath = 'data/w3c-users/' + userHref.split('/').pop() + '/affiliations.json';
-        const affApiRes = await (await fetch(affLocalPath)).json();
-        if (affApiRes._links && Array.isArray(affApiRes._links.affiliations)) {
-          affiliationsList = affApiRes._links.affiliations.map(a => a.title || a.href);
-        }
-      } catch {}
+          const affApiRes = findDataByUrl(user._links.affiliations.href);
+          if (affApiRes && affApiRes._links && affApiRes._links.affiliations) {
+            let affArr = affApiRes._links.affiliations;
+            if (!Array.isArray(affArr)) {
+              affArr = Object.values(affArr);
+            }
+            affiliationsList = affArr.map(a => a.title || a.href);
+          } else {
+            console.warn('Affiliations structure unexpected:', affApiRes);
+          }
+      } catch (e) {
+        console.error('Affiliations fetch error:', e);
+      }
     }
     if (affiliationsList.length > 0) {
       dl.innerHTML += `<dt>Affiliations:</dt><dd>${affiliationsList.map(a => escapeHtml(a)).join(', ')}</dd>`;
     }
 
-    // Groups名取得（data/w3c-groups.jsonから参照）
+    // Groups名取得（findDataByUrlのみ使用、配列化対応）
     let groupsList = [];
     if (user._links && user._links.groups && user._links.groups.href) {
       try {
-        const grpData = await (await fetch('data/w3c-groups.json')).json();
-        // groups APIのレスポンス例からhrefリストを取得
-        const grpApiRes = await (await fetch(user._links.groups.href)).json();
-        if (grpApiRes._links && Array.isArray(grpApiRes._links.groups)) {
-          groupsList = grpApiRes._links.groups.map(g => {
-            const groupObj = grpData[g.href];
-            return groupObj && groupObj.data && groupObj.data.title ? groupObj.data.title : (g.title || g.href);
-          });
-        }
-      } catch {}
+          const grpApiRes = window.findDataByUrl(user._links.groups.href);
+          if (grpApiRes && grpApiRes._links && grpApiRes._links.groups) {
+            let grpArr = grpApiRes._links.groups;
+            if (!Array.isArray(grpArr)) {
+              grpArr = Object.values(grpArr);
+            }
+            groupsList = grpArr.map(g => {
+              const groupObj = window.findDataByUrl(g.href);
+              return groupObj && groupObj.data && groupObj.data.title ? groupObj.data.title : (g.title || g.href);
+            });
+          } else {
+            console.warn('Groups structure unexpected:', grpApiRes);
+          }
+      } catch (e) {
+        console.error('Groups fetch error:', e);
+      }
     }
     if (groupsList.length > 0) {
       dl.innerHTML += `<dt>Groups:</dt><dd>${groupsList.map(g => escapeHtml(g)).join(', ')}</dd>`;
     }
 
-    userDetailsContent.innerHTML = '';
-    userDetailsContent.appendChild(dl);
+    userDetailContent.innerHTML = '';
+    userDetailContent.appendChild(dl);
     
   } catch (e) {
-    userDetailsContent.innerHTML = `<p style="padding: 12px; color: #900;">Error: ${e.message}</p>`;
+    userDetailContent.innerHTML = `<p style="padding: 12px; color: #900;">Error: ${e.message}</p>`;
   }
 }
 

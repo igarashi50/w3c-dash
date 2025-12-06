@@ -652,36 +652,10 @@ async function fetchUsers(collectedGroupsData, collectedParticipationsData) {
             for (const aff of userData._links.affiliations) {
               if (aff && aff.href) {
                 userAfflications.push(aff.href);
-                // affiliationsエンドポイントもfetchして保存
-                try {
-                  const affListData = await fetchData(aff.href);
-                  collectedUsersData[aff.href] = {
-                    fetchedAt: new Date().toISOString(),
-                    data: affListData !== undefined ? affListData : { _error: 'Failed to fetch user affiliations' }
-                  };
-                } catch (e) {
-                  collectedUsersData[aff.href] = {
-                    fetchedAt: new Date().toISOString(),
-                    data: { error: String(e) }
-                  };
-                }
               }
             }
           } else if (typeof userData._links.affiliations === 'object' && userData._links.affiliations.href) {
             userAfflications.push(userData._links.affiliations.href);
-            // affiliationsエンドポイントもfetchして保存
-            try {
-              const affListData = await fetchData(userData._links.affiliations.href);
-              collectedUsersData[userData._links.affiliations.href] = {
-                fetchedAt: new Date().toISOString(),
-                data: affListData !== undefined ? affListData : { _error: 'Failed to fetch user affiliations' }
-              };
-            } catch (e) {
-              collectedUsersData[userData._links.affiliations.href] = {
-                fetchedAt: new Date().toISOString(),
-                data: { error: String(e) }
-              };
-            }
           }
         }
         if (userData && userData._links && userData._links.groups) {
@@ -729,14 +703,14 @@ async function fetchUsers(collectedGroupsData, collectedParticipationsData) {
         fetchedAt: new Date().toISOString(),
         data: affData !== undefined ? affData : { _error: 'Failed to fetch user affiliations' }
       };
-      console.log(`    ✓ Affiliation data fetched`);
+      console.log(`    ✓ user affiliation data fetched`);
       fetchedCount++;
     } catch (e) {
       collectedUsersData[affHref] = {
         fetchedAt: new Date().toISOString(),
         data: { error: String(e) }
       };
-      console.warn(`  error fetching affiliation data ${affHref}: ${String(e)}`);
+      console.warn(`  error fetching user affiliation data ${affHref}: ${String(e)}`);
       errorCount++;
     }
     if (fetchCount % 100 === 0 || i === userAfflications.length - 1) {
@@ -755,14 +729,14 @@ async function fetchUsers(collectedGroupsData, collectedParticipationsData) {
         fetchedAt: new Date().toISOString(),
         data: groupData !== undefined ? groupData : { _error: 'Failed to fetch user group' }
       };
-      console.log(`    ✓ Group data fetched`);
+      console.log(`    ✓ user group data fetched`);
       fetchedCount++;
     } catch (e) {
       collectedUsersData[groupHref] = {
         fetchedAt: new Date().toISOString(),
         data: { error: String(e) }
       };
-      console.warn(`  error fetching group data ${groupHref}: ${String(e)}`);
+      console.warn(`  error fetching user group group data ${groupHref}: ${String(e)}`);
       errorCount++;
     }
     if (fetchCount % 100 === 0 || i === userGroups.length - 1) {

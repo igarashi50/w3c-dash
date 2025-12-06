@@ -1,17 +1,17 @@
 {
   "_metadata": {
     "filename": "w3c-groups",
-    "lastChecked": "2025-12-06T05:19:04.528Z",
-    "fetchStartTime": "20251206-051904",
-    "duration": "10s",
+    "lastChecked": "2025-12-06T14:49:02.773Z",
+    "fetchStartTime": "20251206-144902",
+    "duration": "6s",
     "itemCount": 23
   },
   "https://api.w3.org/groups/cg": {
     "data": {
       "page": 1,
-      "limit": 161,
+      "limit": 283,
       "pages": 1,
-      "total": 161,
+      "total": 283,
       "_links": {
         "groups": {
           "0": {
@@ -415,246 +415,734 @@
             "title": "Private Advertising Technology Community Group"
           },
           "100": {
+            "href": "https://api.w3.org/groups/cg/gpu",
+            "title": "GPU for the Web Community Group"
+          },
+          "101": {
+            "href": "https://api.w3.org/groups/wg/gpu",
+            "title": "GPU for the Web Working Group"
+          },
+          "102": {
+            "href": "https://api.w3.org/groups/cg/schemed",
+            "title": "Healthcare Schema Vocabulary Community Group"
+          },
+          "103": {
+            "href": "https://api.w3.org/groups/tf/i18n-hlreq",
+            "title": "Hebrew Layout Task Force"
+          },
+          "104": {
+            "href": "https://api.w3.org/groups/cg/high-perf-baseline",
+            "title": "High-Performance Baseline for Web Apps Community Group"
+          },
+          "105": {
+            "href": "https://api.w3.org/groups/wg/htmlwg",
+            "title": "HTML Working Group"
+          },
+          "106": {
+            "href": "https://api.w3.org/groups/cg/humancentricai",
+            "title": "Human Centric AI Community Group"
+          },
+          "107": {
+            "href": "https://api.w3.org/groups/cg/hydra",
+            "title": "Hydra Community Group"
+          },
+          "108": {
+            "href": "https://api.w3.org/groups/cg/immersive-captions",
+            "title": "Immersive Captions Community Group"
+          },
+          "109": {
+            "href": "https://api.w3.org/groups/cg/immersive-web",
+            "title": "Immersive Web Community Group"
+          },
+          "110": {
+            "href": "https://api.w3.org/groups/wg/immersive-web",
+            "title": "Immersive Web Working Group"
+          },
+          "111": {
+            "href": "https://api.w3.org/groups/cg/web-adv",
+            "title": "Improving Web Advertising Community Group"
+          },
+          "112": {
+            "href": "https://api.w3.org/groups/cg/idai",
+            "title": "India Digital Accessibility Initiative Community Group"
+          },
+          "113": {
+            "href": "https://api.w3.org/groups/tf/iip",
+            "title": "India International Program"
+          },
+          "114": {
+            "href": "https://api.w3.org/groups/cg/infinite-canvas",
+            "title": "Infinite Canvas Community Group"
+          },
+          "115": {
+            "href": "https://api.w3.org/groups/cg/informationarchitecture",
+            "title": "Information Architecture Community Group"
+          },
+          "116": {
+            "href": "https://api.w3.org/groups/cg/icn",
+            "title": "Information Centric Networking Community Group"
+          },
+          "117": {
+            "href": "https://api.w3.org/groups/cg/interledger",
+            "title": "Interledger Payments Community Group"
+          },
+          "118": {
+            "href": "https://api.w3.org/groups/ig/i18n",
+            "title": "Internationalization Interest Group"
+          },
+          "119": {
+            "href": "https://api.w3.org/groups/wg/i18n-core",
+            "title": "Internationalization Working Group"
+          },
+          "120": {
+            "href": "https://api.w3.org/groups/cg/ixml",
+            "title": "Invisible Markup Community Group"
+          },
+          "121": {
+            "href": "https://api.w3.org/groups/tf/i18n-jlreq",
+            "title": "Japanese Layout Task Force | 日本語組版タスクフォース"
+          },
+          "122": {
+            "href": "https://api.w3.org/groups/cg/json-ld",
+            "title": "JSON for Linked Data Community Group"
+          },
+          "123": {
+            "href": "https://api.w3.org/groups/wg/json-ld",
+            "title": "JSON-LD Working Group"
+          },
+          "124": {
+            "href": "https://api.w3.org/groups/cg/kg-construct",
+            "title": "Knowledge Graph Construction Community Group"
+          },
+          "125": {
+            "href": "https://api.w3.org/groups/cg/lbd",
+            "title": "Linked Building Data Community Group"
+          },
+          "126": {
+            "href": "https://api.w3.org/groups/cg/ld4lt",
+            "title": "Linked Data for Language Technology Community Group"
+          },
+          "127": {
+            "href": "https://api.w3.org/groups/tf/lws-chairs",
+            "title": "Linked Web Storage chairs"
+          },
+          "128": {
+            "href": "https://api.w3.org/groups/wg/lws",
+            "title": "Linked Web Storage Working Group"
+          },
+          "129": {
+            "href": "https://api.w3.org/groups/cg/loading-control-games",
+            "title": "Loading & Control API for Web Games Community Group"
+          },
+          "130": {
+            "href": "https://api.w3.org/groups/tf/low-vision-a11y-tf",
+            "title": "Low Vision Accessibility Task Force"
+          },
+          "131": {
+            "href": "https://api.w3.org/groups/cg/maps4html",
+            "title": "Maps For HTML Community Group"
+          },
+          "132": {
+            "href": "https://api.w3.org/groups/wg/math",
+            "title": "Math Working Group"
+          },
+          "133": {
+            "href": "https://api.w3.org/groups/tf/maturity",
+            "title": "Maturity Model Task Force"
+          },
+          "134": {
+            "href": "https://api.w3.org/groups/ig/me",
+            "title": "Media and Entertainment Interest Group"
+          },
+          "135": {
+            "href": "https://api.w3.org/groups/cg/mcm-jp",
+            "title": "Media Content Metadata Japanese Community Group"
+          },
+          "136": {
+            "href": "https://api.w3.org/groups/wg/media",
+            "title": "Media Working Group"
+          },
+          "137": {
+            "href": "https://api.w3.org/groups/cg/meta-layer",
+            "title": "Meta-Layer Infrastructure Community Group"
+          },
+          "138": {
+            "href": "https://api.w3.org/groups/cg/metaverse-interop",
+            "title": "Metaverse Interoperability Community Group"
+          },
+          "139": {
+            "href": "https://api.w3.org/groups/cg/miniapps",
+            "title": "MiniApps Ecosystem Community Group"
+          },
+          "140": {
+            "href": "https://api.w3.org/groups/wg/miniapps",
+            "title": "MiniApps Working Group"
+          },
+          "141": {
+            "href": "https://api.w3.org/groups/tf/mobile-a11y-tf",
+            "title": "Mobile Accessibility Task Force"
+          },
+          "142": {
+            "href": "https://api.w3.org/groups/tf/i18n-mlreq",
+            "title": "Mongolian Layout Task Force"
+          },
+          "143": {
+            "href": "https://api.w3.org/groups/cg/mqmcg",
+            "title": "Multidimensional Quality Metrics (MQM) Community Group"
+          },
+          "144": {
+            "href": "https://api.w3.org/groups/cg/music-notation",
+            "title": "Music Notation Community Group"
+          },
+          "145": {
+            "href": "https://api.w3.org/groups/cg/nlweb",
+            "title": "NLWeb Community Group"
+          },
+          "146": {
+            "href": "https://api.w3.org/groups/cg/nordic-accessibility",
+            "title": "Nordic Accessibility Community Group"
+          },
+          "147": {
+            "href": "https://api.w3.org/groups/cg/smartcity-nordic",
+            "title": "Nordic Chapter Smart City / Web of Things Community Group"
+          },
+          "148": {
+            "href": "https://api.w3.org/groups/cg/nostr",
+            "title": "nostr Community Group"
+          },
+          "149": {
+            "href": "https://api.w3.org/groups/cg/n3-dev",
+            "title": "Notation 3 (N3) Community Group"
+          },
+          "150": {
+            "href": "https://api.w3.org/groups/cg/odrl",
+            "title": "ODRL Community Group"
+          },
+          "151": {
+            "href": "https://api.w3.org/groups/cg/oki",
+            "title": "Ontologies and Knowledge Graphs in Industry Community Group"
+          },
+          "152": {
+            "href": "https://api.w3.org/groups/cg/oasis",
+            "title": "Ontology for Agents, Systems, and Integration of Services Community Group"
+          },
+          "153": {
+            "href": "https://api.w3.org/groups/cg/ontolex",
+            "title": "Ontology-Lexica Community Group"
+          },
+          "154": {
+            "href": "https://api.w3.org/groups/cg/open-ui",
+            "title": "Open UI Community Group"
+          },
+          "155": {
+            "href": "https://api.w3.org/groups/cg/openactive",
+            "title": "OpenActive Community Group"
+          },
+          "156": {
+            "href": "https://api.w3.org/groups/cg/opentrack",
+            "title": "OpenTrack Community Group"
+          },
+          "157": {
+            "href": "https://api.w3.org/groups/ig/psig",
+            "title": "Patents and Standards Interest Group"
+          },
+          "158": {
+            "href": "https://api.w3.org/groups/tf/pdf-aam",
+            "title": "PDF Accessibility APIs Mapping (PDF-AAM) Task Force"
+          },
+          "159": {
+            "href": "https://api.w3.org/groups/cg/perma-id",
+            "title": "Permanent Identifier Community Group"
+          },
+          "160": {
+            "href": "https://api.w3.org/groups/tf/pmchairs",
+            "title": "PM Working Group Chairs"
+          },
+          "161": {
+            "href": "https://api.w3.org/groups/wg/pointer-events",
+            "title": "Pointer Events Working Group"
+          },
+          "162": {
+            "href": "https://api.w3.org/groups/wg/png",
+            "title": "Portable Network Graphics (PNG) Working Group"
+          },
+          "163": {
+            "href": "https://api.w3.org/groups/cg/pwe",
+            "title": "Positive Work Environment Community Group"
+          },
+          "164": {
+            "href": "https://api.w3.org/groups/cg/privacycg",
+            "title": "Privacy Community Group"
+          },
+          "165": {
+            "href": "https://api.w3.org/groups/tf/tag-privacy",
+            "title": "Privacy Principles Task Force"
+          },
+          "166": {
+            "href": "https://api.w3.org/groups/wg/privacy",
+            "title": "Privacy Working Group"
+          },
+          "167": {
+            "href": "https://api.w3.org/groups/cg/patcg",
+            "title": "Private Advertising Technology Community Group"
+          },
+          "168": {
+            "href": "https://api.w3.org/groups/wg/pat",
+            "title": "Private Advertising Technology Working Group"
+          },
+          "169": {
+            "href": "https://api.w3.org/groups/tf/pm-a11y",
+            "title": "Publishing Accessibility Task Force"
+          },
+          "170": {
+            "href": "https://api.w3.org/groups/bg/publishingbg",
+            "title": "Publishing Business Group"
+          },
+          "171": {
             "href": "https://api.w3.org/groups/cg/publishingcg",
             "title": "Publishing Community Group"
           },
-          "101": {
+          "172": {
+            "href": "https://api.w3.org/groups/tf/pm-dc",
+            "title": "Publishing Digital Comics Task Force"
+          },
+          "173": {
+            "href": "https://api.w3.org/groups/wg/pm",
+            "title": "Publishing Maintenance Working Group"
+          },
+          "174": {
+            "href": "https://api.w3.org/groups/tf/publ-sc",
+            "title": "Publishing Steering Committee task force"
+          },
+          "175": {
+            "href": "https://api.w3.org/groups/wg/rdf-star",
+            "title": "RDF & SPARQL Working Group"
+          },
+          "176": {
+            "href": "https://api.w3.org/groups/wg/rch",
+            "title": "RDF Dataset Canonicalization and Hash Working Group"
+          },
+          "177": {
+            "href": "https://api.w3.org/groups/tf/rch-wg-chairs",
+            "title": "RDF Dataset Canonicalization and Hash Working Group Chairs"
+          },
+          "178": {
             "href": "https://api.w3.org/groups/cg/rdfjs",
             "title": "RDF JavaScript Libraries Community Group"
           },
-          "102": {
+          "179": {
             "href": "https://api.w3.org/groups/cg/rdf-maintenance",
             "title": "RDF Notes Maintenance Community Group"
           },
-          "103": {
+          "180": {
             "href": "https://api.w3.org/groups/cg/r2c2",
             "title": "RDF Rust Common Crates Community Group"
           },
-          "104": {
+          "181": {
             "href": "https://api.w3.org/groups/cg/rsp",
             "title": "RDF Stream Processing Community Group"
           },
-          "105": {
+          "182": {
             "href": "https://api.w3.org/groups/cg/rdfsurfaces",
             "title": "RDF Surfaces Community Group"
           },
-          "106": {
+          "183": {
             "href": "https://api.w3.org/groups/cg/rdf-tests",
             "title": "RDF Test Suite Curation Community Group"
           },
-          "107": {
+          "184": {
             "href": "https://api.w3.org/groups/cg/rdf-dev",
             "title": "RDF-DEV Community Group"
           },
-          "108": {
+          "185": {
+            "href": "https://api.w3.org/groups/tf/rdf-star-editors",
+            "title": "RDF-star Editors"
+          },
+          "186": {
+            "href": "https://api.w3.org/groups/tf/rdf-star-semantics",
+            "title": "RDF-star Semantics"
+          },
+          "187": {
+            "href": "https://api.w3.org/groups/tf/rdf-star-ucr",
+            "title": "RDF-star Use Cases"
+          },
+          "188": {
+            "href": "https://api.w3.org/groups/tf/rdf-star-chairs",
+            "title": "RDF-star WG chairs"
+          },
+          "189": {
+            "href": "https://api.w3.org/groups/tf/rqtf",
+            "title": "Research Questions Task Force"
+          },
+          "190": {
             "href": "https://api.w3.org/groups/cg/md-odrl-profile",
             "title": "Rights Automation for Market Data Community Group"
           },
-          "109": {
+          "191": {
             "href": "https://api.w3.org/groups/cg/rumcg",
             "title": "RUM Community Group"
           },
-          "110": {
+          "192": {
             "href": "https://api.w3.org/groups/cg/architypes",
             "title": "Schema Architypes Community Group"
           },
-          "111": {
+          "193": {
             "href": "https://api.w3.org/groups/cg/schemabibex",
             "title": "Schema Bib Extend Community Group"
           },
-          "112": {
+          "194": {
             "href": "https://api.w3.org/groups/cg/schema-course-extend",
             "title": "Schema Course extension Community Group"
           },
-          "113": {
+          "195": {
             "href": "https://api.w3.org/groups/cg/iotschema",
             "title": "Schema Extensions for IoT Community Group"
           },
-          "114": {
+          "196": {
             "href": "https://api.w3.org/groups/cg/schemaorg",
             "title": "Schema.org Community Group"
           },
-          "115": {
+          "197": {
             "href": "https://api.w3.org/groups/cg/schemaorg4datasets",
             "title": "Schema.org for datasets Community Group"
           },
-          "116": {
+          "198": {
             "href": "https://api.w3.org/groups/cg/sccg",
             "title": "Screen Capture Community Group"
           },
-          "117": {
+          "199": {
             "href": "https://api.w3.org/groups/cg/webscreens",
             "title": "Second Screen Community Group"
           },
-          "118": {
+          "200": {
+            "href": "https://api.w3.org/groups/wg/secondscreen",
+            "title": "Second Screen Working Group"
+          },
+          "201": {
+            "href": "https://api.w3.org/groups/ig/security",
+            "title": "Security Interest Group"
+          },
+          "202": {
             "href": "https://api.w3.org/groups/cg/swag",
             "title": "Security Web Application Guidelines Community Group"
           },
-          "119": {
+          "203": {
             "href": "https://api.w3.org/groups/cg/s-agent-comm",
             "title": "Semantic Agent Communication Community Group"
           },
-          "120": {
+          "204": {
             "href": "https://api.w3.org/groups/cg/semantic-construction",
             "title": "Semantic Construction Product Data Community Group"
           },
-          "121": {
+          "205": {
             "href": "https://api.w3.org/groups/cg/htmlvoc",
             "title": "Semantic HTML-vocabulary Community Group"
           },
-          "122": {
+          "206": {
+            "href": "https://api.w3.org/groups/tf/infrules",
+            "title": "SHACL Inference Rules"
+          },
+          "207": {
+            "href": "https://api.w3.org/groups/tf/shacl-profiling",
+            "title": "SHACL Profiling"
+          },
+          "208": {
+            "href": "https://api.w3.org/groups/tf/shacl-ui",
+            "title": "SHACL UI"
+          },
+          "209": {
             "href": "https://api.w3.org/groups/cg/shex",
             "title": "Shape Expressions Community Group"
           },
-          "123": {
+          "210": {
             "href": "https://api.w3.org/groups/cg/socialcg",
             "title": "Social Web Incubator Community Group"
           },
-          "124": {
+          "211": {
             "href": "https://api.w3.org/groups/cg/solid",
             "title": "Solid Community Group"
           },
-          "125": {
+          "212": {
+            "href": "https://api.w3.org/groups/tf/i18n-sealreq",
+            "title": "Southeast Asian Layout Task Force"
+          },
+          "213": {
+            "href": "https://api.w3.org/groups/tf/rdf-star-sparql",
+            "title": "SPARQL Task Force"
+          },
+          "214": {
             "href": "https://api.w3.org/groups/cg/sparql-dev",
             "title": "SPARQL-dev Community Group"
           },
-          "126": {
+          "215": {
+            "href": "https://api.w3.org/groups/wg/sdw",
+            "title": "Spatio-temporal Data on the Web Working Group"
+          },
+          "216": {
             "href": "https://api.w3.org/groups/cg/speced-cg",
             "title": "Spec Editors Community Group"
           },
-          "127": {
+          "217": {
+            "href": "https://api.w3.org/groups/tf/pronunciation-tf",
+            "title": "Spoken Presentation Task Force"
+          },
+          "218": {
             "href": "https://api.w3.org/groups/cg/sport-schema",
             "title": "Sport Schema Community Group"
           },
-          "128": {
+          "219": {
             "href": "https://api.w3.org/groups/cg/sustainability",
             "title": "Sustainability Community Group"
           },
-          "129": {
+          "220": {
+            "href": "https://api.w3.org/groups/ig/sustainableweb",
+            "title": "Sustainable Web Interest Group"
+          },
+          "221": {
+            "href": "https://api.w3.org/groups/tf/svg-a11y",
+            "title": "SVG Accessibility Task Force"
+          },
+          "222": {
+            "href": "https://api.w3.org/groups/wg/svg",
+            "title": "SVG Working Group"
+          },
+          "223": {
             "href": "https://api.w3.org/groups/cg/sync-on-the-web",
             "title": "Sync on the Web Community Group"
           },
-          "130": {
+          "224": {
+            "href": "https://api.w3.org/groups/tf/tag-associates",
+            "title": "TAG Associates"
+          },
+          "225": {
             "href": "https://api.w3.org/groups/cg/talent-signal",
             "title": "Talent Marketplace Signaling Community Group"
           },
-          "131": {
+          "226": {
+            "href": "https://api.w3.org/groups/other/tag",
+            "title": "Technical Architecture Group"
+          },
+          "227": {
             "href": "https://api.w3.org/groups/cg/tdmrep",
             "title": "Text and Data Mining Reservation Protocol Community Group"
           },
-          "132": {
+          "228": {
             "href": "https://api.w3.org/groups/cg/tourismdata",
             "title": "The Tourism Structured Web Data Community Group"
           },
-          "133": {
+          "229": {
             "href": "https://api.w3.org/groups/cg/tmcg",
             "title": "Threat Modeling Community Group"
           },
-          "134": {
+          "230": {
+            "href": "https://api.w3.org/groups/tf/i18n-tlreq",
+            "title": "Tibetan Layout Task Force"
+          },
+          "231": {
+            "href": "https://api.w3.org/groups/wg/timed-text",
+            "title": "Timed Text Working Group"
+          },
+          "232": {
             "href": "https://api.w3.org/groups/cg/treecg",
             "title": "TREE hypermedia Community Group"
           },
-          "135": {
+          "233": {
             "href": "https://api.w3.org/groups/cg/uispec",
             "title": "UI Specification Schema Community Group"
           },
-          "136": {
+          "234": {
             "href": "https://api.w3.org/groups/cg/unhosted",
             "title": "Unhosted Web Community Group"
           },
-          "137": {
+          "235": {
             "href": "https://api.w3.org/groups/cg/did-native-addr",
             "title": "Universal DID-Native Addressing (UDNA) Community Group"
           },
-          "138": {
+          "236": {
+            "href": "https://api.w3.org/groups/wg/vc",
+            "title": "Verifiable Credentials Working Group"
+          },
+          "237": {
+            "href": "https://api.w3.org/groups/tf/vc-wg-chairs",
+            "title": "Verifiable Credentials Working Group Chairs"
+          },
+          "238": {
+            "href": "https://api.w3.org/groups/tf/vision",
+            "title": "Vision Task Force"
+          },
+          "239": {
             "href": "https://api.w3.org/groups/cg/voiceinteraction",
             "title": "Voice Interaction Community Group"
           },
-          "139": {
+          "240": {
             "href": "https://api.w3.org/groups/cg/w3process",
             "title": "W3C Process Community Group"
           },
-          "140": {
+          "241": {
+            "href": "https://api.w3.org/groups/tf/personalization-tf",
+            "title": "WAI Adapt Task Force"
+          },
+          "242": {
+            "href": "https://api.w3.org/groups/ig/wai",
+            "title": "WAI Interest Group"
+          },
+          "243": {
+            "href": "https://api.w3.org/groups/tf/wcag2x-backlog",
+            "title": "WCAG 2.x Backlog Task Force"
+          },
+          "244": {
+            "href": "https://api.w3.org/groups/tf/wcag2ict",
+            "title": "WCAG2ICT Task Force"
+          },
+          "245": {
+            "href": "https://api.w3.org/groups/ig/webai",
+            "title": "Web & AI Interest Group"
+          },
+          "246": {
+            "href": "https://api.w3.org/groups/ig/web-networks",
+            "title": "Web & Networks Interest Group"
+          },
+          "247": {
             "href": "https://api.w3.org/groups/cg/waits",
             "title": "Web AI for Time Series Community Group"
           },
-          "141": {
+          "248": {
+            "href": "https://api.w3.org/groups/wg/webappsec",
+            "title": "Web Application Security Working Group"
+          },
+          "249": {
+            "href": "https://api.w3.org/groups/wg/webapps",
+            "title": "Web Applications Working Group"
+          },
+          "250": {
+            "href": "https://api.w3.org/groups/wg/webauthn",
+            "title": "Web Authentication Working Group"
+          },
+          "251": {
             "href": "https://api.w3.org/groups/cg/web-bluetooth",
             "title": "Web Bluetooth Community Group"
           },
-          "142": {
+          "252": {
             "href": "https://api.w3.org/groups/cg/webcomponents",
             "title": "Web Components Community Group"
           },
-          "143": {
+          "253": {
+            "href": "https://api.w3.org/groups/wg/webediting",
+            "title": "Web Editing Working Group"
+          },
+          "254": {
+            "href": "https://api.w3.org/groups/wg/webfonts",
+            "title": "Web Fonts Working Group"
+          },
+          "255": {
             "href": "https://api.w3.org/groups/cg/webforensics",
             "title": "Web Forensics Community Group"
           },
-          "144": {
+          "256": {
             "href": "https://api.w3.org/groups/cg/webhistory",
             "title": "Web History Community Group"
           },
-          "145": {
+          "257": {
             "href": "https://api.w3.org/groups/cg/wica",
             "title": "Web Identity & Credentials Adoption Community Group"
           },
-          "146": {
+          "258": {
             "href": "https://api.w3.org/groups/cg/webmachinelearning",
             "title": "Web Machine Learning Community Group"
           },
-          "147": {
+          "259": {
+            "href": "https://api.w3.org/groups/wg/webmachinelearning",
+            "title": "Web Machine Learning Working Group"
+          },
+          "260": {
             "href": "https://api.w3.org/groups/cg/webmediaapi",
             "title": "Web Media API Community Group"
           },
-          "148": {
+          "261": {
             "href": "https://api.w3.org/groups/cg/texttracks",
             "title": "Web Media Text Tracks Community Group"
           },
-          "149": {
+          "262": {
             "href": "https://api.w3.org/groups/cg/web-nfc",
             "title": "Web NFC Community Group"
           },
-          "150": {
+          "263": {
             "href": "https://api.w3.org/groups/cg/wot",
             "title": "Web of Things Community Group"
           },
-          "151": {
+          "264": {
+            "href": "https://api.w3.org/groups/ig/wot",
+            "title": "Web of Things Interest Group"
+          },
+          "265": {
             "href": "https://api.w3.org/groups/cg/wot-jp",
             "title": "Web of Things Japanese Community Group"
           },
-          "152": {
+          "266": {
+            "href": "https://api.w3.org/groups/wg/wot",
+            "title": "Web of Things Working Group"
+          },
+          "267": {
+            "href": "https://api.w3.org/groups/ig/securepay",
+            "title": "Web Payment Security Interest Group"
+          },
+          "268": {
+            "href": "https://api.w3.org/groups/wg/payments",
+            "title": "Web Payments Working Group"
+          },
+          "269": {
+            "href": "https://api.w3.org/groups/wg/webperf",
+            "title": "Web Performance Working Group"
+          },
+          "270": {
             "href": "https://api.w3.org/groups/cg/wicg",
             "title": "Web Platform Incubator Community Group"
           },
-          "153": {
+          "271": {
+            "href": "https://api.w3.org/groups/wg/webrtc",
+            "title": "Web Real-Time Communications Working Group"
+          },
+          "272": {
             "href": "https://api.w3.org/groups/cg/web-thing-protocol",
             "title": "Web Thing Protocol Community Group"
           },
-          "154": {
+          "273": {
+            "href": "https://api.w3.org/groups/ig/smart-cities",
+            "title": "Web-based Digital Twins for Smart Cities Interest Group"
+          },
+          "274": {
             "href": "https://api.w3.org/groups/cg/webassembly",
             "title": "WebAssembly Community Group"
           },
-          "155": {
+          "275": {
+            "href": "https://api.w3.org/groups/wg/wasm",
+            "title": "WebAssembly Working Group"
+          },
+          "276": {
             "href": "https://api.w3.org/groups/cg/webdx",
             "title": "WebDX Community Group"
           },
-          "156": {
+          "277": {
             "href": "https://api.w3.org/groups/cg/webextensions",
             "title": "WebExtensions Community Group"
           },
-          "157": {
+          "278": {
+            "href": "https://api.w3.org/groups/wg/webtransport",
+            "title": "WebTransport Working Group"
+          },
+          "279": {
             "href": "https://api.w3.org/groups/cg/webview",
             "title": "WebView Community Group"
           },
-          "158": {
+          "280": {
             "href": "https://api.w3.org/groups/cg/xformsusers",
             "title": "XForms Users Community Group"
           },
-          "159": {
+          "281": {
             "href": "https://api.w3.org/groups/cg/xproc-next",
             "title": "XProc Next Community Group"
           },
-          "160": {
+          "282": {
             "href": "https://api.w3.org/groups/cg/xslt-40",
             "title": "XQuery and XSLT Extensions Community Group"
           }
