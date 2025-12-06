@@ -496,6 +496,7 @@ async function showUserDetail(userHref, userName) {
     
     const dl = document.createElement('dl');
     dl.style.padding = '0 12px 12px 12px';
+    dl.style.fontSize = '14px';
 
     // 基本情報
     if (user.name) dl.innerHTML += `<dt>Name:</dt><dd>${escapeHtml(user.name)}</dd>`;
@@ -525,45 +526,43 @@ async function showUserDetail(userHref, userName) {
       }
     }
 
-    // Description
-    if (user.description) {
-      dl.innerHTML += `<dt>Description:</dt><dd>${escapeHtml(user.description)}</dd>`;
+    // Discriminator
+    if (user.discr) {
+      dl.innerHTML += `<dt>Discriminator:</dt><dd>${escapeHtml(user.discr)}</dd>`;
     }
 
     // Affiliations名取得（findDataByUrlのみ使用、配列化対応）
     let affiliationsList = [];
     if (user._links && user._links.affiliations && user._links.affiliations.href) {
       try {
-          const affApiRes = findDataByUrl(user._links.affiliations.href);
-          if (affApiRes && affApiRes._links && affApiRes._links.affiliations) {
-            let affArr = affApiRes._links.affiliations;
-            if (!Array.isArray(affArr)) {
-              affArr = Object.values(affArr);
-            }
-            affiliationsList = affArr.map(a => a.title || a.href);
-          } else {
-            console.warn('Affiliations structure unexpected:', affApiRes);
-          }
+        const affApiRes = window.findByDataUrl(user._links.affiliations.href);
+        let affArr = [];
+        if (affApiRes && affApiRes._links && affApiRes._links.affiliations) {
+          // affiliationsが数値キー付きオブジェクトの場合はObject.valuesで配列化
+          affArr = Object.values(affApiRes._links.affiliations);
+        }
+        // affiliationsListにtitleまたはhrefを格納
+        affiliationsList = affArr.map(a => a.title || a.href).filter(Boolean);
       } catch (e) {
         console.error('Affiliations fetch error:', e);
       }
     }
     if (affiliationsList.length > 0) {
-      dl.innerHTML += `<dt>Affiliations:</dt><dd>${affiliationsList.map(a => escapeHtml(a)).join(', ')}</dd>`;
+      dl.innerHTML += `<dt>Affiliations:</dt><dd>${affiliationsList.map(a => escapeHtml(a)).join('<br>')}</dd>`;
     }
 
     // Groups名取得（findDataByUrlのみ使用、配列化対応）
     let groupsList = [];
     if (user._links && user._links.groups && user._links.groups.href) {
       try {
-          const grpApiRes = window.findDataByUrl(user._links.groups.href);
+          const grpApiRes = window.findByDataUrl(user._links.groups.href);
           if (grpApiRes && grpApiRes._links && grpApiRes._links.groups) {
             let grpArr = grpApiRes._links.groups;
             if (!Array.isArray(grpArr)) {
               grpArr = Object.values(grpArr);
             }
             groupsList = grpArr.map(g => {
-              const groupObj = window.findDataByUrl(g.href);
+              const groupObj = window.findByDataUrl(g.href);
               return groupObj && groupObj.data && groupObj.data.title ? groupObj.data.title : (g.title || g.href);
             });
           } else {
@@ -574,7 +573,7 @@ async function showUserDetail(userHref, userName) {
       }
     }
     if (groupsList.length > 0) {
-      dl.innerHTML += `<dt>Groups:</dt><dd>${groupsList.map(g => escapeHtml(g)).join(', ')}</dd>`;
+      dl.innerHTML += `<dt>Groups:</dt><dd>${groupsList.map(g => escapeHtml(g)).join('<br>')}</dd>`;
     }
 
     userDetailContent.innerHTML = '';

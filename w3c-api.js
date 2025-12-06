@@ -73,6 +73,7 @@ async function loadData() {
   }
   // set setApiData
   globalApiData = { groupsData, participationsData, usersData, affiliationsData };
+  window.findByDataUrl = findByDataUrl;
 }
 
 // WG, IG, CG, TF, Other のグループリストを取得
