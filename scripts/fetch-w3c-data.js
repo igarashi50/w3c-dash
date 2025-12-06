@@ -527,6 +527,7 @@ async function fetchParticipations(collectedGroupsData, collectedParticipationsD
     }
   }
   const allParticipations = Array.from(allParticipationsSet);
+  const participants = []
   console.log(`Found ${allParticipations.length} unique participation data to fetch\n`);
   let fetchedCount = 0;
   let errorCount = 0;
@@ -534,90 +535,71 @@ async function fetchParticipations(collectedGroupsData, collectedParticipationsD
   for (let i = 0; i < allParticipations.length; i++) {
     const partHref = allParticipations[i];
     let detailEntry = undefined;
+    fetchCount++;
+    if (VERBOSE) console.log(`[${fetchCount}] Fetching: ${partHref}`);
+    // 1. リストページ（/groups/.../participations）をfetch
+    const detailPages = await fetchData(partHref);
+    detailEntry = detailPages[partHref];
+    collectedParticipationsData[partHref] = detailEntry;
+    // 2. その中の _links.participations から個別participationのhrefを抽出
+    const participationsObj = detailEntry.data && detailEntry.data._links && detailEntry.data._links.participations;
+    if (participationsObj && typeof participationsObj === 'object') {
+      for (const key in participationsObj) {
+        const p = participationsObj[key];
+        if (p && p.href && /^https:\/\/api\.w3\.org\/participations\/.+/.test(p.href)) {
+          try {
+            fetchCount++;
+            const participationDetail = await fetchData(p.href);
+            const participationDetailEntry = participationDetail[p.href];
+            collectedParticipationsData[p.href] = participationDetailEntry;
+            const detailData = participationDetailEntry && participationDetailEntry.data;
+            if (detailData && detailData.individual === false && detailData._links?.participants?.href) {
+              participants.push(detailData._links.participants.href);
+            }
+          } catch (e) {
+            collectedParticipationsData[p.href] = {
+              fetchedAt: new Date().toISOString(),
+              data: { error: String(e) }
+            };
+            console.warn(`    error fetching participation detail ${p.href}: ${String(e)}`);
+            errorCount++;
+          }
+          // 進捗表示（100件ごと, 最後の1件）
+          if (fetchCount % 100 === 0) {
+            const duration = Date.now() - fetchStartTimestamp;
+            console.log(`\n--- Progress: ${fetchCount} fetches (${formatDuration(duration)}) ---\n`);
+          }
+        }
+      }
+    }
+  }
+  // Fetch participants for organization participations (individual=false)
+  console.log(`Found ${participants.length} unique participants data to fetch\n`);
+  for (const participantsHref of participants) {
     try {
       fetchCount++;
-      if (VERBOSE) console.log(`[${fetchCount}] Fetching: ${partHref}`);
-      // 1. リストページ（/groups/.../participations）をfetch
-      try {
-        const detailPages = await fetchData(partHref);
-        detailEntry = detailPages[partHref];
-        collectedParticipationsData[partHref] = detailEntry;
-        // 2. その中の _links.participations から個別participationのhrefを抽出
-        const participationsObj = detailEntry.data && detailEntry.data._links && detailEntry.data._links.participations;
-        if (participationsObj && typeof participationsObj === 'object') {
-          for (const key in participationsObj) {
-            const p = participationsObj[key];
-            if (p && p.href && /^https:\/\/api\.w3\.org\/participations\/.+/.test(p.href)) {
-              try {
-                fetchCount++;
-                const participationDetailPages = await fetchData(p.href);
-                const participationDetailEntry = participationDetailPages[p.href];
-                collectedParticipationsData[p.href] = participationDetailEntry;
-              } catch (e) {
-                collectedParticipationsData[p.href] = {
-                  fetchedAt: new Date().toISOString(),
-                  data: { error: String(e) }
-                };
-                console.warn(`    error fetching participation detail ${p.href}: ${String(e)}`);
-                errorCount++;
-              }
-              // 進捗表示（100件ごと, 最後の1件）
-              if (fetchCount % 100 === 0) {
-                const duration = Date.now() - fetchStartTimestamp;
-                console.log(`\n--- Progress: ${fetchCount} fetches (${formatDuration(duration)}) ---\n`);
-              }
-            }
-          }
-        }
-      } catch (e) {
-        collectedParticipationsData[partHref] = {
+      const participantsPages = await fetchData(participantsHref);
+      const participantsEntry = participantsPages[participantsHref];
+      if (participantsEntry) {
+        collectedParticipationsData[participantsHref] = participantsEntry;
+      } else {
+        collectedParticipationsData[participantsHref] = {
           fetchedAt: new Date().toISOString(),
-          data: { error: String(e) }
+          _error: 'failed to fetch participants data'
         };
       }
-      // Fetch participants for organization participations (individual=false)
-      const detail = detailEntry && detailEntry.data ? detailEntry.data : null;
-      if (detail && detail.individual === false && detail._links?.participants?.href) {
-        const participantsHref = detail._links.participants.href;
-        try {
-          // ...existing code...
-          fetchCount++;
-          const participantsPages = await fetchData(participantsHref);
-          const participantsEntry = participantsPages[participantsHref];
-          if (participantsEntry) {
-            collectedParticipationsData[participantsHref] = participantsEntry;
-          } else {
-            collectedParticipationsData[participantsHref] = {
-              fetchedAt: new Date().toISOString(),
-              _error: 'failed to fetch participants data'
-            };
-          }
-          console.log(`    ✓ Participants data fetched`);
-        } catch (e) {
-          collectedParticipationsData[participantsHref] = {
-            fetchedAt: new Date().toISOString(),
-            data: { error: String(e) }
-          };
-          console.warn(`  error fetching participant data ${participantsHref}: ${String(e)}`);
-          errorCount++;
-        }
-        // 進捗表示（100件ごと, 最後の1件）
-        if (fetchCount % 100 === 0) {
-          const duration = Date.now() - fetchStartTimestamp;
-          console.log(`\n--- Progress: ${fetchCount} fetches (${formatDuration(duration)}) ---\n`);
-        }
-      }
+      console.log(`    ✓ Participants data fetched`);
       fetchedCount++;
     } catch (e) {
-      collectedParticipationsData[partHref] = {
+      collectedParticipationsData[participantsHref] = {
         fetchedAt: new Date().toISOString(),
         data: { error: String(e) }
       };
-      console.warn(`error fetching participation ${partHref}: ${String(e)}`);
+      console.warn(`  error fetching participant data ${participantsHref}: ${String(e)}`);
       errorCount++;
     }
     // 進捗表示（100件ごと, 最後の1件）
-    if (fetchCount % 100 === 0 || (i === allParticipations.length - 1)) {
+    if (fetchCount % 100 === 0) {
       const duration = Date.now() - fetchStartTimestamp;
       console.log(`\n--- Progress: ${fetchCount} fetches (${formatDuration(duration)}) ---\n`);
     }
@@ -683,10 +665,12 @@ async function fetchUsers(collectedGroupsData, collectedParticipationsData) {
       }
     }
   }
+  // 抽出した全ユーザーURLを配列化してfetch
   const allUsersArray = Array.from(allUsers);
+  const userAfflications = [];
+  const userGroups = [];
+  let fetchCount = 0, fetchedCount = 0, errorCount = 0;
   console.log(`Found ${allUsersArray.length} users to fetch\n`);
-  let fetchedCount = 0;
-  let errorCount = 0;
   for (let i = 0; i < allUsersArray.length; i++) {
     const userHref = allUsersArray[i];
     let hasError = false;
@@ -702,6 +686,53 @@ async function fetchUsers(collectedGroupsData, collectedParticipationsData) {
           fetchedAt: new Date().toISOString(),
           data: userData
         };
+        if (userData && userData._links && userData._links.affiliations) {
+          // affiliationsが配列の場合
+          if (Array.isArray(userData._links.affiliations)) {
+            for (const aff of userData._links.affiliations) {
+              if (aff && aff.href) {
+                userAfflications.push(aff.href);
+                // affiliationsエンドポイントもfetchして保存
+                try {
+                  const affListResult = await fetchData(aff.href);
+                  // 例: https://api.w3.org/users/{id}/affiliations
+                  collectedUsersData[aff.href] = affListResult;
+                } catch (e) {
+                  collectedUsersData[aff.href] = {
+                    fetchedAt: new Date().toISOString(),
+                    data: { error: String(e) }
+                  };
+                }
+              }
+            }
+          } else if (typeof userData._links.affiliations === 'object' && userData._links.affiliations.href) {
+            userAfflications.push(userData._links.affiliations.href);
+            // affiliationsエンドポイントもfetchして保存
+            try {
+              const affListResult = await fetchData(userData._links.affiliations.href);
+              collectedUsersData[userData._links.affiliations.href] = affListResult;
+            } catch (e) {
+              collectedUsersData[userData._links.affiliations.href] = {
+                fetchedAt: new Date().toISOString(),
+                data: { error: String(e) }
+              };
+            }
+          }
+        }
+        if (userData && userData._links && userData._links.groups) {
+          if (Array.isArray(userData._links.groups)) {
+            for (const grp of userData._links.groups) {
+              if (grp && grp.href) {
+                userGroups.push(grp.href);
+              }
+            }
+          } else if (typeof userData._links.groups === 'object' && userData._links.groups.href) {
+            userGroups.push(userData._links.groups.href);
+          }
+        }
+        if (VERBOSE) {
+          console.log(`    ✓ Fetched user data`);
+        }
       } catch (e) {
         collectedUsersData[userHref] = {
           fetchedAt: new Date().toISOString(),
@@ -723,7 +754,53 @@ async function fetchUsers(collectedGroupsData, collectedParticipationsData) {
       console.log(`--- Progress: ${i + 1}/${allUsersArray.length} user data (${formatDuration(Date.now() - fetchStartTimestamp)})`);
     }
   }
-  console.log(`\n✓ Completed: Fetched ${fetchedCount}/${allUsersArray.length} users data (Errors: ${errorCount})`);
+  console.log(`Found ${userAfflications.length} users affiliations to fetch\n`);
+  for (let i = 0; i < userAfflications.length; i++) {
+    const affHref = userAfflications[i];
+    try {
+      fetchCount++;
+      const affData = await fetchData(affHref);
+      collectedUsersData[affHref] = affData;
+      console.log(`    ✓ Affiliation data fetched`);
+      fetchedCount++;
+    } catch (e) {
+      collectedUsersData[affHref] = {
+        fetchedAt: new Date().toISOString(),
+        data: { error: String(e) }
+      };
+      console.warn(`  error fetching affiliation data ${affHref}: ${String(e)}`);
+      errorCount++;
+    }
+    if (fetchCount % 100 === 0 || i === userAfflications.length - 1) {
+      const duration = Date.now() - fetchStartTimestamp;
+      console.log(`--- Progress: ${i + 1}/${userAfflications.length} affiliations (${formatDuration(duration)})`);
+    }
+  }
+
+  console.log(`Found ${userGroups.length} user groups to fetch\n`);
+  for (let i = 0; i < userGroups.length; i++) {
+    const groupHref = userGroups[i];
+    try {
+      fetchCount++;
+      const groupData = await fetchData(groupHref);
+      collectedUsersData[groupHref] = groupData;
+      console.log(`    ✓ Group data fetched`);
+      fetchedCount++;
+    } catch (e) {
+      collectedUsersData[groupHref] = {
+        fetchedAt: new Date().toISOString(),
+        data: { error: String(e) }
+      };
+      console.warn(`  error fetching group data ${groupHref}: ${String(e)}`);
+      errorCount++;
+    }
+    if (fetchCount % 100 === 0 || i === userGroups.length - 1) {
+      const duration = Date.now() - fetchStartTimestamp;
+      console.log(`--- Progress: ${i + 1}/${userGroups.length} groups (${formatDuration(duration)})`);
+    }
+  }
+
+  console.log(`\n✓ Completed: Fetched ${fetchedCount}/${fetchCount} users data (Errors: ${errorCount})`);
   return collectedUsersData;
 }
 
@@ -742,22 +819,39 @@ async function fetchAffiliations(collectedParticipationsData, collectedUsersData
       allAffiliations.add(data._links.organization.href);
     }
   }
-  // 2. usersのaffiliationsエンドポイントから_links.affiliations配列を抽出
+  // 2. usersのaffiliationsエンドポイントから_links.affiliations配下のhrefを抽出（配列・オブジェクト両対応）
   for (const url in collectedUsersData) {
     if (!url.endsWith('/affiliations')) continue; // affiliationsのデータのみ対象
     const entry = collectedUsersData[url];
-    if (!entry || !entry.data) continue;
-    const data = entry.data;
-    if (data._links && Array.isArray(data._links.affiliations)) {
-      for (const aff of data._links.affiliations) {
-        if (aff && aff.href) {
-          allAffiliations.add(aff.href);
+    // 2重構造対応: { [url]: { [url]: { data: ... } } } の場合も考慮
+    let data = entry && entry.data;
+    if (!data && entry && typeof entry === 'object') {
+      // 2重構造: entry[url].data
+      if (entry[url] && entry[url].data) {
+        data = entry[url].data;
+      }
+    }
+    if (!data) continue;
+    if (data._links && data._links.affiliations) {
+      const affiliations = data._links.affiliations;
+      if (Array.isArray(affiliations)) {
+        for (const aff of affiliations) {
+          if (aff && aff.href) {
+            allAffiliations.add(aff.href);
+          }
+        }
+      } else if (typeof affiliations === 'object') {
+        for (const key of Object.keys(affiliations)) {
+          const aff = affiliations[key];
+          if (aff && aff.href) {
+            allAffiliations.add(aff.href);
+          }
         }
       }
     }
   }
   const allAffiliationsArray = Array.from(allAffiliations);
-  console.log(`Found ${allAffiliationsArray.length} unique affiliations to fetch\n`);
+  console.log(`Found ${allAffiliationsArray.length} affiliations to fetch\n`);
   let fetchedAffiliations = 0;
   let errorCount = 0;
   for (let i = 0; i < allAffiliationsArray.length; i++) {
