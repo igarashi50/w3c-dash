@@ -33,8 +33,8 @@ const testGroups = [
   { type: 'wg', shortname: 'miniapps' },
   // { type: 'wg', shortname: 'wot' },
   { type: 'ig', shortname: 'i18n' },
-  { type: 'cg', shortname: 'global-inclusion' },
-  { type: 'tf', shortname: 'ab-elected' },
+  //{ type: 'cg', shortname: 'global-inclusion' },
+  //{ type: 'tf', shortname: 'ab-elected' },
   { type: 'other', shortname: 'ab' }
 ];
 
@@ -89,10 +89,13 @@ async function compareAndWriteJson(dirPath, filename, collectedData) {
             changedCount++;
           }
         } else if (newEntry) {
-          // 新規追加
+          // 新規追加（新しい方にはあるが古い方にはない
           mergedData[k] = newEntry;
           changedCount++;
-        } // 削除は何もしない（mergedDataに入れない）
+        } else {
+          // 削除（古い方にはあるが、新しい方にはない）ー＞mergedDataに入れない
+          changedCount++
+        }
       }
       hasChanges = changedCount > 0;
     } else {
@@ -592,7 +595,7 @@ async function fetchParticipations(collectedGroupsData, collectedParticipationsD
   }
   // Fetch participants for organization participations (individual=false)
   const participantsArray = Array.from(participants);
-  console.log(`Found ${participantsArray.length} unique participants data to fetch`);
+  console.log(`Found ${participantsArray.length} participants data to fetch`);
   for (let i = 0; i < participantsArray.length; i++) {
     const participantsHref = participantsArray[i];
     if (VERBOSE) console.log(`[${fetchCount + 1}] Fetching: ${participantsHref}`);
@@ -895,7 +898,7 @@ async function fetchAffiliations(collectedParticipationsData, collectedUsersData
 }
 
 
-async function phase1_fetchGroupsParticipationsUsers(dirPath, groupsFilename, { isTestMode }) {
+async function phase1_fetchGroupsParticipationsUsers(dirPath, groupsFilename, isTestMode) {
   const groupsFilePath = dirPath + '/' + groupsFilename;
   // shouldFetchGroupsはmainで判定。isTestModeのみ引数で受け取る。
   logAlways('\n========== PHASE 1: Fetching Groups, Participations List, and Users list ==========\n');
@@ -915,7 +918,11 @@ async function phase1_fetchGroupsParticipationsUsers(dirPath, groupsFilename, { 
   const groupTypes = ['wg', 'ig', 'cg', 'tf', 'other'];
   for (let i = 0; i < groupTypes.length; i++) {
     const type = groupTypes[i];
-    const testGroupShortNames = testGroupsShortNamesMap[type]; // テストモード時のみshortname配列を渡す
+    const testGroupShortNames = testGroupsShortNamesMap[type] ?? [];　// テストモード時のみshortname配列を渡す
+    if (testGroupShortNames.length > 0 && testGroupShortNames.length === 0) {
+      // テストモードでかつ該当typeのshortnameが空の場合はスキップ
+      continue;
+    }
     // logAlwaysはfetchTypeGroups側で出力するため、ここでは出さない
     const typeGroupsData = await fetchTypeGroups(type, testGroupShortNames);
     Object.assign(collectedGroupsData, typeGroupsData);
@@ -952,7 +959,7 @@ async function phase1_fetchGroupsParticipationsUsers(dirPath, groupsFilename, { 
   phaseRequestCounts[0] = phaseRequestCount;
   const phase1Written = await compareAndWriteJson(dirPath, groupsFilename, collectedGroupsData);
   if (phase1Written) {
-    logAlways('✓ Groups data successfully saved.');
+    logAlways('✓ The latest Groups data successfully saved.');
   }
 }
 
@@ -983,14 +990,13 @@ async function phase2_fetchParticipations(dirPath, groupsFilename, participation
   phaseRequestCounts[1] = phaseRequestCount;
   const phase2Written = await compareAndWriteJson(dirPath, participationFilename, collectedParticipationsData);
   if (phase2Written) {
-    logAlways('✓ Participations data successfully saved.');
+    logAlways('✓ The latest Participations data successfully saved.');
   }
 }
 
 async function phase3_fetchUsers(dirPath, groupsFilename, participationFilename, usersFilename) {
   const groupsFilePath = dirPath + '/' + groupsFilename;
   const participationFilePath = dirPath + '/' + participationFilename;
-  const usersFilePath = dirPath + '/' + usersFilename;
   logAlways('\n========== PHASE 3: Fetching Users ==========\n');
   phaseRequestCount = 0;
   phaseStartTimestamp = Date.now();
@@ -1028,7 +1034,7 @@ async function phase3_fetchUsers(dirPath, groupsFilename, participationFilename,
   phaseRequestCounts[2] = phaseRequestCount;
   const phase3Written = await compareAndWriteJson(dirPath, usersFilename, collectedUsersData);
   if (phase3Written) {
-    logAlways('✓ Users data successfully saved.');
+    logAlways('✓ The latest Users data successfully saved.');
   }
 }
 
@@ -1037,7 +1043,6 @@ async function phase3_fetchUsers(dirPath, groupsFilename, participationFilename,
 async function phase4_fetchAffiliations(dirPath, participationFilename, usersFilename, affiliationsFilename) {
   const participationFilePath = dirPath + '/' + participationFilename;
   const usersFilePath = dirPath + '/' + usersFilename;
-  const affiliationsFilePath = dirPath + '/' + affiliationsFilename;
   logAlways('\n========== PHASE 4: Fetching Affiliations ==========\n');
   phaseRequestCount = 0;
   phaseStartTimestamp = Date.now();
@@ -1072,7 +1077,7 @@ async function phase4_fetchAffiliations(dirPath, participationFilename, usersFil
   phaseRequestCounts[3] = phaseRequestCount;
   const phase4Written = await compareAndWriteJson(dirPath, affiliationsFilename, collectedAffiliationsData);
   if (phase4Written) {
-    logAlways('✓ Affiliations data successfully saved.');
+    logAlways('✓ The latest Affiliations data successfully saved.');
   }
 }
 
@@ -1134,7 +1139,7 @@ async function main() {
 
   if (fetchAll || fetchGroups) {
     usedFiles.add(fileNames['groups']);
-    await phase1_fetchGroupsParticipationsUsers(dirPath, fileNames['groups'], { isTestMode });
+    await phase1_fetchGroupsParticipationsUsers(dirPath, fileNames['groups'], isTestMode);
   }
   if (fetchAll || fetchParticipations) {
     usedFiles.add(fileNames['groups'])
@@ -1167,20 +1172,17 @@ async function main() {
   const files = [];
 
   for (const filename of Array.from(usedFiles)) {
+    let path = dirPath + '/' + filename;
     try {
-      if (fs.existsSync(path)) {
-        const content = fs.readFileSync(path, 'utf8');
-        const json = JSON.parse(content);
-        if (json._metadata) {
-          files.push({ _metadata: json._metadata });
-        } else {
-          files.push({ _metadata: { filename: filename, lastChecked: null } });
-        }
-      } else {
-        files.push({ _metadata: { filename: filename, lastChecked: null } });
+      const content = fs.readFileSync(path, 'utf8');
+      const json = JSON.parse(content);
+      if (!json._metadata) {
+        console.warn(`Warning: Missing _metadata in ${path}`);
+        continue;
       }
+      files.push({ _metadata: json._metadata });
     } catch (e) {
-      files.push({ _metadata: { filename: filename, lastChecked: null, error: String(e) } });
+      console.error(`Error reading/parsing ${path}: ${e.message}`);
     }
   }
   const w3cData = {
