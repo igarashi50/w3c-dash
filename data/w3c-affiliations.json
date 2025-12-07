@@ -1,10 +1,10 @@
 {
   "_metadata": {
     "filename": "w3c-affiliations",
-    "lastChecked": "2025-12-06T15:57:27.572Z",
-    "fetchStartTime": "20251206-155727",
-    "duration": "32s",
-    "itemCount": 114
+    "lastChecked": "2025-12-07T07:56:04.884Z",
+    "fetchStartTime": "20251207-075604",
+    "duration": "7m3s",
+    "itemCount": 129
   },
   "https://api.w3.org/affiliations/100162": {
     "data": {
@@ -44,34 +44,6 @@
         },
         "participations": {
           "href": "https://api.w3.org/affiliations/100632/participations"
-        }
-      }
-    }
-  },
-  "https://api.w3.org/affiliations/102258": {
-    "data": {
-      "id": 102258,
-      "name": "FIME",
-      "discr": "organization",
-      "testimonials": {},
-      "is-member": true,
-      "is-member-association": false,
-      "is-partner-member": false,
-      "_links": {
-        "homepage": {
-          "href": "https://www.fime.com/"
-        },
-        "self": {
-          "href": "https://api.w3.org/affiliations/102258"
-        },
-        "participants": {
-          "href": "https://api.w3.org/affiliations/102258/participants"
-        },
-        "participations": {
-          "href": "https://api.w3.org/affiliations/102258/participations"
-        },
-        "logo": {
-          "href": "https://www.w3.org/thumbnails/250/logos/organizations/102258.png?x-version=1"
         }
       }
     }
@@ -152,11 +124,12 @@
     }
   },
   "https://api.w3.org/affiliations/1066": {
+    "fetchedAt": "2025-12-07T08:02:31.086Z",
     "data": {
       "id": 1066,
       "name": "Microsoft Corporation",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -180,11 +153,12 @@
     }
   },
   "https://api.w3.org/affiliations/108617": {
+    "fetchedAt": "2025-12-07T08:03:03.488Z",
     "data": {
       "id": 108617,
       "name": "Amazon",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -203,6 +177,34 @@
         },
         "logo": {
           "href": "https://www.w3.org/thumbnails/250/logos/organizations/108617.png?x-version=4"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/affiliations/1088": {
+    "fetchedAt": "2025-12-07T08:02:32.724Z",
+    "data": {
+      "id": 1088,
+      "name": "Oracle Corporation",
+      "discr": "organization",
+      "testimonials": {
+        "en": "Oracle is committed to preserving the open standards-based philosophy that has made the World Wide Web so successful.  We believe the W3C's open, consensus-driven process and associated rigorous public reviews make it uniquely positioned to guide the Web's technical evolution."
+      },
+      "is-member": true,
+      "is-member-association": false,
+      "is-partner-member": false,
+      "_links": {
+        "homepage": {
+          "href": "http://www.oracle.com/"
+        },
+        "self": {
+          "href": "https://api.w3.org/affiliations/1088"
+        },
+        "participants": {
+          "href": "https://api.w3.org/affiliations/1088/participants"
+        },
+        "participations": {
+          "href": "https://api.w3.org/affiliations/1088/participations"
         }
       }
     }
@@ -307,11 +309,12 @@
     }
   },
   "https://api.w3.org/affiliations/110285": {
+    "fetchedAt": "2025-12-07T08:02:47.549Z",
     "data": {
       "id": 110285,
       "name": "Taiwan Digital Publishing Forum",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -359,11 +362,12 @@
     }
   },
   "https://api.w3.org/affiliations/111458": {
+    "fetchedAt": "2025-12-07T08:02:47.813Z",
     "data": {
       "id": 111458,
       "name": "Thomson Reuters Corp.",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -379,6 +383,37 @@
         },
         "participations": {
           "href": "https://api.w3.org/affiliations/111458/participations"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/affiliations/1117": {
+    "fetchedAt": "2025-12-07T08:02:51.955Z",
+    "data": {
+      "id": 1117,
+      "name": "Fraunhofer Gesellschaft",
+      "discr": "organization",
+      "testimonials": {
+        "en": "Fraunhofer-Gesellschaft is the largest organization for applied research in Europe. We transform original ideas into innovations that benefit society and strengthen both the German and the European economy. The Web is a key driver of our innovation process, and therefore we are committed to support W3C‘s work to lead the Web to its full potential."
+      },
+      "is-member": true,
+      "is-member-association": false,
+      "is-partner-member": false,
+      "_links": {
+        "homepage": {
+          "href": "https://www.fraunhofer.de/en.html"
+        },
+        "self": {
+          "href": "https://api.w3.org/affiliations/1117"
+        },
+        "participants": {
+          "href": "https://api.w3.org/affiliations/1117/participants"
+        },
+        "participations": {
+          "href": "https://api.w3.org/affiliations/1117/participations"
+        },
+        "logo": {
+          "href": "https://www.w3.org/thumbnails/250/logos/organizations/1117.png?x-version=3"
         }
       }
     }
@@ -413,37 +448,13 @@
       }
     }
   },
-  "https://api.w3.org/affiliations/112208": {
-    "data": {
-      "id": 112208,
-      "name": "TetraLogical Services Ltd",
-      "discr": "organization",
-      "testimonials": {},
-      "is-member": true,
-      "is-member-association": false,
-      "is-partner-member": false,
-      "_links": {
-        "homepage": {
-          "href": "https://tetralogical.com"
-        },
-        "self": {
-          "href": "https://api.w3.org/affiliations/112208"
-        },
-        "participants": {
-          "href": "https://api.w3.org/affiliations/112208/participants"
-        },
-        "participations": {
-          "href": "https://api.w3.org/affiliations/112208/participations"
-        }
-      }
-    }
-  },
   "https://api.w3.org/affiliations/112585": {
+    "fetchedAt": "2025-12-07T08:02:47.195Z",
     "data": {
       "id": 112585,
       "name": "Salesforce",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -464,11 +475,12 @@
     }
   },
   "https://api.w3.org/affiliations/114165": {
+    "fetchedAt": "2025-12-07T08:02:48.855Z",
     "data": {
       "id": 114165,
       "name": "Wikimedia Foundation",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -488,12 +500,44 @@
       }
     }
   },
+  "https://api.w3.org/affiliations/1142": {
+    "fetchedAt": "2025-12-07T08:02:32.107Z",
+    "data": {
+      "id": 1142,
+      "name": "Hitachi, Ltd.",
+      "discr": "organization",
+      "testimonials": {
+        "en": "Hitachi has long experience in both OT(operational technology) and IT. Towards the IoT era, this is something to be proud of. Hitachi understands the importance of standardization to make the world seamlessly connected, and strongly supports W3C's activities."
+      },
+      "is-member": true,
+      "is-member-association": false,
+      "is-partner-member": false,
+      "_links": {
+        "homepage": {
+          "href": "https://www.hitachi.com/"
+        },
+        "self": {
+          "href": "https://api.w3.org/affiliations/1142"
+        },
+        "participants": {
+          "href": "https://api.w3.org/affiliations/1142/participants"
+        },
+        "participations": {
+          "href": "https://api.w3.org/affiliations/1142/participations"
+        },
+        "logo": {
+          "href": "https://www.w3.org/thumbnails/250/logos/organizations/1142.png?x-version=4"
+        }
+      }
+    }
+  },
   "https://api.w3.org/affiliations/114633": {
+    "fetchedAt": "2025-12-07T08:02:37.355Z",
     "data": {
       "id": 114633,
       "name": "Instituto Tecnológico de Costa Rica",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -514,11 +558,12 @@
     }
   },
   "https://api.w3.org/affiliations/114837": {
+    "fetchedAt": "2025-12-07T08:02:36.072Z",
     "data": {
       "id": 114837,
       "name": "ByteDance",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -587,11 +632,12 @@
     }
   },
   "https://api.w3.org/affiliations/118052": {
+    "fetchedAt": "2025-12-07T08:02:46.674Z",
     "data": {
       "id": 118052,
       "name": "BFO",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -607,6 +653,34 @@
         },
         "participations": {
           "href": "https://api.w3.org/affiliations/118052/participations"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/affiliations/1183": {
+    "fetchedAt": "2025-12-07T08:02:35.230Z",
+    "data": {
+      "id": 1183,
+      "name": "Fujitsu Limited",
+      "discr": "organization",
+      "testimonials": {
+        "en": "Fujitsu is a leading provider of IT-based business solutions for the global marketplace. Fujitsu is actively promoting standardization of XML, electronic businesses, Web Services, and Cloud computing related technologies. It supports many W3C specifications in its products and services."
+      },
+      "is-member": true,
+      "is-member-association": false,
+      "is-partner-member": false,
+      "_links": {
+        "homepage": {
+          "href": "http://www.fujitsu.com"
+        },
+        "self": {
+          "href": "https://api.w3.org/affiliations/1183"
+        },
+        "participants": {
+          "href": "https://api.w3.org/affiliations/1183/participants"
+        },
+        "participations": {
+          "href": "https://api.w3.org/affiliations/1183/participations"
         }
       }
     }
@@ -633,11 +707,12 @@
     }
   },
   "https://api.w3.org/affiliations/1202": {
+    "fetchedAt": "2025-12-07T08:02:48.607Z",
     "data": {
       "id": 1202,
       "name": "Apple Inc.",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -684,32 +759,50 @@
       }
     }
   },
-  "https://api.w3.org/affiliations/121105": {
+  "https://api.w3.org/affiliations/122954": {
+    "fetchedAt": "2025-12-07T08:02:58.240Z",
     "data": {
-      "id": 121105,
-      "name": "NextRoll",
+      "id": 122954,
+      "name": "Krellian",
       "discr": "organization",
-      "testimonials": {
-        "en": "Transparency and trust are at NextRoll’s core. We are proud to support W3C standards that prioritize user rights and data security. Our participation ensures that the future of digital marketing is built on a foundation of privacy, interoperability, and respect for the user."
-      },
+      "is-member": false,
+      "is-member-association": false,
+      "is-partner-member": false,
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/affiliations/122954"
+        },
+        "participants": {
+          "href": "https://api.w3.org/affiliations/122954/participants"
+        },
+        "participations": {
+          "href": "https://api.w3.org/affiliations/122954/participations"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/affiliations/12390": {
+    "fetchedAt": "2025-12-07T08:02:31.581Z",
+    "data": {
+      "id": 12390,
+      "name": "Siemens AG",
+      "discr": "organization",
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
       "_links": {
         "homepage": {
-          "href": "https://www.nextroll.com"
+          "href": "http://www.siemens.com"
         },
         "self": {
-          "href": "https://api.w3.org/affiliations/121105"
+          "href": "https://api.w3.org/affiliations/12390"
         },
         "participants": {
-          "href": "https://api.w3.org/affiliations/121105/participants"
+          "href": "https://api.w3.org/affiliations/12390/participants"
         },
         "participations": {
-          "href": "https://api.w3.org/affiliations/121105/participations"
-        },
-        "logo": {
-          "href": "https://www.w3.org/thumbnails/250/logos/organizations/121105.png?x-version=1"
+          "href": "https://api.w3.org/affiliations/12390/participations"
         }
       }
     }
@@ -826,11 +919,12 @@
     }
   },
   "https://api.w3.org/affiliations/126211": {
+    "fetchedAt": "2025-12-07T08:02:46.931Z",
     "data": {
       "id": 126211,
       "name": "The New York Times",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -850,12 +944,39 @@
       }
     }
   },
+  "https://api.w3.org/affiliations/126911": {
+    "fetchedAt": "2025-12-07T08:02:39.676Z",
+    "data": {
+      "id": 126911,
+      "name": "|pipe|",
+      "discr": "organization",
+      "testimonials": [],
+      "is-member": true,
+      "is-member-association": false,
+      "is-partner-member": false,
+      "_links": {
+        "homepage": {
+          "href": "https://pi.pe"
+        },
+        "self": {
+          "href": "https://api.w3.org/affiliations/126911"
+        },
+        "participants": {
+          "href": "https://api.w3.org/affiliations/126911/participants"
+        },
+        "participations": {
+          "href": "https://api.w3.org/affiliations/126911/participations"
+        }
+      }
+    }
+  },
   "https://api.w3.org/affiliations/127220": {
+    "fetchedAt": "2025-12-07T08:02:48.066Z",
     "data": {
       "id": 127220,
       "name": "Datadog",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -899,12 +1020,35 @@
       }
     }
   },
+  "https://api.w3.org/affiliations/130649": {
+    "fetchedAt": "2025-12-07T08:03:01.244Z",
+    "data": {
+      "id": 130649,
+      "name": "Dogtiger Labs",
+      "discr": "organization",
+      "is-member": false,
+      "is-member-association": false,
+      "is-partner-member": false,
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/affiliations/130649"
+        },
+        "participants": {
+          "href": "https://api.w3.org/affiliations/130649/participants"
+        },
+        "participations": {
+          "href": "https://api.w3.org/affiliations/130649/participations"
+        }
+      }
+    }
+  },
   "https://api.w3.org/affiliations/132550": {
+    "fetchedAt": "2025-12-07T08:02:50.037Z",
     "data": {
       "id": 132550,
       "name": "Internet2",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -928,11 +1072,12 @@
     }
   },
   "https://api.w3.org/affiliations/134143": {
+    "fetchedAt": "2025-12-07T08:03:00.239Z",
     "data": {
       "id": 134143,
       "name": "Interledger Foundation",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -956,11 +1101,12 @@
     }
   },
   "https://api.w3.org/affiliations/135571": {
+    "fetchedAt": "2025-12-07T08:02:43.283Z",
     "data": {
       "id": 135571,
       "name": "Wix.com Ltd.",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -1002,11 +1148,12 @@
     }
   },
   "https://api.w3.org/affiliations/139121": {
+    "fetchedAt": "2025-12-07T08:03:00.486Z",
     "data": {
       "id": 139121,
       "name": "The News Corporation",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -1080,12 +1227,38 @@
       }
     }
   },
+  "https://api.w3.org/affiliations/141809": {
+    "fetchedAt": "2025-12-07T08:03:06.145Z",
+    "data": {
+      "id": 141809,
+      "name": "Luminem",
+      "discr": "organization",
+      "is-member": false,
+      "is-member-association": false,
+      "is-partner-member": false,
+      "_links": {
+        "homepage": {
+          "href": "http://luminem.org/"
+        },
+        "self": {
+          "href": "https://api.w3.org/affiliations/141809"
+        },
+        "participants": {
+          "href": "https://api.w3.org/affiliations/141809/participants"
+        },
+        "participations": {
+          "href": "https://api.w3.org/affiliations/141809/participations"
+        }
+      }
+    }
+  },
   "https://api.w3.org/affiliations/143173": {
+    "fetchedAt": "2025-12-07T08:02:51.310Z",
     "data": {
       "id": 143173,
       "name": "Ant Group Co., Ltd.",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -1263,6 +1436,35 @@
         },
         "participations": {
           "href": "https://api.w3.org/affiliations/151198/participations"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/affiliations/151838": {
+    "fetchedAt": "2025-12-07T08:02:39.934Z",
+    "data": {
+      "id": 151838,
+      "name": "Ignite Retail Technology",
+      "discr": "organization",
+      "testimonials": [],
+      "is-member": true,
+      "is-member-association": false,
+      "is-partner-member": false,
+      "_links": {
+        "homepage": {
+          "href": "http://ignite-retail.com"
+        },
+        "self": {
+          "href": "https://api.w3.org/affiliations/151838"
+        },
+        "participants": {
+          "href": "https://api.w3.org/affiliations/151838/participants"
+        },
+        "participations": {
+          "href": "https://api.w3.org/affiliations/151838/participations"
+        },
+        "logo": {
+          "href": "https://www.w3.org/thumbnails/250/logos/organizations/151838.png?x-version=1"
         }
       }
     }
@@ -1490,11 +1692,12 @@
     }
   },
   "https://api.w3.org/affiliations/16322": {
+    "fetchedAt": "2025-12-07T08:02:38.376Z",
     "data": {
       "id": 16322,
       "name": "DAISY Consortium",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": true,
       "is-partner-member": false,
@@ -1510,6 +1713,31 @@
         },
         "participations": {
           "href": "https://api.w3.org/affiliations/16322/participations"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/affiliations/163277": {
+    "fetchedAt": "2025-12-07T08:03:06.386Z",
+    "data": {
+      "id": 163277,
+      "name": "Softeq Development GmbH",
+      "discr": "organization",
+      "is-member": false,
+      "is-member-association": false,
+      "is-partner-member": false,
+      "_links": {
+        "homepage": {
+          "href": "http://softeq.com"
+        },
+        "self": {
+          "href": "https://api.w3.org/affiliations/163277"
+        },
+        "participants": {
+          "href": "https://api.w3.org/affiliations/163277/participants"
+        },
+        "participations": {
+          "href": "https://api.w3.org/affiliations/163277/participations"
         }
       }
     }
@@ -1539,11 +1767,12 @@
     }
   },
   "https://api.w3.org/affiliations/163568": {
+    "fetchedAt": "2025-12-07T08:03:06.650Z",
     "data": {
       "id": 163568,
       "name": "Studio株式会社",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -1660,11 +1889,12 @@
     }
   },
   "https://api.w3.org/affiliations/171632": {
+    "fetchedAt": "2025-12-07T08:02:52.744Z",
     "data": {
       "id": 171632,
       "name": "Information Accessibility Institute",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -1684,32 +1914,59 @@
       }
     }
   },
-  "https://api.w3.org/affiliations/26550": {
+  "https://api.w3.org/affiliations/28169": {
+    "fetchedAt": "2025-12-07T08:02:34.709Z",
     "data": {
-      "id": 26550,
-      "name": "German Research Center for Artificial Intelligence (DFKI) Gmbh",
+      "id": 28169,
+      "name": "Electronics and Telecommunications Research Institute (ETRI)",
       "discr": "organization",
       "testimonials": {
-        "en": "DFKI is one of the largest nonprofit contract research institutes worldwide in the field of innovative software technology based on Artificial Intelligence methods. DFKI is committed to the use of W3C standards in research and development."
+        "en": "Established in 1976, ETRI is a non-profit government-funded research organization in Korea. ETRI has successfully developed information technologies on the Web such as ezOWL (visual Editor of OWL), and ETRI is committed to use W3C Technologies in its developments. ETRI is also the home of the W3C Korean Chapter."
       },
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
       "_links": {
         "homepage": {
-          "href": "https://www.dfki.de"
+          "href": "http://www.etri.re.kr"
         },
         "self": {
-          "href": "https://api.w3.org/affiliations/26550"
+          "href": "https://api.w3.org/affiliations/28169"
         },
         "participants": {
-          "href": "https://api.w3.org/affiliations/26550/participants"
+          "href": "https://api.w3.org/affiliations/28169/participants"
         },
         "participations": {
-          "href": "https://api.w3.org/affiliations/26550/participations"
+          "href": "https://api.w3.org/affiliations/28169/participations"
         },
         "logo": {
-          "href": "https://www.w3.org/thumbnails/250/logos/organizations/26550.png?x-version=4"
+          "href": "https://www.w3.org/thumbnails/250/logos/organizations/28169.png?x-version=4"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/affiliations/33654": {
+    "fetchedAt": "2025-12-07T08:02:30.835Z",
+    "data": {
+      "id": 33654,
+      "name": "Conexxus",
+      "discr": "organization",
+      "testimonials": [],
+      "is-member": true,
+      "is-member-association": false,
+      "is-partner-member": false,
+      "_links": {
+        "homepage": {
+          "href": "http://www.conexxus.org"
+        },
+        "self": {
+          "href": "https://api.w3.org/affiliations/33654"
+        },
+        "participants": {
+          "href": "https://api.w3.org/affiliations/33654/participants"
+        },
+        "participations": {
+          "href": "https://api.w3.org/affiliations/33654/participations"
         }
       }
     }
@@ -1744,12 +2001,44 @@
       }
     }
   },
+  "https://api.w3.org/affiliations/34345": {
+    "fetchedAt": "2025-12-07T08:02:30.586Z",
+    "data": {
+      "id": 34345,
+      "name": "Universidad Politécnica de Madrid",
+      "discr": "organization",
+      "testimonials": {
+        "en": "The Universidad Politécnica de Madrid is the largest Spanish technological university as well as a renowned European institution. With two recognitions as Campus of International Excellence, it is outstanding in its research activity together with its training of highly-qualified professionals, competitive at an international level."
+      },
+      "is-member": true,
+      "is-member-association": false,
+      "is-partner-member": false,
+      "_links": {
+        "homepage": {
+          "href": "https://www.upm.es"
+        },
+        "self": {
+          "href": "https://api.w3.org/affiliations/34345"
+        },
+        "participants": {
+          "href": "https://api.w3.org/affiliations/34345/participants"
+        },
+        "participations": {
+          "href": "https://api.w3.org/affiliations/34345/participations"
+        },
+        "logo": {
+          "href": "https://www.w3.org/thumbnails/250/logos/organizations/34345.png?x-version=5"
+        }
+      }
+    }
+  },
   "https://api.w3.org/affiliations/35507": {
+    "fetchedAt": "2025-12-07T08:02:44.645Z",
     "data": {
       "id": 35507,
       "name": "Mozilla Foundation",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -1803,11 +2092,12 @@
     }
   },
   "https://api.w3.org/affiliations/36231": {
+    "fetchedAt": "2025-12-07T08:02:33.222Z",
     "data": {
       "id": 36231,
       "name": "Institut Mines-Télécom",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -1899,27 +2189,28 @@
       }
     }
   },
-  "https://api.w3.org/affiliations/39493": {
+  "https://api.w3.org/affiliations/39619": {
+    "fetchedAt": "2025-12-07T08:02:40.797Z",
     "data": {
-      "id": 39493,
-      "name": "NIC.br - Brazilian Network Information Center",
+      "id": 39619,
+      "name": "OpenLink Software Inc.",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
       "_links": {
         "homepage": {
-          "href": "http://www.cgi.br"
+          "href": "http://www.openlinksw.com"
         },
         "self": {
-          "href": "https://api.w3.org/affiliations/39493"
+          "href": "https://api.w3.org/affiliations/39619"
         },
         "participants": {
-          "href": "https://api.w3.org/affiliations/39493/participants"
+          "href": "https://api.w3.org/affiliations/39619/participants"
         },
         "participations": {
-          "href": "https://api.w3.org/affiliations/39493/participations"
+          "href": "https://api.w3.org/affiliations/39619/participations"
         }
       }
     }
@@ -1976,11 +2267,12 @@
     }
   },
   "https://api.w3.org/affiliations/45096": {
+    "fetchedAt": "2025-12-07T08:02:46.119Z",
     "data": {
       "id": 45096,
       "name": "LG Electronics",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -2001,11 +2293,12 @@
     }
   },
   "https://api.w3.org/affiliations/46141": {
+    "fetchedAt": "2025-12-07T08:02:57.993Z",
     "data": {
       "id": 46141,
       "name": "Sony Group Corporation",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -2026,11 +2319,12 @@
     }
   },
   "https://api.w3.org/affiliations/46378": {
+    "fetchedAt": "2025-12-07T08:02:56.453Z",
     "data": {
       "id": 46378,
       "name": "Netflix Inc.",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -2051,11 +2345,12 @@
     }
   },
   "https://api.w3.org/affiliations/46877": {
+    "fetchedAt": "2025-12-07T08:02:51.621Z",
     "data": {
       "id": 46877,
       "name": "Meta",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -2109,11 +2404,12 @@
     }
   },
   "https://api.w3.org/affiliations/49669": {
+    "fetchedAt": "2025-12-07T08:02:36.327Z",
     "data": {
       "id": 49669,
       "name": "Baidu, Inc.",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -2134,11 +2430,12 @@
     }
   },
   "https://api.w3.org/affiliations/49753": {
+    "fetchedAt": "2025-12-07T08:02:36.586Z",
     "data": {
       "id": 49753,
       "name": "Huawei",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -2227,12 +2524,35 @@
       }
     }
   },
+  "https://api.w3.org/affiliations/54876": {
+    "fetchedAt": "2025-12-07T08:03:00.741Z",
+    "data": {
+      "id": 54876,
+      "name": "Canonical Group Limited",
+      "discr": "organization",
+      "is-member": false,
+      "is-member-association": false,
+      "is-partner-member": false,
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/affiliations/54876"
+        },
+        "participants": {
+          "href": "https://api.w3.org/affiliations/54876/participants"
+        },
+        "participations": {
+          "href": "https://api.w3.org/affiliations/54876/participations"
+        }
+      }
+    }
+  },
   "https://api.w3.org/affiliations/54991": {
+    "fetchedAt": "2025-12-07T08:02:55.573Z",
     "data": {
       "id": 54991,
       "name": "LY Corporation",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -2251,6 +2571,32 @@
         },
         "logo": {
           "href": "https://www.w3.org/thumbnails/250/logos/organizations/54991.png?x-version=1"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/affiliations/56103": {
+    "fetchedAt": "2025-12-07T08:02:33.820Z",
+    "data": {
+      "id": 56103,
+      "name": "ACCESS CO., LTD.",
+      "discr": "organization",
+      "testimonials": [],
+      "is-member": true,
+      "is-member-association": false,
+      "is-partner-member": false,
+      "_links": {
+        "homepage": {
+          "href": "http://www.access-company.com/"
+        },
+        "self": {
+          "href": "https://api.w3.org/affiliations/56103"
+        },
+        "participants": {
+          "href": "https://api.w3.org/affiliations/56103/participants"
+        },
+        "participations": {
+          "href": "https://api.w3.org/affiliations/56103/participations"
         }
       }
     }
@@ -2297,12 +2643,35 @@
       }
     }
   },
+  "https://api.w3.org/affiliations/59030": {
+    "fetchedAt": "2025-12-07T08:02:56.727Z",
+    "data": {
+      "id": 59030,
+      "name": "University of the Aegean",
+      "discr": "organization",
+      "is-member": false,
+      "is-member-association": false,
+      "is-partner-member": false,
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/affiliations/59030"
+        },
+        "participants": {
+          "href": "https://api.w3.org/affiliations/59030/participants"
+        },
+        "participations": {
+          "href": "https://api.w3.org/affiliations/59030/participations"
+        }
+      }
+    }
+  },
   "https://api.w3.org/affiliations/59545": {
+    "fetchedAt": "2025-12-07T08:03:04.539Z",
     "data": {
       "id": 59545,
       "name": "Logius",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -2373,12 +2742,35 @@
       }
     }
   },
+  "https://api.w3.org/affiliations/62598": {
+    "fetchedAt": "2025-12-07T08:03:05.645Z",
+    "data": {
+      "id": 62598,
+      "name": "Cardiff University",
+      "discr": "organization",
+      "is-member": false,
+      "is-member-association": false,
+      "is-partner-member": false,
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/affiliations/62598"
+        },
+        "participants": {
+          "href": "https://api.w3.org/affiliations/62598/participants"
+        },
+        "participations": {
+          "href": "https://api.w3.org/affiliations/62598/participations"
+        }
+      }
+    }
+  },
   "https://api.w3.org/affiliations/62643": {
+    "fetchedAt": "2025-12-07T08:02:48.311Z",
     "data": {
       "id": 62643,
       "name": "Bloomberg",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -2461,34 +2853,6 @@
       }
     }
   },
-  "https://api.w3.org/affiliations/68381": {
-    "data": {
-      "id": 68381,
-      "name": "WU (Wirschaftsuniversität Wien) - Vienna University of Economics and Business",
-      "discr": "organization",
-      "testimonials": {},
-      "is-member": true,
-      "is-member-association": false,
-      "is-partner-member": false,
-      "_links": {
-        "homepage": {
-          "href": "https://www.wu.ac.at/"
-        },
-        "self": {
-          "href": "https://api.w3.org/affiliations/68381"
-        },
-        "participants": {
-          "href": "https://api.w3.org/affiliations/68381/participants"
-        },
-        "participations": {
-          "href": "https://api.w3.org/affiliations/68381/participations"
-        },
-        "logo": {
-          "href": "https://www.w3.org/thumbnails/250/logos/organizations/68381.png?x-version=1"
-        }
-      }
-    }
-  },
   "https://api.w3.org/affiliations/69854": {
     "data": {
       "id": 69854,
@@ -2520,11 +2884,12 @@
     }
   },
   "https://api.w3.org/affiliations/72139": {
+    "fetchedAt": "2025-12-07T08:03:05.893Z",
     "data": {
       "id": 72139,
       "name": "China Mobile Communications Corporation",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -2572,11 +2937,12 @@
     }
   },
   "https://api.w3.org/affiliations/7552": {
+    "fetchedAt": "2025-12-07T08:02:38.106Z",
     "data": {
       "id": 7552,
       "name": "Library of Congress",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -2596,37 +2962,13 @@
       }
     }
   },
-  "https://api.w3.org/affiliations/75851": {
-    "data": {
-      "id": 75851,
-      "name": "Merchant Advisory Group",
-      "discr": "organization",
-      "testimonials": {},
-      "is-member": true,
-      "is-member-association": true,
-      "is-partner-member": false,
-      "_links": {
-        "homepage": {
-          "href": "http://www.merchantadvisorygroup.org/"
-        },
-        "self": {
-          "href": "https://api.w3.org/affiliations/75851"
-        },
-        "participants": {
-          "href": "https://api.w3.org/affiliations/75851/participants"
-        },
-        "participations": {
-          "href": "https://api.w3.org/affiliations/75851/participations"
-        }
-      }
-    }
-  },
   "https://api.w3.org/affiliations/76452": {
+    "fetchedAt": "2025-12-07T08:02:36.844Z",
     "data": {
       "id": 76452,
       "name": "Alibaba Group",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -2647,11 +2989,12 @@
     }
   },
   "https://api.w3.org/affiliations/79706": {
+    "fetchedAt": "2025-12-07T08:02:50.926Z",
     "data": {
       "id": 79706,
       "name": "Shopify",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -2767,6 +3110,32 @@
       }
     }
   },
+  "https://api.w3.org/affiliations/93614": {
+    "fetchedAt": "2025-12-07T08:02:35.487Z",
+    "data": {
+      "id": 93614,
+      "name": "Gooroomee Inc.",
+      "discr": "organization",
+      "testimonials": [],
+      "is-member": true,
+      "is-member-association": false,
+      "is-partner-member": false,
+      "_links": {
+        "homepage": {
+          "href": "http://www.gooroomee.com"
+        },
+        "self": {
+          "href": "https://api.w3.org/affiliations/93614"
+        },
+        "participants": {
+          "href": "https://api.w3.org/affiliations/93614/participants"
+        },
+        "participations": {
+          "href": "https://api.w3.org/affiliations/93614/participations"
+        }
+      }
+    }
+  },
   "https://api.w3.org/affiliations/96819": {
     "data": {
       "id": 96819,
@@ -2818,12 +3187,41 @@
       }
     }
   },
+  "https://api.w3.org/affiliations/9826": {
+    "fetchedAt": "2025-12-07T08:02:32.971Z",
+    "data": {
+      "id": 9826,
+      "name": "ERICSSON",
+      "discr": "organization",
+      "testimonials": {
+        "en": "Founded in 1876, Ericsson is the largest supplier of mobile communications systems in the world. Supporting all major standards for wireless communication, Ericsson is committed to the use and development of W3C Recommendations to continue mobilizing the World Wide Web."
+      },
+      "is-member": true,
+      "is-member-association": false,
+      "is-partner-member": false,
+      "_links": {
+        "homepage": {
+          "href": "https://www.ericsson.com"
+        },
+        "self": {
+          "href": "https://api.w3.org/affiliations/9826"
+        },
+        "participants": {
+          "href": "https://api.w3.org/affiliations/9826/participants"
+        },
+        "participations": {
+          "href": "https://api.w3.org/affiliations/9826/participations"
+        }
+      }
+    }
+  },
   "https://api.w3.org/affiliations/9829": {
+    "fetchedAt": "2025-12-07T08:02:31.851Z",
     "data": {
       "id": 9829,
       "name": "Intel Corporation",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
@@ -2843,30 +3241,54 @@
       }
     }
   },
-  "https://api.w3.org/affiliations/98428": {
+  "https://api.w3.org/affiliations/98847": {
+    "fetchedAt": "2025-12-07T08:02:32.447Z",
     "data": {
-      "id": 98428,
-      "name": "Capital One Financial",
+      "id": 98847,
+      "name": "Internet Research Institute, Inc.",
       "discr": "organization",
-      "testimonials": {},
+      "testimonials": [],
       "is-member": true,
       "is-member-association": false,
       "is-partner-member": false,
       "_links": {
         "homepage": {
-          "href": "https://www.capitalone.com"
+          "href": "http://www.iri.co.jp/"
         },
         "self": {
-          "href": "https://api.w3.org/affiliations/98428"
+          "href": "https://api.w3.org/affiliations/98847"
         },
         "participants": {
-          "href": "https://api.w3.org/affiliations/98428/participants"
+          "href": "https://api.w3.org/affiliations/98847/participants"
         },
         "participations": {
-          "href": "https://api.w3.org/affiliations/98428/participations"
+          "href": "https://api.w3.org/affiliations/98847/participations"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/affiliations/99362": {
+    "fetchedAt": "2025-12-07T08:02:35.826Z",
+    "data": {
+      "id": 99362,
+      "name": "MEDIA DO Co., Ltd.",
+      "discr": "organization",
+      "testimonials": [],
+      "is-member": true,
+      "is-member-association": false,
+      "is-partner-member": false,
+      "_links": {
+        "homepage": {
+          "href": "https://www.mediado.jp/english/"
         },
-        "logo": {
-          "href": "https://www.w3.org/thumbnails/250/logos/organizations/98428.png?x-version=1"
+        "self": {
+          "href": "https://api.w3.org/affiliations/99362"
+        },
+        "participants": {
+          "href": "https://api.w3.org/affiliations/99362/participants"
+        },
+        "participations": {
+          "href": "https://api.w3.org/affiliations/99362/participations"
         }
       }
     }
