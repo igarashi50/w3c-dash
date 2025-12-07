@@ -276,49 +276,36 @@ async function fetchData(startUrl) {
 
   const pages = [];
   let url = startUrl;
+  let page = 1; // 初期ページ
   let lastError = undefined;
-  // すべてのページを取得
+
   while (url) {
     let fetchStart = Date.now();
     let fetchEnd;
     try {
       const r = await fetchJson(url, 6, 5000, 120000);
-      fetchEnd = Date.now();
       pages.push(r);
-      url = r?._links?.next?.href || null;
-    } catch (e) {
-      fetchEnd = Date.now();
-      let errorMsg = '';
-      if (typeof e === 'object' && e !== null) {
-        if (e.statusCode && e.url) {
-          errorMsg = `Error: ${e.statusCode} ${e.url}`;
-        } else if (e.message && e.url) {
-          errorMsg = `Error: ${e.message} ${e.url}`;
-        } else if (e.message) {
-          errorMsg = `Error: ${e.message}`;
-        } else if (e.statusCode) {
-          errorMsg = `Error: ${e.statusCode}`;
-        } else {
-          errorMsg = JSON.stringify(e);
-        }
+      // レスポンスから総ページ数を取得して次のURLを構築
+      const totalPages = r.pages || 1;
+      if (page < totalPages) {
+        page += 1;
+        url = `${startUrl.split('?')[0]}?page=${page}`;
       } else {
-        errorMsg = `${String(e)}`;
+        url = null; // 最後のページに到達
       }
-      if (errorMsg.startsWith('{')) {
-        errorMsg = '[object Object]';
-      }
-      console.warn(`[ERROR] ${errorMsg}`);
-      lastError = errorMsg;
-      url = null; // break
+    } catch (err) {
+      lastError = err;
+      console.log(`    [ERROR] fetchData error for ${url}: ${JSON.stringify(err).substring(0, 200)}`);
+      break;
+    } finally {
+      fetchEnd = Date.now();
     }
     const elapsed = fetchEnd - fetchStart;
     const sleepMs = REQUEST_INTERVAL - elapsed;
     if (sleepMs > 0) {
       await sleep(sleepMs);
     }
-    if (VERBOSE) {
-      console.log(`    [INFO] elapsed ${elapsed}ms  sleep ${sleepMs}ms`);
-    }
+    if (VERBOSE) { console.log(`    [INFO] elapsed ${elapsed}ms  sleep ${sleepMs}ms`); }
     if (lastError) break;
   }
 
