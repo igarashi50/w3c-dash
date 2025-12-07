@@ -41,18 +41,26 @@ jobs:
           git add data/
           if git diff --staged --quiet; then
             echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "has_release_changes=false" >> $GITHUB_OUTPUT
             echo "No changes detected"
           else
             echo "has_changes=true" >> $GITHUB_OUTPUT
-            echo "Changes detected in these files:"
-            git diff --staged --name-only
+            CHANGED_FILES=$(git diff --staged --name-only | grep '^data/' || true)
+            echo "Changed files: $CHANGED_FILES"
+            # w3c-data.json以外が変更されていればリリース
+            RELEASE_FILES=$(echo "$CHANGED_FILES" | grep -v 'w3c-data.json' || true)
+            if [ -n "$RELEASE_FILES" ]; then
+              echo "has_release_changes=true" >> $GITHUB_OUTPUT
+            else
+              echo "has_release_changes=false" >> $GITHUB_OUTPUT
+            fi
             echo ""
             echo "Change statistics:"
             git diff --staged --stat
           fi
       
       - name: Create Release with data files
-        if: steps.check_changes.outputs.has_changes == 'true'
+        if: steps.check_changes.outputs.has_release_changes == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
