@@ -905,9 +905,9 @@ async function phase1_fetchGroupsParticipationsUsers(dirPath, groupsFilename, is
   const groupTypes = ['wg', 'ig', 'cg', 'tf', 'other'];
   for (let i = 0; i < groupTypes.length; i++) {
     const type = groupTypes[i];
-    const testGroupShortNames = testGroupsShortNamesMap[type] ?? [];　// テストモード時のみshortname配列を渡す
-    if (testGroupShortNames.length > 0 && testGroupShortNames.length === 0) {
-      // テストモードでかつ該当typeのshortnameが空の場合はスキップ
+    const testGroupShortNames = testGroupsShortNamesMap[type];　// テストモード時のみshortname配列を渡す
+    if (isTestMode && testGroupShortNames == undefined) {
+      // テストモードでかつ該当typeのshortnameがundefinedの場合はスキップ
       continue;
     }
     // logAlwaysはfetchTypeGroups側で出力するため、ここでは出さない
