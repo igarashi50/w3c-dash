@@ -1,10 +1,10 @@
 {
   "_metadata": {
     "filename": "w3c-groups.json",
-    "lastChecked": "2025-12-07T14:31:51.864Z",
-    "fetchStartTime": "20251207-143151",
-    "duration": "5s",
-    "itemCount": 15
+    "lastChecked": "2025-12-07T15:24:12.752Z",
+    "fetchStartTime": "20251207-152412",
+    "duration": "4s",
+    "itemCount": 18
   },
   "https://api.w3.org/groups/cg": {
     "fetchedAt": "2025-12-07T14:31:56.063Z",
@@ -3361,6 +3361,592 @@
         },
         "last": {
           "href": "https://api.w3.org/groups/wg/miniapps/users?page=1&items=100"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/groups/wg/wot": {
+    "fetchedAt": "2025-12-07T15:24:14.781Z",
+    "data": {
+      "id": 95969,
+      "name": "Web of Things Working Group",
+      "is_closed": false,
+      "creation-date": "2016-12-27",
+      "description": "The Web of Things seeks to counter the fragmentation of the IoT through standard complementing building blocks (e.g., metadata and APIs) that enable easy integration across IoT platforms and application domains.",
+      "shortname": "wot",
+      "discr": "w3cgroup",
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/groups/wg/wot"
+        },
+        "homepage": {
+          "href": "https://www.w3.org/WoT/wg/"
+        },
+        "users": {
+          "href": "https://api.w3.org/groups/wg/wot/users"
+        },
+        "services": {
+          "href": "https://api.w3.org/groups/wg/wot/services"
+        },
+        "specifications": {
+          "href": "https://api.w3.org/groups/wg/wot/specifications"
+        },
+        "chairs": {
+          "href": "https://api.w3.org/groups/wg/wot/chairs"
+        },
+        "team-contacts": {
+          "href": "https://api.w3.org/groups/wg/wot/teamcontacts"
+        },
+        "charters": {
+          "href": "https://api.w3.org/groups/wg/wot/charters"
+        },
+        "active-charter": {
+          "href": "https://api.w3.org/groups/wg/wot/charters/487"
+        },
+        "join": {
+          "href": "https://www.w3.org/groups/wg/wot/join"
+        },
+        "pp-status": {
+          "href": "https://www.w3.org/groups/wg/wot/ipr"
+        },
+        "participations": {
+          "href": "https://api.w3.org/groups/wg/wot/participations"
+        }
+      },
+      "type": "working group",
+      "start-date": "2016-12-27",
+      "end-date": "2026-04-02"
+    }
+  },
+  "https://api.w3.org/groups/wg/wot/participations": {
+    "fetchedAt": "2025-12-07T15:24:14.982Z",
+    "data": {
+      "page": 1,
+      "limit": 100,
+      "pages": 1,
+      "total": 37,
+      "_links": {
+        "up": {
+          "href": "https://api.w3.org/groups/wg/wot"
+        },
+        "participations": [
+          {
+            "href": "https://api.w3.org/participations/37953",
+            "title": "Universidad Politécnica de Madrid"
+          },
+          {
+            "href": "https://api.w3.org/participations/37956",
+            "title": "Conexxus"
+          },
+          {
+            "href": "https://api.w3.org/participations/37962",
+            "title": "Microsoft Corporation"
+          },
+          {
+            "href": "https://api.w3.org/participations/37968",
+            "title": "Rakuten Group, Inc."
+          },
+          {
+            "href": "https://api.w3.org/participations/37983",
+            "title": "Farshid Tavakolizadeh"
+          },
+          {
+            "href": "https://api.w3.org/participations/37986",
+            "title": "Siemens AG"
+          },
+          {
+            "href": "https://api.w3.org/participations/37987",
+            "title": "Intel Corporation"
+          },
+          {
+            "href": "https://api.w3.org/participations/37989",
+            "title": "Hitachi, Ltd."
+          },
+          {
+            "href": "https://api.w3.org/participations/37990",
+            "title": "Jan Romann"
+          },
+          {
+            "href": "https://api.w3.org/participations/37993",
+            "title": "Ben Francis"
+          },
+          {
+            "href": "https://api.w3.org/participations/38004",
+            "title": "Internet Research Institute, Inc."
+          },
+          {
+            "href": "https://api.w3.org/participations/38006",
+            "title": "Cristiano Aguzzi"
+          },
+          {
+            "href": "https://api.w3.org/participations/38027",
+            "title": "Oracle Corporation"
+          },
+          {
+            "href": "https://api.w3.org/participations/38036",
+            "title": "ERICSSON"
+          },
+          {
+            "href": "https://api.w3.org/participations/38087",
+            "title": "Konstantinos Kotis"
+          },
+          {
+            "href": "https://api.w3.org/participations/38092",
+            "title": "Institut Mines-Télécom"
+          },
+          {
+            "href": "https://api.w3.org/participations/38094",
+            "title": "Ecole Mohammadia d'Ingenieurs Rabat (EMI)"
+          },
+          {
+            "href": "https://api.w3.org/participations/38095",
+            "title": "Dave Raggett"
+          },
+          {
+            "href": "https://api.w3.org/participations/38096",
+            "title": "ACCESS CO., LTD."
+          },
+          {
+            "href": "https://api.w3.org/participations/38098",
+            "title": "Institut National de Recherche en Informatique et en Automatique (Inria)"
+          },
+          {
+            "href": "https://api.w3.org/participations/38103",
+            "title": "Philipp-Alexander Blum"
+          },
+          {
+            "href": "https://api.w3.org/participations/38104",
+            "title": "Christine Perey"
+          },
+          {
+            "href": "https://api.w3.org/participations/38105",
+            "title": "Electronics and Telecommunications Research Institute (ETRI)"
+          },
+          {
+            "href": "https://api.w3.org/participations/38151",
+            "title": "Fundacion CTIC"
+          },
+          {
+            "href": "https://api.w3.org/participations/38227",
+            "title": "Fujitsu Limited"
+          },
+          {
+            "href": "https://api.w3.org/participations/38416",
+            "title": "Gooroomee Inc."
+          },
+          {
+            "href": "https://api.w3.org/participations/38735",
+            "title": "MEDIA DO Co., Ltd."
+          },
+          {
+            "href": "https://api.w3.org/participations/39216",
+            "title": "Michael Koster"
+          },
+          {
+            "href": "https://api.w3.org/participations/39725",
+            "title": "ByteDance"
+          },
+          {
+            "href": "https://api.w3.org/participations/42468",
+            "title": "|pipe|"
+          },
+          {
+            "href": "https://api.w3.org/participations/42606",
+            "title": "Ignite Retail Technology"
+          },
+          {
+            "href": "https://api.w3.org/participations/43212",
+            "title": "OpenLink Software Inc."
+          },
+          {
+            "href": "https://api.w3.org/participations/43942",
+            "title": "Charith Perera"
+          },
+          {
+            "href": "https://api.w3.org/participations/44774",
+            "title": "Luca Barbato"
+          },
+          {
+            "href": "https://api.w3.org/participations/45917",
+            "title": "Mahmood Afshari"
+          },
+          {
+            "href": "https://api.w3.org/participations/46036",
+            "title": "Michael McCool"
+          },
+          {
+            "href": "https://api.w3.org/participations/46317",
+            "title": "Fraunhofer Gesellschaft"
+          }
+        ],
+        "self": {
+          "href": "https://api.w3.org/groups/wg/wot/participations?page=1&items=100"
+        },
+        "first": {
+          "href": "https://api.w3.org/groups/wg/wot/participations?page=1&items=100"
+        },
+        "last": {
+          "href": "https://api.w3.org/groups/wg/wot/participations?page=1&items=100"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/groups/wg/wot/users": {
+    "fetchedAt": "2025-12-07T15:24:15.183Z",
+    "data": {
+      "page": 1,
+      "limit": 100,
+      "pages": 1,
+      "total": 67,
+      "_links": {
+        "up": {
+          "href": "https://api.w3.org/groups/wg/wot"
+        },
+        "users": [
+          {
+            "href": "https://api.w3.org/users/pmkhhgdczxwc4s8ws8sk0kc0k4oso48",
+            "title": "Mahmood Afshari",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/t4szqtsr1r4goc04gwo48g0c4s4w4gk",
+            "title": "Cristiano Aguzzi",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/f075m9xhpugco4owcoo8oo400og8wsc",
+            "title": "Slimane Bah",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/nuht5r3rfy8048cs08wos4c044c0gg0",
+            "title": "Luca Barbato",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/gp837j8rfps8ok8s488kwk84wcs8koc",
+            "title": "Roman Binkert",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/cfin9pyx1ag4so4w8c840k844w4sk4c",
+            "title": "Philipp-Alexander Blum",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/apgk6ybxysws8kc0cw0kk8oggg0oco4",
+            "title": "Victor Charpenay",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/98clw5pdglk44wgkkk8o40s4cc84008",
+            "title": "Mun Hwan Choi",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/2qp6vzbh7xus0w80cksgs844w0s84cs",
+            "title": "Andrea Cimmino",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/frz2wf4cjs8o4oowcskwc8w8w0o0c84",
+            "title": "Andrei Ciortea",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/hwhicchka3kgg4o88owckckggoocc80",
+            "title": "Anicic Darko",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/cc9v6puma9wk48sk8cwwsskc44040kk",
+            "title": "Jack Dickinson",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/fgvtyma7jlkwo88w0gc4o8owsoss0g0",
+            "title": "Ouafaa Diouri",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/7i2gkilmibcw0cok840o8sc8ck4w08c",
+            "title": "Zane Durkin",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/e0wroe5ufy80c8cs00cw840csk4w88w",
+            "title": "David Ezell",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/org7l6e45og4kgkwk40kwks8wccog8s",
+            "title": "Dogan Fennibay",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/9uigxfepltkw48socgg4k0goo8ogsss",
+            "title": "Ben Francis",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/kfaomt69paoc8gkg44kok8kokkwk484",
+            "title": "Hiroshi Fujiwara",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/hxrovncr6nksgc0kcokkoskc0000c88",
+            "title": "Andres Garcia Mangas",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/3xiz417hzbcwco4swkc84g0kkcoc088",
+            "title": "Christian Glomb",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/5z8qasyaf0wssscsgwcksg0g440k04s",
+            "title": "Klaus Hartke",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/hnrbn36ljsgs8o48okkw0c0g0wk08wg",
+            "title": "Abderrahim Hasbi",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/9hbww53nv9c08kgsc8wwccgccc80o4s",
+            "title": "Tetsuhiko Hirata",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/759my98wbngg88wooo8sgooo0g8cko8",
+            "title": "Hidenobu Ito",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/mlms4s6irxwco4gogkws40k8c4ss8ko",
+            "title": "Jaime Jimenez",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/602h3rtzblogccw8w8c0cws0004kc44",
+            "title": "Takuki Kamiya",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/g1vraepc0dck8co44wgk0wssgg88gsg",
+            "title": "Ari Keränen",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/tj6vaovrk1wgkwoss0w088k8gcs8kkw",
+            "title": "Geunhyung Kim",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/or13l6k02680sw44ok0s04sos8gg40w",
+            "title": "Ege Korkan",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/ew373cxqzt44sws0848wc8oo4k8osg8",
+            "title": "Michael Koster",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/8k2xjrhl9nokkgc008s404wk088wkcs",
+            "title": "Konstantinos Kotis",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/bc3lpb13tx4w8wk4g0c0kow80w4sscw",
+            "title": "Matthias Kovatsch",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/exld6bfkffw4k4g4occ8ssosg44kkc0",
+            "title": "Sebastian Käbisch",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/mn8sxsya36888gocwksgg8wcsgcooco",
+            "title": "Changkyu Lee",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/kgr6ya2wfr440s44ows884k08o4wkkw",
+            "title": "Kangchan Lee",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/2j0ltmwg0leswks8skc8cc04cw0ow0o",
+            "title": "Wonsuk Lee",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/mzj20lk8sm8kkc8swwgow4cockww48k",
+            "title": "Michael McCool",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/le1ntoawbpc4wkw4c4s4w0ws044koks",
+            "title": "Brian McManus",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/htl7i2kapmgwgo4oo0o0so44kwssksk",
+            "title": "Katsuhiro Mihara",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/j9bcaa3etwgk8ss8o4k8ccg0k88oosg",
+            "title": "Tomoaki Mizushima",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/4p90u7nzlc00g8o84ksko040kkk8ggw",
+            "title": "yosuke nakamura",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/9fsvq7ob5kw08kwo8g0wo8w4kw8o4k4",
+            "title": "Kazuaki Nimura",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/f7td9rolxpssw88gco4c0w84c8wkogc",
+            "title": "Mahda Noura",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/5vzbybof80g8goowcsooss8ko4wg4cs",
+            "title": "Ken Ogiso",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/ibbl6f8j9p4co8skos8kks0skw44cc",
+            "title": "Takashi Ogura",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/5su5k8uj7p0ccgk8k4gc48gcowso4os",
+            "title": "ChangSeok Oh",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/3lo51ebxvqm88gwo4s0s4sw44sg0w48",
+            "title": "Kazeem Oladipupo",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/625xc0j672g4wog0wgog4wso0o0wcgk",
+            "title": "Tim Panton",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/e2bk6lv66nksgokg88ok0w4o0og8ogk",
+            "title": "Daniel Peintner",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/mcv98h02cv4gocwogcw8ss8s044s40w",
+            "title": "Charith Perera",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/bnhurro14vks48kck0wocs8o0kg08w0",
+            "title": "Christine Perey",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/3bhknwa35qo0c48w80w8c08sws0g408",
+            "title": "María Poveda-Villalón",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/ksgplwkb6pco08c0cw0okg408oggkss",
+            "title": "Dave Raggett",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/ry8ds5jsrj4k484c8wwooo888w4scc4",
+            "title": "Elena Reshetova",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/1btxszrhtqbocgkgo8wsoskcg44cc4s",
+            "title": "Asmaâ Retbi",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/tjopox0nomos0kscgwcwg0sogwow00o",
+            "title": "Marc Riedlinger",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/lw5hs8msbk00wwgsc8wk0g0k4ocssg0",
+            "title": "Jan Romann",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/46nuj7gyl6askoccw8ws8gwc0kcow04",
+            "title": "Takuya Sakamoto",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/e2vaqa8xm5w8ocowkg8wg4gwwoc0o8w",
+            "title": "Farshid Tavakolizadeh",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/ox8xc2908xcowo8wwkog0cgokcw0o8o",
+            "title": "Ted Thibodeau Jr",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/54jnhojfcxogsc4ks0g4ws4w0wggw4g",
+            "title": "Joshua Thomas",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/58oc10skemo844s8sowkgowoc8kccow",
+            "title": "Kunihiko Toumura",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/ladv9x6f1sgcwc88o80k08w8gco84cg",
+            "title": "Raphaël Troncy",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/3eyjtdk3kuioskkw0wks4o4gssgok4g",
+            "title": "Shinjiro Urata",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/8zx8d4tvvhgkcowssw4sk0808owc0wo",
+            "title": "Niklas Widell",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/64p2dbxuaaskg08sksw88g8s00k40s",
+            "title": "Josiane Xavier Parreira",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/p9q1824mouso4sk0800kcwk4k4wosgw",
+            "title": "Sunghyun YOON",
+            "former": false
+          }
+        ],
+        "self": {
+          "href": "https://api.w3.org/groups/wg/wot/users?page=1&items=100"
+        },
+        "first": {
+          "href": "https://api.w3.org/groups/wg/wot/users?page=1&items=100"
+        },
+        "last": {
+          "href": "https://api.w3.org/groups/wg/wot/users?page=1&items=100"
         }
       }
     }
