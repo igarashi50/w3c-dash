@@ -25,11 +25,10 @@ jobs:
       - name: Create data directory
         run: mkdir -p data
       
-      - name: Fetch W3C API data (TEST MODE)
-        # テストモードで取得（--testオプション付き）
+      - name: Fetch W3C API data
         run: |
-          echo "[INFO] Fetching W3C groups (TEST MODE)"
-          node scripts/fetch-w3c-data.js --test
+          echo "[INFO] Fetching ALL W3C groups"
+          node scripts/fetch-w3c-data.js
       
       - name: Check for changes
         id: check_changes
@@ -88,6 +87,7 @@ jobs:
           cp data/w3c-participations.json data/w3c-participations-${TIMESTAMP}.json
           cp data/w3c-users.json data/w3c-users-${TIMESTAMP}.json
           cp data/w3c-affiliations.json data/w3c-affiliations-${TIMESTAMP}.json
+          cp data/w3c-data.json data/w3c-data-${TIMESTAMP}.json
           
           echo "Files to release:"
           ls -lh data/w3c-*-${TIMESTAMP}.json
@@ -100,19 +100,22 @@ jobs:
             data/w3c-participations-${TIMESTAMP}.json \
             data/w3c-users-${TIMESTAMP}.json \
             data/w3c-affiliations-${TIMESTAMP}.json \
+            data/w3c-data-${TIMESTAMP}.json \
             --title "W3C API Data Snapshot - $(date +'%Y-%m-%d %H:%M:%S')" \
             --notes "Automated W3C API data snapshot. Each file contains \`_metadata\` with:
           - **filename**: File name
           - **lastChecked**: ISO timestamp of the check
-          - **fetchStartTime**: Start time in YYYYMMDD-HHMMSS format
-          - **duration**: Duration of the fetch operation
-          - **itemCount**: Number of items in the file
+          - **files**: Number of files (optional, only for w3c-data)
+          - **fetchStartTime**: Start time in YYYYMMDD-HHMMSS format (optional)
+          - **duration**: Duration of the fetch operation (optional)
+          - **itemCount**: Number of items in the file (optional)
           
           Files included:
           - **w3c-groups-${TIMESTAMP}.json**: Groups, participations lists, users lists
           - **w3c-participations-${TIMESTAMP}.json**: Participation details
           - **w3c-users-${TIMESTAMP}.json**: User details (IE and organization participants)
-          - **w3c-affiliations-${TIMESTAMP}.json**: Affiliation details"
+          - **w3c-affiliations-${TIMESTAMP}.json**: Affiliation details
+          - **w3c-data-${TIMESTAMP}.json**: Summary of all the generated/used files in this run."
           
           echo ""
           echo "✓ Release created: $TAG_NAME"

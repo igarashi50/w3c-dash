@@ -3,7 +3,7 @@ const https = require('https');
 const http = require('http');
 const zlib = require('zlib');
 const fs = require('fs');
-const { error, group } = require('console');
+const { error, group, dir } = require('console');
 
 // minimist不要: シンプルなフラグ判定
 const VERBOSE = process.argv.includes('--verbose');
@@ -26,17 +26,17 @@ function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 const REQUEST_INTERVAL = 200;
 
 
+forceTestMode = true;   // テストモードフラグ
 // typeごとにshortname配列をまとめる
 const testGroups = [
   { type: 'wg', shortname: 'css' },
   { type: 'wg', shortname: 'miniapps' },
-  { type: 'wg', shortname: 'wot' },
+  // { type: 'wg', shortname: 'wot' },
   { type: 'ig', shortname: 'i18n' },
   { type: 'cg', shortname: 'global-inclusion' },
   { type: 'tf', shortname: 'ab-elected' },
   { type: 'other', shortname: 'ab' }
 ];
-
 
 function formatDuration(ms) {
   const seconds = Math.floor(ms / 1000);
@@ -52,17 +52,18 @@ function formatDuration(ms) {
   }
 }
 
-async function compareAndWriteJson(filename, collectedData) {
+async function compareAndWriteJson(dirPath, filename, collectedData) {
+  ;
+  const filePath = `${dirPath}/${filename}`;
   // 所要時間を計算
   const duration = Date.now() - fetchStartTimestamp;
   const durationStr = formatDuration(duration);
-  const mainFile = `data/${filename}.json`;
   let hasChanges = false;
   let mergedData = {};
   try {
     // 既存ファイルがあれば比較
-    if (fs.existsSync(mainFile)) {
-      const prevContent = fs.readFileSync(mainFile, 'utf8');
+    if (fs.existsSync(filePath)) {
+      const prevContent = fs.readFileSync(filePath, 'utf8');
       const prevJson = JSON.parse(prevContent);
       const prevData = { ...prevJson };
       delete prevData._metadata;
@@ -101,11 +102,11 @@ async function compareAndWriteJson(filename, collectedData) {
     }
     // _metadataは後で付与
   } catch (e) {
-    console.error(`Failed to write ${filename}.json: ${e.message}`);
+    console.error(`Failed to write ${filePath}: ${e.message}`);
   }
   // データが変わっていない場合はファイル保存を行わない
   if (!hasChanges) {
-    console.log(`✓ No changes detected: ${mainFile} not updated.`);
+    console.log(`✓ No changes detected: ${filePath} not updated.`);
     return false;
   }
   const finalDataWithMetadata = {
@@ -119,8 +120,8 @@ async function compareAndWriteJson(filename, collectedData) {
     ...mergedData
   };
   const finalContent = JSON.stringify(finalDataWithMetadata, null, 2);
-  fs.writeFileSync(mainFile, finalContent, 'utf8');
-  console.log(`✓ Main file updated with data changes: ${mainFile}`);
+  fs.writeFileSync(filePath, finalContent, 'utf8');
+  console.log(`✓ File updated with data changes: ${filePath}`);
   return true;
 };
 
@@ -152,12 +153,12 @@ function fetchJson(url, retries = 6, backoffMs = 5000, timeoutMs = 180000, redir
           const raw = Buffer.concat(chunks);
           const enc = (res.headers['content-encoding'] || '').toLowerCase();
 
-          // [RESPONSE] ログ出力（status, content-length, mime-type）
+          // [RESPONSE] ログ出力（status, content-length, Last-Modified）
           if (VERBOSE && !process.env.SUPPRESS_REQUEST_LOG) {
             const status = res.statusCode;
             const clen = res.headers['content-length'] || raw.length;
-            const mime = res.headers['content-type'] || '';
-            console.log(`    [RESPONSE] status=${status} content-length=${clen} mime-type=${mime}`);
+            const lastModified = res.headers['last-modified'] || '';
+            console.log(`    [RESPONSE] status=${status} content-length=${clen} last-modified=${lastModified}`);
           }
 
           // HTTPエラー時はレスポンスボディも記録
@@ -553,8 +554,8 @@ async function fetchParticipations(collectedGroupsData, collectedParticipationsD
   console.log(`Found ${participationsArray.length} participations to fetch`);
   const participants = new Set();
   for (let i = 0; i < participationsArray.length; i++) {
-    if (VERBOSE) console.log(`[${fetchCount + 1}] Fetching: ${participationHref}`);
     const participationHref = participationsArray[i];
+    if (VERBOSE) console.log(`[${fetchCount + 1}] Fetching: ${participationHref}`);
     let participationData = {};
     try {
       if (VERBOSE) console.log(`  → Fetching participation detail from ${participationHref}`);
@@ -593,8 +594,9 @@ async function fetchParticipations(collectedGroupsData, collectedParticipationsD
   const participantsArray = Array.from(participants);
   console.log(`Found ${participantsArray.length} unique participants data to fetch`);
   for (let i = 0; i < participantsArray.length; i++) {
-    if (VERBOSE) console.log(`[${fetchCount + 1}] Fetching: ${participantsHref}`);
     const participantsHref = participantsArray[i];
+    if (VERBOSE) console.log(`[${fetchCount + 1}] Fetching: ${participantsHref}`);
+
     let participantsData = {};
     try {
       if (VERBOSE) console.log(`[${fetchCount}] Fetching: ${participantsHref}`);
@@ -688,10 +690,10 @@ async function fetchUsers(collectedGroupsData, collectedParticipationsData) {
   let fetchCount = 0, fetchedCount = 0, errorCount = 0;
   console.log(`Found ${allUsersArray.length} users to fetch`);
   for (let i = 0; i < allUsersArray.length; i++) {
+    const userHref = allUsersArray[i];
     if (VERBOSE) {
       console.log(`[${i + 1}/${allUsersArray.length}] Fetching: ${userHref}`);
     }
-    const userHref = allUsersArray[i];
     if (userHref) {
       let userData = {};
       try {
@@ -893,7 +895,8 @@ async function fetchAffiliations(collectedParticipationsData, collectedUsersData
 }
 
 
-async function phase1_fetchGroupsParticipationsUsers({ isTestMode }) {
+async function phase1_fetchGroupsParticipationsUsers(dirPath, groupsFilename, { isTestMode }) {
+  const groupsFilePath = dirPath + '/' + groupsFilename;
   // shouldFetchGroupsはmainで判定。isTestModeのみ引数で受け取る。
   logAlways('\n========== PHASE 1: Fetching Groups, Participations List, and Users list ==========\n');
   phaseRequestCount = 0;
@@ -947,24 +950,26 @@ async function phase1_fetchGroupsParticipationsUsers({ isTestMode }) {
   logAlways(`Total requests: ${phaseRequestCount}`);
   logAlways(`Average requests/sec: ${(phaseRequestCount / phaseDurationSec).toFixed(2)}`);
   phaseRequestCounts[0] = phaseRequestCount;
-  const phase1Written = await compareAndWriteJson('w3c-groups', collectedGroupsData);
+  const phase1Written = await compareAndWriteJson(dirPath, groupsFilename, collectedGroupsData);
   if (phase1Written) {
-    logAlways('✓ Groups data successfully saved');
+    logAlways('✓ Groups data successfully saved.');
   }
 }
 
-async function phase2_fetchParticipations() {
+async function phase2_fetchParticipations(dirPath, groupsFilename, participationFilename) {
+  const groupsFilePath = dirPath + '/' + groupsFilename;
+  const participationFilePath = dirPath + '/' + participationFilename;
   logAlways('\n========== PHASE 2: Fetching Participations ==========\n');
   phaseRequestCount = 0;
   phaseStartTimestamp = Date.now();
   // groupsデータを都度ロード
   let collectedGroupsData = {};
   try {
-    const groupsContent = fs.readFileSync('data/w3c-groups.json', 'utf8');
+    const groupsContent = fs.readFileSync(groupsFilePath, 'utf8');
     collectedGroupsData = JSON.parse(groupsContent);
     logAlways(`Loaded ${Object.keys(collectedGroupsData).length} items from w3c-groups.json`);
   } catch (e) {
-    console.error(`Error: Cannot load w3c-groups.json: ${e.message}`);
+    console.error(`Error: Cannot load ${groupsFilePath}: ${e.message}`);
     process.exit(1);
   }
   // participationデータは空で開始
@@ -976,13 +981,16 @@ async function phase2_fetchParticipations() {
   logAlways(`Total requests: ${phaseRequestCount}`);
   logAlways(`Average requests/sec: ${(phaseRequestCount / phaseDurationSec).toFixed(2)}`);
   phaseRequestCounts[1] = phaseRequestCount;
-  const phase2Written = await compareAndWriteJson('w3c-participations', collectedParticipationsData);
+  const phase2Written = await compareAndWriteJson(dirPath, participationFilename, collectedParticipationsData);
   if (phase2Written) {
-    logAlways('✓ Participations data successfully saved');
+    logAlways('✓ Participations data successfully saved.');
   }
 }
 
-async function phase3_fetchUsers() {
+async function phase3_fetchUsers(dirPath, groupsFilename, participationFilename, usersFilename) {
+  const groupsFilePath = dirPath + '/' + groupsFilename;
+  const participationFilePath = dirPath + '/' + participationFilename;
+  const usersFilePath = dirPath + '/' + usersFilename;
   logAlways('\n========== PHASE 3: Fetching Users ==========\n');
   phaseRequestCount = 0;
   phaseStartTimestamp = Date.now();
@@ -991,7 +999,7 @@ async function phase3_fetchUsers() {
 
   // groupsデータロード
   try {
-    const groupsContent = fs.readFileSync('data/w3c-groups.json', 'utf8');
+    const groupsContent = fs.readFileSync(groupsFilePath, 'utf8');
     collectedGroupsData = JSON.parse(groupsContent);
     logAlways(`Loaded ${Object.keys(collectedGroupsData).length} items from w3c-groups.json`);
   } catch (e) {
@@ -1001,7 +1009,7 @@ async function phase3_fetchUsers() {
 
   // participationsデータを都度ロード
   try {
-    const participationsContent = fs.readFileSync('data/w3c-participations.json', 'utf8');
+    const participationsContent = fs.readFileSync(participationFilePath, 'utf8');
     collectedParticipationsData = JSON.parse(participationsContent);
     logAlways(`Loaded ${Object.keys(collectedParticipationsData).length} items from w3c-participations.json`);
   } catch (e) {
@@ -1018,15 +1026,18 @@ async function phase3_fetchUsers() {
   logAlways(`Total requests: ${phaseRequestCount}`);
   logAlways(`Average requests/sec: ${(phaseRequestCount / phaseDurationSec).toFixed(2)}`);
   phaseRequestCounts[2] = phaseRequestCount;
-  const phase3Written = await compareAndWriteJson('w3c-users', collectedUsersData);
+  const phase3Written = await compareAndWriteJson(dirPath, usersFilename, collectedUsersData);
   if (phase3Written) {
-    logAlways('✓ Users data successfully saved');
+    logAlways('✓ Users data successfully saved.');
   }
 }
 
 // （重複・壊れた定義を削除）
 // PHASE 4: Affiliations
-async function phase4_fetchAffiliations() {
+async function phase4_fetchAffiliations(dirPath, participationFilename, usersFilename, affiliationsFilename) {
+  const participationFilePath = dirPath + '/' + participationFilename;
+  const usersFilePath = dirPath + '/' + usersFilename;
+  const affiliationsFilePath = dirPath + '/' + affiliationsFilename;
   logAlways('\n========== PHASE 4: Fetching Affiliations ==========\n');
   phaseRequestCount = 0;
   phaseStartTimestamp = Date.now();
@@ -1034,7 +1045,7 @@ async function phase4_fetchAffiliations() {
   // participationsデータを都度ロード
   let collectedParticipationsData = {};
   try {
-    const participationsContent = fs.readFileSync('data/w3c-participations.json', 'utf8');
+    const participationsContent = fs.readFileSync(participationFilePath, 'utf8');
     collectedParticipationsData = JSON.parse(participationsContent);
     logAlways(`Loaded ${Object.keys(collectedParticipationsData).length} items from w3c-participations.json`);
   } catch (e) {
@@ -1044,11 +1055,11 @@ async function phase4_fetchAffiliations() {
   // usersデータを都度ロード
   let collectedUsersData = {};
   try {
-    const usersContent = fs.readFileSync('data/w3c-users.json', 'utf8');
+    const usersContent = fs.readFileSync(usersFilePath, 'utf8');
     collectedUsersData = JSON.parse(usersContent);
-    logAlways(`Loaded ${Object.keys(collectedUsersData).length} items from w3c-users.json`);
+    logAlways(`Loaded ${Object.keys(collectedUsersData).length} items from ${usersFilePath}`);
   } catch (e) {
-    console.error(`Error: Cannot load w3c-users.json: ${e.message}`);
+    console.error(`Error: Cannot load ${usersFilePath}: ${e.message}`);
     process.exit(1);
   }
   const collectedAffiliationsData = await fetchAffiliations(collectedParticipationsData, collectedUsersData);
@@ -1059,13 +1070,26 @@ async function phase4_fetchAffiliations() {
   logAlways(`Total requests: ${phaseRequestCount}`);
   logAlways(`Average requests/sec: ${(phaseRequestCount / phaseDurationSec).toFixed(2)}`);
   phaseRequestCounts[3] = phaseRequestCount;
-  const phase4Written = await compareAndWriteJson('w3c-affiliations', collectedAffiliationsData);
+  const phase4Written = await compareAndWriteJson(dirPath, affiliationsFilename, collectedAffiliationsData);
   if (phase4Written) {
-    logAlways('✓ Affiliations data successfully saved');
+    logAlways('✓ Affiliations data successfully saved.');
   }
 }
 
+function printUsage() {
+  console.log(`\nUsage:
+  node scripts/fetch-w3c-data.js                    # Fetch all data (groups + participations + users + affiliations)
+  node scripts/fetch-w3c-data.js --groups --test     # Test mode (7 sample groups, groups phase only)
+  node scripts/fetch-w3c-data.js --groups           # Fetch only groups, participations lists, users lists
+  node scripts/fetch-w3c-data.js --participations   # Fetch only participation details (requires w3c-groups.json)
+  node scripts/fetch-w3c-data.js --users            # Fetch only user details (requires w3c-participations.json)
+  node scripts/fetch-w3c-data.js --affiliations     # Fetch only affiliations (requires w3c-users.json)
+  node scripts/fetch-w3c-data.js --groups --participations  # Fetch groups and participations
+  node scripts/fetch-w3c-data.js --verbose          # Show detailed fetch logs\n`);
+}
+
 async function main() {
+  const dirPath = './data';
   fetchStartTimestamp = Date.now();
   const now = new Date(fetchStartTimestamp);
   fetchStartTime = now.toISOString()
@@ -1083,67 +1107,51 @@ async function main() {
   if (unknownOptions.length > 0 || unknownSingleOptions.length > 0) {
     const allUnknown = [...unknownOptions, ...unknownSingleOptions];
     console.error(`Error: Unsupported option(s): ${allUnknown.join(', ')}`);
-    console.log(`\nUsage:
-  node scripts/fetch-w3c-data.js                    # Fetch all data (groups + participations + users + affiliations)
-  node scripts/fetch-w3c-data.js --groups --test     # Test mode (7 sample groups, groups phase only)
-  node scripts/fetch-w3c-data.js --groups           # Fetch only groups, participations lists, users lists
-  node scripts/fetch-w3c-data.js --participations   # Fetch only participation details (requires w3c-groups.json)
-  node scripts/fetch-w3c-data.js --users            # Fetch only user details (requires w3c-participations.json)
-  node scripts/fetch-w3c-data.js --affiliations     # Fetch only affiliations (requires w3c-users.json)
-  node scripts/fetch-w3c-data.js --groups --participations  # Fetch groups and participations
-  node scripts/fetch-w3c-data.js --verbose          # Show detailed fetch logs\n`);
+    printUsage();
     process.exit(1);
   }
   if (process.argv.includes('--help') || process.argv.includes('-h')) {
-    console.log(`\nUsage:
-  node scripts/fetch-w3c-data.js                    # Fetch all data (groups + participations + users + affiliations)
-  node scripts/fetch-w3c-data.js --groups --test     # Test mode (7 sample groups, groups phase only)
-  node scripts/fetch-w3c-data.js --groups           # Fetch only groups, participations lists, users lists
-  node scripts/fetch-w3c-data.js --participations   # Fetch only participation details (requires w3c-groups.json)
-  node scripts/fetch-w3c-data.js --users            # Fetch only user details (requires w3c-participations.json)
-  node scripts/fetch-w3c-data.js --affiliations     # Fetch only affiliations (requires w3c-users.json)
-  node scripts/fetch-w3c-data.js --groups --participations  # Fetch groups and participations
-  node scripts/fetch-w3c-data.js --verbose          # Show detailed fetch logs\n`);
+    printUsage();
     process.exit(0);
   }
-  fs.mkdirSync('data', { recursive: true });
-  // --groups --test の場合は phase1 のみ実行
-  const isTestMode = process.argv.includes('--test');
+  fs.mkdirSync(dirPath, { recursive: true });
+  const isTestMode = process.argv.includes('--test') || forceTestMode;
   const fetchGroups = process.argv.includes('--groups');
   const fetchParticipations = process.argv.includes('--participations');
   const fetchUsers = process.argv.includes('--users');
   const fetchAffiliations = process.argv.includes('--affiliations');
   const fetchAll = !fetchGroups && !fetchParticipations && !fetchUsers && !fetchAffiliations;
 
-  const fileNameMap = {
-    'data/w3c-groups.json': 'w3c-groups',
-    'data/w3c-participations.json': 'w3c-participations',
-    'data/w3c-users.json': 'w3c-users',
-    'data/w3c-affiliations.json': 'w3c-affiliations'
+  const fileNames = {
+    data: 'w3c-data.json',
+    groups: 'w3c-groups.json',
+    participations: 'w3c-participations.json',
+    users: 'w3c-users.json',
+    affiliations: 'w3c-affiliations.json'
   };
   const nowIso = new Date().toISOString();
   const usedFiles = new Set();
 
   if (fetchAll || fetchGroups) {
-    usedFiles.add('data/w3c-groups.json');
-    await phase1_fetchGroupsParticipationsUsers({ isTestMode });
+    usedFiles.add(fileNames['groups']);
+    await phase1_fetchGroupsParticipationsUsers(dirPath, fileNames['groups'], { isTestMode });
   }
   if (fetchAll || fetchParticipations) {
-    usedFiles.add('data/w3c-groups.json');
-    usedFiles.add('data/w3c-participations.json');
-    await phase2_fetchParticipations({ isTestMode });
+    usedFiles.add(fileNames['groups'])
+    usedFiles.add(fileNames['participations']);
+    await phase2_fetchParticipations(dirPath, fileNames['groups'], fileNames['participations']);
   }
   if (fetchAll || fetchUsers) {
-    usedFiles.add('data/w3c-groups.json');
-    usedFiles.add('data/w3c-users.json');
-    usedFiles.add('data/w3c-participations.json');
-    await phase3_fetchUsers();
+    usedFiles.add(fileNames['groups']);
+    usedFiles.add(fileNames['participations']);
+    usedFiles.add(fileNames['users']);
+    await phase3_fetchUsers(dirPath, fileNames['groups'], fileNames['participations'], fileNames['users']);
   }
   if (fetchAll || fetchAffiliations) {
-    usedFiles.add('data/w3c-users.json');
-    usedFiles.add('data/w3c-participations.json');
-    usedFiles.add('data/w3c-affiliations.json');
-    await phase4_fetchAffiliations()
+    usedFiles.add(fileNames['users']);
+    usedFiles.add(fileNames['participations']);
+    usedFiles.add(fileNames['affiliations']);
+    await phase4_fetchAffiliations(dirPath, fileNames['participations'], fileNames['users'], fileNames['affiliations']);
   }
 
   const duration = Date.now() - fetchStartTimestamp;
@@ -1158,8 +1166,7 @@ async function main() {
   // files配列構築
   const files = [];
 
-  for (const path of Array.from(usedFiles)) {
-    const name = fileNameMap[path] || path;
+  for (const filename of Array.from(usedFiles)) {
     try {
       if (fs.existsSync(path)) {
         const content = fs.readFileSync(path, 'utf8');
@@ -1167,24 +1174,25 @@ async function main() {
         if (json._metadata) {
           files.push({ _metadata: json._metadata });
         } else {
-          files.push({ _metadata: { filename: name, lastChecked: null } });
+          files.push({ _metadata: { filename: filename, lastChecked: null } });
         }
       } else {
-        files.push({ _metadata: { filename: name, lastChecked: null } });
+        files.push({ _metadata: { filename: filename, lastChecked: null } });
       }
     } catch (e) {
-      files.push({ _metadata: { filename: name, lastChecked: null, error: String(e) } });
+      files.push({ _metadata: { filename: filename, lastChecked: null, error: String(e) } });
     }
   }
   const w3cData = {
     _metadata: {
-      filename: 'w3c-data',
+      filename: fileNames['data'],
       lastChecked: nowIso
     },
     files
   };
-  fs.writeFileSync('data/w3c-data.json', JSON.stringify(w3cData, null, 2), 'utf8');
-  console.log('✓ w3c-data.json updated');
+  const path = dirPath + '/' + fileNames['data'];
+  fs.writeFileSync(path, JSON.stringify(w3cData, null, 2), 'utf8');
+  console.log(`✓ ${path} updated`);
 }
 
 main().catch(e => {
