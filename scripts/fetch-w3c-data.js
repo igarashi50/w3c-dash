@@ -31,7 +31,7 @@ forceTestMode = true;   // テストモードフラグ
 const testGroups = [
   { type: 'wg', shortname: 'css' },
   { type: 'wg', shortname: 'miniapps' },
-  // { type: 'wg', shortname: 'wot' },
+  { type: 'wg', shortname: 'wot' },
   { type: 'ig', shortname: 'i18n' },
   //{ type: 'cg', shortname: 'global-inclusion' },
   //{ type: 'tf', shortname: 'ab-elected' },
