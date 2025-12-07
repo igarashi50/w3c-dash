@@ -1113,24 +1113,37 @@ async function main() {
   const fetchParticipations = process.argv.includes('--participations');
   const fetchUsers = process.argv.includes('--users');
   const fetchAffiliations = process.argv.includes('--affiliations');
-  const fetchAll = !fetchGroups && !fetchParticipations && !fetchUsers && !fetchAffiliations && !isTestMode;
+  const fetchAll = !fetchGroups && !fetchParticipations && !fetchUsers && !fetchAffiliations;
 
-  if (isTestMode && fetchGroups && !fetchParticipations && !fetchUsers && !fetchAffiliations) {
-    // --groups --test の場合は phase1 のみ
+  const fileNameMap = {
+    'data/w3c-groups.json': 'w3c-groups',
+    'data/w3c-participations.json': 'w3c-participations',
+    'data/w3c-users.json': 'w3c-users',
+    'data/w3c-affiliations.json': 'w3c-affiliations'
+  };
+  const nowIso = new Date().toISOString();
+  const usedFiles = new Set();
+
+  if (fetchAll || fetchGroups) {
+    usedFiles.add('data/w3c-groups.json');
     await phase1_fetchGroupsParticipationsUsers({ isTestMode });
-  } else {
-    if (fetchAll || isTestMode || fetchGroups) {
-      await phase1_fetchGroupsParticipationsUsers({ isTestMode });
-    }
-    if (fetchAll || isTestMode || fetchParticipations) {
-      await phase2_fetchParticipations({ isTestMode });
-    }
-    if (fetchAll || isTestMode || fetchUsers) {
-      await phase3_fetchUsers();
-    }
-    if (fetchAll || isTestMode || fetchAffiliations) {
-      await phase4_fetchAffiliations();
-    }
+  }
+  if (fetchAll || fetchParticipations) {
+    usedFiles.add('data/w3c-groups.json');
+    usedFiles.add('data/w3c-participations.json');
+    await phase2_fetchParticipations({ isTestMode });
+  }
+  if (fetchAll || fetchUsers) {
+    usedFiles.add('data/w3c-groups.json');
+    usedFiles.add('data/w3c-users.json');
+    usedFiles.add('data/w3c-participations.json');
+    await phase3_fetchUsers();
+  }
+  if (fetchAll || fetchAffiliations) {
+    usedFiles.add('data/w3c-users.json');
+    usedFiles.add('data/w3c-participations.json');
+    usedFiles.add('data/w3c-affiliations.json');
+    await phase4_fetchAffiliations()
   }
 
   const duration = Date.now() - fetchStartTimestamp;
@@ -1140,53 +1153,38 @@ async function main() {
   console.log(`Total requests (all phases): ${totalRequestCount}`);
   const totalDurationSec = duration / 1000;
   console.log(`Average requests/sec (all phases): ${(totalRequestCount / totalDurationSec).toFixed(2)}`);
-  // 各ファイルを都度ロードして件数表示
-  try {
-    const groupsContent = fs.readFileSync('data/w3c-groups.json', 'utf8');
-    const groupsData = JSON.parse(groupsContent);
-    // テストモード時はFiltered Groups数も表示
-    let totalGroupsCount = 0;
-    for (const key of Object.keys(groupsData)) {
-      if (key === '_metadata') continue;
-      // /groups/{type} のリストページ
-      if (/\/groups\/(wg|ig|cg|tf|other)$/.test(key)) {
-        const entry = groupsData[key];
-        if (entry && entry.data && entry.data._links && Array.isArray(entry.data._links.groups)) {
-          totalGroupsCount += entry.data._links.groups.length;
+
+  // w3c-data.json生成処理
+  // files配列構築
+  const files = [];
+
+  for (const path of Array.from(usedFiles)) {
+    const name = fileNameMap[path] || path;
+    try {
+      if (fs.existsSync(path)) {
+        const content = fs.readFileSync(path, 'utf8');
+        const json = JSON.parse(content);
+        if (json._metadata) {
+          files.push({ _metadata: json._metadata });
+        } else {
+          files.push({ _metadata: { filename: name, lastChecked: null } });
         }
+      } else {
+        files.push({ _metadata: { filename: name, lastChecked: null } });
       }
+    } catch (e) {
+      files.push({ _metadata: { filename: name, lastChecked: null, error: String(e) } });
     }
-    let testedGroupsCount = 0;
-    for (const key of Object.keys(groupsData)) {
-      if (key === '_metadata') continue;
-      // /groups/{type}/{shortname} 形式のみカウント
-      if (/\/groups\/(wg|ig|cg|tf|other)\/[a-zA-Z0-9\-]+$/.test(key)) {
-        testedGroupsCount++;
-      }
-    }
-    if (isTestMode) {
-      console.log(`Total Groups: ${totalGroupsCount}`);
-      console.log(`Tested Groups (Test Mode) : ${testedGroupsCount}`);
-    } else {
-      console.log(`Total Groups: ${totalGroupsCount}`);
-    }
-    console.log(`Groups data: ${Object.keys(groupsData).length} items`);
-  } catch { }
-  try {
-    const participationsContent = fs.readFileSync('data/w3c-participations.json', 'utf8');
-    const participationsData = JSON.parse(participationsContent);
-    console.log(`Participations data: ${Object.keys(participationsData).length} items`);
-  } catch { }
-  try {
-    const usersContent = fs.readFileSync('data/w3c-users.json', 'utf8');
-    const usersData = JSON.parse(usersContent);
-    console.log(`Users data: ${Object.keys(usersData).length} items`);
-  } catch { }
-  try {
-    const affiliationsContent = fs.readFileSync('data/w3c-affiliations.json', 'utf8');
-    const affiliationsData = JSON.parse(affiliationsContent);
-    console.log(`Affiliations data: ${Object.keys(affiliationsData).length} items`);
-  } catch { }
+  }
+  const w3cData = {
+    _metadata: {
+      filename: 'w3c-data',
+      lastChecked: nowIso
+    },
+    files
+  };
+  fs.writeFileSync('data/w3c-data.json', JSON.stringify(w3cData, null, 2), 'utf8');
+  console.log('✓ w3c-data.json updated');
 }
 
 main().catch(e => {
