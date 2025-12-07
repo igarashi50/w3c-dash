@@ -25,11 +25,11 @@ jobs:
       - name: Create data directory
         run: mkdir -p data
       
-      - name: Fetch W3C API data
-        # 本番モードで取得（--testオプションなし）
+      - name: Fetch W3C API data (TEST MODE)
+        # テストモードで取得（--testオプション付き）
         run: |
-          echo "[INFO] Fetching ALL W3C groups (production mode)"
-          node scripts/fetch-w3c-data.js
+          echo "[INFO] Fetching W3C groups (TEST MODE)"
+          node scripts/fetch-w3c-data.js --test
       
       - name: Check for changes
         id: check_changes
