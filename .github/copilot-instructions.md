@@ -1,14 +1,26 @@
+
 # W3C Dash Development Guide
 
 ## Overview
-W3C Dash is a **client-side web dashboard** for visualizing W3C group participation data. The application consists of a static HTML page that loads pre-fetched W3C API data from JSON files and renders interactive charts and tables using Chart.js.
+W3C Dash is a **client-side web application** for visualizing W3C group participation statistics. The application consists of a static HTML page that loads pre-fetched W3C API data from JSON files and renders interactive tables and visual summaries. No Chart.js is used; all visualizations are custom DOM-based.
 
 ## Architecture
 
+### Project Structure
+- `index.html` — Main HTML file for the dashboard UI
+- `w3c-dash.js` — Main UI logic and event handling
+- `w3c-api.js` — Data access and aggregation logic
+- `w3c-dash.css` — Styles for the dashboard
+- `data/` — Pre-fetched W3C API data in JSON format
+- `scripts/fetch-w3c-data.js` — Node.js script to fetch and update data via the W3C API
+- `.github/workflows/fetch-w3c-data.yml` — GitHub Actions workflow for automated data fetching and updates
+- `README.md` — Project overview and usage instructions
+- `LICENSE` — License information
+
 ### Data Flow
-1. **Data Collection** (`scripts/fetch-w3c-data.js`): Node.js script fetches data from W3C API and saves to `data/*.json`
-2. **Data Loading** (`w3c-api.js`): Client-side module loads JSON files and provides lookup functions
-3. **UI Rendering** (`w3c-dash.js`): Main application logic builds tables, charts, and popups
+1. **Data Fetching**: Run `node scripts/fetch-w3c-data.js` to fetch the latest W3C API data and save it to `data/*.json`.
+2. **Data Loading**: The dashboard loads these JSON files in the browser and processes them via `w3c-api.js`.
+3. **UI Rendering**: `index.html` and `w3c-dash.js` builds tables and popups for interactive exploration.
 
 ### Key Components
 - **`w3c-api.js`**: Pure data access layer
@@ -19,7 +31,7 @@ W3C Dash is a **client-side web dashboard** for visualizing W3C group participat
 - **`w3c-dash.js`**: UI logic and event handling
   - `renderData()`: Main rendering function - builds sortable table with charts
   - `showMembersPopup()`: Three-pane popup (Members → Participants → User Details)
-  - Chart.js integration: Dual horizontal bar charts per group (Members + Participants stacked)
+  - Custom DOM-based bar charts and summaries
 
 ### Data Model
 ```javascript
@@ -86,10 +98,10 @@ python3 -m http.server 8000
 
 ### Updating Data
 ```bash
-# Full data refresh (takes ~2-3 hours for all W3C groups)
+# Full data refresh (takes ~2-3 hours for all W3C groups), where forceTestMode=false
 node scripts/fetch-w3c-data.js
 
-# Quick test with sample groups
+# Quick test with sample groups (or forceTestMode=true)
 node scripts/fetch-w3c-data.js --test
 ```
 
@@ -107,9 +119,7 @@ node scripts/fetch-w3c-data.js --test
 3. Add clickable handler if showing detail list
 
 ### Changing Chart Appearance
-- Charts defined in `loadGroups()` after table rendering
-- Two charts per group: Members (single bar) + Participants (stacked bar)
-- `maxScale` ensures both charts use same X-axis scale for visual comparison
+- Bar charts and summaries are rendered using custom DOM logic in `w3c-dash.js`.
 - Colors: M=#0969da, U=#1f883d, IE=#bf8700, S=#cf222e, Ind=#8250df
 
 ### Debugging Data Issues
@@ -123,7 +133,6 @@ node scripts/fetch-w3c-data.js --test
 - **No server-side processing**: All data must be pre-fetched to JSON files
 - **W3C API rate limits**: 6000 requests per IP per 10 minutes (script uses 50% of limit)
 - **Browser memory**: Large datasets may require pagination (currently loads all groups at once)
-- **Chart.js datalabels plugin**: Required for displaying values inside bars
 
 ## External Dependencies
   - No npm/package.json - intentionally dependency-free for simplicity

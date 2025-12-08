@@ -27,10 +27,10 @@ All data is fetched from the W3C API (https://www.w3.org/api/) and stored as loc
 
 > **Recommended:**
 >
-> The public "W3C Dash" is available at the official GitHub Pages site:
+> The public "W3C Dash" is available at the GitHub Pages site of this repo:
 > [https://igarashi50.github.io/w3c-dash/](https://igarashi50.github.io/w3c-dash/)
 >
-> This site provides up-to-date statistics based on regularly fetched data snapshots. For most users, we recommend using this hosted version.
+> This site provides up-to-date statistics based on weekly fetched data snapshots. For most users, we recommend using this hosted version.
 
 If you want to run locally or update the data yourself:
 1. Fetch the latest data:
