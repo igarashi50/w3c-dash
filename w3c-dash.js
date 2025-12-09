@@ -105,7 +105,7 @@ function showList(title, arr) {
   overlay.style.display = 'block';
 }
 
-async function showMembersPopup(groupData, groupName, initialFilter = 'members') {
+async function showGroupPopup(groupData, groupName, initialFilter = 'members') {
   const popup = document.getElementById('membersPopup');
   const overlay = document.getElementById('membersPopupOverlay');
   const title = document.getElementById('membersPopupTitle');
@@ -117,8 +117,8 @@ async function showMembersPopup(groupData, groupName, initialFilter = 'members')
   
   // 各フィルターのカウントを計算
   const counts = {
-    members: groupData.participantsList ? groupData.participantsList.length : 0,
-    mp: groupData.usersList ? groupData.usersList.length : 0,
+    members: groupData.membersMap ? Object.keys(groupData.membersMap).length : 0,
+    mp: groupData.memberParticipantsList ? groupData.memberParticipantsList.length : 0,
     invited: groupData.invited ? groupData.invited.length : 0,
     staffs: groupData.staffs ? groupData.staffs.length : 0,
     individuals: groupData.individuals ? groupData.individuals.length : 0,
@@ -300,9 +300,9 @@ async function showMembersPopup(groupData, groupName, initialFilter = 'members')
       return;
     }
     
-    // Members (participantsList)
+    // Members (membersMapのkeyリスト)
     if (currentFilter === 'all' || currentFilter === 'members') {
-      const members = groupData.participantsList || [];
+      const members = groupData.membersMap ? Object.keys(groupData.membersMap) : [];
       const sortedMembers = [...members].sort((a, b) => a.localeCompare(b));
       
       sortedMembers.forEach((member, index) => {
@@ -684,8 +684,8 @@ async function renderData() {
       case 'participants':
         sortedResults = [...filteredResults].sort((a, b) => (b.totalParticipantsCount || 0) - (a.totalParticipantsCount || 0));
         break;
-      case 'users':
-        sortedResults = [...filteredResults].sort((a, b) => (b.usersCount || 0) - (a.usersCount || 0));
+      case 'memberParticipants':
+        sortedResults = [...filteredResults].sort((a, b) => (b.memberParticipantsCount || 0) - (a.memberParticipantsCount || 0));
         break;
       case 'members':
         sortedResults = [...filteredResults].sort((a, b) => (b.membersCount || 0) - (a.membersCount || 0));
@@ -704,7 +704,7 @@ async function renderData() {
 
     // 全体統計を計算（重複を除く）
     const allMembers = new Set();
-    const allUsers = new Set();
+    const allMemberParticipants = new Set();
     const allInvitedExperts = new Map();
     const allStaffs = new Map();
     const allIndividuals = new Map();
@@ -712,13 +712,13 @@ async function renderData() {
 
     groupsData.forEach(group => {
       // Members
-      if (group.participantsList) {
-        group.participantsList.forEach(member => allMembers.add(member));
+      if (group.membersMap) {
+        Object.keys(group.membersMap).forEach(member => allMembers.add(member));
       }
-      // Users
-      if (group.usersList) {
-        group.usersList.forEach(user => {
-          allUsers.add(user);
+      // Member Participants
+      if (group.memberParticipants) {
+        group.memberParticipants.forEach(user => {
+          allMemberParticipants.add(user);
           allParticipants.add(user);
         });
       }
@@ -766,7 +766,7 @@ async function renderData() {
           <div style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 1em;">
             <span>Groups: ${groupsData.length}</span>
             <span>Members (M): <span class="clickable" data-summary-type="members">${allMembers.size}</span></span>
-            <span>Member Participants (MP): <span class="clickable" data-summary-type="users">${allUsers.size}</span></span>
+            <span>Member Participants (MP): <span class="clickable" data-summary-type="users">${allMemberParticipants.size}</span></span>
             <span>Invited Experts (IE): <span class="clickable" data-summary-type="invited">${allInvitedExperts.size}</span></span>
             <span>Staffs (S): <span class="clickable" data-summary-type="staffs">${allStaffs.size}</span></span>
             <span>Individuals (Ind): <span class="clickable" data-summary-type="individuals">${allIndividuals.size}</span></span>
@@ -993,7 +993,7 @@ async function renderData() {
       usersCell.style.width = '50px';
       usersCell.style.minWidth = '50px';
       usersCell.style.maxWidth = '50px';
-      usersCell.innerHTML = `<span class="clickable ${g.isException ? 'exception' : ''}" data-index="${originalIndex}" data-type="usersList">${g.usersCount || 0}</span>`;
+      usersCell.innerHTML = `<span class="clickable ${g.isException ? 'exception' : ''}" data-index="${originalIndex}" data-type="memberParticipantsList">${g.memberParticipantsCount || 0}</span>`;
       row.appendChild(usersCell);
       
       // Invited Experts
@@ -1085,15 +1085,15 @@ async function renderData() {
       const participantsDiv = document.getElementById(`participants-chart-${i}`);
       if (participantsDiv) {
         // デフォルト順
-        let stackOrder = [
-          { key: 'users', value: g.usersCount || 0, color: '#1f883d' },
-          { key: 'invited', value: g.invitedCount || 0, color: '#bf8700' },
-          { key: 'staffs', value: g.staffsCount || 0, color: '#cf222e' },
-          { key: 'individuals', value: g.individualsCount || 0, color: '#8250df' }
-        ];
+          let stackOrder = [
+            { key: 'mp', value: g.memberParticipantsCount || 0, color: '#1f883d' },
+            { key: 'invited', value: g.invitedCount || 0, color: '#bf8700' },
+            { key: 'staffs', value: g.staffsCount || 0, color: '#cf222e' },
+            { key: 'individuals', value: g.individualsCount || 0, color: '#8250df' }
+          ];
         // 現在のsortByに応じて先頭に持ってくる
         const sortBy = document.getElementById('sortBy').value;
-        const idx = stackOrder.findIndex(s => s.key === sortBy);
+          const idx = stackOrder.findIndex(s => s.key === sortBy);
         if (idx > 0) {
           // 先頭に移動
           const [item] = stackOrder.splice(idx, 1);
@@ -1131,9 +1131,9 @@ async function renderData() {
             groupData.invited = Array.from(allInvitedExperts.values());
             groupData.staffs = Array.from(allStaffs.values());
             groupData.individuals = Array.from(allIndividuals.values());
-            groupData.usersList = Array.from(allUsers);
+            groupData.memberParticipantsList = Array.from(allMemberParticipants);
             break;
-          case 'users': // MP
+          case 'mp': // MP
             groupData.membersMap = {};
             groupsData.forEach(g => {
               if (g.membersMap) {
@@ -1157,7 +1157,7 @@ async function renderData() {
             break;
         }
         
-        showMembersPopup(groupData, groupName, initialFilter);
+        showGroupPopup(groupData, groupName, initialFilter);
       }
       
       // Summaryのクリックイベント
@@ -1197,7 +1197,7 @@ async function renderData() {
         } else if (type === 'individuals') {
           initialFilter = 'individuals';
         }
-        showMembersPopup(groupsData[index], groupsData[index].name, initialFilter);
+        showGroupPopup(groupsData[index], groupsData[index].name, initialFilter);
       });
     }
 
