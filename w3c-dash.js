@@ -955,15 +955,15 @@ async function renderData() {
       row.appendChild(memberParticipantsCell);
 
       // Invited Experts
-      const invitedCell = document.createElement('td');
-      invitedCell.style.width = '50px';
-      invitedCell.style.minWidth = '50px';
-      invitedCell.style.maxWidth = '50px';
-      invitedCell.innerHTML = `<span class="clickable ${g.isException ? 'exception' : ''}" data-index="${originalIndex}" data-type="invitedExperts">${g.invitedExpertsCount || 0}</span>`;
+      const invitedExpertsCell  = document.createElement('td');
+      invitedExpertsCell .style.width = '50px';
+      invitedExpertsCell .style.minWidth = '50px';
+      invitedExpertsCell .style.maxWidth = '50px';
+      invitedExpertsCell .innerHTML = `<span class="clickable ${g.isException ? 'exception' : ''}" data-index="${originalIndex}" data-type="invitedExperts">${g.invitedExpertsCount || 0}</span>`;
       if (g._error) {
-        invitedCell.innerHTML += '<div class="error">(err)</div>';
+        invitedExpertsCell .innerHTML += '<div class="error">(err)</div>';
       }
-      row.appendChild(invitedCell);
+      row.appendChild(invitedExpertsCell );
 
       // Staffs
       const staffsCell = document.createElement('td');
@@ -1026,7 +1026,7 @@ async function renderData() {
 
     // チャートを描画
     const maxMembers = Math.max(...sortedResults.map(g => g.membersCount || 0));
-    const maxParticipants = Math.max(...sortedResults.map(g => g.allParticipantsCountCount || 0));
+    const maxParticipants = Math.max(...sortedResults.map(g => g.allParticipantsCount || 0));
     // 両方のチャートで同じスケールを使用
     const maxScale = Math.max(maxMembers, maxParticipants);
 
