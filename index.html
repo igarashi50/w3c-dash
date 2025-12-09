@@ -36,40 +36,64 @@
 
   <div id="popupOverlay" class="popup-overlay"></div>
 
-  <div id="membersPopup">
-    <div id="membersPopupHeader">
-      <div id="membersPopupTitle"></div>
-      <div id="membersPopupClose">[Close]</div>
+  <div id="participationsPopup">
+    <div id="participationsPopupHeader">
+      <div id="participationsPopupTitle"></div>
+      <div id="participationsPopupClose">[Close]</div>
     </div>
     <div id="participationsFilter" style="padding: 8px 12px; background: #f6f8fa; border-bottom: 1px solid #ddd; display: flex; flex-direction: column; gap: 8px;">
       <span style="font-size: 18px; font-weight: 600;">Participations</span>
       <div id="participationsButtonContainer" style="display: flex; gap: 4px; flex-wrap: wrap;">
-        <button class="filter-btn" data-filter="members">M</button>
-        <button class="filter-btn" data-filter="invited">IE</button>
-        <button class="filter-btn" data-filter="staffs">S</button>
-        <button class="filter-btn" data-filter="individuals">Ind</button>
-        <button class="filter-btn" data-filter="participants">P</button>
+        <!-- Filter buttons will be added here -->
       </div>
     </div>
-    <div id="membersPopupBody">
+    <div id="participationsPopupBody">
       <div id="membersList" class="pane">
         <h3>Affiliations</h3>
-        <div id="membersListContent"></div>
+        <div id="membersListContent">
+            <!-- members content will be added here -->
+        </div>
       </div>
       <div id="participantsList" class="pane">
         <h3>Participants</h3>
-        <div id="participantsListContent"></div>
+        <div id="participantsListContent">
+            <!-- participants content will be added here -->
+        </div>
       </div>
       <div id="userDetail" class="pane">
         <h3>User Detail</h3>
-        <div id="userDetailContent"></div>
+        <div id="userDetailContent">
+            <!-- user detail content will be added here -->
+        </div>
       </div>
     </div>
   </div>
 
-  <div id="membersPopupOverlay" class="popup-overlay"></div>
+  <div id="participationsPopupOverlay" class="popup-overlay"></div>
 
   <script src="w3c-api.js"></script>
   <script src="w3c-dash.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // MPの数字にクリックイベントを追加
+      const mpNumberElement = document.querySelector('#summary .mp-number');
+      if (!mpNumberElement) {
+        console.error('MP number element not found in #summary');
+        return;
+      }
+
+      console.log('MP number element found:', mpNumberElement);
+
+      if (typeof groupData === 'undefined') {
+        console.error('groupData is not defined');
+        return;
+      }
+
+      mpNumberElement.addEventListener('click', () => {
+        console.log('MP number clicked, opening popup with MP filter');
+        showparticipationsPopup(groupData, 'Group Name', 'mp');
+      });
+    });
+  </script>
 </body>
 </html>

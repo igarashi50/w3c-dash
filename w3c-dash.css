@@ -335,7 +335,7 @@ button {
   -ms-user-select: text;
 }
 
-#membersPopup {
+#participationsPopup {
   position: fixed;
   top: 5%;
   left: 5%;
@@ -349,33 +349,33 @@ button {
   flex-direction: column;
 }
 
-#membersPopupHeader {
+#participationsPopupHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  border-bottom: 2px solid #ddd;
+  border-bottom: 2px solid #ddd;  
   background: #f6f8fa;
 }
 
-#membersPopupTitle {
+#participationsPopupTitle {
   font-weight: 600;
   font-size: 16px;
 }
 
-#membersPopupClose {
+#participationsPopupClose  {
   cursor: pointer;
   color: #0366d6;
   font-size: 14px;
   padding: 4px 8px;
 }
 
-#membersPopupClose:hover {
+#participationsPopupClose:hover {
   background: #e9ecef;
   border-radius: 3px;
 }
 
-#membersPopupBody {
+#participationsPopupBody {
   display: flex;
   flex: 1;
   overflow: hidden;
