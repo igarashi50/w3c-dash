@@ -152,6 +152,9 @@ function getParticipationDetail(participationHref) {
 // グループごとの集計情報を取得
 function extractGroupInfo(group) {
   try {
+    if (group.title == 'AB Liaisons to the Board of Directors') {
+      console.log('Debug: Processing AB Liaisons to the Board of Directors');
+    }
     const name = group.title || group.name || 'Unknown Group';
     const groupType = group.groupType || 'unknown';
     // グループ詳細
@@ -169,7 +172,11 @@ function extractGroupInfo(group) {
     let users = [];
     if (usersUrl) {
       const usersData = findByDataUrl(usersUrl);
-      users = Object.values(usersData?._links?.users) || [];
+      if (usersData) {
+        users = Object.values(usersData?._links?.users || []);
+      } else {
+        console.warn(`Warning: No users data found for URL: ${usersUrl}`);
+      }
     }
     const invitedExperts = [];
     const individuals = [];
@@ -407,6 +414,7 @@ function extractGroupInfo(group) {
       homepage
     });
   } catch (e) {
+    console.error(`Exception in extractGroupInfo group ${group.title || 'Unknown'} group.href=${group.href || 'Unknown'}: ${String(e)}`);
     return new GroupInfo({
       _error: e.message || String(e)
     });
