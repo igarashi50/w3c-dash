@@ -185,7 +185,7 @@ function _mainRenderSummary(summaryDiv, groupsData) {
           <span>Groups: ${groupsData.length}</span>
           <span>Members (M): <span class="clickable" data-summary-type="members">${allMembers.size}</span></span>
           <span>Member Participants (MP): <span class="clickable" data-summary-type="users">${allMemberParticipants.size}</span></span>
-          <span>Invited Experts (IE): <span class="clickable" data-summary-type="invited">${allInvitedExperts.size}</span></span>
+          <span>Invited Experts (IE): <span class="clickable" data-summary-type="invitedExperts">${allInvitedExperts.size}</span></span>
           <span>Staffs (S): <span class="clickable" data-summary-type="staffs">${allStaffs.size}</span></span>
           <span>Individuals (Ind): <span class="clickable" data-summary-type="individuals">${allIndividuals.size}</span></span>
           <span>Participants (P): <span class="clickable" data-summary-type="allParticipants">${allParticipants.size}</span></span>
@@ -326,20 +326,30 @@ function _mainRenderGroups({ groupsDiv, groupsData, sortedResults, filterType, s
       th.style.minWidth = '50px';
       th.style.maxWidth = '50px';
     } else if (index === 7) {
-      th.style.width = '250px';
-      th.style.minWidth = '250px';
-      th.style.maxWidth = '250px';
+      th.style.width = 'auto';
+      th.style.minWidth = '180px';
+      th.style.maxWidth = '1fr';
     }
 
+    // ソート矢印色を統一
+    const arrowColorActive = '#0969da';
+    const arrowColorInactive = '#bbb';
+
     if (col.key === 'name') {
-      // Group Name列のヘッダー
       th.style.cursor = 'pointer';
       th.className = sortBy === 'name' ? 'sorted' : '';
       th.onclick = () => {
         document.getElementById('sortBy').value = 'name';
         renderDashboard();
       };
-      th.innerHTML = `${col.label}<span class="sort-icon">↓</span>`;
+      const arrow = document.createElement('span');
+      arrow.className = 'sort-icon';
+      arrow.innerHTML = '↓';
+      arrow.style.marginLeft = '2px';
+      arrow.style.color = sortBy === 'name' ? arrowColorActive : arrowColorInactive;
+      th.innerHTML = '';
+      th.appendChild(document.createTextNode(col.label));
+      th.appendChild(arrow);
     } else if (col.sortable) {
       th.style.cursor = 'pointer';
       th.className = sortBy === col.key ? 'sorted' : '';
@@ -347,9 +357,15 @@ function _mainRenderGroups({ groupsDiv, groupsData, sortedResults, filterType, s
         document.getElementById('sortBy').value = col.key;
         renderDashboard();
       };
-      th.innerHTML = `${col.label}<span class="sort-icon">↓</span>`;
+      const arrow = document.createElement('span');
+      arrow.className = 'sort-icon';
+      arrow.innerHTML = '↓';
+      arrow.style.marginLeft = '2px';
+      arrow.style.color = sortBy === col.key ? arrowColorActive : arrowColorInactive;
+      th.innerHTML = '';
+      th.appendChild(document.createTextNode(col.label));
+      th.appendChild(arrow);
     } else if (col.key === 'charts') {
-      // ChartsカラムにLegendを統合
       th.innerHTML = `
         <div style="font-size: 0.75em; line-height: 1.3;">
           <div style="font-weight: bold; margin-bottom: 4px;">Charts</div>
@@ -552,9 +568,9 @@ function _mainRenderTableBody(groupsData, sortedResults) {
 
     // Charts Cell (上下配置)
     const chartsCell = document.createElement('td');
-    chartsCell.style.width = '250px';
-    chartsCell.style.minWidth = '250px';
-    chartsCell.style.maxWidth = '250px';
+    chartsCell.style.width = 'auto';
+    chartsCell.style.minWidth = '180px';
+    chartsCell.style.maxWidth = '1fr';
     chartsCell.style.padding = '2px';
 
     // Members Chart
@@ -845,24 +861,178 @@ async function _popupRenderAllParticipantsList(groupInfo, membersListContent, pa
 
 async function _popupRenderMembersList(groupInfo, membersListContent, affiliationsTitle) {
   const members = groupInfo.membersMap ? Object.keys(groupInfo.membersMap) : [];
-  const sortedMembers = [...members].sort((a, b) => a.localeCompare(b));
-  sortedMembers.forEach((member, index) => {
-    const div = document.createElement('div');
-    div.className = 'member-item';
-    if (groupInfo.isException) {
-      div.classList.add('exception');
+  // デフォルトは組織名順
+  let sortMode = 'name';
+  let sortedMembers = [...members].sort((a, b) => a.localeCompare(b));
+
+  // --- タイトル右にソートボタン配置 ---
+  // 既存のボタンがあれば削除
+  let sortBtnBar = affiliationsTitle.querySelector('.aff-sort-btn-bar');
+  if (sortBtnBar) affiliationsTitle.removeChild(sortBtnBar);
+  sortBtnBar = document.createElement('span');
+  sortBtnBar.className = 'aff-sort-btn-bar';
+  sortBtnBar.style.display = 'inline-flex';
+  sortBtnBar.style.gap = '2px';
+  sortBtnBar.style.marginLeft = '8px';
+  sortBtnBar.style.float = 'right';
+  sortBtnBar.style.justifyContent = 'flex-end';
+
+  // ボタン生成
+  const nameSortBtn = document.createElement('button');
+  nameSortBtn.className = 'aff-sort-btn active';
+  nameSortBtn.style.fontSize = '11px';
+  nameSortBtn.style.padding = '0 4px';
+  nameSortBtn.style.lineHeight = '1.2';
+  nameSortBtn.title = '組織名順';
+
+  const countSortBtn = document.createElement('button');
+  countSortBtn.className = 'aff-sort-btn';
+  countSortBtn.style.fontSize = '11px';
+  countSortBtn.style.padding = '0 4px';
+  countSortBtn.style.lineHeight = '1.2';
+  countSortBtn.title = '参加者数順';
+
+  // 矢印spanを分離して色を制御
+  const nameArrow = document.createElement('span');
+  nameArrow.innerHTML = '&#8595;';
+  nameArrow.style.fontSize = '10px';
+  nameArrow.style.verticalAlign = 'middle';
+  nameArrow.style.marginLeft = '1px';
+
+  const countArrow = document.createElement('span');
+  countArrow.innerHTML = '&#8595;';
+  countArrow.style.fontSize = '10px';
+  countArrow.style.verticalAlign = 'middle';
+  countArrow.style.marginLeft = '1px';
+
+  nameSortBtn.innerHTML = '';
+  nameSortBtn.appendChild(document.createTextNode('abc'));
+  nameSortBtn.appendChild(nameArrow);
+
+  countSortBtn.innerHTML = '';
+  countSortBtn.appendChild(document.createTextNode('MP'));
+  countSortBtn.appendChild(countArrow);
+
+  sortBtnBar.appendChild(nameSortBtn);
+  sortBtnBar.appendChild(countSortBtn);
+  affiliationsTitle.appendChild(sortBtnBar);
+
+  // グローバル関数として分離
+  function _popupRenderMembersListContent({
+    groupInfo,
+    members,
+    membersListContent,
+    affiliationsTitle,
+    sortBtnBar,
+    sortMode,
+    nameArrow,
+    countArrow
+  }) {
+    let sortedMembers;
+    // 既存リスト削除
+    membersListContent.innerHTML = '';
+    // ソート
+    if (sortMode === 'name') {
+      sortedMembers = [...members].sort((a, b) => a.localeCompare(b));
+      if (nameArrow) nameArrow.style.color = '#0969da';
+      if (countArrow) countArrow.style.color = '#bbb';
+    } else {
+      sortedMembers = [...members].sort((a, b) => {
+        const countA = Array.isArray(groupInfo.membersMap[a]) ? groupInfo.membersMap[a].length : 0;
+        const countB = Array.isArray(groupInfo.membersMap[b]) ? groupInfo.membersMap[b].length : 0;
+        // 降順
+        return countB - countA || a.localeCompare(b);
+      });
+      if (nameArrow) nameArrow.style.color = '#bbb';
+      if (countArrow) countArrow.style.color = '#0969da';
     }
-    div.textContent = member;
-    div.dataset.member = member;
-    div.dataset.index = index;
-    div.addEventListener('click', async () => {
-      document.querySelectorAll('.member-item').forEach(el => el.classList.remove('selected'));
-      div.classList.add('selected');
-      await _popupRenderParticipantsForMember(groupInfo, member);
+    sortedMembers.forEach((member, index) => {
+      const div = document.createElement('div');
+      div.className = 'member-item';
+      if (groupInfo.isException) {
+        div.classList.add('exception');
+      }
+      // 参加者数を取得
+      const count = Array.isArray(groupInfo.membersMap[member]) ? groupInfo.membersMap[member].length : 0;
+      // カスタムレイアウト: 名前左寄せ、MP数右寄せ、間隔広め、MP数は黒
+      div.style.display = 'flex';
+      div.style.justifyContent = 'space-between';
+      div.style.alignItems = 'center';
+      div.style.gap = '32px';
+      // 名前（左寄せ）
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = member;
+      nameSpan.style.textAlign = 'left';
+      nameSpan.style.flex = '1';
+      nameSpan.style.paddingRight = '16px';
+      nameSpan.style.overflowWrap = 'anywhere';
+      // MP数（右寄せ）
+      const countSpan = document.createElement('span');
+      countSpan.textContent = count;
+      countSpan.style.textAlign = 'right';
+      countSpan.style.flex = '0 0 10px';
+      countSpan.style.fontWeight = 'normal';
+      countSpan.style.color = '#000';
+      countSpan.style.fontSize = 'inherit';
+      countSpan.style.fontFamily = 'inherit';
+      div.appendChild(nameSpan);
+      div.appendChild(countSpan);
+      div.dataset.member = member;
+      div.dataset.index = index;
+      div.addEventListener('click', async () => {
+        document.querySelectorAll('.member-item').forEach(el => el.classList.remove('selected'));
+        div.classList.add('selected');
+        await _popupRenderParticipantsForMember(groupInfo, member);
+      });
+      membersListContent.appendChild(div);
     });
-    membersListContent.appendChild(div);
+    affiliationsTitle.textContent = `Affiliations: ${sortedMembers.length}`;
+    affiliationsTitle.appendChild(sortBtnBar);
+  }
+
+  // ボタンイベント
+  nameSortBtn.addEventListener('click', () => {
+    sortMode = 'name';
+    nameSortBtn.classList.add('active');
+    countSortBtn.classList.remove('active');
+    _popupRenderMembersListContent({
+      groupInfo,
+      members,
+      membersListContent,
+      affiliationsTitle,
+      sortBtnBar,
+      sortMode,
+      nameArrow,
+      countArrow
+    });
   });
-  affiliationsTitle.textContent = `Affiliations: ${sortedMembers.length}`;
+  countSortBtn.addEventListener('click', () => {
+    sortMode = 'count';
+    countSortBtn.classList.add('active');
+    nameSortBtn.classList.remove('active');
+    _popupRenderMembersListContent({
+      groupInfo,
+      members,
+      membersListContent,
+      affiliationsTitle,
+      sortBtnBar,
+      sortMode,
+      nameArrow,
+      countArrow
+    });
+  });
+
+  // 初期表示
+  _popupRenderMembersListContent({
+    groupInfo,
+    members,
+    membersListContent,
+    affiliationsTitle,
+    sortBtnBar,
+    sortMode,
+    nameArrow,
+    countArrow
+  });
 }
 
 async function _popupRenderTypeList(groupInfo, typeKey, typeLabel, membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle) {
