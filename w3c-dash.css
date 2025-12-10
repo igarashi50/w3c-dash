@@ -1,19 +1,34 @@
 body {
   font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
   margin: 0;
-  padding: 18px;
-  height: 100vh;
-  overflow: hidden;
+  padding: 0;
+  background: #fff;
+}
+
+body {
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  overflow-y: hidden;
+}
+
+#main {
   display: flex;
   flex-direction: column;
+  height: 100dvh;
+  padding: 4px 16px 4px 16px;
+  box-sizing: border-box;
+}
 }
 
 h1 {
   font-size: 18px;
   margin: 0 0 8px;
+  margin-top: auto;
 }
 
-#controls {
+#summary {
   margin: 8px 0 12px;
 }
 
@@ -44,13 +59,15 @@ h1 {
 }
 
 #groups {
-  margin-top: 12px;
+  margin: 0 0 12px 0;
   border: 1px solid #ddd;
   border-radius: 4px;
   overflow: hidden;
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .table-header-container {

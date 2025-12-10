@@ -6,12 +6,16 @@ let attachedGroupsHandler = false;
 async function renderDashboard() {
   const loadingStatus = document.getElementById('status');
   const groupsDiv = document.getElementById('groups');
-  const summaryDiv = document.getElementById('summary');
+  const summaryStatDiv = document.getElementById('summary-stats');
   const legendDiv = document.getElementById('legend');
 
+  if (loadingStatus) {
+    loadingStatus.className = 'loading';
+    loadingStatus.textContent = 'Loading W3C API data...';
+  }
+
   groupsDiv.innerHTML = '';
-  loadingStatus.className = 'loading';
-  loadingStatus.textContent = 'Loading W3C API data...';
+
 
   try {
     // 初回のみロード
@@ -60,16 +64,20 @@ async function renderDashboard() {
     }
 
     // Summary表示をサブ関数に分離
-    _mainRenderSummary(summaryDiv, groupsData);
+    _mainRenderSummary(summaryStatDiv, groupsData);
 
-    _mainRenderGroups({groupsDiv, groupsData, sortedResults, filterType, sortBy});
+    _mainRenderGroups({ groupsDiv, groupsData, sortedResults, filterType, sortBy });
 
-    loadingStatus.className = '';
-    loadingStatus.textContent = '';
+    if (loadingStatus) {
+      loadingStatus.className = '';
+      loadingStatus.textContent = '';
+    }
   } catch (e) {
     const msg = e.message || String(e);
-    loadingStatus.className = 'error';
-    loadingStatus.textContent = `Error loading data: ${msg}`;
+    if (loadingStatus) {
+      loadingStatus.className = 'error';
+      loadingStatus.textContent = `Error loading data: ${msg}`;
+    }
     console.error(e);
   }
 }
@@ -120,7 +128,7 @@ renderDashboard()
 /* 
 以下はmainパネルの表示用のサブ関数 '_main'で始まる関数
 */
-function _mainRenderSummary(summaryDiv, groupsData) {
+function _mainRenderSummary(summaryStatDiv, groupsData) {
   // 全体統計を計算（重複を除く）
   const allMembers = new Set();
   const allMemberParticipants = new Map();
@@ -177,14 +185,19 @@ function _mainRenderSummary(summaryDiv, groupsData) {
     const year = date.getUTCFullYear();
     dateStr = `as of ${month} ${day}, ${year}`;
   }
-  summaryDiv.innerHTML = `
-    <section style="border: 1px solid #ddd; border-radius: 4px; padding: 12px; background: #f8f9fa; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-start;">
+  // タイトル右のdateStrに表示
+  const dateStrSpan = document.getElementById('dateStr');
+  if (dateStrSpan) {
+    dateStrSpan.textContent = dateStr;
+  }
+  summaryStatDiv.innerHTML = `
+    <section style="border: 1px solid #ddd; border-radius: 4px; padding: 10px; background: #f8f9fa; margin-bottom: 1.5px; display: flex; justify-content: space-between; align-items: flex-start;">
       <div>
-        <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Summary</div>
-        <div style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 1em;">
+        <div style="font-size: 1.25em; font-weight: 700; margin-bottom: 5px;">Summary</div>
+        <div style="display: flex; gap: 7px; flex-wrap: wrap; font-size: 1em; line-height: 1.18; row-gap: 2px; margin-left: 10px;">
           <span>Groups: ${groupsData.length}</span>
           <span>Members (M): <span class="clickable" data-summary-type="members">${allMembers.size}</span></span>
-          <span>Member Participants (MP): <span class="clickable" data-summary-type="users">${allMemberParticipants.size}</span></span>
+          <span>Member Participants (MP): <span class="clickable" data-summary-type="memberParticipants">${allMemberParticipants.size}</span></span>
           <span>Invited Experts (IE): <span class="clickable" data-summary-type="invitedExperts">${allInvitedExperts.size}</span></span>
           <span>Staffs (S): <span class="clickable" data-summary-type="staffs">${allStaffs.size}</span></span>
           <span>Individuals (Ind): <span class="clickable" data-summary-type="individuals">${allIndividuals.size}</span></span>
@@ -192,7 +205,6 @@ function _mainRenderSummary(summaryDiv, groupsData) {
           <span style="font-size: 1em; color: #666;">Note: P=MP+IE+S+Ind</span>
         </div>
       </div>
-      <div style="font-size: 0.9em; color: #666; white-space: nowrap;">${dateStr}</div>
     </section>
   `;
 
@@ -234,7 +246,7 @@ function _mainRenderSummary(summaryDiv, groupsData) {
           individuals: Array.from(allIndividuals.values()),
           allParticipants: Array.from(allParticipants.values())
         });
-         popupParticipationsSheet(groupInfo, groupName, initialFilter);
+        popupParticipationsSheet(groupInfo, groupName, initialFilter);
       }
     });
   }
@@ -291,9 +303,9 @@ function _mainRenderGroups({ groupsDiv, groupsData, sortedResults, filterType, s
   const filterBar = document.createElement('div');
   filterBar.className = 'filter-bar';
   filterBar.innerHTML = `
-    <div style="display: flex; flex-direction: column; gap: 8px; padding: 8px 12px; background: #f6f8fa; border-bottom: 1px solid #ddd;">
-      <div style="font-size: 1em; font-weight: 600;">Groups</div>
-      <div id="groupTypeFilter" style="display: flex; gap: 4px; flex-wrap: wrap;">
+    <div style="display: flex; flex-direction: column; gap: 1px; padding: 10px; background: #f6f8fa; border-bottom: 1px solid #ddd;">
+      <div style="font-size: 1em; font-weight: 600; margin-bottom: 5px;">Groups</div>
+      <div id="groupTypeFilter" style="display: flex; gap: 1.5px; flex-wrap: wrap; margin-left: 10px;">
         <button class="filter-btn" data-type="wg">WG</button>
         <button class="filter-btn" data-type="ig">IG</button>
         <button class="filter-btn" data-type="cg">CG</button>
@@ -367,33 +379,30 @@ function _mainRenderGroups({ groupsDiv, groupsData, sortedResults, filterType, s
       th.appendChild(arrow);
     } else if (col.key === 'charts') {
       th.innerHTML = `
-        <div style="font-size: 0.75em; line-height: 1.3;">
-          <div style="font-weight: bold; margin-bottom: 4px;">Charts</div>
-          <div style="display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center;">
-            <div style="display: flex; align-items: center; gap: 3px;">
-              <div style="width: 10px; height: 10px; background-color: #0969da;"></div>
-              <span>M</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 3px;">
-              <div style="width: 10px; height: 10px; background-color: #1f883d;"></div>
-              <span>MP</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 3px;">
-              <div style="width: 10px; height: 10px; background-color: #bf8700;"></div>
-              <span>IE</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 3px;">
-              <div style="width: 10px; height: 10px; background-color: #cf222e;"></div>
-              <span>S</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 3px;">
-              <div style="width: 10px; height: 10px; background-color: #8250df;"></div>
-              <span>Ind</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 3px;">
-              <div style="width: 10px; height: 10px; border: 1px solid #000;"></div>
-              <span>P = MP+IE+S+Ind</span>
-            </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 2px 3px; align-items: center; font-size: 0.8em; line-height: 1.2; min-height: 1.5em;">
+          <div style="display: flex; align-items: center; gap: 2px;">
+            <div style="width: 8px; height: 8px; background-color: #0969da;"></div>
+            <span>M</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 2px;">
+            <div style="width: 8px; height: 8px; background-color: #1f883d;"></div>
+            <span>MP</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 2px;">
+            <div style="width: 8px; height: 8px; background-color: #bf8700;"></div>
+            <span>IE</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 2px;">
+            <div style="width: 8px; height: 8px; background-color: #cf222e;"></div>
+            <span>S</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 2px;">
+            <div style="width: 8px; height: 8px; background-color: #8250df;"></div>
+            <span>Ind</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 2px;">
+            <div style="width: 8px; height: 8px; border: 1px solid #000;"></div>
+            <span>P = MP+IE+S+Ind</span>
           </div>
         </div>
       `;

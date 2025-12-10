@@ -63,11 +63,9 @@ No npm or package.json required
 See [LICENSE](LICENSE) for details.
 
 ## Disclaimer
-The information provided by this application is based on data fetched from the public W3C API. However, the accuracy, completeness, or reliability of the data is not guaranteed. Use of the fetched data is subject to the terms and conditions set by the W3C API and the W3C.
+The information provided by this application is based on data fetched from the public W3C API. However, the accuracy, completeness, or reliability of the data is not guaranteed. Use of the fetched data is subject to the terms and conditions set by the W3C API.
 
 ## Author
 Maintained by @igarashi50
 
 ---
-
-For more details, see the in-repo development guide in `.github/copilot-instructions.md`.

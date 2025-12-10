@@ -1,14 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>W3C Dash</title>
   <link rel="stylesheet" href="w3c-dash.css" />
+  <link rel="icon" href="w3c-dash.svg" type="image/svg+xml">
 </head>
+
 <body>
-  <h1>W3C Dash</h1>
-  <div id="controls">
+  <div id="titleRow" style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.5em;">
+
+    <!-- 左側：ロゴ + タイトル + サブタイトル -->
+    <div style="display: flex; align-items: center; gap: 1em;">
+    <img src="w3c-dash.svg" width="32px" height="32px" alt="W3C Dash Logo"
+     style="margin-left: 10px;">
+
+      <!-- タイトル + サブタイトル（横並びに変更） -->
+      <div style="display: flex; align-items: baseline; gap: 0.5em;">
+        <h1 id="title" style="font-size:1.5em; font-weight:700; margin: 0;">
+          W3C Dash
+        </h1>
+        <span style="font-size: 0.85em; color: #888; font-weight: 400; letter-spacing: 0.01em;">
+          - a dashboard of <a href="https://www.w3.org" target="_blank"
+            style="color: #0969da; text-decoration: underline;">W3C</a> statistics -
+        </span>
+      </div>
+    </div>
+
+    <!-- 右側：日付 -->
+    <span id="dateStr" style="font-size: 0.8em; color: #666; white-space: nowrap;"></span>
+  </div>
+
+
+  <div id="summary">
+    <div id="status"></div>
     <select id="sortBy" style="display: none;">
       <option value="name">Group Name ↑</option>
       <option value="invitedExperts">Invited Experts ↓</option>
@@ -18,11 +45,15 @@
       <option value="staffs">Staffs ↓</option>
       <option value="individuals">Individuals ↓</option>
     </select>
-    <div id="summary" class="small"></div>
+    <div id="summary-stats" class="small"></div>
   </div>
-
-  <div id="status" class="loading">Ready</div>
   <div id="groups"></div>
+  <div
+    style="padding: 0.5em; text-align: center; color: #aaa; font-size: 0.7em; border-top: 1px solid #eee; background: #fafbfc;">
+    The source code of this web application is maintained at:
+    <a href="https://github.com/igarashi50/w3c-dash" target="_blank">https://github.com/igarashi50/w3c-dash</a>
+  </div>
+  </div>
 
   <div id="popup">
     <div id="popupHeader">
@@ -41,7 +72,8 @@
       <div id="participationsPopupTitle"></div>
       <div id="participationsPopupClose">[Close]</div>
     </div>
-    <div id="participationsFilter" style="padding: 8px 12px; background: #f6f8fa; border-bottom: 1px solid #ddd; display: flex; flex-direction: column; gap: 8px;">
+    <div id="participationsFilter"
+      style="padding: 8px 12px; background: #f6f8fa; border-bottom: 1px solid #ddd; display: flex; flex-direction: column; gap: 8px;">
       <span style="font-size: 18px; font-weight: 600;">Participations</span>
       <div id="participationsButtonContainer" style="display: flex; gap: 4px; flex-wrap: wrap;">
         <!-- Filter buttons will be added here -->
@@ -51,49 +83,27 @@
       <div id="membersList" class="pane">
         <h3>Affiliations</h3>
         <div id="membersListContent">
-            <!-- members content will be added here -->
+          <!-- members content will be added here -->
         </div>
       </div>
       <div id="participantsList" class="pane">
         <h3>Participants</h3>
         <div id="participantsListContent">
-            <!-- participants content will be added here -->
+          <!-- participants content will be added here -->
         </div>
       </div>
       <div id="userDetail" class="pane">
         <h3>User Detail</h3>
         <div id="userDetailContent">
-            <!-- user detail content will be added here -->
+          <!-- user detail content will be added here -->
         </div>
       </div>
     </div>
   </div>
 
   <div id="participationsPopupOverlay" class="popup-overlay"></div>
-
   <script src="w3c-api.js"></script>
   <script src="w3c-dash.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // MPの数字にクリックイベントを追加
-      const mpNumberElement = document.querySelector('#summary .mp-number');
-      if (!mpNumberElement) {
-        console.error('MP number element not found in #summary');
-        return;
-      }
-
-      console.log('MP number element found:', mpNumberElement);
-
-      if (typeof groupData === 'undefined') {
-        console.error('groupData is not defined');
-        return;
-      }
-
-      mpNumberElement.addEventListener('click', () => {
-        console.log('MP number clicked, opening popup with MP filter');
-        showparticipationsPopup(groupData, 'Group Name', 'mp');
-      });
-    });
-  </script>
 </body>
+
 </html>

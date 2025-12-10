@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- D-shape -->
+  <path d="M160 80H560c220 0 360 180 360 432S780 944 560 944H160c-44 0-80-36-80-80V160c0-44 36-80 80-80z" fill="#00A6FF"/>
+
+  <!-- Bars centered vertically (15px up) -->
+  <rect x="240" y="232" width="360" height="110" rx="55" fill="#fff"/>
+  <rect x="240" y="382" width="520" height="110" rx="55" fill="#fff"/>
+  <rect x="240" y="532" width="400" height="110" rx="55" fill="#fff"/>
+  <rect x="240" y="682" width="280" height="110" rx="55" fill="#fff"/>
+</svg>
