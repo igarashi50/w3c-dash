@@ -182,15 +182,34 @@ function extractGroupInfo(group) {
     for (const part of participations) {
       const partHref = part.href;
       if (!partHref) continue;
-      const detail = findByDataUrl(partHref);
-      if (!detail) continue;
-      const orgTitle = detail._links?.organization?.title || part.title || 'Unknown';
+      const partDetail = findByDataUrl(partHref);
+      if (!partDetail) continue;
+      const orgTitle = partDetail._links?.organization?.title || part.title || 'Unknown';
       // Members: individual=false, invited-expert=false
-      if (detail['individual'] === false && detail['invited-expert'] === false) {
+      if (partDetail['individual'] === false && partDetail['invited-expert'] === false) {
+        const affiliationHref = partDetail._links?.organization?.href;
+        if (affiliationHref) {
+          const affData = findByDataUrl(affiliationHref);
+          if (affData) {
+            const isMember = affData['is-member']
+            if (!isMember) {
+              if (groupType === 'wg' || groupType === 'ig') {
+                // WG/IGの場合、メンバーシップであるはずなので警告を出す
+                console.log(`Warning: ${orgTitle} in ${groupType}: ${name} is a not W3C member's organization, skipping as member`);
+              }
+              continue; 
+            }
+          } else {
+            console.warn(`Warning: Organization data not found for href ${affiliationHref} of ${name}`);
+          }
+        } else {
+          console.warn(`Warning: Participation ${partHref} of ${name} has no organization href`);
+        }
+        // 重複していなければメンバーに追加
         if (!members.includes(orgTitle)) members.push(orgTitle);
         if (!membersMap[orgTitle]) membersMap[orgTitle] = [];
         // participantsエンドポイントから個人を取得
-        const participantsHref = detail._links?.participants?.href;
+        const participantsHref = partDetail._links?.participants?.href;
         if (participantsHref) {
           const participantsData = findByDataUrl(participantsHref);
           if (participantsData) {
@@ -213,15 +232,15 @@ function extractGroupInfo(group) {
         }
       }
       // Invited Experts: individual=true, invited-expert=true
-      else if (detail['individual'] === true && detail['invited-expert'] === true) {
-        const userHref = detail._links?.user?.href;
-        const userTitle = detail._links?.user?.title || userHref || 'Unknown';
+      else if (partDetail['individual'] === true && partDetail['invited-expert'] === true) {
+        const userHref = partDetail._links?.user?.href;
+        const userTitle = partDetail._links?.user?.title || userHref || 'Unknown';
         invitedExperts.push({ name: userTitle, userHref });
       }
       // Individuals/Staffs: individual=true, invited-expert=false
-      else if (detail['individual'] === true && detail['invited-expert'] === false) {
-        const userHref = detail._links?.user?.href;
-        const userTitle = detail._links?.user?.title || userHref || 'Unknown';
+      else if (partDetail['individual'] === true && partDetail['invited-expert'] === false) {
+        const userHref = partDetail._links?.user?.href;
+        const userTitle = partDetail._links?.user?.title || userHref || 'Unknown';
         const affiliationsHref = userHref ? userHref + '/affiliations' : null;
         let isW3CStaff = false;
         if (affiliationsHref) {
@@ -281,10 +300,10 @@ function extractGroupInfo(group) {
             affs = affiliationsEntry._links.affiliations;
             if (!Array.isArray(affs)) affs = Object.values(affs);
             // 全ユーザーのaffiliationsを出力
-            console.log(`  [Debug] User #${processedCount} "${userTitle}": affiliations=${JSON.stringify(affs.map(a => a.title))}`);
+            // console.log(`  [Debug] User #${processedCount} "${userTitle}": affiliations=${JSON.stringify(affs.map(a => a.title))}`);
             if (affs.length === 0) {
               affEmptyCount++;
-              console.log(`  [Debug] User #${processedCount} "${userTitle}": EMPTY affiliations`);
+              // console.log(`  [Debug] User #${processedCount} "${userTitle}": EMPTY affiliations`);
             }
             // W3C staffかチェック
             isW3CStaff = affs.some(aff => aff.title === 'W3C');
@@ -310,7 +329,7 @@ function extractGroupInfo(group) {
                 });
               }
             });
-            console.log(`  [Debug] User #${processedCount} "${userTitle}": IE=${isInvitedExpert}, Staff=${isW3CStaff}, OrgCount=${orgCount}, TotalOrgs=${organizationsSet.size}`);
+            // console.log(`  [Debug] User #${processedCount} "${userTitle}": IE=${isInvitedExpert}, Staff=${isW3CStaff}, OrgCount=${orgCount}, TotalOrgs=${organizationsSet.size}`);
           } else {
             affDataMissingCount++;
             console.log(`  [Debug] User #${processedCount} "${userTitle}": No affiliations data`);
