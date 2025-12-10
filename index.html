@@ -10,49 +10,49 @@
 </head>
 
 <body>
-  <div id="titleRow" style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.5em;">
+  <div id="main">
+    <div id="titleRow" style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.5em;">
 
-    <!-- 左側：ロゴ + タイトル + サブタイトル -->
-    <div style="display: flex; align-items: center; gap: 1em;">
-    <img src="w3c-dash.svg" width="32px" height="32px" alt="W3C Dash Logo"
-     style="margin-left: 10px;">
+      <!-- 左側：ロゴ + タイトル + サブタイトル -->
+      <div style="display: flex; align-items: center; gap: 1em;">
+        <img src="w3c-dash.svg" width="32px" height="32px" alt="W3C Dash Logo" style="margin-left: 10px;">
 
-      <!-- タイトル + サブタイトル（横並びに変更） -->
-      <div style="display: flex; align-items: baseline; gap: 0.5em;">
-        <h1 id="title" style="font-size:1.5em; font-weight:700; margin: 0;">
-          W3C Dash
-        </h1>
-        <span style="font-size: 0.85em; color: #888; font-weight: 400; letter-spacing: 0.01em;">
-          - a dashboard of <a href="https://www.w3.org" target="_blank"
-            style="color: #0969da; text-decoration: underline;">W3C</a> statistics -
-        </span>
+        <!-- タイトル + サブタイトル（横並びに変更） -->
+        <div style="display: flex; align-items: baseline; gap: 0.5em;">
+          <h1 id="title" style="font-size:1.5em; font-weight:700; margin: 0;">
+            W3C Dash
+          </h1>
+          <span style="font-size: 0.85em; color: #888; font-weight: 400; letter-spacing: 0.01em;">
+            - a dashboard of <a href="https://www.w3.org" target="_blank"
+              style="color: #0969da; text-decoration: underline;">W3C</a> statistics -
+          </span>
+        </div>
       </div>
+
+      <!-- 右側：日付 -->
+      <span id="dateStr" style="font-size: 0.8em; color: #666; white-space: nowrap;"></span>
     </div>
 
-    <!-- 右側：日付 -->
-    <span id="dateStr" style="font-size: 0.8em; color: #666; white-space: nowrap;"></span>
-  </div>
 
-
-  <div id="summary">
-    <div id="status"></div>
-    <select id="sortBy" style="display: none;">
-      <option value="name">Group Name ↑</option>
-      <option value="invitedExperts">Invited Experts ↓</option>
-      <option value="allParticipants">All Participants ↓</option>
-      <option value="memberParticipants">Member Participants ↓</option>
-      <option value="members">Members ↓</option>
-      <option value="staffs">Staffs ↓</option>
-      <option value="individuals">Individuals ↓</option>
-    </select>
-    <div id="summary-stats" class="small"></div>
-  </div>
-  <div id="groups"></div>
-  <div
-    style="padding: 0.5em; text-align: center; color: #aaa; font-size: 0.7em; border-top: 1px solid #eee; background: #fafbfc;">
-    The source code of this web application is maintained at:
-    <a href="https://github.com/igarashi50/w3c-dash" target="_blank">https://github.com/igarashi50/w3c-dash</a>
-  </div>
+    <div id="summary">
+      <div id="status"></div>
+      <select id="sortBy" style="display: none;">
+        <option value="name">Group Name ↑</option>
+        <option value="invitedExperts">Invited Experts ↓</option>
+        <option value="allParticipants">All Participants ↓</option>
+        <option value="memberParticipants">Member Participants ↓</option>
+        <option value="members">Members ↓</option>
+        <option value="staffs">Staffs ↓</option>
+        <option value="individuals">Individuals ↓</option>
+      </select>
+      <div id="summary-stats" class="small"></div>
+    </div>
+    <div id="groups"></div>
+    <div
+      style="padding: 0.5em; text-align: center; color: #aaa; font-size: 0.7em; border-top: 1px solid #eee; background: #fafbfc;">
+      The source code of this web application is maintained at:
+      <a href="https://github.com/igarashi50/w3c-dash" target="_blank">https://github.com/igarashi50/w3c-dash</a>
+    </div>
   </div>
 
   <div id="popup">
