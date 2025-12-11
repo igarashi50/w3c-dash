@@ -4,7 +4,6 @@ const http = require('http');
 const zlib = require('zlib');
 const fs = require('fs');
 
-
 // minimist不要: シンプルなフラグ判定
 const VERBOSE = process.argv.includes('--verbose');
 function logAlways(msg) { console.log(msg); }
@@ -28,7 +27,7 @@ const REQUEST_INTERVAL = 200;
 
 forceTestMode = false;   // テストモードフラグ
 // typeごとにshortname配列をまとめる
-const testGroups = [
+const testGroupsOld = [
   //{ type: 'wg', shortname: 'css' },
   //{ type: 'wg', shortname: 'miniapps' },
   { type: 'wg', shortname: 'did' },
@@ -38,6 +37,15 @@ const testGroups = [
   { type: 'tf', shortname: 'ab-elected' },
   //{ type: 'other', shortname: 'ab' }
 ];
+
+const testGroups = [  // minimal set for quick tests
+  //{type: 'wg', shortname: 'dx'},
+  {type: 'wg', shortname: 'data-shapes'},
+  {type: 'ig', shortname: 'wai'},
+  {type: 'cg', shortname: 'ixml'},
+  {type: 'tf', shortname: 'ab-elected'},
+  {type: 'other', shortname: 'ab'},
+]
 
 
 const reGroupsParticipations = /^https:\/\/api\.w3\.org\/groups\/[^\/]+\/[^\/]+\/participations$/;
@@ -1249,13 +1257,13 @@ async function phase4_fetchUsers(dirPath, groupsFilename, participationFilename,
 }
 
 
-async function createDataJson(dirPath, fileNames) {
+async function createDataJson(dirPath, usedFilenames, dataFileName, testGroups) {
   const files = [];
-  for (const filename of Object.values(fileNames)) {
+  for (const filename of usedFilenames) {
     let path = dirPath + '/' + filename;
     try {
       const content = fs.readFileSync(path, 'utf8');
-      const json = JSON.parse(content);ƒ
+      const json = JSON.parse(content);
       if (!json._metadata) {
         console.warn(`Warning: Missing _metadata in ${path}`);
         continue;
@@ -1266,24 +1274,25 @@ async function createDataJson(dirPath, fileNames) {
       break
     }
   }
-  if (files.length == Object.values(fileNames).length) {
+  if (files.length == usedFilenames.length) {
     // testMode時はtestGroupsリストを_metadataに追加
+    const nowIso = new Date().toISOString();
     const metadata = {
-      filename: fileNames.data,
+      filename: dataFileName,
       lastChecked: nowIso
     };
-    if (isTestMode) {
+    if (testGroups) {
       metadata.testGroups = testGroups;
     }
     const w3cData = {
       _metadata: metadata,
       files
     };
-    const path = dirPath + '/' + fileNames.data
+    const path = dirPath + '/' + dataFileName
     fs.writeFileSync(path, JSON.stringify(w3cData, null, 2), 'utf8');
     console.log(`✓ ${path} created successfully.`);
   } else {
-    console.error('Error: w3c-data.json not created due to errors in the previous phases.');
+    console.error(`Error: ${dataFileName} not created due to errors in the previous phases.`);
   }
 }
 
@@ -1340,22 +1349,31 @@ async function main() {
     users: 'w3c-users.json',
     affiliations: 'w3c-affiliations.json'
   };
-  const nowIso = new Date().toISOString();
+  let usedFileSet = new Set();
 
   let phase1Finished = false;
   let phase2Finished = false;
   let phase3Finished = false;
   let phase4Finished = false;
   if (fetchAll || fetchGroups) {
+    usedFileSet.add(fileNames.groups);
     phase1Finished = await phase1_fetchGroups(dirPath, fileNames.groups, isTestMode);
   }
   if (fetchAll || fetchParticipations) {
+    usedFileSet.add(fileNames.groups);
+    usedFileSet.add(fileNames.participations);
     phase2Finished = await phase2_fetchParticipations(dirPath, fileNames.groups, fileNames.participations);
   }
   if (fetchAll || fetchAffiliations) {
+    usedFileSet.add(fileNames.participations);
+    usedFileSet.add(fileNames.affiliations);
     phase3Finished = await phase3_fetchAffiliations(dirPath, fileNames.participations, fileNames.affiliations, isTestMode);
   }
   if (fetchAll || fetchUsers) {
+    usedFileSet.add(fileNames.groups);
+    usedFileSet.add(fileNames.participations);
+    usedFileSet.add(fileNames.affiliations);
+    usedFileSet.add(fileNames.users);
     phase4Finished = await phase4_fetchUsers(dirPath, fileNames.groups, fileNames.participations, fileNames.affiliations, fileNames.users);
   }
 
@@ -1370,7 +1388,7 @@ async function main() {
   // w3c-data.json生成は全Phase（groups, participations, users, affiliations）を実行した場合のみ
   if (phase1Finished && phase2Finished && phase3Finished && phase4Finished) {
     // files配列構築
-    await createDataJson(dirPath, fileNames);
+    await createDataJson(dirPath, Array.from(usedFileSet), fileNames.data, isTestMode ? testGroups : null);
   } else {
     console.log('w3c-data.json not created because not all phases ran.');
   }
