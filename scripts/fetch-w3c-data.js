@@ -114,26 +114,27 @@ async function compareAndWriteJson(dirPath, filename, collectedData) {
     // _metadataは後で付与
   } catch (e) {
     console.error(`Failed to write ${filePath}: ${e.message}`);
+    return false; // not finished
   }
   // データが変わっていない場合はファイル保存を行わない
   if (!hasChanges) {
     console.log(`✓ No changes detected: ${filePath} not updated.`);
-    return false;
+  } else {
+    const finalDataWithMetadata = {
+      _metadata: {
+        filename: filename,
+        lastChecked: new Date(fetchStartTimestamp).toISOString(),
+        fetchStartTime: fetchStartTime,
+        duration: durationStr,
+        itemCount: Object.keys(mergedData).length
+      },
+      ...mergedData
+    };
+    const finalContent = JSON.stringify(finalDataWithMetadata, null, 2);
+    fs.writeFileSync(filePath, finalContent, 'utf8');
+    console.log(`✓ File updated with data changes: ${filePath}`);
   }
-  const finalDataWithMetadata = {
-    _metadata: {
-      filename: filename,
-      lastChecked: new Date(fetchStartTimestamp).toISOString(),
-      fetchStartTime: fetchStartTime,
-      duration: durationStr,
-      itemCount: Object.keys(mergedData).length
-    },
-    ...mergedData
-  };
-  const finalContent = JSON.stringify(finalDataWithMetadata, null, 2);
-  fs.writeFileSync(filePath, finalContent, 'utf8');
-  console.log(`✓ File updated with data changes: ${filePath}`);
-  return true;
+  return true;  // finished
 };
 
 function fetchJson(url, retries = 6, backoffMs = 600, timeoutMs = 180000, redirects = 5) {
@@ -1117,11 +1118,11 @@ async function phase1_fetchGroups(dirPath, groupsFilename, isTestMode) {
   logAlways(`Total requests: ${phaseRequestCount}`);
   logAlways(`Average requests/sec: ${(phaseRequestCount / phaseDurationSec).toFixed(2)}`);
   phaseRequestCounts[0] = phaseRequestCount;
-  const phase1Finished = await compareAndWriteJson(dirPath, groupsFilename, collectedGroupsData);
-  if (phase1Finished) {
+  const isFinished = await compareAndWriteJson(dirPath, groupsFilename, collectedGroupsData);
+  if (isFinished) {
     logAlways('✓ The latest Groups data is up to date.');
   }
-  return phase1Finished;
+  return isFinished;
 }
 
 async function phase2_fetchParticipations(dirPath, groupsFilename, participationFilename) {
@@ -1148,11 +1149,11 @@ async function phase2_fetchParticipations(dirPath, groupsFilename, participation
   logAlways(`Total requests: ${phaseRequestCount}`);
   logAlways(`Average requests/sec: ${(phaseRequestCount / phaseDurationSec).toFixed(2)}`);
   phaseRequestCounts[1] = phaseRequestCount;
-  const phase2Finished = await compareAndWriteJson(dirPath, participationFilename, collectedParticipationsData);
-  if (phase2Finished) {
+  const isFinished = await compareAndWriteJson(dirPath, participationFilename, collectedParticipationsData);
+  if (isFinished) {
     logAlways('✓ The latest Participations data is up to date.');
   }
-  return phase2Finished;
+  return isFinished;
 }
 
 // PHASE 3: Affiliations
@@ -1174,18 +1175,18 @@ async function phase3_fetchAffiliations(dirPath, participationFilename, affiliat
   }
 
   const collectedAffiliationsData = await fetchAffiliations(collectedParticipationsData, isTestMode);
-  logAlways(`\n========== PHASE 4 Summary ==========`);
+  logAlways(`\n========== PHASE 3 Summary ==========`);
   logAlways(`Total affiliations data collected: ${Object.keys(collectedAffiliationsData).length}`);
   const phaseDurationSec = (Date.now() - phaseStartTimestamp) / 1000;
   logAlways(`Phase duration (sec): ${phaseDurationSec.toFixed(2)}`);
   logAlways(`Total requests: ${phaseRequestCount}`);
   logAlways(`Average requests/sec: ${(phaseRequestCount / phaseDurationSec).toFixed(2)}`);
   phaseRequestCounts[3] = phaseRequestCount;
-  const phase4Finished = await compareAndWriteJson(dirPath, affiliationsFilename, collectedAffiliationsData);
-  if (phase4Finished) {
+  const isFinished = await compareAndWriteJson(dirPath, affiliationsFilename, collectedAffiliationsData);
+  if (isFinished) {
     logAlways('✓ The latest Affiliations data is up to date.');
   }
-  return phase4Finished;
+  return isFinished;
 }
 
 
@@ -1233,18 +1234,18 @@ async function phase4_fetchUsers(dirPath, groupsFilename, participationFilename,
 
   // usersデータは空で開始
   let collectedUsersData = await fetchUsers(collectedGroupsData, collectedParticipationsData, collectedAffiliationsData);
-  logAlways(`\n========== PHASE 3 Summary ===========`);
+  logAlways(`\n========== PHASE 4 Summary ===========`);
   logAlways(`Total users data collected: ${Object.keys(collectedUsersData).length}`);
   const phaseDurationSec = (Date.now() - phaseStartTimestamp) / 1000;
   logAlways(`Phase duration (sec): ${phaseDurationSec.toFixed(2)}`);
   logAlways(`Total requests: ${phaseRequestCount}`);
   logAlways(`Average requests/sec: ${(phaseRequestCount / phaseDurationSec).toFixed(2)}`);
   phaseRequestCounts[2] = phaseRequestCount;
-  const phase3Finished = await compareAndWriteJson(dirPath, usersFilename, collectedUsersData);
-  if (phase3Finished) {
+  const isFinished = await compareAndWriteJson(dirPath, usersFilename, collectedUsersData);
+  if (isFinished) {
     logAlways('✓ The latest Users data is up to date.');
   }
-  return phase3Finished;
+  return isFinished;
 }
 
 
@@ -1254,7 +1255,7 @@ async function createDataJson(dirPath, fileNames) {
     let path = dirPath + '/' + filename;
     try {
       const content = fs.readFileSync(path, 'utf8');
-      const json = JSON.parse(content);
+      const json = JSON.parse(content);ƒ
       if (!json._metadata) {
         console.warn(`Warning: Missing _metadata in ${path}`);
         continue;

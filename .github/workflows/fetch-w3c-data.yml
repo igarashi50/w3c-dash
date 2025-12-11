@@ -111,9 +111,9 @@ jobs:
           - **itemCount**: Number of items in the file (optional)
           
           Files included:
-          - **w3c-groups-${TIMESTAMP}.json**: Groups, participations lists, users lists
+          - **w3c-groups-${TIMESTAMP}.json**: Groups, participations lists of users lists of each group
           - **w3c-participations-${TIMESTAMP}.json**: Participation details
-          - **w3c-users-${TIMESTAMP}.json**: User details (IE and organization participants)
+          - **w3c-users-${TIMESTAMP}.json**: User details (member participants, IEs, staffs and individual)
           - **w3c-affiliations-${TIMESTAMP}.json**: Affiliation details
           - **w3c-data-${TIMESTAMP}.json**: Summary of all the generated/used files in this run."
           
