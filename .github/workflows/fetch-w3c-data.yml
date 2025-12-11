@@ -85,8 +85,8 @@ jobs:
           echo "Preparing files with timestamps..."
           cp data/w3c-groups.json data/w3c-groups-${TIMESTAMP}.json
           cp data/w3c-participations.json data/w3c-participations-${TIMESTAMP}.json
-          cp data/w3c-users.json data/w3c-users-${TIMESTAMP}.json
           cp data/w3c-affiliations.json data/w3c-affiliations-${TIMESTAMP}.json
+          cp data/w3c-users.json data/w3c-users-${TIMESTAMP}.json
           cp data/w3c-data.json data/w3c-data-${TIMESTAMP}.json
           
           echo "Files to release:"
@@ -147,6 +147,6 @@ jobs:
             echo "#### Updated Files:" >> $GITHUB_STEP_SUMMARY
             echo "- w3c-groups.json" >> $GITHUB_STEP_SUMMARY
             echo "- w3c-participations.json" >> $GITHUB_STEP_SUMMARY
-            echo "- w3c-users.json" >> $GITHUB_STEP_SUMMARY
             echo "- w3c-affiliations.json" >> $GITHUB_STEP_SUMMARY
+            echo "- w3c-users.json" >> $GITHUB_STEP_SUMMARY
           fi

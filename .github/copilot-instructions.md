@@ -60,10 +60,11 @@ Participation types:
 - **Pagination**: Automatically merges multi-page API responses into single entries
 - **Change Detection**: Compares new data with existing JSON, preserves timestamps if unchanged
 - **Phased Execution**: 
-  1. Groups + participations lists + users lists
+  1. Groups + participations lists of each group + users lists of each group
   2. Participation details (requires phase 1)
-  3. User details (requires phase 2)
-  4. Affiliations (requires phase 3)
+  3. Affiliations (requires phase 2)
+  4. User details (requires phase 1, 2, and 3)
+
 
 ```bash
 # Usage examples
