@@ -1033,7 +1033,7 @@ async function fetchAffiliations(collectedParticipationsData, isTestMode) {
     }
   }
 
-  // groupに参加していないMPをPhase4で読むためにはAfflicationsのparticipationurlもe.g. https://api.w3.org/affiliations/1057/participants"読んでデータを保存しないといけない、
+  // groupに参加していないMPをPhase4で読むためにはAfflicationsのparticipationのurlもe.g. https://api.w3.org/affiliations/1057/participants"読んでデータを保存する
   const participantsArray = Array.from(participantsFromAffiliations);
   console.log(`Found ${participantsArray.length} affiliation participants to fetch`);
   for (let i = 0; i < participantsArray.length; i++) {
