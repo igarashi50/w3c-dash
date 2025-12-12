@@ -1,8 +1,8 @@
 {
   "_metadata": {
     "filename": "w3c-groups.json",
-    "lastChecked": "2025-12-11T18:48:52.809Z",
-    "fetchStartTime": "20251211-184852",
+    "lastChecked": "2025-12-12T14:03:54.106Z",
+    "fetchStartTime": "20251212-140354",
     "duration": "5s",
     "itemCount": 17
   },
@@ -1966,317 +1966,330 @@
       }
     }
   },
-  "https://api.w3.org/groups/wg/dx": {
-    "fetchedAt": "2025-12-11T18:48:53.268Z",
+  "https://api.w3.org/groups/wg/data-shapes": {
+    "fetchedAt": "2025-12-12T14:03:54.812Z",
     "data": {
-      "id": 99375,
-      "name": "Dataset Exchange Working Group",
+      "id": 73865,
+      "name": "Data Shapes Working Group",
       "is_closed": false,
-      "creation-date": "2017-05-04",
-      "description": "The mission of the Dataset Exchange WG is to:\n1. Maintain and revise the Data Catalog Vocabulary, DCAT, taking into account feature requests from the DCAT user community.\n2. Define and publish guidance on the specification and use of application profiles when requesting and serving data on the Web.",
-      "shortname": "dx",
+      "creation-date": "2014-09-26",
+      "description": "The mission of the Data Shapes Working Group is to update data shapes standards in line with the versions of core Semantic Web standards that cater for RDF-star and to extend the applications of data shapes with new packaging and use specifications.",
+      "shortname": "data-shapes",
       "discr": "w3cgroup",
       "_links": {
         "self": {
-          "href": "https://api.w3.org/groups/wg/dx"
+          "href": "https://api.w3.org/groups/wg/data-shapes"
         },
         "homepage": {
-          "href": "https://www.w3.org/2017/dxwg/"
+          "href": "https://www.w3.org/groups/wg/data-shapes/"
         },
         "users": {
-          "href": "https://api.w3.org/groups/wg/dx/users"
+          "href": "https://api.w3.org/groups/wg/data-shapes/users"
         },
         "services": {
-          "href": "https://api.w3.org/groups/wg/dx/services"
+          "href": "https://api.w3.org/groups/wg/data-shapes/services"
         },
         "specifications": {
-          "href": "https://api.w3.org/groups/wg/dx/specifications"
+          "href": "https://api.w3.org/groups/wg/data-shapes/specifications"
         },
         "chairs": {
-          "href": "https://api.w3.org/groups/wg/dx/chairs"
+          "href": "https://api.w3.org/groups/wg/data-shapes/chairs"
         },
         "team-contacts": {
-          "href": "https://api.w3.org/groups/wg/dx/teamcontacts"
+          "href": "https://api.w3.org/groups/wg/data-shapes/teamcontacts"
         },
         "charters": {
-          "href": "https://api.w3.org/groups/wg/dx/charters"
+          "href": "https://api.w3.org/groups/wg/data-shapes/charters"
         },
         "active-charter": {
-          "href": "https://api.w3.org/groups/wg/dx/charters/463"
+          "href": "https://api.w3.org/groups/wg/data-shapes/charters/525"
         },
         "join": {
-          "href": "https://www.w3.org/groups/wg/dx/join"
+          "href": "https://www.w3.org/groups/wg/data-shapes/join"
         },
         "pp-status": {
-          "href": "https://www.w3.org/groups/wg/dx/ipr"
+          "href": "https://www.w3.org/groups/wg/data-shapes/ipr"
         },
         "participations": {
-          "href": "https://api.w3.org/groups/wg/dx/participations"
+          "href": "https://api.w3.org/groups/wg/data-shapes/participations"
         }
       },
       "type": "working group",
-      "start-date": "2017-05-05",
-      "end-date": "2025-06-30"
+      "start-date": "2014-09-30",
+      "end-date": "2026-12-31"
     }
   },
-  "https://api.w3.org/groups/wg/dx/participations": {
-    "fetchedAt": "2025-12-11T18:48:53.560Z",
+  "https://api.w3.org/groups/wg/data-shapes/participations": {
+    "fetchedAt": "2025-12-12T14:03:55.139Z",
     "data": {
       "page": 1,
       "limit": 100,
       "pages": 1,
-      "total": 22,
+      "total": 24,
       "_links": {
         "up": {
-          "href": "https://api.w3.org/groups/wg/dx"
+          "href": "https://api.w3.org/groups/wg/data-shapes"
         },
         "participations": [
           {
-            "href": "https://api.w3.org/participations/37830",
-            "title": "Andrea Perego"
+            "href": "https://api.w3.org/participations/44072",
+            "title": "Carine Bournez"
           },
           {
-            "href": "https://api.w3.org/participations/37845",
-            "title": "ByteDance"
+            "href": "https://api.w3.org/participations/44074",
+            "title": "Zazuko GmbH"
           },
           {
-            "href": "https://api.w3.org/participations/37849",
-            "title": "Riccardo Albertoni"
+            "href": "https://api.w3.org/participations/44078",
+            "title": "KurrawongAI"
           },
           {
-            "href": "https://api.w3.org/participations/37850",
-            "title": "Caroline Burle"
+            "href": "https://api.w3.org/participations/44104",
+            "title": "Apache Software Foundation"
           },
           {
-            "href": "https://api.w3.org/participations/37856",
-            "title": "INSIGHT - The Centre for Data Analytics"
+            "href": "https://api.w3.org/participations/44114",
+            "title": "University of Oxford"
           },
           {
-            "href": "https://api.w3.org/participations/37860",
-            "title": "Lawrence Berkeley National Laboratory"
+            "href": "https://api.w3.org/participations/44125",
+            "title": "OpenLink Software Inc."
           },
           {
-            "href": "https://api.w3.org/participations/37864",
+            "href": "https://api.w3.org/participations/44131",
+            "title": "Ontotext"
+          },
+          {
+            "href": "https://api.w3.org/participations/44148",
+            "title": "Ashley Sommer"
+          },
+          {
+            "href": "https://api.w3.org/participations/44166",
+            "title": "Netflix Inc."
+          },
+          {
+            "href": "https://api.w3.org/participations/44203",
+            "title": "TopQuadrant"
+          },
+          {
+            "href": "https://api.w3.org/participations/44261",
+            "title": "Siemens AG"
+          },
+          {
+            "href": "https://api.w3.org/participations/44273",
+            "title": "National Institute of Standards and Technology (NIST)"
+          },
+          {
+            "href": "https://api.w3.org/participations/44289",
             "title": "Institut National de Recherche en Informatique et en Automatique (Inria)"
           },
           {
-            "href": "https://api.w3.org/participations/37940",
-            "title": "Open Geospatial Consortium"
+            "href": "https://api.w3.org/participations/44444",
+            "title": "Scott Henninger"
           },
           {
-            "href": "https://api.w3.org/participations/37967",
-            "title": "Vrije Universiteit"
-          },
-          {
-            "href": "https://api.w3.org/participations/37971",
-            "title": "Alejandra Gonzalez Beltran"
-          },
-          {
-            "href": "https://api.w3.org/participations/37982",
-            "title": "Peter Winstanley"
-          },
-          {
-            "href": "https://api.w3.org/participations/38099",
-            "title": "Pierre-Antoine Champin"
-          },
-          {
-            "href": "https://api.w3.org/participations/38108",
-            "title": "NIC.br - Brazilian Network Information Center"
-          },
-          {
-            "href": "https://api.w3.org/participations/39185",
-            "title": "MITRE Corporation"
-          },
-          {
-            "href": "https://api.w3.org/participations/39547",
+            "href": "https://api.w3.org/participations/44672",
             "title": "Fundacion CTIC"
           },
           {
-            "href": "https://api.w3.org/participations/39568",
-            "title": "Institut Mines-Télécom"
+            "href": "https://api.w3.org/participations/44731",
+            "title": "imec"
           },
           {
-            "href": "https://api.w3.org/participations/40667",
-            "title": "Universidad Politécnica de Madrid"
+            "href": "https://api.w3.org/participations/45132",
+            "title": "Matt Goldberg"
           },
           {
-            "href": "https://api.w3.org/participations/40953",
-            "title": "David Browning"
+            "href": "https://api.w3.org/participations/45657",
+            "title": "Y.digital"
           },
           {
-            "href": "https://api.w3.org/participations/42106",
-            "title": "FATMA Chamekh"
+            "href": "https://api.w3.org/participations/45833",
+            "title": "SAP SE"
           },
           {
-            "href": "https://api.w3.org/participations/42304",
-            "title": "Geonovum"
+            "href": "https://api.w3.org/participations/45919",
+            "title": "Kurt Cagle"
           },
           {
-            "href": "https://api.w3.org/participations/44083",
-            "title": "Pavlina Fragkou"
+            "href": "https://api.w3.org/participations/45923",
+            "title": "Livio Robaldo"
           },
           {
-            "href": "https://api.w3.org/participations/46031",
-            "title": "Lars G. Svensson"
+            "href": "https://api.w3.org/participations/45925",
+            "title": "Ognjen Savkovic"
+          },
+          {
+            "href": "https://api.w3.org/participations/46187",
+            "title": "Daniël Beeke"
+          },
+          {
+            "href": "https://api.w3.org/participations/46620",
+            "title": "Stiftelsen for internetinfrastruktur (IIS)"
           }
         ],
         "self": {
-          "href": "https://api.w3.org/groups/wg/dx/participations?page=1&items=100"
+          "href": "https://api.w3.org/groups/wg/data-shapes/participations?page=1&items=100"
         },
         "first": {
-          "href": "https://api.w3.org/groups/wg/dx/participations?page=1&items=100"
+          "href": "https://api.w3.org/groups/wg/data-shapes/participations?page=1&items=100"
         },
         "last": {
-          "href": "https://api.w3.org/groups/wg/dx/participations?page=1&items=100"
+          "href": "https://api.w3.org/groups/wg/data-shapes/participations?page=1&items=100"
         }
       }
     }
   },
-  "https://api.w3.org/groups/wg/dx/users": {
-    "fetchedAt": "2025-12-11T18:48:53.928Z",
+  "https://api.w3.org/groups/wg/data-shapes/users": {
+    "fetchedAt": "2025-12-12T14:03:55.738Z",
     "data": {
       "page": 1,
       "limit": 100,
       "pages": 1,
-      "total": 30,
+      "total": 32,
       "_links": {
         "up": {
-          "href": "https://api.w3.org/groups/wg/dx"
+          "href": "https://api.w3.org/groups/wg/data-shapes"
         },
         "users": [
           {
-            "href": "https://api.w3.org/users/5aednjp6r64oc48w8ccg84c40c4ccoo",
-            "title": "Riccardo Albertoni",
+            "href": "https://api.w3.org/users/p9mih3az4lc00444kgg8o0ccc4ggwkk",
+            "title": "Shervin Afshar",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/7z3u54xnfxs88k8cw0kwwc0s0k08o04",
-            "title": "Waheed Ashraf",
+            "href": "https://api.w3.org/users/9t56qgfqo34s88cwg8gc0wsskwcw84g",
+            "title": "Vladimir Alexiev",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/ic0s57h19f4sos8ssoooc8ks8g84c8k",
-            "title": "Rob Atkinson",
+            "href": "https://api.w3.org/users/byu5o4pakq8s0kc4c0sks8w4484kw4w",
+            "title": "Kishore Banala",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/fqhzwbpvxp4c0o0gcgoowwkw8kg8c4c",
-            "title": "David Browning",
+            "href": "https://api.w3.org/users/o7eq0z2wz80cskcc4gw040sowo488wc",
+            "title": "Daniël Beeke",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/qkxdmplfkqsg48k0k04ckoccoowkgks",
-            "title": "Caroline Burle",
+            "href": "https://api.w3.org/users/3t8ccdk4azi8wskgg0gkoowkw8ok4oc",
+            "title": "Thomas Bergwinkl",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/pgge491bgk08g4gwggosc8cw4kggc4c",
-            "title": "FATMA Chamekh",
+            "href": "https://api.w3.org/users/6fbrmqerwtss40040kwk4cggw4g4880",
+            "title": "Alexandre Bertails",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/t891ludoisggsccsw44o8goccc0s0ks",
-            "title": "Pierre-Antoine Champin",
+            "href": "https://api.w3.org/users/600t7wbuwqkgs4ooco00sc8g84w0wwo",
+            "title": "Carine Bournez",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/10wqc6l129is8k80g48oggockkkc0oo",
-            "title": "Shaobo Chen",
+            "href": "https://api.w3.org/users/9a26fdb3yqskoks88gkw4gwocscgk4o",
+            "title": "Kurt Cagle",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/jdglzk9c1s008o8c80ksg84cwwokwwg",
-            "title": "Pablo COCA",
+            "href": "https://api.w3.org/users/lwj5fvwak2og8w4s4swgs8cw8g8k880",
+            "title": "Nicholas Car",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/gv5rt03vp0ggksowkw48og04wsosw4k",
-            "title": "Michael Cochez",
+            "href": "https://api.w3.org/users/h42ex2p81og0wk0csgcgk8g0c0wg8wc",
+            "title": "Edmond Chuc",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/1751al87g6pwkwgg804400g0swcco4o",
-            "title": "Javier Conde Díaz",
+            "href": "https://api.w3.org/users/eilsk5mhj0o4o8oo044wo4okwokc0wc",
+            "title": "Robert David",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/cap5ldtrosg0cg08kg4444wg44c8o00",
-            "title": "Simon Cox",
+            "href": "https://api.w3.org/users/l5vnrmdy8j4og4gs444o0sogwwgsckc",
+            "title": "Matt Goldberg",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/6rkkqewv7mskw0w0c0ssc8ok8wcg0gc",
-            "title": "Bart De Lathouwer",
+            "href": "https://api.w3.org/users/8e1y97wnjbc4gw4kgg48wowkwc48g0s",
+            "title": "David Habgood",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/7ghxoav5xz8kc4c000s8kc4so480g0o",
-            "title": "Ana Duarte",
+            "href": "https://api.w3.org/users/iv6n8vgql5c8gcg0gw4sosk48c4gkkc",
+            "title": "Scott Henninger",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/dl653l4ur5cs4ws84g8sc0w48owgksg",
-            "title": "Pavlina Fragkou",
+            "href": "https://api.w3.org/users/hdfjurscaw0gscs40804k0kkcccws8w",
+            "title": "Alex Hutter",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/g1lvqrgzmpkwwkk00kgsowoko88888k",
-            "title": "Alejandra Gonzalez Beltran",
+            "href": "https://api.w3.org/users/rjnnj3imndw40gw0wks8gc4w040ss08",
+            "title": "Holger Knublauch",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/tbbxehrfhhc4wosgow0wwssksws0wk4",
-            "title": "Annette Greiner",
+            "href": "https://api.w3.org/users/qf7jsf8u7cgokg0csk00co40gc0ckgw",
+            "title": "Jose Emilio Labra Gayo",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/ie9hok7k0204oo84ksgs0gws88okcw8",
-            "title": "Rafiqul Haque",
+            "href": "https://api.w3.org/users/aftbmr61sgwkww8w4o04k0cooc4k8s8",
+            "title": "Alexander Nelson",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/o0ry09uk95wwssksc8ko8k8c0ok0gck",
-            "title": "Antoine Isaac",
+            "href": "https://api.w3.org/users/mt1ng6511us04k4kwww4008wo0scgo8",
+            "title": "Matthias Palmér",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/onv9qu2p840cgw8wcgkcws80cgc88go",
-            "title": "Bardia Khorsand",
+            "href": "https://api.w3.org/users/f7cjcmjsnk84wws0ccks80coksk8wss",
+            "title": "Eliana Papoutsoglou",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/qp78ezv26y8o0skkkcw8cs4wkk0goso",
-            "title": "Franck Michel",
+            "href": "https://api.w3.org/users/3e9apd9whhc00cw0wk08k4sksogc88w",
+            "title": "Tomasz Pluskiewicz",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/fbm7lnqr9xk4ck0w48co0gs4040o0cg",
-            "title": "Nitin Naik",
+            "href": "https://api.w3.org/users/npovjod1g34ogwgwscw0840oksowwoo",
+            "title": "Livio Robaldo",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/losx2h8y38gk0wokko8kgkgs4kkcok4",
-            "title": "Andrea Perego",
+            "href": "https://api.w3.org/users/lr343j5229cs4k8kcsoc4ww0c8cks80",
+            "title": "Felix Sasaki",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/9m8vkhq8qo00s48s8o0cwswko40kkk0",
-            "title": "Muhammad Asif Razzaq",
+            "href": "https://api.w3.org/users/5nmm93pnnns4g44scs8k4sgkkggsgg4",
+            "title": "Ognjen Savkovic",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/hb9oqefqy08osg8o0ockswwog44wc8g",
-            "title": "Joaquin Salvachua",
+            "href": "https://api.w3.org/users/ez5whckagcg0cog0wg8occsgggoog8c",
+            "title": "Andy Seaborne",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/o3h5zhb3b34k8skg8w0wokkkc8k00g0",
-            "title": "Ingo Simonis",
+            "href": "https://api.w3.org/users/6yy0kjhr618oogog0kkg4kw00sc048w",
+            "title": "Ieben Smessaert",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/np9xwc0pnmswcgkkg8gkg4cw8ogcwgw",
-            "title": "Lars G. Svensson",
+            "href": "https://api.w3.org/users/9naqo2mvs4cgsw48o4so8s0ssco0ccg",
+            "title": "Ashley Sommer",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/3nuww5wjx1mo8cwswcc8g8wosgws0c0",
+            "title": "Simon Steyskal",
             "former": false
           },
           {
@@ -2285,24 +2298,29 @@
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/mis1bdvs12sckksoc0wc8cckcc4g0sk",
-            "title": "Peter Winstanley",
+            "href": "https://api.w3.org/users/ox8xc2908xcowo8wwkog0cgokcw0o8o",
+            "title": "Ted Thibodeau Jr",
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/behozvazzio8808g0owksksk8s8884k",
-            "title": "Achille Zappa",
+            "href": "https://api.w3.org/users/67iu3xmgsuscg480o8o4s0gso4404gw",
+            "title": "Simon Werner",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/b39dpa6cki88csg4ko0scgc0w8oc884",
+            "title": "Jesse Wright",
             "former": false
           }
         ],
         "self": {
-          "href": "https://api.w3.org/groups/wg/dx/users?page=1&items=100"
+          "href": "https://api.w3.org/groups/wg/data-shapes/users?page=1&items=100"
         },
         "first": {
-          "href": "https://api.w3.org/groups/wg/dx/users?page=1&items=100"
+          "href": "https://api.w3.org/groups/wg/data-shapes/users?page=1&items=100"
         },
         "last": {
-          "href": "https://api.w3.org/groups/wg/dx/users?page=1&items=100"
+          "href": "https://api.w3.org/groups/wg/data-shapes/users?page=1&items=100"
         }
       }
     }

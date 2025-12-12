@@ -155,6 +155,10 @@ function extractGroupInfo(group) {
     if (group.title == 'AB Liaisons to the Board of Directors') {
       console.log('Debug: Processing AB Liaisons to the Board of Directors');
     }
+    if (group.title.startsWith("Invisible Markup Community Group")) {
+      console.log('Debug: Processing ixml group with exception handling');
+    }
+
     const name = group.title || group.name || 'Unknown Group';
     const groupType = group.groupType || 'unknown';
     // グループ詳細
@@ -167,6 +171,15 @@ function extractGroupInfo(group) {
       const participationsData = findByDataUrl(participationsUrl);
       participations = Object.values(participationsData?._links?.participations) || [];
     }
+
+    const invitedExperts = [];
+    const individuals = [];
+    const staffs = [];
+    const members = [];
+    const usersFromParticipations = [];
+    const usersFromParticipationsDetailed = [];
+    const membersMap = {};
+
     // users
     const usersUrl = groupDetail?._links?.users?.href;
     let users = [];
@@ -178,14 +191,8 @@ function extractGroupInfo(group) {
         console.warn(`Warning: No users data found for URL: ${usersUrl}`);
       }
     }
-    const invitedExperts = [];
-    const individuals = [];
-    const staffs = [];
-    const members = [];
-    const usersFromParticipations = [];
-    const usersFromParticipationsDetailed = [];
-    const membersMap = {};
 
+    // wg/igではparticipationsにて参加を管理しているのでそれを処理。ただ、IEもparticipationsに入っているので注意。
     for (const part of participations) {
       const partHref = part.href;
       if (!partHref) continue;
@@ -204,7 +211,7 @@ function extractGroupInfo(group) {
                 // WG/IGの場合、メンバーシップであるはずなので警告を出す
                 console.log(`Warning: ${orgTitle} in ${groupType}: ${name} is a not W3C member's organization, skipping as member`);
               }
-              continue; 
+              continue;
             }
           } else {
             console.warn(`Warning: Organization data not found for href ${affiliationHref} of ${name}`);
@@ -266,20 +273,25 @@ function extractGroupInfo(group) {
         if (isW3CStaff) {
           staffs.push({ name: userTitle, userHref });
         } else {
-          individuals.push({ name: userTitle, userHref });
+          console.log(`  Warning: User "${userTitle}" in wg/ig group "${name}" is classified as Individual without W3C staff affiliation`);
+          individuals.push({ name: userTitle, userHref }); // これは本来おかしい
         }
       }
     }
 
-    // ========== EXCEPTION HANDLING START ==========
-    // participations=0でusers>0の場合、usersエンドポイントのaffiliationsから分類
-    // Note: IG, AB/TAG/BoD(other)などに適用。
+
     let finalUsers = usersFromParticipations;
     let finalUsersDetailed = usersFromParticipationsDetailed;
     let finalMembers = members;
     const finalMembersMap = { ...membersMap }; // 例外処理用のmembersMapコピー
 
-    if (participations.length === 0 && users.length > 0) {
+    if (groupType == 'cg') {
+      individuals.push(...users.map(u => ({ name: u.title || u.name || 'Unknown', userHref: u.href })));
+    } else if (participations.length === 0 && users.length > 0) {
+      // ========== EXCEPTION HANDLING START ==========
+      // participations=0でusers>0の場合、usersエンドポイントのaffiliationsから分類
+      // Note: IG, AB/TAG/BoD(other)などに適用。 Membersとしての参加でないgroupでも、一応メンバー分類できるようにするため
+
       console.log(`[Exception] Group "${name}" has participations=0 but users=${users.length}, using affiliations-based classification`);
 
       // usersエンドポイントから各ユーザーの詳細を取得して分類

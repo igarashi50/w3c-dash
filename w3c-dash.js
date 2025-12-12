@@ -167,12 +167,19 @@ function _mainRenderSummary(summaryStatDiv, groupsData) {
       });
     }
     // All Participants
-    if (group.individuals) {
+    if (group.allParticipants) {
       group.allParticipants.forEach(ind => {
         allParticipants.set(ind.name, ind);
       });
     }
+
+
   });
+
+  for (const user of allParticipants.values()) {
+    console.log(user.name);
+  }
+  console.log('Total Participants:', allParticipants.size);
 
   // Summary情報を表示
   const lastChecked = groupsData._metadata?.lastChecked;
@@ -1183,6 +1190,8 @@ function escapeHtml(str) {
 
 async function _popupRenderUserDetail(userHref, userName) {
   const userDetailContent = document.getElementById('userDetailContent');
+  // スクロール可能にする（overflow）
+  userDetailContent.style.overflowY = 'auto';
 
   if (!userHref) {
     userDetailContent.innerHTML = '<p style="padding: 12px; color: #666;">No user data available</p>';

@@ -40,11 +40,11 @@ const testGroupsOld = [
 
 const testGroups = [  // minimal set for quick tests
   //{type: 'wg', shortname: 'dx'},
-  {type: 'wg', shortname: 'data-shapes'},
-  {type: 'ig', shortname: 'wai'},
-  {type: 'cg', shortname: 'ixml'},
-  {type: 'tf', shortname: 'ab-elected'},
-  {type: 'other', shortname: 'ab'},
+  { type: 'wg', shortname: 'data-shapes' },
+  { type: 'ig', shortname: 'wai' },
+  { type: 'cg', shortname: 'ixml' },
+  { type: 'tf', shortname: 'ab-elected' },
+  { type: 'other', shortname: 'ab' },
 ]
 
 
@@ -53,6 +53,7 @@ const reGroupsUsers = /^https:\/\/api\.w3\.org\/groups\/[^\/]+\/[^\/]+\/users$/;
 const reParticipationsParticipants = /^https:\/\/api\.w3\.org\/participations\/[^\/]+\/participants$/;
 const reUsersAffiliations = /^https:\/\/api\.w3\.org\/users\/[^\/]+\/affiliations$/;
 const reUsersGroups = /^https:\/\/api\.w3\.org\/users\/[^\/]+\/groups$/;
+const reUsers = /^https:\/\/api\.w3\.org\/users\/[^\/]+$/;
 
 function formatDuration(ms) {
   const seconds = Math.floor(ms / 1000);
@@ -641,30 +642,38 @@ async function fetchParticipations(collectedGroupsData, collectedParticipationsD
   return collectedParticipationsData;
 }
 
-async function fetchUsers(collectedGroupsData, collectedParticipationsData, collectedAffiliationsData) {
+async function fetchUsers(collectedGroupsData, collectedParticipationsData) {
   console.log('Start fetching Users');
-  // usersデータ格納用オブジェクトを初期化
-  let collectedUsersData = {};
 
   // groupsの/usersエンドポイントからもユーザーURLを抽出, これはCGの個人参加の人、例外のIGのメンバーも含まれる
   const usersFromGroups = new Set();
   if (collectedGroupsData) {
     for (const url in collectedGroupsData) {
+      if (!reGroupsUsers.test(url)) {
+        // console.log(`Skipping non-/users URL: ${url}`);
+        continue;
+      }
       const entry = collectedGroupsData[url];
       if (!entry || !entry.data) continue;
       const data = entry.data;
+      // links.usersがある場合はそのhrefを追加
       if (data._links && data._links.users) {
         const users = data._links.users;
         if (Array.isArray(users)) {
           // https://api.w3.org/users/{hash}
           for (const user of users) {
             if (user && user.href) {
+              console.log(user.title);
+              if (user.title === 'Antoine Zimmermann') {
+                console.log('Found Antoine Zimmermann:', user.href);
+              }
               usersFromGroups.add(user.href);
             }
           }
         } else if (users && typeof users === 'object') {
           for (const user of Object.values(users)) {
             if (user && user.href) {
+                   console.log('title:', user.title);
               usersFromGroups.add(user.href);
             }
           }
@@ -706,53 +715,21 @@ async function fetchUsers(collectedGroupsData, collectedParticipationsData, coll
     }
   }
 
-  // affiliationsデータからもユーザーURLを抽出, groupsに属してない参加者や
-  const usersFromAffiliations = new Set();
-  for (const url in collectedAffiliationsData) {
-    const entry = collectedAffiliationsData[url];
-    if (!entry || !entry.data) continue;
-    const data = entry.data;
-    // 参加者(users)をaffiliationsのparticipantsエンドポイントから取得
-    if (data._links && data._links.participants && data._links.participants.href) {
-      const participantsUrl = data._links.participants.href;
-      try {
-        // 参加者リストをfetch
-        const participantsData = collectedAffiliationsData[participantsUrl].data
-        if (!participantsData) {
-          console.warn(`Warning: No data found for participants in collectedAffiliationsData: ${participantsUrl}`);
-          continue;
-        }
-        if (participantsData && participantsData._links && participantsData._links.participants) {
-          const participants = participantsData._links.participants;
-          if (Array.isArray(participants)) {
-            for (const participant of participants) {
-              if (participant && participant.href) {
-                usersFromAffiliations.add(participant.href);
-              }
-            }
-          } else if (participants && typeof participants === 'object') {
-            for (const participant of Object.values(participants)) {
-              if (participant && participant.href) {
-                usersFromAffiliations.add(participant.href);
-              }
-            }
-          }
-        }
-      } catch (e) {
-        console.warn(`Error fetching participants for affiliation ${url}: ${String(e)}`);
-      }
-    }
-  }
-
   // 抽出した全ユーザーURLを配列化してfetch
   console.log('Found users from groups: ' + usersFromGroups.size);
   console.log('Found users from participations: ' + usersFromParticipants.size);
-  console.log('Found users from affiliations: ' + usersFromAffiliations.size);
   const allUsers = new Set([
     ...usersFromGroups,
     ...usersFromParticipants,
-    ...usersFromAffiliations
   ]);
+
+  let collectedUsersData = await fetchUsersData(allUsers);
+
+  return collectedUsersData;
+}
+
+async function fetchUsersData(allUsers) {
+  let collectedUsersData = {}; // user Dataが収集されるて戻り値
   const allUsersArray = Array.from(allUsers);
   const userAfflications = new Set();
   const userGroups = new Set();
@@ -760,6 +737,10 @@ async function fetchUsers(collectedGroupsData, collectedParticipationsData, coll
   console.log(`Found ${allUsersArray.length} users to fetch`);
   for (let i = 0; i < allUsersArray.length; i++) {
     const userHref = allUsersArray[i];
+    if (userHref.startsWith('https://api.w3.org/users/daga418zjf48w80sowwc8owk4gkgk04')) {
+      // このURLはユーザURLではないのでスキップ
+      console.log(`  emma URL: ${userHref}`);
+    }
     if (VERBOSE) {
       console.log(`[${i + 1}/${allUsersArray.length}] Fetching: ${userHref}`);
     }
@@ -771,6 +752,7 @@ async function fetchUsers(collectedGroupsData, collectedParticipationsData, coll
 
         // 全Phaseで[REQUEST][RESPONSE]を出す
         userData = await fetchData(userHref);
+        console.log(i, userData.name);
         if (userData && userData._links && userData._links.affiliations) {
           // affiliationsが配列の場合
           if (Array.isArray(userData._links.affiliations)) {
@@ -831,11 +813,15 @@ async function fetchUsers(collectedGroupsData, collectedParticipationsData, coll
       console.log(`    --- Progress: ${i + 1}/${allUsersArray.length} user data (${formatDuration(Date.now() - fetchStartTimestamp)})`);
     }
   }
-  // 取得した前ユーザのアフィリえーションを取得をfetch
+  // 取得したuserAfflicationsのURLからafflicationの情報をfetch
   const userAfflicationsArray = Array.from(userAfflications);
   console.log(`Found ${userAfflicationsArray.length} user affiliations to fetch`);
   for (let i = 0; i < userAfflicationsArray.length; i++) {
     const affHref = userAfflicationsArray[i];
+    if (affHref.startsWith('https://api.w3.org/users/daga418zjf48w80sowwc8owk4gkgk04')) {
+      // このURLはユーザURLではないのでスキップ
+      console.log(`  emma URL: ${affHref}`);
+    }
     let affData = {};
     try {
       if (VERBOSE) console.log(`[${i + 1}/${userAfflicationsArray.length}] Fetching: ${affHref}`);
@@ -861,11 +847,15 @@ async function fetchUsers(collectedGroupsData, collectedParticipationsData, coll
       console.log(`    --- Progress: ${i + 1}/${userAfflicationsArray.length} user affiliations (${formatDuration(duration)})`);
     }
   }
-  // 取得した前ユーザのGroupdqを取得をfetch
+  // 取得したユーザのGroupsを取得をfetch
   const userGroupsArray = Array.from(userGroups);
-  console.log(`Found ${userGroupsArray.length} userd groups to fetch`);
+  console.log(`Found ${userGroupsArray.length} users groups to fetch`);
   for (let i = 0; i < userGroupsArray.length; i++) {
     const groupHref = userGroupsArray[i];
+    if (groupHref.startsWith('https://api.w3.org/users/daga418zjf48w80sowwc8owk4gkgk04')) {
+      // このURLはユーザURLではないのでスキップ
+      console.log(`  emma URL: ${groupHref}`);
+    }
     let groupData = {};
     try {
       if (VERBOSE) console.log(`[${i + 1}/${userGroupsArray.length}] Fetching: ${groupHref}`);
@@ -896,18 +886,13 @@ async function fetchUsers(collectedGroupsData, collectedParticipationsData, coll
   return collectedUsersData;
 }
 
-async function fetchAffiliations(collectedParticipationsData, isTestMode) {
-  // 注意事項
-  // すべてのUsersを取得するためにfetchUsersはFetchAfflicationsの後で実行するので、collectedUsersDataは引数で受け取らない
-  // testMode=trueの場合、participationsおよびusersから見つかったaffiliationsのみをfetchするので、indivisualのaffiliationsはfetchしない
-  // このため、ig/i18nのようにparticipations=0, users > 0の例外ケースの場合はTestModeではUsersのallifationsが保存されない
-  // testMode=falseの場合、すべてのaffiliationsをfetchするのでindivisualのaffiliationsもfetchするので、すべてのUsersのaffiliationsが保存される
+async function fetchAffiliations(collectedParticipationsData, collectedUsersData, isTestMode) {
   console.log('start fetching Affiliations');
   // 戻り値のaffiliationsデータ格納用オブジェクトを初期化
   let collectedAffiliationsData = {};
 
-  const affiliationsFromParticipations = new Set();
   // 1. participationsからorganization affiliationを抽出
+  const affiliationsFromParticipations = new Set();
   for (const url in collectedParticipationsData) {
     if (url.endsWith('/participants')) continue; // participantsのデータは除外
     const entry = collectedParticipationsData[url];
@@ -917,9 +902,10 @@ async function fetchAffiliations(collectedParticipationsData, isTestMode) {
       affiliationsFromParticipations.add(data._links.organization.href);
     }
   }
-  /*
-  const affiliationsFromUsers = new Set();
+  console.log(`Found ${affiliationsFromParticipations.size} affiliations from participations`);
+
   // 2. usersのaffiliationsエンドポイントから_links.affiliations配下のhrefを抽出（配列・オブジェクト両対応）
+  const affiliationsFromUsers = new Set();
   for (const url in collectedUsersData) {
     if (!url.endsWith('/affiliations')) continue; // affiliationsのデータのみ対象
     const entry = collectedUsersData[url];
@@ -950,11 +936,10 @@ async function fetchAffiliations(collectedParticipationsData, isTestMode) {
       }
     }
   }
-  console.log(`Found ${affiliationsFromParticipations.size} affiliations from participations`);
   console.log(`Found ${affiliationsFromUsers.size} affiliations from users`);
+
   const combiedAffiliations = new Set([...affiliationsFromParticipations, ...affiliationsFromUsers]);
   console.log(`Combined affiliations from participations and users: ${combiedAffiliations.size}`);
-  */
 
   // フェッチの開始
   let fetchCount = 0, fetchedCount = 0, errorCount = 0;
@@ -1067,10 +1052,72 @@ async function fetchAffiliations(collectedParticipationsData, isTestMode) {
   return collectedAffiliationsData;
 }
 
+async function fetchUsersWhoAreNotInGroups(collectedAffiliationsData, collectedUsersData, isSkipFetchUsersNotInGroups) {
+  console.log('Start fetching Users who are not in any Groups');
+  // collectedAffiliationsDataから全参加者(users)を抽出
+  const userHrefsFromAffiliations = new Set();
+  for (const url in collectedAffiliationsData) {
+    const entry = collectedAffiliationsData[url];
+    if (!entry || !entry.data) continue;
+    const data = entry.data;
+    // 参加者(users)をaffiliationsのparticipantsエンドポイントから取得
+    if (data._links && data._links.participants && data._links.participants.href) {
+      const participantsUrl = data._links.participants.href;
+      try {
+        // 参加者リストをfetch
+        const participantsData = collectedAffiliationsData[participantsUrl].data
+        if (!participantsData) {
+          console.warn(`Warning: No data found for participants in collectedAffiliationsData: ${participantsUrl}`);
+          continue;
+        }
+        if (participantsData && participantsData._links && participantsData._links.participants) {
+          const participants = participantsData._links.participants;
+          if (Array.isArray(participants)) {
+            for (const participant of participants) {
+              if (participant && participant.href) {
+                userHrefsFromAffiliations.add(participant.href);
+              }
+            }
+          } else if (participants && typeof participants === 'object') {
+            for (const participant of Object.values(participants)) {
+              if (participant && participant.href) {
+                userHrefsFromAffiliations.add(participant.href);
+              }
+            }
+          }
+        }
+      } catch (e) {
+        console.warn(`Error fetching participants for affiliation ${url}: ${String(e)}`);
+      }
+    }
+  }
+  console.log(`Total users extracted from affiliations: ${userHrefsFromAffiliations.size}`);
+  // collectedUsersDataから全ユーザーを抽出
+  const userHrefsFromUsers = new Set(Object.keys(collectedUsersData).filter(href => reUsers.test(href)));
+  console.log(`Users who are in any groups (i.e. already fetched users)): ${userHrefsFromUsers.size}`);
+  // affiliationsから抽出したユーザーのうち、collectedUsersDataに存在しないユーザーを抽出
+  const userHrefsWhoAreNotInGroups = new Set([...userHrefsFromAffiliations].filter(x => !userHrefsFromUsers.has(x)));
+  console.log(`Users who are not in any groups (i.e. not yet fetched users): ${userHrefsWhoAreNotInGroups.size}`);
+  let fetchUserHrefs = Array.from(userHrefsWhoAreNotInGroups);
+
+  if (isSkipFetchUsersNotInGroups) {
+    console.log('--- isSkipFetchUsersNotInGroups = true');
+    return collectedUsersData
+  }
+
+  // 抽出したユーザーをfetch    
+  let additionalUsersData = await fetchUsersData(fetchUserHrefs);
+  const newCollectedUsersData = [...collectedUsersData, ...additionalUsersData];
+  console.log(`Total users data collected after merging users who are not in any Groups: ${newCollectedUsersData.length}`);
+
+  return newCollectedUsersData;
+}
+
+
 async function phase1_fetchGroups(dirPath, groupsFilename, isTestMode) {
   const groupsFilePath = dirPath + '/' + groupsFilename;
   // shouldFetchGroupsはmainで判定。isTestModeのみ引数で受け取る。
-  logAlways('\n========== PHASE 1: Fetching Groups, Participations List, and Users list ==========\n');
+  logAlways('\n========== PHASE 1 (groups): Started ==========\n');
   phaseRequestCount = 0;
   phaseStartTimestamp = Date.now();
   let collectedGroupsData = {};
@@ -1096,7 +1143,7 @@ async function phase1_fetchGroups(dirPath, groupsFilename, isTestMode) {
     const typeGroupsData = await fetchTypeGroups(type, testGroupShortNames);
     Object.assign(collectedGroupsData, typeGroupsData);
   }
-  logAlways(`\n========== PHASE 1 Summary ==========`);
+  logAlways(`\n========== PHASE 1 (groups): Finished ==========`);
   // 全グループ数（リストページから集計）
   let totalGroupCount = 0;
   for (const key of Object.keys(collectedGroupsData)) {
@@ -1150,7 +1197,7 @@ async function phase2_fetchParticipations(dirPath, groupsFilename, participation
   }
   // participationデータは空で開始
   let collectedParticipationsData = await fetchParticipations(collectedGroupsData, {});
-  logAlways(`\n========== PHASE 2 Summary ==========`);
+  logAlways(`\n========== PHASE 2 (participations): Finished ==========`);
   logAlways(`Total participations data collected: ${Object.keys(collectedParticipationsData).length}`);
   const phaseDurationSec = (Date.now() - phaseStartTimestamp) / 1000;
   logAlways(`Phase duration (sec): ${phaseDurationSec.toFixed(2)}`);
@@ -1164,45 +1211,12 @@ async function phase2_fetchParticipations(dirPath, groupsFilename, participation
   return isFinished;
 }
 
-// PHASE 3: Affiliations
-async function phase3_fetchAffiliations(dirPath, participationFilename, affiliationsFilename, isTestMode) {
-  const participationFilePath = dirPath + '/' + participationFilename;
-  logAlways('\n========== PHASE 3: Fetching Affiliations ==========\n');
-  phaseRequestCount = 0;
-  phaseStartTimestamp = Date.now();
+// PHASE 3: Users
 
-  // participationsデータを都度ロード
-  let collectedParticipationsData = {};
-  try {
-    const participationsContent = fs.readFileSync(participationFilePath, 'utf8');
-    collectedParticipationsData = JSON.parse(participationsContent);
-    logAlways(`Loaded ${Object.keys(collectedParticipationsData).length} items from w3c-participations.json`);
-  } catch (e) {
-    console.error(`Error: Cannot load w3c-participations.json: ${e.message}`);
-    process.exit(1);
-  }
-
-  const collectedAffiliationsData = await fetchAffiliations(collectedParticipationsData, isTestMode);
-  logAlways(`\n========== PHASE 3 Summary ==========`);
-  logAlways(`Total affiliations data collected: ${Object.keys(collectedAffiliationsData).length}`);
-  const phaseDurationSec = (Date.now() - phaseStartTimestamp) / 1000;
-  logAlways(`Phase duration (sec): ${phaseDurationSec.toFixed(2)}`);
-  logAlways(`Total requests: ${phaseRequestCount}`);
-  logAlways(`Average requests/sec: ${(phaseRequestCount / phaseDurationSec).toFixed(2)}`);
-  phaseRequestCounts[3] = phaseRequestCount;
-  const isFinished = await compareAndWriteJson(dirPath, affiliationsFilename, collectedAffiliationsData);
-  if (isFinished) {
-    logAlways('✓ The latest Affiliations data is up to date.');
-  }
-  return isFinished;
-}
-
-
-async function phase4_fetchUsers(dirPath, groupsFilename, participationFilename, affiliationsFilename, usersFilename) {
+async function phase3_fetchUsers(dirPath, groupsFilename, participationFilename, usersFilename) {
   const groupsFilePath = dirPath + '/' + groupsFilename;
   const participationFilePath = dirPath + '/' + participationFilename;
-  const affiliationsFilePath = dirPath + '/' + affiliationsFilename;
-  logAlways('\n========== PHASE 4: Fetching Users ==========\n');
+  logAlways('\n========== PHASE 3 (users): Started ==========\n');
   phaseRequestCount = 0;
   phaseStartTimestamp = Date.now();
   let collectedGroupsData = {};
@@ -1229,20 +1243,9 @@ async function phase4_fetchUsers(dirPath, groupsFilename, participationFilename,
     process.exit(1);
   }
 
-  // affliationsデータを都度ロード
-  try {
-    const affiliationsContent = fs.readFileSync(affiliationsFilePath, 'utf8');
-    collectedAffiliationsData = JSON.parse(affiliationsContent);
-    logAlways(`Loaded ${Object.keys(collectedAffiliationsData).length} items from w3c-affiliations.json`);
-  } catch (e) {
-    console.error(`Error: Cannot load w3c-affiliations.json: ${e.message}`);
-    process.exit(1);
-  }
-
-
   // usersデータは空で開始
   let collectedUsersData = await fetchUsers(collectedGroupsData, collectedParticipationsData, collectedAffiliationsData);
-  logAlways(`\n========== PHASE 4 Summary ===========`);
+  logAlways(`\n========== PHASE 3 (users): Finished ==========`);
   logAlways(`Total users data collected: ${Object.keys(collectedUsersData).length}`);
   const phaseDurationSec = (Date.now() - phaseStartTimestamp) / 1000;
   logAlways(`Phase duration (sec): ${phaseDurationSec.toFixed(2)}`);
@@ -1256,6 +1259,100 @@ async function phase4_fetchUsers(dirPath, groupsFilename, participationFilename,
   return isFinished;
 }
 
+// PHASE 4: Affiliations
+async function phase4_fetchAffiliations(dirPath, participationFilename, usersFilename, affiliationsFilename, isTestMode) {
+  const participationFilePath = dirPath + '/' + participationFilename;
+  const usersFilePath = dirPath + '/' + usersFilename;
+  logAlways('\n========== PHASE 4 (affiliations): Started ==========\n');
+  phaseRequestCount = 0;
+  phaseStartTimestamp = Date.now();
+
+  // participationsデータを都度ロード
+  let collectedParticipationsData = {};
+  try {
+    const participationsContent = fs.readFileSync(participationFilePath, 'utf8');
+    collectedParticipationsData = JSON.parse(participationsContent);
+    logAlways(`Loaded ${Object.keys(collectedParticipationsData).length} items from ${participationFilePath}`);
+  } catch (e) {
+    console.error(`Error: Cannot load ${participationFilePath}: ${e.message}`);
+    process.exit(1);
+  }
+
+  // usersデータを都度ロード
+  let collectedUsersData = {};
+  try {
+    const usersContent = fs.readFileSync(usersFilePath, 'utf8');
+    collectedUsersData = JSON.parse(usersContent);
+    logAlways(`Loaded ${Object.keys(collectedUsersData).length} items ${usersFilePath}`);
+  } catch (e) {
+    console.error(`Error: Cannot load w3c-users.json: ${e.message}`);
+    process.exit(1);
+  }
+
+  const collectedAffiliationsData = await fetchAffiliations(collectedParticipationsData, collectedUsersData, isTestMode);
+  logAlways(`\n========== PHASE 4 (affiliations): Finished ==========`);
+  logAlways(`Total affiliations data collected: ${Object.keys(collectedAffiliationsData).length}`);
+  const phaseDurationSec = (Date.now() - phaseStartTimestamp) / 1000;
+  logAlways(`Phase duration (sec): ${phaseDurationSec.toFixed(2)}`);
+  logAlways(`Total requests: ${phaseRequestCount}`);
+  logAlways(`Average requests/sec: ${(phaseRequestCount / phaseDurationSec).toFixed(2)}`);
+  phaseRequestCounts[3] = phaseRequestCount;
+  const isFinished = await compareAndWriteJson(dirPath, affiliationsFilename, collectedAffiliationsData);
+  if (isFinished) {
+    logAlways('✓ The latest Affiliations data is up to date.');
+  }
+  return isFinished;
+}
+
+async function phase5_fetchUsersWhoAreNotInGroups(dirPath, affiliationsFilename, usersFilename, isSkipFetchUsersNotInGroups) {
+  const affiliationsFilePath = dirPath + '/' + affiliationsFilename;
+  const usersFilePath = dirPath + '/' + usersFilename;
+  logAlways('\n========== PHASE 5 (users-not-in-groups): Started ==========\n');
+  phaseRequestCount = 0;
+  phaseStartTimestamp = Date.now();
+
+  // affiliationsデータを都度ロード
+  let collectedAffiliationsData = {};
+  try {
+    const affiliationsContent = fs.readFileSync(affiliationsFilePath, 'utf8');
+    collectedAffiliationsData = JSON.parse(affiliationsContent);
+    logAlways(`Loaded ${Object.keys(collectedAffiliationsData).length} items from ${affiliationsFilePath}`);
+  } catch (e) {
+    console.error(`Error: Cannot load ${affiliationsFilePath}: ${e.message}`);
+    process.exit(1);
+  }
+
+  // usersデータを都度ロード
+  let collectedUsersData = {};
+  try {
+    const usersContent = fs.readFileSync(usersFilePath, 'utf8');
+    collectedUsersData = JSON.parse(usersContent);
+    logAlways(`Loaded ${Object.keys(collectedUsersData).length} items ${usersFilePath}`);
+  } catch (e) {
+    console.error(`Error: Cannot load w3c-users.json: ${e.message}`);
+    process.exit(1);
+  }
+
+  const newCollectedUsersData = await fetchUsersWhoAreNotInGroups(collectedAffiliationsData, collectedUsersData, isSkipFetchUsersNotInGroups);
+  logAlways(`\n========== PHASE 5 (users-not-in-groups): Finished  ==========`);
+  let isFinished = true
+  if (isSkipFetchUsersNotInGroups) {
+    logAlways(`Skipped fetching users who are not in any Groups since it will take a long time.`);
+  } else {
+    logAlways(`Total users data collected after merging users who are not in any Groups: ${newCollectedUsersData.length}`);
+    const phaseDurationSec = (Date.now() - phaseStartTimestamp) / 1000;
+    logAlways(`Phase duration (sec): ${phaseDurationSec.toFixed(2)}`);
+    logAlways(`Total requests: ${phaseRequestCount}`);
+    logAlways(`Average requests/sec: ${(phaseRequestCount / phaseDurationSec).toFixed(2)}`);
+    phaseRequestCounts[4] = phaseRequestCount;
+    // usersデータを再書き込み
+    isFinished = await compareAndWriteJson(dirPath, usersFilename, newCollectedUsersData);
+  }
+  if (isFinished) {
+    logAlways('✓ The latest Users data is up to date.');
+  }
+  return isFinished;
+}
 
 async function createDataJson(dirPath, usedFilenames, dataFileName, testGroups) {
   const files = [];
@@ -1298,13 +1395,15 @@ async function createDataJson(dirPath, usedFilenames, dataFileName, testGroups) 
 
 function printUsage() {
   console.log(`\nUsage:
-  node scripts/fetch-w3c-data.js                    # Fetch all data (All Phases: groups + participations + affiliations + users)
+  node scripts/fetch-w3c-data.js                    # All Phases: Fetch all data (All Phases: groups + participations + affiliations + users)
   node scripts/fetch-w3c-data.js --groups --test    # Test mode (only sample groups)
-  node scripts/fetch-w3c-data.js --groups           # Fetch only Phase1: groups, participations lists, users lists
-  node scripts/fetch-w3c-data.js --participations   # Fetch only Phase2: participation details (requires w3c-groups.json)
-  node scripts/fetch-w3c-data.js --affiliations     # Fetch only Phase3: affiliations (requires w3c-participations)
-  node scripts/fetch-w3c-data.js --users            # Fetch only Phase4: user details (requires w3c-participations.json and user-affiliations.json)
-  node scripts/fetch-w3c-data.js --groups --participations  # Fetch groups(Phase1) and participations(Phase2)
+  node scripts/fetch-w3c-data.js --groups           # Only Phase1: update groups, participations lists, users lists in w3c-groups.json
+  node scripts/fetch-w3c-data.js --participations   # Only Phase2: update participation details in w3c-participations.json (requires w3c-groups.json)
+   node scripts/fetch-w3c-data.js --users           # Only Phase3: update user details in w3c-users.json (requires w3c-participations.json and w3c-affiliations.json)
+  node scripts/fetch-w3c-data.js --affiliations     # Only Phase4: update affiliations in w3c-affiliations.json (requires w3c-participations.json)
+
+  node scripts/fetch-w3c-data.js --users-not-in-groups  # Only Phase5: update users who are not in any groups  in w3c-users.json (requires w3c-participations.json and w3c-users.json)
+  node scripts/fetch-w3c-data.js --groups --participations  # Only Phase1 and Phase2: update groups and participations
   node scripts/fetch-w3c-data.js --verbose          # Show detailed fetch logs\n`);
 }
 
@@ -1318,7 +1417,7 @@ async function main() {
     .split('.')[0];
   console.log(`Fetch started at: ${fetchStartTime}`);
   const allowedOptions = [
-    '--groups', '--test', '--participations', '--users', '--affiliations', '--verbose', '--help', '-h'
+    '--groups', '--test', '--participations', '--users', '--affiliations', '--phase1', '--phase2', '--phase3', '--phase4', '--phase5', '--verbose', '--help', '-h'
   ];
   // 未対応の--option
   const unknownOptions = process.argv.slice(2).filter(opt => opt.startsWith('--') && !allowedOptions.includes(opt));
@@ -1336,11 +1435,13 @@ async function main() {
   }
   fs.mkdirSync(dirPath, { recursive: true });
   const isTestMode = process.argv.includes('--test') || forceTestMode;
-  const fetchGroups = process.argv.includes('--groups');
-  const fetchParticipations = process.argv.includes('--participations');
-  const fetchAffiliations = process.argv.includes('--affiliations');
-  const fetchUsers = process.argv.includes('--users');
-  const fetchAll = !fetchGroups && !fetchParticipations && !fetchAffiliations && !fetchUsers;
+  const fetchGroups = process.argv.includes('--groups') || process.argv.includes('--phase1');
+  const fetchParticipations = process.argv.includes('--participations') || process.argv.includes('--phase2');
+  const fetchUsers = process.argv.includes('--users') || process.argv.includes('--phase3');
+  const fetchAffiliations = process.argv.includes('--affiliations') || process.argv.includes('--phase4');
+  const fetchUsersNotInGroups = process.argv.includes('--users-not-in-groups') || process.argv.includes('--phase5')
+  const fetchAll = !fetchGroups && !fetchParticipations && !fetchAffiliations && !fetchUsers && !fetchUsersNotInGroups;
+  const isSkipFetchUsersNotInGroups = true // 注意：groupに参加していないparticipantsの多すぎるので、--skipFetchUsersNotInGroupsをつけない限り取得しない。
 
   const fileNames = {
     data: 'w3c-data.json',
@@ -1364,17 +1465,24 @@ async function main() {
     usedFileSet.add(fileNames.participations);
     phase2Finished = await phase2_fetchParticipations(dirPath, fileNames.groups, fileNames.participations);
   }
-  if (fetchAll || fetchAffiliations) {
-    usedFileSet.add(fileNames.participations);
-    usedFileSet.add(fileNames.affiliations);
-    phase3Finished = await phase3_fetchAffiliations(dirPath, fileNames.participations, fileNames.affiliations, isTestMode);
-  }
   if (fetchAll || fetchUsers) {
     usedFileSet.add(fileNames.groups);
     usedFileSet.add(fileNames.participations);
-    usedFileSet.add(fileNames.affiliations);
     usedFileSet.add(fileNames.users);
-    phase4Finished = await phase4_fetchUsers(dirPath, fileNames.groups, fileNames.participations, fileNames.affiliations, fileNames.users);
+    phase3Finished = await phase3_fetchUsers(dirPath, fileNames.groups, fileNames.participations, fileNames.users);
+  }
+
+  if (fetchAll || fetchAffiliations) {
+    usedFileSet.add(fileNames.participations);
+    usedFileSet.add(fileNames.users);
+    usedFileSet.add(fileNames.affiliations);
+    phase4Finished = await phase4_fetchAffiliations(dirPath, fileNames.participations, fileNames.users, fileNames.affiliations, isTestMode);
+  }
+
+  if (fetchAll || fetchUsersNotInGroups) {
+    usedFileSet.add(fileNames.participations);
+    usedFileSet.add(fileNames.affiliations);
+    phase3Finished = await phase5_fetchUsersWhoAreNotInGroups(dirPath, fileNames.affiliations, fileNames.users, isSkipFetchUsersNotInGroups);
   }
 
   const duration = Date.now() - fetchStartTimestamp;
