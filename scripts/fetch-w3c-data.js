@@ -146,7 +146,7 @@ async function compareAndWriteJson(dirPath, filename, collectedData) {
   return true;  // finished
 };
 
-function fetchJson(url, retries = 6, backoffMs = 600, timeoutMs = 180000, redirects = 5) {
+function fetchJson(url, retries = 6, backoffMs = 60000, timeoutMs = 180000, redirects = 5) {
   phaseRequestCount++;
   totalRequestCount++;
   return new Promise((resolve, reject) => {
@@ -294,6 +294,11 @@ async function fetchData(startUrl) {
 
   const pages = [];
   let url = startUrl;
+  if (url.endsWith('/')) url = url.slice(0, -1);
+  // items=500を常に付与
+  if (!url.includes('items=')) {
+    url += (url.includes('?') ? '&' : '?') + 'items=500';
+  }
   let page = 1; // 初期ページ
   let lastError = undefined;
 
@@ -307,7 +312,10 @@ async function fetchData(startUrl) {
       const totalPages = r.pages || 1;
       if (page < totalPages) {
         page += 1;
-        url = `${startUrl.split('?')[0]}?page=${page}`;
+        let baseUrl = startUrl.split('?')[0];
+        if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+        // items=500とpageを両方付与
+        url = `${baseUrl}?items=500&page=${page}`;
       } else {
         url = null; // 最後のページに到達
       }
@@ -663,10 +671,6 @@ async function fetchUsers(collectedGroupsData, collectedParticipationsData) {
           // https://api.w3.org/users/{hash}
           for (const user of users) {
             if (user && user.href) {
-              console.log(user.title);
-              if (user.title === 'Antoine Zimmermann') {
-                console.log('Found Antoine Zimmermann:', user.href);
-              }
               usersFromGroups.add(user.href);
             }
           }
@@ -737,10 +741,7 @@ async function fetchUsersData(allUsers) {
   console.log(`Found ${allUsersArray.length} users to fetch`);
   for (let i = 0; i < allUsersArray.length; i++) {
     const userHref = allUsersArray[i];
-    if (userHref.startsWith('https://api.w3.org/users/daga418zjf48w80sowwc8owk4gkgk04')) {
-      // このURLはユーザURLではないのでスキップ
-      console.log(`  emma URL: ${userHref}`);
-    }
+
     if (VERBOSE) {
       console.log(`[${i + 1}/${allUsersArray.length}] Fetching: ${userHref}`);
     }
@@ -752,7 +753,6 @@ async function fetchUsersData(allUsers) {
 
         // 全Phaseで[REQUEST][RESPONSE]を出す
         userData = await fetchData(userHref);
-        console.log(i, userData.name);
         if (userData && userData._links && userData._links.affiliations) {
           // affiliationsが配列の場合
           if (Array.isArray(userData._links.affiliations)) {
@@ -818,10 +818,6 @@ async function fetchUsersData(allUsers) {
   console.log(`Found ${userAfflicationsArray.length} user affiliations to fetch`);
   for (let i = 0; i < userAfflicationsArray.length; i++) {
     const affHref = userAfflicationsArray[i];
-    if (affHref.startsWith('https://api.w3.org/users/daga418zjf48w80sowwc8owk4gkgk04')) {
-      // このURLはユーザURLではないのでスキップ
-      console.log(`  emma URL: ${affHref}`);
-    }
     let affData = {};
     try {
       if (VERBOSE) console.log(`[${i + 1}/${userAfflicationsArray.length}] Fetching: ${affHref}`);
@@ -1417,7 +1413,7 @@ async function main() {
     .split('.')[0];
   console.log(`Fetch started at: ${fetchStartTime}`);
   const allowedOptions = [
-    '--groups', '--test', '--participations', '--users', '--affiliations', '--phase1', '--phase2', '--phase3', '--phase4', '--phase5', '--verbose', '--help', '-h'
+    '--groups', '--test', '--participations', '--users', '--affiliations', '--users-not-in-groups', '--phase1', '--phase2', '--phase3', '--phase4', '--phase5', '--verbose', '--help', '-h'
   ];
   // 未対応の--option
   const unknownOptions = process.argv.slice(2).filter(opt => opt.startsWith('--') && !allowedOptions.includes(opt));
