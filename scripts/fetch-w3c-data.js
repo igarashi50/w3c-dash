@@ -1103,7 +1103,7 @@ async function fetchUsersWhoAreNotInGroups(collectedAffiliationsData, collectedU
 
   // 抽出したユーザーをfetch    
   let additionalUsersData = await fetchUsersData(fetchUserHrefs);
-  const newCollectedUsersData = [...collectedUsersData, ...additionalUsersData];
+  const newCollectedUsersData = { ...collectedUsersData, ...additionalUsersData };
   console.log(`Total users data collected after merging users who are not in any Groups: ${newCollectedUsersData.length}`);
 
   return newCollectedUsersData;
