@@ -1,43 +1,65 @@
 {
   "_metadata": {
     "filename": "w3c-data.json",
-    "lastChecked": "2025-12-07T16:05:36.422Z"
+    "lastChecked": "2025-12-13T17:36:16.051Z",
+    "testGroups": [
+      {
+        "type": "wg",
+        "shortname": "data-shapes"
+      },
+      {
+        "type": "ig",
+        "shortname": "wai"
+      },
+      {
+        "type": "cg",
+        "shortname": "ixml"
+      },
+      {
+        "type": "tf",
+        "shortname": "ab-elected"
+      },
+      {
+        "type": "other",
+        "shortname": "ab"
+      }
+    ]
   },
   "files": [
     {
       "_metadata": {
         "filename": "w3c-groups.json",
-        "lastChecked": "2025-12-07T16:05:36.419Z",
-        "fetchStartTime": "20251207-160536",
-        "duration": "5m24s",
-        "itemCount": 785
+        "lastChecked": "2025-12-13T17:34:54.762Z",
+        "fetchStartTime": "20251213-173454",
+        "duration": "3s",
+        "itemCount": 17
       }
     },
     {
       "_metadata": {
         "filename": "w3c-participations.json",
-        "lastChecked": "2025-12-07T16:05:36.419Z",
-        "fetchStartTime": "20251207-160536",
-        "duration": "1h25m20s",
-        "itemCount": 23847
+        "lastChecked": "2025-12-13T17:34:54.762Z",
+        "fetchStartTime": "20251213-173454",
+        "duration": "20s",
+        "itemCount": 87
       }
     },
     {
       "_metadata": {
         "filename": "w3c-users.json",
-        "lastChecked": "2025-12-07T16:05:36.419Z",
-        "fetchStartTime": "20251207-160536",
-        "duration": "3h41m2s",
-        "itemCount": 40602
+        "lastChecked": "2025-12-13T17:34:54.762Z",
+        "fetchStartTime": "20251213-173454",
+        "duration": "1m9s",
+        "itemCount": 240
       }
     },
     {
       "_metadata": {
         "filename": "w3c-affiliations.json",
-        "lastChecked": "2025-12-07T16:05:36.419Z",
-        "fetchStartTime": "20251207-160536",
-        "duration": "3h55m16s",
-        "itemCount": 4260
+        "lastChecked": "2025-12-13T17:34:54.762Z",
+        "fetchStartTime": "20251213-173454",
+        "duration": "1m21s",
+        "itemCount": 58
       }
     }
   ]
