@@ -176,11 +176,6 @@ function _mainRenderSummary(summaryStatDiv, groupsData) {
 
   });
 
-  for (const user of allParticipants.values()) {
-    console.log(user.name);
-  }
-  console.log('Total Participants:', allParticipants.size);
-
   // Summary情報を表示
   const lastChecked = groupsData._metadata?.lastChecked;
   let dateStr = '';
