@@ -153,6 +153,11 @@ function getParticipationsClassificationMaps(groupType, participationsUrl) {
   const staffsMap = new Map();
   // groupDetailは呼び出し元で取得済み
   // orgは不要
+
+  if (groupType == "cg") {
+    console.log(`  [Info] Processing CG group with participations URL: ${participationsUrl}`);
+  }
+
   if (participationsUrl) {
     try {
       const participationsData = findByDataUrl(participationsUrl);
@@ -173,14 +178,14 @@ function getParticipationsClassificationMaps(groupType, participationsUrl) {
                 if (affData) {
                   const isMember = affData['is-member']
                   if (!isMember) {
-                    if (groupType === 'working group' || groupType === 'interest group') {
+                    if (groupType === 'wg' || groupType === 'ig') {
                       // WG/IGの場合、メンバーシップであるはずなので警告を出す
                       console.log(`Warning: ${orgTitle} in ${groupType}: ${org} is a not W3C member's organization, skipping as member`);
-                    } else if (groupType === 'community group' || groupType === 'task force' || groupType === 'other') {
+                      continue
+                    } else if (groupType === 'cg' || groupType === 'tf' || groupType === 'other') {
                       // CG/TF/Otherの場合、メンバーシップでない場合もあるので警告は出さない
-                      console.log(`  [Info] ${orgTitle} in ${groupType}: ${org} is a not W3C member's organization, skipping as member`);
+                      // console.log(`  [Info] ${orgTitle} in q${groupType}: ${org} is a not W3C member's organization, skipping as member`);
                     }
-                    continue;
                   }
                 } else {
                   console.warn(`Warning: Organization data not found for href ${affiliationHref} of ${orgTitle}`);
