@@ -25,7 +25,8 @@ function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 const REQUEST_INTERVAL = 200;
 
 
-forceTestMode = false;   // テストモードフラグ
+// forceTestMode = false;   // 本番はこっち
+forceTestMode = true;   // テストモードフラグ
 // typeごとにshortname配列をまとめる
 const testGroupsOld = [
   //{ type: 'wg', shortname: 'css' },
