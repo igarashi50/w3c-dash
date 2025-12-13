@@ -29,14 +29,14 @@ const REQUEST_INTERVAL = 200;
 forceTestMode = true;   // テストモードフラグ
 // typeごとにshortname配列をまとめる
 const testGroupsOld = [
-  //{ type: 'wg', shortname: 'css' },
+  { type: 'wg', shortname: 'css' },
   //{ type: 'wg', shortname: 'miniapps' },
   { type: 'wg', shortname: 'did' },
   { type: 'wg', shortname: 'wot' },
-  //{ type: 'ig', shortname: 'i18n' },
+  { type: 'ig', shortname: 'i18n' },
   //{ type: 'cg', shortname: 'global-inclusion' },
   { type: 'tf', shortname: 'ab-elected' },
-  //{ type: 'other', shortname: 'ab' }
+  { type: 'other', shortname: 'ab' }
 ];
 
 const testGroups = [  // minimal set for quick tests
@@ -55,6 +55,7 @@ const reParticipationsParticipants = /^https:\/\/api\.w3\.org\/participations\/[
 const reUsersAffiliations = /^https:\/\/api\.w3\.org\/users\/[^\/]+\/affiliations$/;
 const reUsersGroups = /^https:\/\/api\.w3\.org\/users\/[^\/]+\/groups$/;
 const reUsers = /^https:\/\/api\.w3\.org\/users\/[^\/]+$/;
+const reAffiliations = /^https:\/\/api\.w3\.org\/affiliations\/[^\/]+$/;
 
 function formatDuration(ms) {
   const seconds = Math.floor(ms / 1000);
@@ -678,7 +679,6 @@ async function fetchUsers(collectedGroupsData, collectedParticipationsData) {
         } else if (users && typeof users === 'object') {
           for (const user of Object.values(users)) {
             if (user && user.href) {
-                   console.log('title:', user.title);
               usersFromGroups.add(user.href);
             }
           }
@@ -849,10 +849,6 @@ async function fetchUsersData(allUsers) {
   console.log(`Found ${userGroupsArray.length} users groups to fetch`);
   for (let i = 0; i < userGroupsArray.length; i++) {
     const groupHref = userGroupsArray[i];
-    if (groupHref.startsWith('https://api.w3.org/users/daga418zjf48w80sowwc8owk4gkgk04')) {
-      // このURLはユーザURLではないのでスキップ
-      console.log(`  emma URL: ${groupHref}`);
-    }
     let groupData = {};
     try {
       if (VERBOSE) console.log(`[${i + 1}/${userGroupsArray.length}] Fetching: ${groupHref}`);
@@ -1054,6 +1050,9 @@ async function fetchUsersWhoAreNotInGroups(collectedAffiliationsData, collectedU
   // collectedAffiliationsDataから全参加者(users)を抽出
   const userHrefsFromAffiliations = new Set();
   for (const url in collectedAffiliationsData) {
+    // urlはhttps://api.w3.org/affiliations/{hash}の形式
+    if (!reAffiliations.test(url)) continue;
+    // ここで https://api.w3.org/affiliations/{hash} 形式のデータだけ処理
     const entry = collectedAffiliationsData[url];
     if (!entry || !entry.data) continue;
     const data = entry.data;
@@ -1439,7 +1438,7 @@ async function main() {
   const fetchUsersNotInGroups = process.argv.includes('--users-not-in-groups') || process.argv.includes('--phase5')
   const fetchAll = !fetchGroups && !fetchParticipations && !fetchAffiliations && !fetchUsers && !fetchUsersNotInGroups;
   const isSkipFetchUsersNotInGroups = true // 注意：groupに参加していないparticipantsの多すぎるので、--skipFetchUsersNotInGroupsをつけない限り取得しない。
-
+  // const isSkipFetchUsersNotInGroups = false // テストはこちら。
   const fileNames = {
     data: 'w3c-data.json',
     groups: 'w3c-groups.json',
