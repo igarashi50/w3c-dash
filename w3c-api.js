@@ -145,13 +145,14 @@ function extractGroups() {
 }
 
 // groupを引数に、participationsから各種Mapを返す
-function getParticipationsClassificationMaps(groupDetail) {
-  const membersFromParticipationsMap = new Map();
-  const usersFromParticipationsMap = new Map(); // userHref -> userObj
-  const individualsFromParticipationsMap = new Map(); // userHref -> userObj  
-  const invitedExpertsFromParticipationsMap = new Map();
-  const staffsFromParticipationsMap = new Map();
-  const participationsUrl = groupDetail?._links?.participations?.href;
+function getParticipationsClassificationMaps(groupType, participationsUrl) {
+  const membersMap = new Map();
+  const memberParticipantsMap = new Map(); // userHref -> userObj
+  const individualsMap = new Map(); // userHref -> userObj  
+  const invitedExpertsMap = new Map();
+  const staffsMap = new Map();
+  // groupDetailは呼び出し元で取得済み
+  // orgは不要
   if (participationsUrl) {
     try {
       const participationsData = findByDataUrl(participationsUrl);
@@ -164,208 +165,265 @@ function getParticipationsClassificationMaps(groupDetail) {
           try {
             const partDetail = findByDataUrl(part.href);
             // Members: individual=false, invited-expert=false
-            if (partDetail['individual'] === false && partDetail['invited-expert'] === false) {
+            if (partDetail['individual'] === false) {
               const orgTitle = partDetail._links?.organization?.title || part.title || 'Unknown';
-              if (!membersFromParticipationsMap.has(orgTitle)) membersFromParticipationsMap.set(orgTitle, []);
-              // participantsエンドポイントから個人を取得
+              const affiliationHref = partDetail._links?.organization?.href;
+              if (affiliationHref) {
+                const affData = findByDataUrl(affiliationHref);
+                if (affData) {
+                  const isMember = affData['is-member']
+                  if (!isMember) {
+                    if (groupType === 'working group' || groupType === 'interest group') {
+                      // WG/IGの場合、メンバーシップであるはずなので警告を出す
+                      console.log(`Warning: ${orgTitle} in ${groupType}: ${org} is a not W3C member's organization, skipping as member`);
+                    } else if (groupType === 'community group' || groupType === 'task force' || groupType === 'other') {
+                      // CG/TF/Otherの場合、メンバーシップでない場合もあるので警告は出さない
+                      console.log(`  [Info] ${orgTitle} in ${groupType}: ${org} is a not W3C member's organization, skipping as member`);
+                    }
+                    continue;
+                  }
+                } else {
+                  console.warn(`Warning: Organization data not found for href ${affiliationHref} of ${orgTitle}`);
+                  ccontinue;
+                }
+              } else {
+                console.warn(`Warning: Participation ${part.href} of ${org} has no organization href`);
+                continue;
+              }
+
+              if (!membersMap.has(orgTitle)) membersMap.set(orgTitle, []); // 会員なのでMemberとして追加
+              // participantsエンドポイントからMenbaからの参加者を追加
               const participantsHref = partDetail._links?.participants?.href;
               if (participantsHref) {
-                const participantsData = findByDataUrl(participantsHref);
+                const participantsData = findByDataUrl(participantsHref);  // // participatonsの場合はaffiliationsは一つだけ
                 let participantItems = participantsData?._links?.participants || [];
                 if (participantItems && typeof participantItems === 'object' && !Array.isArray(participantItems)) {
                   participantItems = Object.values(participantItems);
                 }
                 for (const pItem of participantItems) {
                   if (pItem.href && pItem.title) {
-                    // usersFromParticipationsMap: userHref -> userObj
-                    usersFromParticipationsMap.set(pItem.href, { name: pItem.title, userHref: pItem.href });
+                    // usersMap: userHref -> userObj
+                    memberParticipantsMap.set(pItem.href, { name: pItem.title, userHref: pItem.href });
                     // membersMap: orgTitle -> [{name, userHref}]
-                    if (!membersFromParticipationsMap.get(orgTitle).some(u => u.userHref === pItem.href)) {
-                      membersFromParticipationsMap.get(orgTitle).push({ name: pItem.title, userHref: pItem.href });
+                    if (!membersMap.get(orgTitle).some(u => u.userHref === pItem.href)) {
+                      membersMap.get(orgTitle).push({ name: pItem.title, userHref: pItem.href });
                     }
                   }
                 }
               }
-            }
-            // Invited Experts: individual=true, invited-expert=true
-            else if (partDetail['individual'] === true && partDetail['invited-expert'] === true) {
-              const userHref = partDetail._links?.user?.href;
-              const userTitle = partDetail._links?.user?.title || userHref || 'Unknown';
-              if (userHref) invitedExpertsFromParticipationsMap.set(userHref, { name: userTitle, userHref });
-            }
-            // Staffs: individual=true, invited-expert=false
-            else if (partDetail['individual'] === true && partDetail['invited-expert'] === false) {
-              const userHref = partDetail._links?.user?.href;
-              const userTitle = partDetail._links?.user?.title || userHref || 'Unknown';
-              let isW3CStaff = false;
-              if (userHref) {
-                const affiliationsHref = userHref + '/affiliations';
-                const affiliationsEntry = findByDataUrl(affiliationsHref);
-                if (affiliationsEntry?._links?.affiliations) {
-                  let affs = affiliationsEntry._links.affiliations;
-                  if (affs == undefined) {
-                    console.log(`  [Debug] User "${userTitle}": EMPTY affiliations`);
-                  } else {
-                    if (!Array.isArray(affs)) affs = Object.values(affs);
-                    isW3CStaff = affs.some(aff => aff.title === 'W3C');
+            } else if (partDetail['individual'] === true) { // Invited Experts: individual=true, invited-expert=true
+              if (partDetail['invited-expert'] === true) {
+                const userHref = partDetail._links?.user?.href;
+                const userTitle = partDetail._links?.user?.title || userHref || 'Unknown';
+                if (userHref) invitedExpertsMap.set(userHref, { name: userTitle, userHref });
+              } else {        // Indivisuals or Staffs: individual=true, invited-expert=false
+                const userHref = partDetail._links?.user?.href;
+                const userTitle = partDetail._links?.user?.title || userHref || 'Unknown';
+
+                if (userHref) {
+                  const userData = findByDataUrl(userHref);
+                  const afflicationsHref = userData?._links?.affiliations?.href;
+                  if (!afflicationsHref) {
+                    // console.warn(`Warning: Participation ${part.href} of ${userTitle} has no organization href`);
+                    continue; // 個人参加の場合は組織がないこともあるので警告は出さない
                   }
-                }
-                if (isW3CStaff) {
-                  staffsFromParticipationsMap.set(userHref, { name: userTitle, userHref });
-                } else if (groupDetail.type == 'wg' || groupDetail.type == 'ig') {
-                  console.log(`  Warning: User "${userTitle}" in group "${groupDetail.name || 'Unknown'}" is classified as Individual without W3C staff affiliation`);
-                } else {
-                  individualsFromParticipationsMap.set(userHref, { name: userTitle, userHref });
+                  const { isW3CStaff, isInviedExpert, isMember, afflications } = checkAffiliations(afflicationsHref);
+                  if (isW3CStaff) {
+                    staffsMap.set(userHref, { name: userTitle, userHref });
+                  } else if (isMember) {
+                    if (groupType == 'working group' || groupType == 'interest group') {
+                      console.log(`  Warning: User "${userTitle}" in group "${groupType}" is classified as Individual without W3C staff affiliation`);
+                    } else {
+                      memberParticipantsMap.set(userHref, { name: userTitle, userHref });
+                    }
+                  } else {
+                    individualsMap.set(userHref, { name: userTitle, userHref });
+                  }
                 }
               }
             }
           } catch (e) {
-            console.error(`Exception in processing participation ${part.href}: ${String(e)}`);
+            console.error(`Exception in processing participations for URL ${participationsUrl}: ${String(e)}`);
           }
         }
       }
     } catch (e) {
-      console.error(`Exception in processing participations for URL ${participationsUrl}: ${String(e)}`);
+      console.error(`Exception in getParticipationsClassificationMaps for URL ${participationsUrl}: ${String(e)}`);
     }
+    return { membersMap, memberParticipantsMap, individualsMap, invitedExpertsMap, staffsMap };
   }
-  return { membersFromParticipationsMap, usersFromParticipationsMap, individualsFromParticipationsMap, invitedExpertsFromParticipationsMap, staffsFromParticipationsMap };
 }
 
+function checkAffiliations(affiliationsHref) {
+  let isMember = false;
+  let isW3CStaff = false;
+  let isInvitedExpert = false;
+  let afflications = [];
 
-// groupDetailを引数に、usersMapからindivisualMembersMap, indivisualsMap, invitedExpertsMap, staffMapを返す
-function getUsersClassificationMaps(groupDetail) {
-  const membersFromUsersMap = new Map(); // orgUrl -> orgData
-  const individualsFromUsersMap = new Map(); // userHref -> userObj
-  const invitedExpertsFromUsersMap = new Map(); // userHref -> userObj
-  const staffsFromUsersMap = new Map(); // userHref -> userObj
-  let usersMap = new Map();
-
-  const usersUrl = groupDetail?._links?.users?.href;
-  if (usersUrl) {
-    try {
-        const usersData = findByDataUrl(usersUrl);
-        const usersArray = usersData?._links?.users || [];
-        if (Array.isArray(usersArray) && usersArray.length > 0) {
-          usersMap = new Map(usersArray.map(u => [u.href, u]));
-        }
-        // usersArrayが空配列やundefinedの場合は空のMapのまま
-    } catch (e) {
-      console.error(`Exception in getUsersMap for URL ${usersUrl}: ${String(e)}`);
+  try {
+    const affiliationsEntry = findByDataUrl(affiliationsHref);
+    let affs = affiliationsEntry?._links?.affiliations;
+    // affsがundefined/nullなら空配列、配列でなければObject.valuesで配列化
+    if (!affs) {
+      affs = [];
+    } else if (!Array.isArray(affs)) {
+      affs = Object.values(affs);
     }
-
-    for (const user of usersMap.values()) {
-      try {
-        const userHref = user.href;
-        let isW3CStaff = false;
-        let isInvitedExpert = false;
-        const userDetail = findByDataUrl(userHref);
-        const affiliationsHref = userDetail?._liks?.affiliations?.href;
-        let orgAffiliations = [];
-        if (affiliationsHref) {
-          const affiliationsEntry = findByDataUrl(affiliationsHref);
-          if (affiliationsEntry && affiliationsEntry._links && affiliationsEntry._links.affiliations) {
-            let affs = affiliationsEntry._links.affiliations;
-            if (!Array.isArray(affs)) affs = Object.values(affs);
-            orgAffiliations = affs.filter(aff => aff.title && aff.title !== 'W3C' && !aff.title != 'W3C Invited Experts');
-            // W3C staffかチェック
-            isW3CStaff = affs.some(aff => aff.title === 'W3C');
-            // Invited Expertかチェック
-            isInvitedExpert = affs.some(aff =>
-              aff.title === 'W3C Invited Experts');
-            // membersFromUsersMap: orgのURLをkey, dataをvalue
-            for (const org of orgAffiliations) {
-              if (org.href && !membersFromUsersMap.has(org.href)) {
-                const orgData = findByDataUrl(org.href);
-                if (orgData) membersFromUsersMap.set(org.href, { name: org.title, orgHref: org.href });
-              }
-            }
-          }
+    for (const aff of affs) {
+      const affiliationHref = aff.href;
+      if (!affiliationHref) {
+        console.warn(`Warning: User ${userTitle}'s affiliation ${aff} has no affiliation href`);
+        continue;
+      }
+      const affData = findByDataUrl(affiliationHref);
+      if (!affData) {
+        console.warn(`Warning: Organization data not found for href ${affiliationHref} of ${userTitle}`);
+        continue;
+      }
+      afflications.push(aff);
+      if (affData.name === 'W3C') {
+        isW3CStaff = true;
+      } else {
+        if (affData['is-member'] === true) {
+          isMember = true;
         }
-        if (isInvitedExpert) {
-          invitedExpertsFromUsersMap.set(userHref, { name: user.title, userHref });
-        } else if (isW3CStaff) {
-          staffsFromUsersMap.set(userHref, { name: user.title, userHref });
-        } else {
-          individualsFromUsersMap.set(userHref, { name: user.title, userHref });
-        }
-      } catch (e) {
-        console.error(`Exception in processing user ${user.href}: ${String(e)}`);
       }
     }
+  } catch (e) {
+    console.error(`Exception in checkAffiliations for URL ${affiliationsHref}: ${String(e)}`);
   }
-  return { membersFromUsersMap, individualsFromUsersMap, invitedExpertsFromUsersMap, staffsFromUsersMap };
+  return { isMember, isW3CStaff, isInvitedExpert, afflications };
+}
+
+// urersUrlからusers情報を読み各種Mapを返す
+function getUsersClassificationMaps(groupType, usersUrl) {
+  const membersMap = new Map(); // orgUrl -> orgData
+  const memberParticipantsMap = new Map(); // orgUrl -> userObj
+  const individualsMap = new Map(); // userHref -> userObj
+  const invitedExpertsMap = new Map(); // userHref -> userObj
+  const staffsMap = new Map(); // userHref -> userObj
+
+  let usersMap = new Map();
+  try {
+    const usersData = findByDataUrl(usersUrl);
+    const usersArray = usersData?._links?.users || [];
+    if (Array.isArray(usersArray) && usersArray.length > 0) {
+      usersMap = new Map(usersArray.map(u => [u.href, u]));
+    }
+    // usersArrayが空配列やundefinedの場合は空のMapのまま
+  } catch (e) {
+    console.error(`Exception in getUsersMap for URL ${usersUrl}: ${String(e)}`);
+  }
+
+  for (const user of usersMap.values()) {
+    try {
+      const userHref = user.href;
+      const userDetail = findByDataUrl(userHref);
+      const userTitle = user.title || 'Unknown';
+      const affiliationsHref = userDetail?._links?.affiliations?.href;
+      const affTitle = userDetail?._links?.affiliations?.title || 'Unknown';
+      if (affiliationsHref) {
+        let { isMember, isW3CStaff, isInvitedExpert, afflications } = checkAffiliations(affiliationsHref);
+        if (isMember) {
+          if (afflications.length != 1) {
+            console.log(`  Warning: User "${user.title}" has multiple affiliations, skip saving as member participant`);
+          } else {
+            const affHref = afflications[0].href;
+            const orgTitle = afflications[0].title || 'Unknown';
+            // 1. set時に配列で初期化
+            if (!membersMap.has(orgTitle)) {
+              membersMap.set(orgTitle, []);
+            }
+            // 2. getもaffHrefで統一
+            if (!membersMap.get(orgTitle).some(u => u.userHref === userHref)) {
+              membersMap.get(orgTitle).push({ name: userTitle, userHref });
+            }
+            memberParticipantsMap.set(userHref, { name: userTitle, userHref });
+          }
+        } else if (isInvitedExpert) {
+          if (groupType === 'working group' || groupType === 'interest group') {
+            console.log(`  Warning: User "${user.title}" in group "${groupType}" is classified as Invited Expert without W3C staff affiliation`);
+          } else {
+            invitedExpertsMap.set(userHref, { name: user.title, userHref });
+          }
+        } else if (isW3CStaff) {
+          staffsMap.set(userHref, { name: user.title, userHref });
+        } else {
+          if (groupType === 'working group') {
+            console.log(`  Warning: User "${user.title}" in group "${groupType}" is classified as Individual without W3C staff affiliation`);
+          } else {
+            individualsMap.set(userHref, { name: user.title, userHref });
+          }
+        }
+      }
+    } catch (e) {
+      console.error(`Exception in processing user ${user.href}: ${String(e)}`);
+    }
+  }
+  return { membersMap, memberParticipantsMap, individualsMap, invitedExpertsMap, staffsMap };
 }
 
 // グループごとの集計情報を取得
 function extractGroupInfo(group) {
-  if (group.title == 'AB Liaisons to the Board of Directors') {
-    console.log('Debug: Processing AB Liaisons to the Board of Directors');
-  }
-  if (group.title.startsWith("Invisible Markup Community Group")) {
-    console.log('Debug: Processing ixml group with exception handling');
-  }
-
-  if (group.title.startsWith("Chairs of the Board, AB, and TAG")) {
-    console.log('Debug:Chairs of the Board, AB, and TAG exception handling');
-  }
-
-  if (group.groupType === 'tf') {
-    console.log(`Debug: Processing 'tf' group: ${group.title || group.name || 'Unknown Group'}`);
-  }
-
   const name = group.title || group.name || 'Unknown Group';
   const groupType = group.groupType || 'unknown';
   // グループ詳細
   const groupDetail = findByDataUrl(group.href);
   const homepage = groupDetail?._links?.homepage?.href;
 
-  // participationsを分類
-  const {
-    membersFromParticipationsMap,
-    usersFromParticipationsMap,
-    individualsFromParticipationsMap,
-    invitedExpertsFromParticipationsMap,
-    staffsFromParticipationsMap
-  } = getParticipationsClassificationMaps(groupDetail);
 
-  // usersを分類
-  const {
-    membersFromUsersMap,
-    individualsFromUsersMap,
-    invitedExpertsFromUsersMap,
-    staffsFromUsersMap
-  } = getUsersClassificationMaps(groupDetail);
+  let isIndivisualParticipationGroup = false;
+  const participationsUrl = groupDetail?._links?.participations?.href;
+  const usersUrl = groupDetail?._links?.users?.href;
+  let membersMap = new Map();
+  let memberParticipantsMap = new Map();
+  let individualsMap = new Map();
+  let invitedExpertsMap = new Map();
+  let staffsMap = new Map();
 
-  // 各Mapをマージ（key重複時はparticipations優先）
-  const mergedMembersMap = new Map([...membersFromUsersMap, ...membersFromParticipationsMap]);
-  const mergedInvitedExpertsMap = new Map([...invitedExpertsFromUsersMap, ...invitedExpertsFromParticipationsMap]);
-  const mergedStaffsMap = new Map([...staffsFromUsersMap, ...staffsFromParticipationsMap]);
-  const mergedIndividualsMap = new Map([...individualsFromUsersMap, ...individualsFromParticipationsMap]);
+  if (participationsUrl) {
+    ({
+      membersMap,
+      memberParticipantsMap,
+      individualsMap,
+      invitedExpertsMap,
+      staffsMap
+    } = getParticipationsClassificationMaps(groupType, participationsUrl));
+  } else if (usersUrl) {
+    isIndivisualParticipationGroup = true;
+    ({
+      membersMap,
+      memberParticipantsMap,
+      individualsMap,
+      invitedExpertsMap,
+      staffsMap
+    } = getUsersClassificationMaps(groupType, usersUrl));
+  }
 
-  // Participants = Users + Invited Experts + Individuals + Staffs  
-  const allParticipantsMap = new Map([
-    ...usersFromParticipationsMap,
-    ...mergedInvitedExpertsMap,
-    ...mergedIndividualsMap,
-    ...mergedStaffsMap
-  ]);
+  // Participants = memberParticipants + Invited Experts + Individuals + Staffs（重複許容）
+  const allParticipantsArray = [
+    ...Array.from(membersMap.values()).flat(),
+    ...invitedExpertsMap.values(),
+    ...staffsMap.values(),
+    ...individualsMap.values(),
+  ];
 
   const groupInfo = new GroupInfo({
     name,
     groupType,
-    membersCount: mergedMembersMap.size,
-    membersMap: mergedMembersMap,
-    memberParticipantsCount: usersFromParticipationsMap.size,
-    memberParticipants: usersFromParticipationsMap.size > 0 ? Array.from(usersFromParticipationsMap.values()).map(v => v.name) : [],
-    invitedExpertsCount: mergedInvitedExpertsMap.size,
-    invitedExperts: mergedInvitedExpertsMap.size > 0 ? Array.from(mergedInvitedExpertsMap.values()).map(v => v.name) : [],
-    individualsCount: mergedIndividualsMap.size,
-    individuals: mergedIndividualsMap.size > 0 ? Array.from(mergedIndividualsMap.values()).map(v => v.name) : [],
-    staffsCount: mergedStaffsMap.size,
-    staffs: mergedStaffsMap.size > 0 ? Array.from(mergedStaffsMap.values()).map(v => v.name) : [],
-    allParticipantsCount: allParticipantsMap.size,
-    allParticipants: allParticipantsMap.size > 0 ? Array.from(allParticipantsMap.values()).map(v => v.name) : [],
-    isException: usersFromParticipationsMap.size === 0 && individualsFromParticipationsMap.size > 0,  // some IGs and other groups.
+    membersCount: membersMap.size,
+    membersMap: membersMap,
+    memberParticipantsCount: memberParticipantsMap.size,
+    memberParticipants: memberParticipantsMap.size > 0 ? Array.from(memberParticipantsMap.values()) : [],
+    invitedExpertsCount: invitedExpertsMap.size,
+    invitedExperts: invitedExpertsMap.size > 0 ? Array.from(invitedExpertsMap.values()) : [],
+    individualsCount: individualsMap.size,
+    individuals: individualsMap.size > 0 ? Array.from(individualsMap.values()) : [],
+    staffsCount: staffsMap.size,
+    staffs: staffsMap.size > 0 ? Array.from(staffsMap.values()) : [],
+    allParticipantsCount: allParticipantsArray.length,
+    allParticipants: allParticipantsArray,
+    isException: isIndivisualParticipationGroup,  // some IGs, task forces and other groups, e.g. ab.
     homepage
   });
   return groupInfo;

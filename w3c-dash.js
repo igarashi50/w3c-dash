@@ -130,7 +130,7 @@ renderDashboard()
 */
 function _mainRenderSummary(summaryStatDiv, groupsData) {
   // 全体統計を計算（重複を除く）
-  const allMembers = new Set();
+  const allMembers = new Map();
   const allMemberParticipants = new Map();
   const allInvitedExperts = new Map();
   const allStaffs = new Map();
@@ -140,7 +140,10 @@ function _mainRenderSummary(summaryStatDiv, groupsData) {
   groupsData.forEach(group => {
     // Members
     if (group.membersMap) {
-      Object.keys(group.membersMap).forEach(member => allMembers.add(member));
+      for (const [org, participants] of group.membersMap instanceof Map ? group.membersMap.entries() : Object.entries(group.membersMap)) {
+        if (!allMembers.has(org)) allMembers.set(org, []);
+        allMembers.get(org).push(...participants);
+      }
     }
     // Member Participants
     if (group.memberParticipants) {
@@ -172,8 +175,6 @@ function _mainRenderSummary(summaryStatDiv, groupsData) {
         allParticipants.set(ind.name, ind);
       });
     }
-
-
   });
 
   // Summary情報を表示
@@ -220,26 +221,23 @@ function _mainRenderSummary(summaryStatDiv, groupsData) {
       if (summaryType) {
         let initialFilter = summaryType;
         let groupName = 'Summary';
-        // 全グループのmembersMapをマージ: 組織名→参加者配列
-        const mergedMembersMap = {};
+        // 全グループのmembersMapをマージ: 組織名→参加者配列（name重複排除をMapで実現）
+        const mergedMembersMap = new Map();
         groupsData.forEach(group => {
           if (group.membersMap) {
-            Object.entries(group.membersMap).forEach(([org, participants]) => {
-              if (!mergedMembersMap[org]) mergedMembersMap[org] = [];
-              mergedMembersMap[org].push(...participants);
-            });
+            for (const [org, participants] of group.membersMap instanceof Map ? group.membersMap.entries() : Object.entries(group.membersMap)) {
+              if (!mergedMembersMap.has(org)) mergedMembersMap.set(org, new Map());
+              const orgMap = mergedMembersMap.get(org);
+              participants.forEach(p => {
+                if (p && p.name) orgMap.set(p.name, p);
+              });
+            }
           }
         });
-        // 各組織ごとにnameで重複排除
-        Object.keys(mergedMembersMap).forEach(org => {
-          const seen = new Set();
-          mergedMembersMap[org] = mergedMembersMap[org].filter(p => {
-            if (!p || !p.name) return false;
-            if (seen.has(p.name)) return false;
-            seen.add(p.name);
-            return true;
-          });
-        });
+        // Map<org, Map<name, participant>> → Map<org, participant[]>
+        for (const [org, orgMap] of mergedMembersMap.entries()) {
+          mergedMembersMap.set(org, Array.from(orgMap.values()));
+        }
         let groupInfo = new GroupInfo({
           membersMap: mergedMembersMap,
           memberParticipants: Array.from(allMemberParticipants.values()),
@@ -751,7 +749,7 @@ async function popupParticipationsSheet(groupInfo, groupName, initialFilter = 'm
   title.textContent = groupName;
 
   const counts = {
-    members: groupInfo.membersMap ? Object.keys(groupInfo.membersMap).length : 0,
+    members: groupInfo.membersMap instanceof Map ? groupInfo.membersMap.size : 0,
     memberParticipants: groupInfo.memberParticipants ? groupInfo.memberParticipants.length : 0,
     invitedExperts: groupInfo.invitedExperts ? groupInfo.invitedExperts.length : 0,
     staffs: groupInfo.staffs ? groupInfo.staffs.length : 0,
@@ -871,7 +869,7 @@ async function _popupRenderAllParticipantsList(groupInfo, membersListContent, pa
 }
 
 async function _popupRenderMembersList(groupInfo, membersListContent, affiliationsTitle) {
-  const members = groupInfo.membersMap ? Object.keys(groupInfo.membersMap) : [];
+  const members = groupInfo.membersMap ? Array.from(groupInfo.membersMap.keys()) : [];
   // デフォルトは組織名順
   let sortMode = 'name';
   let sortedMembers = [...members].sort((a, b) => a.localeCompare(b));
@@ -949,8 +947,8 @@ async function _popupRenderMembersList(groupInfo, membersListContent, affiliatio
       if (countArrow) countArrow.style.color = '#bbb';
     } else {
       sortedMembers = [...members].sort((a, b) => {
-        const countA = Array.isArray(groupInfo.membersMap[a]) ? groupInfo.membersMap[a].length : 0;
-        const countB = Array.isArray(groupInfo.membersMap[b]) ? groupInfo.membersMap[b].length : 0;
+        const countA = Array.isArray(groupInfo.membersMap.get(a)) ? groupInfo.membersMap.get(a).length : 0;
+        const countB = Array.isArray(groupInfo.membersMap.get(b)) ? groupInfo.membersMap.get(b).length : 0;
         // 降順
         return countB - countA || a.localeCompare(b);
       });
@@ -964,7 +962,7 @@ async function _popupRenderMembersList(groupInfo, membersListContent, affiliatio
         div.classList.add('exception');
       }
       // 参加者数を取得
-      const count = Array.isArray(groupInfo.membersMap[member]) ? groupInfo.membersMap[member].length : 0;
+      const count = Array.isArray(groupInfo.membersMap.get(member)) ? groupInfo.membersMap.get(member).length : 0;
       // カスタムレイアウト: 名前左寄せ、MP数右寄せ、間隔広め、MP数は黒
       div.style.display = 'flex';
       div.style.justifyContent = 'space-between';
@@ -1140,8 +1138,8 @@ async function _popupRenderParticipantsForMember(groupInfo, memberOrg) {
   userDetailContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view detail</p>';
 
   // membersMapから該当する組織のparticipantsを取得
-  const membersMap = groupInfo.membersMap || {};
-  const participants = membersMap[memberOrg] || [];
+  const participants = groupInfo.membersMap && groupInfo.membersMap.get? groupInfo.membersMap.get(memberOrg) || []
+: [];
 
   if (participants.length === 0) {
     participantsListContent.innerHTML = '<p style="padding: 12px; color: #666; font-style: italic;">No participants data available for this organization</p>';
