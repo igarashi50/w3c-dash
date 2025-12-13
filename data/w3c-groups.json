@@ -1,0 +1,2328 @@
+{
+  "_metadata": {
+    "filename": "w3c-groups.json",
+    "lastChecked": "2025-12-13T18:25:44.761Z",
+    "fetchStartTime": "20251213-182544",
+    "duration": "3s",
+    "itemCount": 17
+  },
+  "https://api.w3.org/groups/cg": {
+    "fetchedAt": "2025-12-13T18:25:46.412Z",
+    "data": {
+      "page": 1,
+      "limit": 500,
+      "pages": 1,
+      "total": 161,
+      "_links": {
+        "groups": [
+          {
+            "href": "https://api.w3.org/groups/cg/a11yedge",
+            "title": "Accessibility at the Edge Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/a11y-discov-vocab",
+            "title": "Accessibility Discoverability Vocabulary for Schema.org Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/accessibility4children",
+            "title": "Accessibility for Children Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/global-inclusion",
+            "title": "Accessibility Internationalization Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/arrm",
+            "title": "Accessibility Roles and Responsibilities Mapping (ARRM) Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/act-r",
+            "title": "ACT Rules Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/adva11yresources",
+            "title": "Advancing Accessibility Resources Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/agentic-arbitration",
+            "title": "Agentic Arbitration Protocol Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/agentprotocol",
+            "title": "AI Agent Protocol Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/aikr",
+            "title": "AI KR (Artificial Intelligence Knowledge Representation) Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/aiwss",
+            "title": "AI-Driven Web Standards Specification Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/antifraud",
+            "title": "Anti-Fraud Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/aria-at",
+            "title": "ARIA and Assistive Technologies Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/audio-comgp",
+            "title": "Audio Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/audio-description",
+            "title": "Audio Description Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/av4browsers",
+            "title": "Audiovisual Media Formats for Browsers Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/atag",
+            "title": "Authoring Tool Accessibility Guidelines Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/autofill",
+            "title": "Autofill Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/gao",
+            "title": "Automotive Ontology Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/webagents",
+            "title": "Autonomous Agents on the Web Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/bpmlod",
+            "title": "Best Practices for Multilingual Linked Open Data Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/bibframe2schema",
+            "title": "Bibframe2Schema.org Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/boost-01",
+            "title": "Biomass Open Origin Standard for Tracking (BOOST) Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/bioschemas",
+            "title": "Bioschemas for lifesciences Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/bc2",
+            "title": "Blockchain2 Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/bdns",
+            "title": "Building Device Naming Standards Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/chem-web-pub",
+            "title": "Chemistry for the Web and Publishing Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/cndid",
+            "title": "Chinese DID & VC Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/ce-dpp",
+            "title": "Circular Economy and Digital Product Passports Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/civics",
+            "title": "Civic Technology Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/cloud-edge-client",
+            "title": "Cloud-Edge-Client Coordination Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/coga-community",
+            "title": "Cognitive Accessibility Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/cogai",
+            "title": "Cognitive AI Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/colorweb",
+            "title": "Color on the Web Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/council",
+            "title": "Community Group Program Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/crdt4rdf",
+            "title": "CRDT for RDF Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/credentials",
+            "title": "Credentials Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/credibility",
+            "title": "Credible Web Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/css4",
+            "title": "CSS4 Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/csvw",
+            "title": "CSV on the Web Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/cacg",
+            "title": "Cybernetic Avatar Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/datadoc",
+            "title": "Data Documentation Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/facade-x",
+            "title": "Data Façades Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/dia",
+            "title": "Data Interoperating Architecture Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/dpvcg",
+            "title": "Data Privacy Vocabularies and Controls Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/dataspaces",
+            "title": "Dataspaces Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/defacto",
+            "title": "Decentralized Fact-checking & Provenance Organization (DeFacto) Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/design-tokens",
+            "title": "Design Tokens Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/docs-cg",
+            "title": "Documentation Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/dcm",
+            "title": "Dynamic Configuration Management Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/eocred-schema",
+            "title": "Educational and Occupational Credentials in schema.org Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/reconciliation",
+            "title": "Entity Reconciliation Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/equity",
+            "title": "Equity Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/expath",
+            "title": "EXPath Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/fdp",
+            "title": "FAIR Data Point Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/fed-id",
+            "title": "Federated Identity Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/fibo",
+            "title": "Financial Industry Business Ontology Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/games",
+            "title": "Games Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/gpu",
+            "title": "GPU for the Web Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/schemed",
+            "title": "Healthcare Schema Vocabulary Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/high-perf-baseline",
+            "title": "High-Performance Baseline for Web Apps Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/humancentricai",
+            "title": "Human Centric AI Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/hydra",
+            "title": "Hydra Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/immersive-captions",
+            "title": "Immersive Captions Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/immersive-web",
+            "title": "Immersive Web Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/web-adv",
+            "title": "Improving Web Advertising Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/idai",
+            "title": "India Digital Accessibility Initiative Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/infinite-canvas",
+            "title": "Infinite Canvas Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/informationarchitecture",
+            "title": "Information Architecture Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/icn",
+            "title": "Information Centric Networking Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/interledger",
+            "title": "Interledger Payments Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/ixml",
+            "title": "Invisible Markup Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/json-ld",
+            "title": "JSON for Linked Data Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/kg-construct",
+            "title": "Knowledge Graph Construction Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/lbd",
+            "title": "Linked Building Data Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/ld4lt",
+            "title": "Linked Data for Language Technology Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/loading-control-games",
+            "title": "Loading & Control API for Web Games Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/maps4html",
+            "title": "Maps For HTML Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/mcm-jp",
+            "title": "Media Content Metadata Japanese Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/meta-layer",
+            "title": "Meta-Layer Infrastructure Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/metaverse-interop",
+            "title": "Metaverse Interoperability Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/miniapps",
+            "title": "MiniApps Ecosystem Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/mqmcg",
+            "title": "Multidimensional Quality Metrics (MQM) Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/music-notation",
+            "title": "Music Notation Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/nlweb",
+            "title": "NLWeb Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/nordic-accessibility",
+            "title": "Nordic Accessibility Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/smartcity-nordic",
+            "title": "Nordic Chapter Smart City / Web of Things Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/nostr",
+            "title": "nostr Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/n3-dev",
+            "title": "Notation 3 (N3) Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/odrl",
+            "title": "ODRL Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/oki",
+            "title": "Ontologies and Knowledge Graphs in Industry Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/oasis",
+            "title": "Ontology for Agents, Systems, and Integration of Services Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/ontolex",
+            "title": "Ontology-Lexica Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/open-ui",
+            "title": "Open UI Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/openactive",
+            "title": "OpenActive Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/opentrack",
+            "title": "OpenTrack Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/perma-id",
+            "title": "Permanent Identifier Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/pwe",
+            "title": "Positive Work Environment Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/privacycg",
+            "title": "Privacy Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/patcg",
+            "title": "Private Advertising Technology Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/publishingcg",
+            "title": "Publishing Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/rdfjs",
+            "title": "RDF JavaScript Libraries Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/rdf-maintenance",
+            "title": "RDF Notes Maintenance Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/r2c2",
+            "title": "RDF Rust Common Crates Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/rsp",
+            "title": "RDF Stream Processing Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/rdfsurfaces",
+            "title": "RDF Surfaces Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/rdf-tests",
+            "title": "RDF Test Suite Curation Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/rdf-dev",
+            "title": "RDF-DEV Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/md-odrl-profile",
+            "title": "Rights Automation for Market Data Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/rumcg",
+            "title": "RUM Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/architypes",
+            "title": "Schema Architypes Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/schemabibex",
+            "title": "Schema Bib Extend Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/schema-course-extend",
+            "title": "Schema Course extension Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/iotschema",
+            "title": "Schema Extensions for IoT Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/schemaorg",
+            "title": "Schema.org Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/schemaorg4datasets",
+            "title": "Schema.org for datasets Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/sccg",
+            "title": "Screen Capture Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/webscreens",
+            "title": "Second Screen Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/swag",
+            "title": "Security Web Application Guidelines Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/s-agent-comm",
+            "title": "Semantic Agent Communication Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/semantic-construction",
+            "title": "Semantic Construction Product Data Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/htmlvoc",
+            "title": "Semantic HTML-vocabulary Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/shex",
+            "title": "Shape Expressions Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/socialcg",
+            "title": "Social Web Incubator Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/solid",
+            "title": "Solid Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/sparql-dev",
+            "title": "SPARQL-dev Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/speced-cg",
+            "title": "Spec Editors Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/sport-schema",
+            "title": "Sport Schema Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/sustainability",
+            "title": "Sustainability Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/sync-on-the-web",
+            "title": "Sync on the Web Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/talent-signal",
+            "title": "Talent Marketplace Signaling Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/tdmrep",
+            "title": "Text and Data Mining Reservation Protocol Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/tourismdata",
+            "title": "The Tourism Structured Web Data Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/tmcg",
+            "title": "Threat Modeling Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/treecg",
+            "title": "TREE hypermedia Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/uispec",
+            "title": "UI Specification Schema Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/unhosted",
+            "title": "Unhosted Web Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/did-native-addr",
+            "title": "Universal DID-Native Addressing (UDNA) Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/voiceinteraction",
+            "title": "Voice Interaction Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/w3process",
+            "title": "W3C Process Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/waits",
+            "title": "Web AI for Time Series Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/web-bluetooth",
+            "title": "Web Bluetooth Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/webcomponents",
+            "title": "Web Components Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/webforensics",
+            "title": "Web Forensics Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/webhistory",
+            "title": "Web History Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/wica",
+            "title": "Web Identity & Credentials Adoption Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/webmachinelearning",
+            "title": "Web Machine Learning Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/webmediaapi",
+            "title": "Web Media API Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/texttracks",
+            "title": "Web Media Text Tracks Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/web-nfc",
+            "title": "Web NFC Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/wot",
+            "title": "Web of Things Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/wot-jp",
+            "title": "Web of Things Japanese Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/wicg",
+            "title": "Web Platform Incubator Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/web-thing-protocol",
+            "title": "Web Thing Protocol Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/webassembly",
+            "title": "WebAssembly Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/webdx",
+            "title": "WebDX Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/webextensions",
+            "title": "WebExtensions Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/webview",
+            "title": "WebView Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/xformsusers",
+            "title": "XForms Users Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/xproc-next",
+            "title": "XProc Next Community Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/cg/xslt-40",
+            "title": "XQuery and XSLT Extensions Community Group"
+          }
+        ],
+        "self": {
+          "href": "https://api.w3.org/groups?page=1&items=500"
+        },
+        "first": {
+          "href": "https://api.w3.org/groups?page=1&items=500"
+        },
+        "last": {
+          "href": "https://api.w3.org/groups?page=1&items=500"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/groups/cg/ixml": {
+    "fetchedAt": "2025-12-13T18:25:46.612Z",
+    "data": {
+      "id": 130021,
+      "name": "Invisible Markup Community Group",
+      "is_closed": false,
+      "creation-date": "2021-03-16",
+      "description": "We choose which representations of our data to use, JSON, CSV, XML, or whatever, depending on habit, convenience, or the context we want to use that data in. On the other hand, having an interoperable generic toolchain such as that provided by XML to process data is of immense value. How do we resolve the conflicting requirements of convenience, habit, and context, and still enable a generic toolchain? Invisible XML (ixml) is a method for treating non-XML documents as if they were XML, enabling authors to write documents and data in a format they prefer while providing XML for processes that are more effective with XML content. This is an ongoing project to provide software that lets you treat any parsable format as if it were XML, without the need for markup.",
+      "shortname": "ixml",
+      "spec-publisher": true,
+      "discr": "w3cgroup",
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/groups/cg/ixml"
+        },
+        "homepage": {
+          "href": "https://www.w3.org/community/ixml/"
+        },
+        "users": {
+          "href": "https://api.w3.org/groups/cg/ixml/users"
+        },
+        "services": {
+          "href": "https://api.w3.org/groups/cg/ixml/services"
+        },
+        "chairs": {
+          "href": "https://api.w3.org/groups/cg/ixml/chairs"
+        },
+        "join": {
+          "href": "https://www.w3.org/community/ixml/join"
+        },
+        "participations": {
+          "href": "https://api.w3.org/groups/cg/ixml/participations"
+        }
+      },
+      "type": "community group"
+    }
+  },
+  "https://api.w3.org/groups/cg/ixml/participations": {
+    "fetchedAt": "2025-12-13T18:25:46.812Z",
+    "data": {
+      "page": 1,
+      "limit": 500,
+      "pages": 1,
+      "total": 32,
+      "_links": {
+        "up": {
+          "href": "https://api.w3.org/groups/cg/ixml"
+        },
+        "participations": [
+          {
+            "href": "https://api.w3.org/participations/34063",
+            "title": "Aleksei Guzev"
+          },
+          {
+            "href": "https://api.w3.org/participations/34064",
+            "title": "German Research Center for Artificial Intelligence (DFKI) Gmbh"
+          },
+          {
+            "href": "https://api.w3.org/participations/34068",
+            "title": "Liam Quin"
+          },
+          {
+            "href": "https://api.w3.org/participations/34070",
+            "title": "Staats- und Universitätsbibliothek Hamburg"
+          },
+          {
+            "href": "https://api.w3.org/participations/34071",
+            "title": "le-tex publishing services GmbH"
+          },
+          {
+            "href": "https://api.w3.org/participations/34074",
+            "title": "CWI"
+          },
+          {
+            "href": "https://api.w3.org/participations/34082",
+            "title": "Dimitre Novatchev"
+          },
+          {
+            "href": "https://api.w3.org/participations/34088",
+            "title": "Taylor & Francis Group"
+          },
+          {
+            "href": "https://api.w3.org/participations/34093",
+            "title": "Adam Retter"
+          },
+          {
+            "href": "https://api.w3.org/participations/34135",
+            "title": "The Open University"
+          },
+          {
+            "href": "https://api.w3.org/participations/34207",
+            "title": "eXpertML Ltd"
+          },
+          {
+            "href": "https://api.w3.org/participations/34280",
+            "title": "John Lumley"
+          },
+          {
+            "href": "https://api.w3.org/participations/34917",
+            "title": "University of Illinois"
+          },
+          {
+            "href": "https://api.w3.org/participations/35252",
+            "title": "adeel ahmad"
+          },
+          {
+            "href": "https://api.w3.org/participations/35978",
+            "title": "Saxonica"
+          },
+          {
+            "href": "https://api.w3.org/participations/36377",
+            "title": "Bethan Tovey-Walsh"
+          },
+          {
+            "href": "https://api.w3.org/participations/36452",
+            "title": "Mohamed ZERGAOUI"
+          },
+          {
+            "href": "https://api.w3.org/participations/36545",
+            "title": "Hans-Jürgen Rennau"
+          },
+          {
+            "href": "https://api.w3.org/participations/37159",
+            "title": "Dorothy Hoskins"
+          },
+          {
+            "href": "https://api.w3.org/participations/37172",
+            "title": "Terry Badger"
+          },
+          {
+            "href": "https://api.w3.org/participations/37589",
+            "title": "Kurt Cagle"
+          },
+          {
+            "href": "https://api.w3.org/participations/38075",
+            "title": "Aliens From The Future Inc."
+          },
+          {
+            "href": "https://api.w3.org/participations/39933",
+            "title": "Micah Dubinko"
+          },
+          {
+            "href": "https://api.w3.org/participations/41845",
+            "title": "XABN"
+          },
+          {
+            "href": "https://api.w3.org/participations/42680",
+            "title": "Rakensi"
+          },
+          {
+            "href": "https://api.w3.org/participations/42681",
+            "title": "Nico Verwer"
+          },
+          {
+            "href": "https://api.w3.org/participations/42715",
+            "title": "Jim Saiya"
+          },
+          {
+            "href": "https://api.w3.org/participations/43402",
+            "title": "David Birnbaum"
+          },
+          {
+            "href": "https://api.w3.org/participations/44035",
+            "title": "Fredrik Öhrström"
+          },
+          {
+            "href": "https://api.w3.org/participations/44809",
+            "title": "The Turnout LLC"
+          },
+          {
+            "href": "https://api.w3.org/participations/45913",
+            "title": "Alan Painter"
+          },
+          {
+            "href": "https://api.w3.org/participations/46610",
+            "title": "Alex Everitt"
+          }
+        ],
+        "self": {
+          "href": "https://api.w3.org/groups/cg/ixml/participations?page=1&items=500"
+        },
+        "first": {
+          "href": "https://api.w3.org/groups/cg/ixml/participations?page=1&items=500"
+        },
+        "last": {
+          "href": "https://api.w3.org/groups/cg/ixml/participations?page=1&items=500"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/groups/cg/ixml/users": {
+    "fetchedAt": "2025-12-13T18:25:47.012Z",
+    "data": {
+      "page": 1,
+      "limit": 500,
+      "pages": 1,
+      "total": 30,
+      "_links": {
+        "up": {
+          "href": "https://api.w3.org/groups/cg/ixml"
+        },
+        "users": [
+          {
+            "href": "https://api.w3.org/users/riwxghlwfusgkos4w8so4wwsc4kks8c",
+            "title": "adeel ahmad",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/gn2f4srsdn48wc48084w4ckcggk40co",
+            "title": "Terry Badger",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/sdccs91gj688o8wkow044kokss0c8g8",
+            "title": "David Birnbaum",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/9a26fdb3yqskoks88gkw4gwocscgk4o",
+            "title": "Kurt Cagle",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/eb4bjatsoy044w4osccwc488gkc0os0",
+            "title": "Chris Chapman",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/eab9z8az2xkcksw4cscc0w084owws84",
+            "title": "Ben Damman",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/ftdgp3ucg7wwokw0cw0ow4gg00scosc",
+            "title": "Micah Dubinko",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/7bgdtvvie2gw4ggcs8gw0ck0wk0wgk8",
+            "title": "John Dziurlaj",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/qazstmjgk6oookckso8g80swgoo8g4g",
+            "title": "Alex Everitt",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/90j0eytcjccocgck4wwggwkg0sswkcw",
+            "title": "Michael Gryk",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/flbr34tzshwks8s08gg84kgcgk00o04",
+            "title": "Aleksei Guzev",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/czxdyxgiulkoo0c8wsc80ss8co00k8w",
+            "title": "Tomos Hillman",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/4a952flyx400s48kcgs4sw84scok4co",
+            "title": "Dorothy Hoskins",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/ipnhht3q8rcc44wcogoo0ccc0w8gocg",
+            "title": "Gerrit Imsieke",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/ai1pzszqmdk4scssks40gsosgcc0c0s",
+            "title": "Vincent Lizzi",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/p32o3t69940kw0kkc44c8k00048kgg0",
+            "title": "John Lumley",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/jw702kyo7q8g04w8g48ocs8ggc8o8wc",
+            "title": "David Maus",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/fp68zdr27tsg0ock0g408ogws0wwkk",
+            "title": "Dimitre Novatchev",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/96p7u0cpul0cgo80kg0o8ww0oogso44",
+            "title": "Alan Painter",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/s772qdb0xy8kgs8skckkkos8so44400",
+            "title": "Steven Pemberton",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/8l7gbdnpnbk8gcwcoocwos8w4o0kgsg",
+            "title": "Liam Quin",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/18cd15draqrk0ccogog8oock8k44ksc",
+            "title": "Hans-Jürgen Rennau",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/j7cu33d9v14c84wg4s8kgwsggo4gkco",
+            "title": "Adam Retter",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/sy547thm34044kssgw4kkg4gwwkowo8",
+            "title": "Jim Saiya",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/7ea8o6lnt84ccw0owsk0ocksw8480kk",
+            "title": "Bethan Tovey-Walsh",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/kjv423r2pm8oockog0kksk8s4sk8wk8",
+            "title": "Nico Verwer",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/hkss2c9sp14w400gso8s4okgg480cw4",
+            "title": "Norman Walsh",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/2bk0bt941e80w8co04w0o8ooc00cks",
+            "title": "Fridolin Wild",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/f4c8aexrs74044wgwockws4c4kw0wwo",
+            "title": "Mohamed ZERGAOUI",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/r1eu9kcrno0884kg8s404sgowoskscw",
+            "title": "Fredrik Öhrström",
+            "former": false
+          }
+        ],
+        "self": {
+          "href": "https://api.w3.org/groups/cg/ixml/users?page=1&items=500"
+        },
+        "first": {
+          "href": "https://api.w3.org/groups/cg/ixml/users?page=1&items=500"
+        },
+        "last": {
+          "href": "https://api.w3.org/groups/cg/ixml/users?page=1&items=500"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/groups/ig": {
+    "fetchedAt": "2025-12-13T18:25:45.810Z",
+    "data": {
+      "page": 1,
+      "limit": 500,
+      "pages": 1,
+      "total": 13,
+      "_links": {
+        "groups": [
+          {
+            "href": "https://api.w3.org/groups/ig/chinese-web",
+            "title": "Chinese Web Interest Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/ig/exploration",
+            "title": "Exploration Interest Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/ig/i18n",
+            "title": "Internationalization Interest Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/ig/me",
+            "title": "Media and Entertainment Interest Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/ig/psig",
+            "title": "Patents and Standards Interest Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/ig/security",
+            "title": "Security Interest Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/ig/sustainableweb",
+            "title": "Sustainable Web Interest Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/ig/wai",
+            "title": "WAI Interest Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/ig/webai",
+            "title": "Web & AI Interest Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/ig/web-networks",
+            "title": "Web & Networks Interest Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/ig/wot",
+            "title": "Web of Things Interest Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/ig/securepay",
+            "title": "Web Payment Security Interest Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/ig/smart-cities",
+            "title": "Web-based Digital Twins for Smart Cities Interest Group"
+          }
+        ],
+        "self": {
+          "href": "https://api.w3.org/groups?page=1&items=500"
+        },
+        "first": {
+          "href": "https://api.w3.org/groups?page=1&items=500"
+        },
+        "last": {
+          "href": "https://api.w3.org/groups?page=1&items=500"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/groups/ig/wai": {
+    "fetchedAt": "2025-12-13T18:25:46.011Z",
+    "data": {
+      "id": 72669,
+      "name": "WAI Interest Group",
+      "is_closed": false,
+      "description": "The mission of the Web Accessibility Initiative Interest Group (WAI IG) is to promote awareness of W3C accessibility work and publications, encourage engagement in W3C accessibility work, and provide an open public forum for sharing information related to web accessibility.",
+      "shortname": "wai",
+      "discr": "w3cgroup",
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/groups/ig/wai"
+        },
+        "homepage": {
+          "href": "https://www.w3.org/WAI/about/groups/waiig/"
+        },
+        "users": {
+          "href": "https://api.w3.org/groups/ig/wai/users"
+        },
+        "services": {
+          "href": "https://api.w3.org/groups/ig/wai/services"
+        },
+        "specifications": {
+          "href": "https://api.w3.org/groups/ig/wai/specifications"
+        },
+        "chairs": {
+          "href": "https://api.w3.org/groups/ig/wai/chairs"
+        },
+        "team-contacts": {
+          "href": "https://api.w3.org/groups/ig/wai/teamcontacts"
+        },
+        "charters": {
+          "href": "https://api.w3.org/groups/ig/wai/charters"
+        },
+        "active-charter": {
+          "href": "https://api.w3.org/groups/ig/wai/charters/541"
+        }
+      },
+      "type": "interest group",
+      "start-date": "2001-06-18",
+      "end-date": "2027-07-31"
+    }
+  },
+  "https://api.w3.org/groups/ig/wai/users": {
+    "fetchedAt": "2025-12-13T18:25:46.211Z",
+    "data": {
+      "page": 1,
+      "limit": 500,
+      "pages": 1,
+      "total": 3,
+      "_links": {
+        "up": {
+          "href": "https://api.w3.org/groups/ig/wai"
+        },
+        "users": [
+          {
+            "href": "https://api.w3.org/users/tsh8ayza68008wkc08wsos0ss0sosgk",
+            "title": "Ashley Abaragu",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/g7y9jy24rdsko0sg4w8o0ooogwgkc00",
+            "title": "Katie Haritos-Shea",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/n8ny12fld7kggckc00kc0wgco84440s",
+            "title": "Shawn Lawton Henry",
+            "former": false
+          }
+        ],
+        "self": {
+          "href": "https://api.w3.org/groups/ig/wai/users?page=1&items=500"
+        },
+        "first": {
+          "href": "https://api.w3.org/groups/ig/wai/users?page=1&items=500"
+        },
+        "last": {
+          "href": "https://api.w3.org/groups/ig/wai/users?page=1&items=500"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/groups/other": {
+    "fetchedAt": "2025-12-13T18:25:47.813Z",
+    "data": {
+      "page": 1,
+      "limit": 500,
+      "pages": 1,
+      "total": 4,
+      "_links": {
+        "groups": [
+          {
+            "href": "https://api.w3.org/groups/other/ab",
+            "title": "Advisory Board"
+          },
+          {
+            "href": "https://api.w3.org/groups/other/ac",
+            "title": "Advisory Committee"
+          },
+          {
+            "href": "https://api.w3.org/groups/other/board",
+            "title": "Board of Directors"
+          },
+          {
+            "href": "https://api.w3.org/groups/other/tag",
+            "title": "Technical Architecture Group"
+          }
+        ],
+        "self": {
+          "href": "https://api.w3.org/groups?page=1&items=500"
+        },
+        "first": {
+          "href": "https://api.w3.org/groups?page=1&items=500"
+        },
+        "last": {
+          "href": "https://api.w3.org/groups?page=1&items=500"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/groups/other/ab": {
+    "fetchedAt": "2025-12-13T18:25:48.013Z",
+    "data": {
+      "id": 7756,
+      "name": "Advisory Board",
+      "is_closed": false,
+      "description": "The <a href=\"https://www.w3.org/policies/process/#AB\">Advisory Board</a> provides ongoing guidance to the Team on issues of strategy, management, legal matters, process, and conflict resolution.",
+      "shortname": "ab",
+      "discr": "group",
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/groups/other/ab"
+        },
+        "homepage": {
+          "href": "https://www.w3.org/Member/Board/"
+        },
+        "users": {
+          "href": "https://api.w3.org/groups/other/ab/users"
+        },
+        "services": {
+          "href": "https://api.w3.org/groups/other/ab/services"
+        },
+        "chairs": {
+          "href": "https://api.w3.org/groups/other/ab/chairs"
+        },
+        "team-contacts": {
+          "href": "https://api.w3.org/groups/other/ab/teamcontacts"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/groups/other/ab/users": {
+    "fetchedAt": "2025-12-13T18:25:48.213Z",
+    "data": {
+      "page": 1,
+      "limit": 500,
+      "pages": 1,
+      "total": 16,
+      "_links": {
+        "up": {
+          "href": "https://api.w3.org/groups/other/ab"
+        },
+        "users": [
+          {
+            "href": "https://api.w3.org/users/guk8w5oiam0w0kskwg00gsg0c4okccs",
+            "title": "Daniel Appelquist",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/i1s3l6f1ffccgk0kgk4gsws4co0cwg8",
+            "title": "Hidde de Vries",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/eabszyz4oqgw8sk0w48004c0wgws8kc",
+            "title": "Wei Ding",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/srffjzgqsxwk04swwwss8wc8cok8wws",
+            "title": "Seth Dobbs",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/daga418zjf48w80sowwc8owk4gkgk04",
+            "title": "Emma Fraser",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/dom10edkqtk40w0k8w444kck0c00ooc",
+            "title": "Max Gendler",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/99nje3kxgw00g0s48ww0kcgogsk4koo",
+            "title": "Tatsuya Igarashi",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/3od3675jqum8s8ooo808400okk4c4s4",
+            "title": "Elena Lape",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/39i97qy0fi4g8kok48gw8s444sskwsk",
+            "title": "An Qi (Angel) Li",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/k44qkt1rntww0wcwwgksk8w4o4o0ksg",
+            "title": "Theresa O'Connor",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/6zva4q7j4884c4swoc8w4sso084s0c8",
+            "title": "Hiroshi Ota",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/mj2homng83k00g4s4skks8408w4kowo",
+            "title": "Avneesh Singh",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/1dd0l3k02iv40w48koss4s8og8gog0g",
+            "title": "Ralph Swick",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/c7dfyqclji0wgwcock40o4soc48wsw8",
+            "title": "Amy van der Hiel",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/nfaebkmghm8o480s4gk04s8gs48wccw",
+            "title": "Song XU",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/f56pdzfygrw44osooc00kwscwswc08",
+            "title": "Brent Zundel",
+            "former": false
+          }
+        ],
+        "self": {
+          "href": "https://api.w3.org/groups/other/ab/users?page=1&items=500"
+        },
+        "first": {
+          "href": "https://api.w3.org/groups/other/ab/users?page=1&items=500"
+        },
+        "last": {
+          "href": "https://api.w3.org/groups/other/ab/users?page=1&items=500"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/groups/tf": {
+    "fetchedAt": "2025-12-13T18:25:47.212Z",
+    "data": {
+      "page": 1,
+      "limit": 500,
+      "pages": 1,
+      "total": 59,
+      "_links": {
+        "groups": [
+          {
+            "href": "https://api.w3.org/groups/tf/ab-liaisons-to-bod",
+            "title": "AB Liaisons to the Board of Directors"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/wcag-act",
+            "title": "Accessibility Conformance Testing (ACT) Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/ab-elected",
+            "title": "Advisory Board Elected Members"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/i18n-afrlreq",
+            "title": "African Layout Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/i18n-alreq",
+            "title": "Arabic Layout Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/aria-practices",
+            "title": "ARIA Authoring Practices Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/aria-editors",
+            "title": "ARIA Editors"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/automotive-pay",
+            "title": "Automotive Payments Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/auto-privacy-security",
+            "title": "Automotive Privacy and Security Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/board-audit",
+            "title": "Board Audit Committee"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/board-development",
+            "title": "Board Development Committee"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/board-directors",
+            "title": "Board Directors"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/board-emergency",
+            "title": "Board Emergency Committee"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/board-finance",
+            "title": "Board Finance Committee"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/board-governance",
+            "title": "Board Governance Committee"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/board-officers",
+            "title": "Board Officers"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/board-personnel",
+            "title": "Board Personnel Committee"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/board-ab-tag-chairs",
+            "title": "Chairs of the Board, AB, and TAG"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/i18n-clreq",
+            "title": "Chinese Text Layout Task Force | 中文排版需求"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/cognitive-a11y-tf",
+            "title": "Cognitive and Learning Disabilities Accessibility Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/dx-dcat",
+            "title": "DCAT Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/pm-ann",
+            "title": "EPUB Annotation Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/i18n-elreq",
+            "title": "Ethiopic Layout Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/i18n-eurlreq",
+            "title": "European Layout Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/fast",
+            "title": "Framework for Accessible Specification of Technologies Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/i18n-hlreq",
+            "title": "Hebrew Layout Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/iip",
+            "title": "India International Program"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/i18n-jlreq",
+            "title": "Japanese Layout Task Force | 日本語組版タスクフォース"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/lws-chairs",
+            "title": "Linked Web Storage chairs"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/low-vision-a11y-tf",
+            "title": "Low Vision Accessibility Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/maturity",
+            "title": "Maturity Model Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/mobile-a11y-tf",
+            "title": "Mobile Accessibility Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/i18n-mlreq",
+            "title": "Mongolian Layout Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/pdf-aam",
+            "title": "PDF Accessibility APIs Mapping (PDF-AAM) Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/pmchairs",
+            "title": "PM Working Group Chairs"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/tag-privacy",
+            "title": "Privacy Principles Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/pm-a11y",
+            "title": "Publishing Accessibility Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/pm-dc",
+            "title": "Publishing Digital Comics Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/publ-sc",
+            "title": "Publishing Steering Committee task force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/rch-wg-chairs",
+            "title": "RDF Dataset Canonicalization and Hash Working Group Chairs"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/rdf-star-editors",
+            "title": "RDF-star Editors"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/rdf-star-semantics",
+            "title": "RDF-star Semantics"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/rdf-star-ucr",
+            "title": "RDF-star Use Cases"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/rdf-star-chairs",
+            "title": "RDF-star WG chairs"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/rqtf",
+            "title": "Research Questions Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/infrules",
+            "title": "SHACL Inference Rules"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/shacl-profiling",
+            "title": "SHACL Profiling"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/shacl-ui",
+            "title": "SHACL UI"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/i18n-sealreq",
+            "title": "Southeast Asian Layout Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/rdf-star-sparql",
+            "title": "SPARQL Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/pronunciation-tf",
+            "title": "Spoken Presentation Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/svg-a11y",
+            "title": "SVG Accessibility Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/tag-associates",
+            "title": "TAG Associates"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/i18n-tlreq",
+            "title": "Tibetan Layout Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/vc-wg-chairs",
+            "title": "Verifiable Credentials Working Group Chairs"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/vision",
+            "title": "Vision Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/personalization-tf",
+            "title": "WAI Adapt Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/wcag2x-backlog",
+            "title": "WCAG 2.x Backlog Task Force"
+          },
+          {
+            "href": "https://api.w3.org/groups/tf/wcag2ict",
+            "title": "WCAG2ICT Task Force"
+          }
+        ],
+        "self": {
+          "href": "https://api.w3.org/groups?page=1&items=500"
+        },
+        "first": {
+          "href": "https://api.w3.org/groups?page=1&items=500"
+        },
+        "last": {
+          "href": "https://api.w3.org/groups?page=1&items=500"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/groups/tf/ab-elected": {
+    "fetchedAt": "2025-12-13T18:25:47.412Z",
+    "data": {
+      "id": 147348,
+      "name": "Advisory Board Elected Members",
+      "is_closed": false,
+      "creation-date": "2023-08-21",
+      "description": "Elected members of the Advisory Board",
+      "shortname": "ab-elected",
+      "members": [
+        {
+          "id": 7756,
+          "name": "Advisory Board",
+          "is_closed": false,
+          "description": "The <a href=\"https://www.w3.org/policies/process/#AB\">Advisory Board</a> provides ongoing guidance to the Team on issues of strategy, management, legal matters, process, and conflict resolution.",
+          "shortname": "ab",
+          "discr": "group",
+          "_links": {
+            "self": {
+              "href": "https://api.w3.org/groups/other/ab"
+            },
+            "homepage": {
+              "href": "https://www.w3.org/Member/Board/"
+            },
+            "users": {
+              "href": "https://api.w3.org/groups/other/ab/users"
+            },
+            "services": {
+              "href": "https://api.w3.org/groups/other/ab/services"
+            },
+            "chairs": {
+              "href": "https://api.w3.org/groups/other/ab/chairs"
+            },
+            "team-contacts": {
+              "href": "https://api.w3.org/groups/other/ab/teamcontacts"
+            }
+          }
+        }
+      ],
+      "internal": false,
+      "participants_list_public": true,
+      "discr": "tf",
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/groups/tf/ab-elected"
+        },
+        "users": {
+          "href": "https://api.w3.org/groups/tf/ab-elected/users"
+        },
+        "services": {
+          "href": "https://api.w3.org/groups/tf/ab-elected/services"
+        },
+        "chairs": {
+          "href": "https://api.w3.org/groups/tf/ab-elected/chairs"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/groups/tf/ab-elected/users": {
+    "fetchedAt": "2025-12-13T18:25:47.612Z",
+    "data": {
+      "page": 1,
+      "limit": 500,
+      "pages": 1,
+      "total": 11,
+      "_links": {
+        "up": {
+          "href": "https://api.w3.org/groups/tf/ab-elected"
+        },
+        "users": [
+          {
+            "href": "https://api.w3.org/users/guk8w5oiam0w0kskwg00gsg0c4okccs",
+            "title": "Daniel Appelquist",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/i1s3l6f1ffccgk0kgk4gsws4co0cwg8",
+            "title": "Hidde de Vries",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/eabszyz4oqgw8sk0w48004c0wgws8kc",
+            "title": "Wei Ding",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/dom10edkqtk40w0k8w444kck0c00ooc",
+            "title": "Max Gendler",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/99nje3kxgw00g0s48ww0kcgogsk4koo",
+            "title": "Tatsuya Igarashi",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/3od3675jqum8s8ooo808400okk4c4s4",
+            "title": "Elena Lape",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/k44qkt1rntww0wcwwgksk8w4o4o0ksg",
+            "title": "Theresa O'Connor",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/6zva4q7j4884c4swoc8w4sso084s0c8",
+            "title": "Hiroshi Ota",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/mj2homng83k00g4s4skks8408w4kowo",
+            "title": "Avneesh Singh",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/nfaebkmghm8o480s4gk04s8gs48wccw",
+            "title": "Song XU",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/f56pdzfygrw44osooc00kwscwswc08",
+            "title": "Brent Zundel",
+            "former": false
+          }
+        ],
+        "self": {
+          "href": "https://api.w3.org/groups/tf/ab-elected/users?page=1&items=500"
+        },
+        "first": {
+          "href": "https://api.w3.org/groups/tf/ab-elected/users?page=1&items=500"
+        },
+        "last": {
+          "href": "https://api.w3.org/groups/tf/ab-elected/users?page=1&items=500"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/groups/wg": {
+    "fetchedAt": "2025-12-13T18:25:45.009Z",
+    "data": {
+      "page": 1,
+      "limit": 500,
+      "pages": 1,
+      "total": 45,
+      "_links": {
+        "groups": [
+          {
+            "href": "https://api.w3.org/groups/wg/ag",
+            "title": "Accessibility Guidelines Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/apa",
+            "title": "Accessible Platform Architectures Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/aria",
+            "title": "Accessible Rich Internet Applications Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/audio",
+            "title": "Audio Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/browser-tools-testing",
+            "title": "Browser Testing and Tools Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/css",
+            "title": "Cascading Style Sheets (CSS) Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/data-shapes",
+            "title": "Data Shapes Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/dx",
+            "title": "Dataset Exchange Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/did",
+            "title": "Decentralized Identifier Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/das",
+            "title": "Devices and Sensors Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/distributed-tracing",
+            "title": "Distributed Tracing Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/fedid",
+            "title": "Federated Identity Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/gpu",
+            "title": "GPU for the Web Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/htmlwg",
+            "title": "HTML Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/immersive-web",
+            "title": "Immersive Web Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/i18n-core",
+            "title": "Internationalization Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/json-ld",
+            "title": "JSON-LD Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/lws",
+            "title": "Linked Web Storage Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/math",
+            "title": "Math Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/media",
+            "title": "Media Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/miniapps",
+            "title": "MiniApps Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/pointer-events",
+            "title": "Pointer Events Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/png",
+            "title": "Portable Network Graphics (PNG) Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/privacy",
+            "title": "Privacy Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/pat",
+            "title": "Private Advertising Technology Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/pm",
+            "title": "Publishing Maintenance Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/rdf-star",
+            "title": "RDF & SPARQL Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/rch",
+            "title": "RDF Dataset Canonicalization and Hash Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/secondscreen",
+            "title": "Second Screen Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/sdw",
+            "title": "Spatio-temporal Data on the Web Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/svg",
+            "title": "SVG Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/timed-text",
+            "title": "Timed Text Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/vc",
+            "title": "Verifiable Credentials Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/webappsec",
+            "title": "Web Application Security Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/webapps",
+            "title": "Web Applications Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/webauthn",
+            "title": "Web Authentication Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/webediting",
+            "title": "Web Editing Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/webfonts",
+            "title": "Web Fonts Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/webmachinelearning",
+            "title": "Web Machine Learning Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/wot",
+            "title": "Web of Things Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/payments",
+            "title": "Web Payments Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/webperf",
+            "title": "Web Performance Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/webrtc",
+            "title": "Web Real-Time Communications Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/wasm",
+            "title": "WebAssembly Working Group"
+          },
+          {
+            "href": "https://api.w3.org/groups/wg/webtransport",
+            "title": "WebTransport Working Group"
+          }
+        ],
+        "self": {
+          "href": "https://api.w3.org/groups?page=1&items=500"
+        },
+        "first": {
+          "href": "https://api.w3.org/groups?page=1&items=500"
+        },
+        "last": {
+          "href": "https://api.w3.org/groups?page=1&items=500"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/groups/wg/data-shapes": {
+    "fetchedAt": "2025-12-13T18:25:45.209Z",
+    "data": {
+      "id": 73865,
+      "name": "Data Shapes Working Group",
+      "is_closed": false,
+      "creation-date": "2014-09-26",
+      "description": "The mission of the Data Shapes Working Group is to update data shapes standards in line with the versions of core Semantic Web standards that cater for RDF-star and to extend the applications of data shapes with new packaging and use specifications.",
+      "shortname": "data-shapes",
+      "discr": "w3cgroup",
+      "_links": {
+        "self": {
+          "href": "https://api.w3.org/groups/wg/data-shapes"
+        },
+        "homepage": {
+          "href": "https://www.w3.org/groups/wg/data-shapes/"
+        },
+        "users": {
+          "href": "https://api.w3.org/groups/wg/data-shapes/users"
+        },
+        "services": {
+          "href": "https://api.w3.org/groups/wg/data-shapes/services"
+        },
+        "specifications": {
+          "href": "https://api.w3.org/groups/wg/data-shapes/specifications"
+        },
+        "chairs": {
+          "href": "https://api.w3.org/groups/wg/data-shapes/chairs"
+        },
+        "team-contacts": {
+          "href": "https://api.w3.org/groups/wg/data-shapes/teamcontacts"
+        },
+        "charters": {
+          "href": "https://api.w3.org/groups/wg/data-shapes/charters"
+        },
+        "active-charter": {
+          "href": "https://api.w3.org/groups/wg/data-shapes/charters/525"
+        },
+        "join": {
+          "href": "https://www.w3.org/groups/wg/data-shapes/join"
+        },
+        "pp-status": {
+          "href": "https://www.w3.org/groups/wg/data-shapes/ipr"
+        },
+        "participations": {
+          "href": "https://api.w3.org/groups/wg/data-shapes/participations"
+        }
+      },
+      "type": "working group",
+      "start-date": "2014-09-30",
+      "end-date": "2026-12-31"
+    }
+  },
+  "https://api.w3.org/groups/wg/data-shapes/participations": {
+    "fetchedAt": "2025-12-13T18:25:45.410Z",
+    "data": {
+      "page": 1,
+      "limit": 500,
+      "pages": 1,
+      "total": 24,
+      "_links": {
+        "up": {
+          "href": "https://api.w3.org/groups/wg/data-shapes"
+        },
+        "participations": [
+          {
+            "href": "https://api.w3.org/participations/44072",
+            "title": "Carine Bournez"
+          },
+          {
+            "href": "https://api.w3.org/participations/44074",
+            "title": "Zazuko GmbH"
+          },
+          {
+            "href": "https://api.w3.org/participations/44078",
+            "title": "KurrawongAI"
+          },
+          {
+            "href": "https://api.w3.org/participations/44104",
+            "title": "Apache Software Foundation"
+          },
+          {
+            "href": "https://api.w3.org/participations/44114",
+            "title": "University of Oxford"
+          },
+          {
+            "href": "https://api.w3.org/participations/44125",
+            "title": "OpenLink Software Inc."
+          },
+          {
+            "href": "https://api.w3.org/participations/44131",
+            "title": "Ontotext"
+          },
+          {
+            "href": "https://api.w3.org/participations/44148",
+            "title": "Ashley Sommer"
+          },
+          {
+            "href": "https://api.w3.org/participations/44166",
+            "title": "Netflix Inc."
+          },
+          {
+            "href": "https://api.w3.org/participations/44203",
+            "title": "TopQuadrant"
+          },
+          {
+            "href": "https://api.w3.org/participations/44261",
+            "title": "Siemens AG"
+          },
+          {
+            "href": "https://api.w3.org/participations/44273",
+            "title": "National Institute of Standards and Technology (NIST)"
+          },
+          {
+            "href": "https://api.w3.org/participations/44289",
+            "title": "Institut National de Recherche en Informatique et en Automatique (Inria)"
+          },
+          {
+            "href": "https://api.w3.org/participations/44444",
+            "title": "Scott Henninger"
+          },
+          {
+            "href": "https://api.w3.org/participations/44672",
+            "title": "Fundacion CTIC"
+          },
+          {
+            "href": "https://api.w3.org/participations/44731",
+            "title": "imec"
+          },
+          {
+            "href": "https://api.w3.org/participations/45132",
+            "title": "Matt Goldberg"
+          },
+          {
+            "href": "https://api.w3.org/participations/45657",
+            "title": "Y.digital"
+          },
+          {
+            "href": "https://api.w3.org/participations/45833",
+            "title": "SAP SE"
+          },
+          {
+            "href": "https://api.w3.org/participations/45919",
+            "title": "Kurt Cagle"
+          },
+          {
+            "href": "https://api.w3.org/participations/45923",
+            "title": "Livio Robaldo"
+          },
+          {
+            "href": "https://api.w3.org/participations/45925",
+            "title": "Ognjen Savkovic"
+          },
+          {
+            "href": "https://api.w3.org/participations/46187",
+            "title": "Daniël Beeke"
+          },
+          {
+            "href": "https://api.w3.org/participations/46620",
+            "title": "Stiftelsen for internetinfrastruktur (IIS)"
+          }
+        ],
+        "self": {
+          "href": "https://api.w3.org/groups/wg/data-shapes/participations?page=1&items=500"
+        },
+        "first": {
+          "href": "https://api.w3.org/groups/wg/data-shapes/participations?page=1&items=500"
+        },
+        "last": {
+          "href": "https://api.w3.org/groups/wg/data-shapes/participations?page=1&items=500"
+        }
+      }
+    }
+  },
+  "https://api.w3.org/groups/wg/data-shapes/users": {
+    "fetchedAt": "2025-12-13T18:25:45.610Z",
+    "data": {
+      "page": 1,
+      "limit": 500,
+      "pages": 1,
+      "total": 32,
+      "_links": {
+        "up": {
+          "href": "https://api.w3.org/groups/wg/data-shapes"
+        },
+        "users": [
+          {
+            "href": "https://api.w3.org/users/p9mih3az4lc00444kgg8o0ccc4ggwkk",
+            "title": "Shervin Afshar",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/9t56qgfqo34s88cwg8gc0wsskwcw84g",
+            "title": "Vladimir Alexiev",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/byu5o4pakq8s0kc4c0sks8w4484kw4w",
+            "title": "Kishore Banala",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/o7eq0z2wz80cskcc4gw040sowo488wc",
+            "title": "Daniël Beeke",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/3t8ccdk4azi8wskgg0gkoowkw8ok4oc",
+            "title": "Thomas Bergwinkl",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/6fbrmqerwtss40040kwk4cggw4g4880",
+            "title": "Alexandre Bertails",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/600t7wbuwqkgs4ooco00sc8g84w0wwo",
+            "title": "Carine Bournez",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/9a26fdb3yqskoks88gkw4gwocscgk4o",
+            "title": "Kurt Cagle",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/lwj5fvwak2og8w4s4swgs8cw8g8k880",
+            "title": "Nicholas Car",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/h42ex2p81og0wk0csgcgk8g0c0wg8wc",
+            "title": "Edmond Chuc",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/eilsk5mhj0o4o8oo044wo4okwokc0wc",
+            "title": "Robert David",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/l5vnrmdy8j4og4gs444o0sogwwgsckc",
+            "title": "Matt Goldberg",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/8e1y97wnjbc4gw4kgg48wowkwc48g0s",
+            "title": "David Habgood",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/iv6n8vgql5c8gcg0gw4sosk48c4gkkc",
+            "title": "Scott Henninger",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/hdfjurscaw0gscs40804k0kkcccws8w",
+            "title": "Alex Hutter",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/rjnnj3imndw40gw0wks8gc4w040ss08",
+            "title": "Holger Knublauch",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/qf7jsf8u7cgokg0csk00co40gc0ckgw",
+            "title": "Jose Emilio Labra Gayo",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/aftbmr61sgwkww8w4o04k0cooc4k8s8",
+            "title": "Alexander Nelson",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/mt1ng6511us04k4kwww4008wo0scgo8",
+            "title": "Matthias Palmér",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/f7cjcmjsnk84wws0ccks80coksk8wss",
+            "title": "Eliana Papoutsoglou",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/3e9apd9whhc00cw0wk08k4sksogc88w",
+            "title": "Tomasz Pluskiewicz",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/npovjod1g34ogwgwscw0840oksowwoo",
+            "title": "Livio Robaldo",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/lr343j5229cs4k8kcsoc4ww0c8cks80",
+            "title": "Felix Sasaki",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/5nmm93pnnns4g44scs8k4sgkkggsgg4",
+            "title": "Ognjen Savkovic",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/ez5whckagcg0cog0wg8occsgggoog8c",
+            "title": "Andy Seaborne",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/6yy0kjhr618oogog0kkg4kw00sc048w",
+            "title": "Ieben Smessaert",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/9naqo2mvs4cgsw48o4so8s0ssco0ccg",
+            "title": "Ashley Sommer",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/3nuww5wjx1mo8cwswcc8g8wosgws0c0",
+            "title": "Simon Steyskal",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/duq0xa55gk084kooc0k0wcckgokosg4",
+            "title": "Yousouf Taghzouti",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/ox8xc2908xcowo8wwkog0cgokcw0o8o",
+            "title": "Ted Thibodeau Jr",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/67iu3xmgsuscg480o8o4s0gso4404gw",
+            "title": "Simon Werner",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/b39dpa6cki88csg4ko0scgc0w8oc884",
+            "title": "Jesse Wright",
+            "former": false
+          }
+        ],
+        "self": {
+          "href": "https://api.w3.org/groups/wg/data-shapes/users?page=1&items=500"
+        },
+        "first": {
+          "href": "https://api.w3.org/groups/wg/data-shapes/users?page=1&items=500"
+        },
+        "last": {
+          "href": "https://api.w3.org/groups/wg/data-shapes/users?page=1&items=500"
+        }
+      }
+    }
+  }
+}
