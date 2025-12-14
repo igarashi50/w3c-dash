@@ -6,7 +6,6 @@ async function renderDashboard() {
   const loadingStatus = document.getElementById('status');
   const groupsDiv = document.getElementById('groups');
   const summaryStatDiv = document.getElementById('summary-stats');
-  const legendDiv = document.getElementById('legend');
 
   if (loadingStatus) {
     loadingStatus.className = 'loading';
@@ -62,7 +61,7 @@ async function renderDashboard() {
     }
 
     // Summary表示をサブ関数に分離
-    _mainRenderSummary(summaryStatDiv, groupsInfo.summaryGroup, groupsInfo._metadata.lastChecked);
+    _mainRenderSummary(summaryStatDiv, groupsArray.length, groupsInfo.summaryGroup, groupsInfo._metadata.lastChecked);
 
     _mainRenderGroups({ groupsDiv, groupsArray, sortedResults, filterType, sortBy });
 
@@ -126,7 +125,7 @@ renderDashboard()
 /* 
 以下はmainパネルの表示用のサブ関数 '_main'で始まる関数
 */
-function _mainRenderSummary(summaryStatDiv, summaryGroup, lastChecked) {
+function _mainRenderSummary(summaryStatDiv, groupCounts, summaryGroup, lastChecked) {
   // Summary情報を表示
   let dateStr = '';
   if (lastChecked) {
@@ -147,7 +146,7 @@ function _mainRenderSummary(summaryStatDiv, summaryGroup, lastChecked) {
       <div>
         <div style="font-size: 1.25em; font-weight: 700; margin-bottom: 5px;">Summary</div>
         <div style="display: flex; gap: 7px; flex-wrap: wrap; font-size: 1em; line-height: 1.18; row-gap: 2px; margin-left: 10px;">
-          <span>Groups: ${summaryGroup.groupsCount}</span>
+          <span>Groups (G): ${groupCounts}</span>
           <span>Members (M): <span class="clickable" data-summary-type="members">${summaryGroup.membersCount}</span></span>
           <span>Member Participants (MP): <span class="clickable" data-summary-type="memberParticipants">${summaryGroup.memberParticipantsCount}</span></span>
           <span>Invited Experts (IE): <span class="clickable" data-summary-type="invitedExperts">${summaryGroup.invitedExpertsCount}</span></span>
@@ -736,59 +735,26 @@ async function popupParticipationsSheet(groupInfo, initialFilter = 'members') {
 }
 
 async function _popupRenderMemberParticipantsList(groupInfo, membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle) {
-  const div = document.createElement('div');
-  div.className = 'member-item selected';
-  if (groupInfo.isException) {
-    div.classList.add('exception');
-  }
-  div.textContent = 'All Members';
-  membersListContent.appendChild(div);
-  participantsListContent.innerHTML = '';
-  userDetailContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
-  const sortedMPs = (groupInfo.memberParticipants || []).slice().sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-  sortedMPs.forEach(participant => {
-    const div = document.createElement('div');
-    div.className = 'participant-item';
-    div.textContent = participant.name;
-    if (participant.userHref) {
-      div.addEventListener('click', async () => {
-        document.querySelectorAll('.participant-item').forEach(el => el.classList.remove('selected'));
-        div.classList.add('selected');
-        await _popupRenderUserDetail(participant.userHref, participant.name);
-      });
-    }
-    participantsListContent.appendChild(div);
+  _popupRenderParticipantsList({
+    list: groupInfo.memberParticipants || [],
+    label: 'All Members',
+    membersListContent,
+    participantsListContent,
+    userDetailContent,
+    affiliationsTitle,
+    participantsTitle
   });
-  affiliationsTitle.textContent = `Affiliations: 1`;
-  participantsTitle.textContent = `Participants: ${sortedMPs.length}`;
 }
-
 async function _popupRenderAllParticipantsList(groupInfo, membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle) {
-  const div = document.createElement('div');
-  div.className = 'member-item selected';
-  if (groupInfo.isException) {
-    div.classList.add('exception');
-  }
-  div.textContent = 'All Members+IE+S+Ind';
-  membersListContent.appendChild(div);
-  participantsListContent.innerHTML = '';
-  userDetailContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
-  const sortedAllParticipants = (groupInfo.allParticipants || []).slice().sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-  sortedAllParticipants.forEach(participant => {
-    const div = document.createElement('div');
-    div.className = 'participant-item';
-    div.textContent = participant.name;
-    if (participant.userHref) {
-      div.addEventListener('click', async () => {
-        document.querySelectorAll('.participant-item').forEach(el => el.classList.remove('selected'));
-        div.classList.add('selected');
-        await _popupRenderUserDetail(participant.userHref, participant.name);
-      });
-    }
-    participantsListContent.appendChild(div);
+  _popupRenderParticipantsList({
+    list: groupInfo.allParticipants || [],
+    label: 'All Members+IE+S+Ind',
+    membersListContent,
+    participantsListContent,
+    userDetailContent,
+    affiliationsTitle,
+    participantsTitle
   });
-  affiliationsTitle.textContent = `Affiliations: 1`;
-  participantsTitle.textContent = `Participants: ${sortedAllParticipants.length}`;
 }
 
 async function _popupRenderMembersList(groupInfo, membersListContent, affiliationsTitle) {
@@ -968,50 +934,138 @@ async function _popupRenderMembersList(groupInfo, membersListContent, affiliatio
 }
 
 async function _popupRenderTypeList(groupInfo, typeKey, typeLabel, membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle) {
-  const div = document.createElement('div');
-  div.className = 'member-item special-affiliation';
-  if (groupInfo.isException) {
-    div.classList.add('exception');
-  }
-  div.textContent = typeLabel;
-  div.dataset.afftype = typeKey;
-  div.addEventListener('click', async () => {
-    document.querySelectorAll('.member-item').forEach(el => el.classList.remove('selected'));
-    div.classList.add('selected');
-    participantsListContent.innerHTML = '';
-    userDetailContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
-    let list = [];
-    let emptyMsg = '';
-    if (typeKey === 'invitedExperts') {
-      list = groupInfo.invitedExperts || [];
-      emptyMsg = 'No Invited Experts available';
-    } else if (typeKey === 'staffs') {
-      list = groupInfo.staffs || [];
-      emptyMsg = 'No Staffs available';
-    } else if (typeKey === 'individuals') {
-      list = groupInfo.individuals || [];
-      emptyMsg = 'No Individuals available';
-    }
-    if (list.length === 0) {
-      participantsListContent.innerHTML = `<p style="padding: 12px; color: #666; font-style: italic;">${emptyMsg}</p>`;
-      participantsTitle.textContent = `Participants: 0`;
-    } else {
-      list.sort((a, b) => (a.name || '').localeCompare(b.name || '')).forEach(item => {
-        const pDiv = document.createElement('div');
-        pDiv.className = 'participant-item';
-        pDiv.textContent = item.name;
-        pDiv.addEventListener('click', async () => {
-          document.querySelectorAll('.participant-item').forEach(el => el.classList.remove('selected'));
-          pDiv.classList.add('selected');
-          await _popupRenderUserDetail(item.userHref, item.name);
-        });
-        participantsListContent.appendChild(pDiv);
-      });
-      participantsTitle.textContent = `Participants: ${list.length}`;
-    }
+  _popupRenderParticipantsList({
+    list: (typeKey === 'invitedExperts') ? (groupInfo.invitedExperts || []) :
+          (typeKey === 'staffs') ? (groupInfo.staffs || []) :
+          (typeKey === 'individuals') ? (groupInfo.individuals || []) : [],
+    label: typeLabel,
+    membersListContent,
+    participantsListContent,
+    userDetailContent,
+    affiliationsTitle,
+    participantsTitle
   });
+}
+
+// 共通化: 参加者リスト＋numGroups＋ソートUI
+function _popupRenderParticipantsList({list, label, membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle}) {
+  // 左ペインタイトル
+  const div = document.createElement('div');
+  div.className = 'member-item selected';
+  div.textContent = label;
   membersListContent.appendChild(div);
-  affiliationsTitle.textContent = `Affiliations: 1`;
+  participantsListContent.innerHTML = '';
+  userDetailContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view details</p>';
+
+  // タイトル右にソートボタン
+  let sortBtnBar = participantsTitle.querySelector('.part-sort-btn-bar');
+  if (sortBtnBar) participantsTitle.removeChild(sortBtnBar);
+  sortBtnBar = document.createElement('span');
+  sortBtnBar.className = 'part-sort-btn-bar';
+  sortBtnBar.style.display = 'inline-flex';
+  sortBtnBar.style.gap = '2px';
+  sortBtnBar.style.marginLeft = '8px';
+  sortBtnBar.style.float = 'right';
+  sortBtnBar.style.justifyContent = 'flex-end';
+
+  const nameSortBtn = document.createElement('button');
+  nameSortBtn.className = 'part-sort-btn active';
+  nameSortBtn.style.fontSize = '11px';
+  nameSortBtn.style.padding = '0 4px';
+  nameSortBtn.style.lineHeight = '1.2';
+  nameSortBtn.title = '名前順';
+
+  const numGroupsSortBtn = document.createElement('button');
+  numGroupsSortBtn.className = 'part-sort-btn';
+  numGroupsSortBtn.style.fontSize = '11px';
+  numGroupsSortBtn.style.padding = '0 4px';
+  numGroupsSortBtn.style.lineHeight = '1.2';
+  numGroupsSortBtn.title = 'グループ数順';
+
+  const nameArrow = document.createElement('span');
+  nameArrow.innerHTML = '&#8595;';
+  nameArrow.style.fontSize = '10px';
+  nameArrow.style.verticalAlign = 'middle';
+  nameArrow.style.marginLeft = '1px';
+
+  const numGroupsArrow = document.createElement('span');
+  numGroupsArrow.innerHTML = '&#8595;';
+  numGroupsArrow.style.fontSize = '10px';
+  numGroupsArrow.style.verticalAlign = 'middle';
+  numGroupsArrow.style.marginLeft = '1px';
+
+  nameSortBtn.innerHTML = '';
+  nameSortBtn.appendChild(document.createTextNode('abc'));
+  nameSortBtn.appendChild(nameArrow);
+
+  numGroupsSortBtn.innerHTML = '';
+  numGroupsSortBtn.appendChild(document.createTextNode('#G'));
+  numGroupsSortBtn.appendChild(numGroupsArrow);
+
+  sortBtnBar.appendChild(nameSortBtn);
+  sortBtnBar.appendChild(numGroupsSortBtn);
+  participantsTitle.appendChild(sortBtnBar);
+
+  let sortMode = 'name';
+  function renderList() {
+    participantsListContent.innerHTML = '';
+    let sortedList;
+    if (sortMode === 'name') {
+      sortedList = [...list].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      nameArrow.style.color = '#0969da';
+      numGroupsArrow.style.color = '#bbb';
+    } else {
+      sortedList = [...list].sort((a, b) => (b.numGroups || 0) - (a.numGroups || 0) || (a.name || '').localeCompare(b.name || ''));
+      nameArrow.style.color = '#bbb';
+      numGroupsArrow.style.color = '#0969da';
+    }
+    sortedList.forEach(participant => {
+      const div = document.createElement('div');
+      div.className = 'participant-item';
+      div.style.display = 'flex';
+      div.style.justifyContent = 'space-between';
+      div.style.alignItems = 'center';
+      div.style.gap = '16px';
+      // 名前
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = participant.name;
+      nameSpan.style.flex = '1';
+      nameSpan.style.overflowWrap = 'anywhere';
+      // numGroups
+      const numGroupsSpan = document.createElement('span');
+      numGroupsSpan.textContent = (participant.numGroups != null ? participant.numGroups : 0);
+      numGroupsSpan.title = 'Number of groups';
+      numGroupsSpan.style.fontSize = '0.9em';
+      numGroupsSpan.style.color = '#888';
+      numGroupsSpan.style.textAlign = 'right';
+      numGroupsSpan.style.minWidth = '2em';
+      div.appendChild(nameSpan);
+      div.appendChild(numGroupsSpan);
+      if (participant.userHref) {
+        div.addEventListener('click', async () => {
+          document.querySelectorAll('.participant-item').forEach(el => el.classList.remove('selected'));
+          div.classList.add('selected');
+          await _popupRenderUserDetail(participant.userHref, participant.name);
+        });
+      }
+      participantsListContent.appendChild(div);
+    });
+    participantsTitle.textContent = `Participants: ${sortedList.length}`;
+    participantsTitle.appendChild(sortBtnBar);
+  }
+  nameSortBtn.addEventListener('click', () => {
+    sortMode = 'name';
+    nameSortBtn.classList.add('active');
+    numGroupsSortBtn.classList.remove('active');
+    renderList();
+  });
+  numGroupsSortBtn.addEventListener('click', () => {
+    sortMode = 'numGroups';
+    numGroupsSortBtn.classList.add('active');
+    nameSortBtn.classList.remove('active');
+    renderList();
+  });
+  renderList();
 }
 
 async function _popupRenderFilteredList(groupInfo, currentFilter, membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle) {
@@ -1061,37 +1115,124 @@ async function _popupRenderParticipantsForMember(groupInfo, memberOrg) {
   userDetailContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view detail</p>';
 
   // membersMapから該当する組織のparticipantsを取得
-  const participants = groupInfo.membersMap && groupInfo.membersMap.get? groupInfo.membersMap.get(memberOrg) || []
-: [];
+  const participants = groupInfo.membersMap && groupInfo.membersMap.get? groupInfo.membersMap.get(memberOrg) || [] : [];
 
-  if (participants.length === 0) {
-    participantsListContent.innerHTML = '<p style="padding: 12px; color: #666; font-style: italic;">No participants data available for this organization</p>';
-    // タイトル更新
-    const participantsTitle = document.querySelector('#participantsList h3');
-    participantsTitle.textContent = `Participants: 0`;
-    return;
-  }
-
-  // 名前でソート
-  const sortedParticipants = [...participants].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-
-  sortedParticipants.forEach(participant => {
-    const div = document.createElement('div');
-    div.className = 'participant-item';
-    div.textContent = participant.name;
-    if (participant.userHref) {
-      div.addEventListener('click', async () => {
-        document.querySelectorAll('.participant-item').forEach(el => el.classList.remove('selected'));
-        div.classList.add('selected');
-        await _popupRenderUserDetail(participant.userHref, participant.name);
-      });
-    }
-    participantsListContent.appendChild(div);
-  });
-
-  // タイトル更新
   const participantsTitle = document.querySelector('#participantsList h3');
-  participantsTitle.textContent = `Participants: ${sortedParticipants.length}`;
+  // --- タイトル右にソートボタン配置 ---
+  // 既存のボタンがあれば削除
+  let sortBtnBar = participantsTitle.querySelector('.part-sort-btn-bar');
+  if (sortBtnBar) participantsTitle.removeChild(sortBtnBar);
+  sortBtnBar = document.createElement('span');
+  sortBtnBar.className = 'part-sort-btn-bar';
+  sortBtnBar.style.display = 'inline-flex';
+  sortBtnBar.style.gap = '2px';
+  sortBtnBar.style.marginLeft = '8px';
+  sortBtnBar.style.float = 'right';
+  sortBtnBar.style.justifyContent = 'flex-end';
+
+  // ボタン生成
+  const nameSortBtn = document.createElement('button');
+  nameSortBtn.className = 'part-sort-btn active';
+  nameSortBtn.style.fontSize = '11px';
+  nameSortBtn.style.padding = '0 4px';
+  nameSortBtn.style.lineHeight = '1.2';
+  nameSortBtn.title = '名前順';
+
+  const numGroupsSortBtn = document.createElement('button');
+  numGroupsSortBtn.className = 'part-sort-btn';
+  numGroupsSortBtn.style.fontSize = '11px';
+  numGroupsSortBtn.style.padding = '0 4px';
+  numGroupsSortBtn.style.lineHeight = '1.2';
+  numGroupsSortBtn.title = 'グループ数順';
+
+  // 矢印span
+  const nameArrow = document.createElement('span');
+  nameArrow.innerHTML = '&#8595;';
+  nameArrow.style.fontSize = '10px';
+  nameArrow.style.verticalAlign = 'middle';
+  nameArrow.style.marginLeft = '1px';
+
+  const numGroupsArrow = document.createElement('span');
+  numGroupsArrow.innerHTML = '&#8595;';
+  numGroupsArrow.style.fontSize = '10px';
+  numGroupsArrow.style.verticalAlign = 'middle';
+  numGroupsArrow.style.marginLeft = '1px';
+
+  nameSortBtn.innerHTML = '';
+  nameSortBtn.appendChild(document.createTextNode('abc'));
+  nameSortBtn.appendChild(nameArrow);
+
+  numGroupsSortBtn.innerHTML = '';
+  numGroupsSortBtn.appendChild(document.createTextNode('#G'));
+  numGroupsSortBtn.appendChild(numGroupsArrow);
+
+  sortBtnBar.appendChild(nameSortBtn);
+  sortBtnBar.appendChild(numGroupsSortBtn);
+  participantsTitle.appendChild(sortBtnBar);
+
+  // ソートモード
+  let sortMode = 'name';
+  function renderList() {
+    participantsListContent.innerHTML = '';
+    let sortedParticipants;
+    if (sortMode === 'name') {
+      sortedParticipants = [...participants].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      nameArrow.style.color = '#0969da';
+      numGroupsArrow.style.color = '#bbb';
+    } else {
+      sortedParticipants = [...participants].sort((a, b) => (b.numGroups || 0) - (a.numGroups || 0) || (a.name || '').localeCompare(b.name || ''));
+      nameArrow.style.color = '#bbb';
+      numGroupsArrow.style.color = '#0969da';
+    }
+    sortedParticipants.forEach(participant => {
+      const div = document.createElement('div');
+      div.className = 'participant-item';
+      div.style.display = 'flex';
+      div.style.justifyContent = 'space-between';
+      div.style.alignItems = 'center';
+      div.style.gap = '16px';
+      // 名前
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = participant.name;
+      nameSpan.style.flex = '1';
+      nameSpan.style.overflowWrap = 'anywhere';
+      // numGroups
+      const numGroupsSpan = document.createElement('span');
+      numGroupsSpan.textContent = (participant.numGroups != null ? participant.numGroups : 0);
+      numGroupsSpan.title = 'Number of groups';
+      numGroupsSpan.style.fontSize = '0.9em';
+      numGroupsSpan.style.color = '#888';
+      numGroupsSpan.style.textAlign = 'right';
+      numGroupsSpan.style.minWidth = '2em';
+      div.appendChild(nameSpan);
+      div.appendChild(numGroupsSpan);
+      if (participant.userHref) {
+        div.addEventListener('click', async () => {
+          document.querySelectorAll('.participant-item').forEach(el => el.classList.remove('selected'));
+          div.classList.add('selected');
+          await _popupRenderUserDetail(participant.userHref, participant.name);
+        });
+      }
+      participantsListContent.appendChild(div);
+    });
+    participantsTitle.textContent = `Participants: ${sortedParticipants.length}`;
+    participantsTitle.appendChild(sortBtnBar);
+  }
+  // ボタンイベント
+  nameSortBtn.addEventListener('click', () => {
+    sortMode = 'name';
+    nameSortBtn.classList.add('active');
+    numGroupsSortBtn.classList.remove('active');
+    renderList();
+  });
+  numGroupsSortBtn.addEventListener('click', () => {
+    sortMode = 'numGroups';
+    numGroupsSortBtn.classList.add('active');
+    nameSortBtn.classList.remove('active');
+    renderList();
+  });
+  // 初期表示
+  renderList();
 }
 
 // HTMLエスケープ関数
