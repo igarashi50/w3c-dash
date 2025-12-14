@@ -434,7 +434,7 @@ async function fetchTypeGroups(type, testGroupShortNames = null) {
   for (let i = 0; i < groupsArray.length; i++) {
     const g = groupsArray[i];
     const groupName = g.title || g.name || g.id || 'unknown';
-    logAlways(`[${i + 1}/${groupsArray.length}] Processing: ${groupName}`);
+    // logAlways(`[${i + 1}/${groupsArray.length}] Processing: ${groupName}`);
     const groupHref = g.href;
     let urls = new Set();
     if (groupHref) {
@@ -475,7 +475,7 @@ async function fetchTypeGroups(type, testGroupShortNames = null) {
     }
 
     // Fetch the urls for the group
-    const urlsArray = Array.from(urls);
+    const urlsArray = Array.from(urls);w
     console.log(`  Found ${urlsArray.length} data URLs to fetch for group`);
     for (let j = 0; j < urlsArray.length; j++) {
 

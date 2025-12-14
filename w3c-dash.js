@@ -1,5 +1,4 @@
-let groupsData = null; // 初回のみロード
-let groupsInfoLoaded = false;
+let groupsInfo = null; // 初回のみロード
 let attachedSummaryHandler = false;
 let attachedGroupsHandler = false;
 
@@ -19,17 +18,16 @@ async function renderDashboard() {
 
   try {
     // 初回のみロード
-    if (!groupsInfoLoaded) {
-      const results = await getAllGroupsInfo();
-      groupsData = results;
-      groupsInfoLoaded = true;
+    if (groupsInfo === null) {
+      groupsInfo = await getAllGroupsInfo();
     }
+    const groupsArray = groupsInfo.groupsArray;
 
-    // フィルター・ソートはgroupsDataのみ参照
+    // フィルター・ソートはgroupsInfo.groupsArrayのみ参照
     const filterType = localStorage.getItem('groupTypeFilter') || 'wg';
     const filteredResults = filterType === 'all'
-      ? groupsData
-      : groupsData.filter(g => g.groupType === filterType);
+      ? groupsArray
+      : groupsArray.filter(g => g.groupType === filterType);
 
     // ソート基準を取得
     const sortBy = document.getElementById('sortBy').value;
@@ -64,9 +62,9 @@ async function renderDashboard() {
     }
 
     // Summary表示をサブ関数に分離
-    _mainRenderSummary(summaryStatDiv, groupsData);
+    _mainRenderSummary(summaryStatDiv, groupsInfo.summaryGroup, groupsInfo._metadata.lastChecked);
 
-    _mainRenderGroups({ groupsDiv, groupsData, sortedResults, filterType, sortBy });
+    _mainRenderGroups({ groupsDiv, groupsArray, sortedResults, filterType, sortBy });
 
     if (loadingStatus) {
       loadingStatus.className = '';
@@ -128,57 +126,8 @@ renderDashboard()
 /* 
 以下はmainパネルの表示用のサブ関数 '_main'で始まる関数
 */
-function _mainRenderSummary(summaryStatDiv, groupsData) {
-  // 全体統計を計算（重複を除く）
-  const allMembers = new Map();
-  const allMemberParticipants = new Map();
-  const allInvitedExperts = new Map();
-  const allStaffs = new Map();
-  const allIndividuals = new Map();
-  const allParticipants = new Map()
-
-  groupsData.forEach(group => {
-    // Members
-    if (group.membersMap) {
-      for (const [org, participants] of group.membersMap instanceof Map ? group.membersMap.entries() : Object.entries(group.membersMap)) {
-        if (!allMembers.has(org)) allMembers.set(org, []);
-        allMembers.get(org).push(...participants);
-      }
-    }
-    // Member Participants
-    if (group.memberParticipants) {
-      group.memberParticipants.forEach(user => {
-        allMemberParticipants.set(user.name, user);
-      });
-    }
-    // Invited Experts
-    if (group.invitedExperts) {
-      group.invitedExperts.forEach(ie => {
-        allInvitedExperts.set(ie.name, ie);
-      });
-    }
-    // Staffs
-    if (group.staffs) {
-      group.staffs.forEach(staff => {
-        allStaffs.set(staff.name, staff);
-      });
-    }
-    // Individuals
-    if (group.individuals) {
-      group.individuals.forEach(ind => {
-        allIndividuals.set(ind.name, ind);
-      });
-    }
-    // All Participants
-    if (group.allParticipants) {
-      group.allParticipants.forEach(ind => {
-        allParticipants.set(ind.name, ind);
-      });
-    }
-  });
-
+function _mainRenderSummary(summaryStatDiv, summaryGroup, lastChecked) {
   // Summary情報を表示
-  const lastChecked = groupsData._metadata?.lastChecked;
   let dateStr = '';
   if (lastChecked) {
     const date = new Date(lastChecked);
@@ -198,13 +147,13 @@ function _mainRenderSummary(summaryStatDiv, groupsData) {
       <div>
         <div style="font-size: 1.25em; font-weight: 700; margin-bottom: 5px;">Summary</div>
         <div style="display: flex; gap: 7px; flex-wrap: wrap; font-size: 1em; line-height: 1.18; row-gap: 2px; margin-left: 10px;">
-          <span>Groups: ${groupsData.length}</span>
-          <span>Members (M): <span class="clickable" data-summary-type="members">${allMembers.size}</span></span>
-          <span>Member Participants (MP): <span class="clickable" data-summary-type="memberParticipants">${allMemberParticipants.size}</span></span>
-          <span>Invited Experts (IE): <span class="clickable" data-summary-type="invitedExperts">${allInvitedExperts.size}</span></span>
-          <span>Staffs (S): <span class="clickable" data-summary-type="staffs">${allStaffs.size}</span></span>
-          <span>Individuals (Ind): <span class="clickable" data-summary-type="individuals">${allIndividuals.size}</span></span>
-          <span>Participants (P): <span class="clickable" data-summary-type="allParticipants">${allParticipants.size}</span></span>
+          <span>Groups: ${summaryGroup.groupsCount}</span>
+          <span>Members (M): <span class="clickable" data-summary-type="members">${summaryGroup.membersCount}</span></span>
+          <span>Member Participants (MP): <span class="clickable" data-summary-type="memberParticipants">${summaryGroup.memberParticipantsCount}</span></span>
+          <span>Invited Experts (IE): <span class="clickable" data-summary-type="invitedExperts">${summaryGroup.invitedExpertsCount}</span></span>
+          <span>Staffs (S): <span class="clickable" data-summary-type="staffs">${summaryGroup.staffsCount}</span></span>
+          <span>Individuals (Ind): <span class="clickable" data-summary-type="individuals">${summaryGroup.individualsCount}</span></span>
+          <span>Participants (P): <span class="clickable" data-summary-type="allParticipants">${summaryGroup.allParticipantsCount}</span></span>
           <span style="font-size: 1em; color: #666;">Note: P=MP+IE+S+Ind</span>
         </div>
       </div>
@@ -220,40 +169,14 @@ function _mainRenderSummary(summaryStatDiv, groupsData) {
       const summaryType = target.getAttribute('data-summary-type');
       if (summaryType) {
         let initialFilter = summaryType;
-        let groupName = 'Summary';
-        // 全グループのmembersMapをマージ: 組織名→参加者配列（name重複排除をMapで実現）
-        const mergedMembersMap = new Map();
-        groupsData.forEach(group => {
-          if (group.membersMap) {
-            for (const [org, participants] of group.membersMap instanceof Map ? group.membersMap.entries() : Object.entries(group.membersMap)) {
-              if (!mergedMembersMap.has(org)) mergedMembersMap.set(org, new Map());
-              const orgMap = mergedMembersMap.get(org);
-              participants.forEach(p => {
-                if (p && p.name) orgMap.set(p.name, p);
-              });
-            }
-          }
-        });
-        // Map<org, Map<name, participant>> → Map<org, participant[]>
-        for (const [org, orgMap] of mergedMembersMap.entries()) {
-          mergedMembersMap.set(org, Array.from(orgMap.values()));
-        }
-        let groupInfo = new GroupInfo({
-          membersMap: mergedMembersMap,
-          memberParticipants: Array.from(allMemberParticipants.values()),
-          invitedExperts: Array.from(allInvitedExperts.values()),
-          staffs: Array.from(allStaffs.values()),
-          individuals: Array.from(allIndividuals.values()),
-          allParticipants: Array.from(allParticipants.values())
-        });
-        popupParticipationsSheet(groupInfo, groupName, initialFilter);
+        popupParticipationsSheet(summaryGroup, initialFilter);
       }
     });
   }
 }
 
 // groupsDivの描画をまとめるサブ関数
-function _mainRenderGroups({ groupsDiv, groupsData, sortedResults, filterType, sortBy }) {
+function _mainRenderGroups({ groupsDiv, groupsArray, sortedResults, filterType, sortBy }) {
   groupsDiv.innerHTML = '';
 
   // ヘッダーコンテナを作成
@@ -267,9 +190,9 @@ function _mainRenderGroups({ groupsDiv, groupsData, sortedResults, filterType, s
     cg: 0,
     tf: 0,
     other: 0,
-    all: groupsData.length
+    all: groupsArray.length
   };
-  groupsData.forEach(g => {
+  groupsArray.forEach(g => {
     const type = g.groupType;
     if (counts.hasOwnProperty(type)) {
       counts[type]++;
@@ -454,7 +377,7 @@ function _mainRenderGroups({ groupsDiv, groupsData, sortedResults, filterType, s
   }, 0);
 
   // テーブルボディ描画をサブ関数に分離
-  const bodyContainer = _mainRenderTableBody(groupsData, sortedResults);
+  const bodyContainer = _mainRenderTableBody(groupsArray, sortedResults);
   groupsDiv.appendChild(bodyContainer);
   // チャート描画はbodyContainer追加後に必ず呼ぶ
   _mainDrawGroupsCharts(sortedResults);
@@ -467,7 +390,7 @@ function _mainRenderGroups({ groupsDiv, groupsData, sortedResults, filterType, s
 
       const index = parseInt(target.getAttribute('data-index'));
       const type = target.getAttribute('data-type');
-      if (isNaN(index) || !groupsData[index]) return;
+      if (isNaN(index) || !groupsArray[index]) return;
 
       // Membersの場合は特別な3ペインポップアップを表示
       let initialFilter = 'members';
@@ -484,12 +407,12 @@ function _mainRenderGroups({ groupsDiv, groupsData, sortedResults, filterType, s
       } else if (type === 'individuals') {
         initialFilter = 'individuals';
       }
-      popupParticipationsSheet(groupsData[index], groupsData[index].name, initialFilter);
+      popupParticipationsSheet(groupsArray[index], initialFilter);
     });
   }
 }
 
-function _mainRenderTableBody(groupsData, sortedResults) {
+function _mainRenderTableBody(groupsArray, sortedResults) {
   // ボディコンテナを作成
   const bodyContainer = document.createElement('div');
   bodyContainer.className = 'table-body-container';
@@ -506,7 +429,7 @@ function _mainRenderTableBody(groupsData, sortedResults) {
     const row = document.createElement('tr');
 
     // 元のインデックスを保存
-    const originalIndex = groupsData.indexOf(g);
+    const originalIndex = groupsArray.indexOf(g);
 
     // グループ名
     const nameCell = document.createElement('td');
@@ -738,7 +661,7 @@ function _maindrawBarChart(container, values, colors, maxValue) {
 /* ##
  popupParticipationsSheet()でPopupを表示, 利用されるサブ関数の名前は’_poupup’で始まる
  ### */
-async function popupParticipationsSheet(groupInfo, groupName, initialFilter = 'members') {
+async function popupParticipationsSheet(groupInfo, initialFilter = 'members') {
   const popup = document.getElementById('participationsPopup');
   const overlay = document.getElementById('participationsPopupOverlay');
   const title = document.getElementById('participationsPopupTitle');
@@ -746,7 +669,7 @@ async function popupParticipationsSheet(groupInfo, groupName, initialFilter = 'm
   const participantsListContent = document.getElementById('participantsListContent');
   const userDetailContent = document.getElementById('userDetailContent');
 
-  title.textContent = groupName;
+  title.textContent = groupInfo.name
 
   const counts = {
     members: groupInfo.membersMap instanceof Map ? groupInfo.membersMap.size : 0,

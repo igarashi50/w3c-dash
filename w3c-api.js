@@ -434,15 +434,89 @@ function extractGroupInfo(group) {
   return groupInfo;
 }
 
+function createSummaryGroup(groups) {
+  // 全体統計を計算（重複を除く）
+  const allMembers = new Map();
+  const allMemberParticipants = new Map();
+  const allInvitedExperts = new Map();
+  const allStaffs = new Map();
+  const allIndividuals = new Map();
+  const allParticipants = new Map()
+
+  groups.forEach(group => {
+    // Members
+    if (group.membersMap) {
+      for (const [org, participants] of group.membersMap instanceof Map ? group.membersMap.entries() : Object.entries(group.membersMap)) {
+        if (!allMembers.has(org)) allMembers.set(org, []);
+        allMembers.get(org).push(...participants);
+      }
+    }
+    // Member Participants
+    if (group.memberParticipants) {
+      group.memberParticipants.forEach(user => {
+        allMemberParticipants.set(user.name, user);
+      });
+    }
+    // Invited Experts
+    if (group.invitedExperts) {
+      group.invitedExperts.forEach(ie => {
+        allInvitedExperts.set(ie.name, ie);
+      });
+    }
+    // Staffs
+    if (group.staffs) {
+      group.staffs.forEach(staff => {
+        allStaffs.set(staff.name, staff);
+      });
+    }
+    // Individuals
+    if (group.individuals) {
+      group.individuals.forEach(ind => {
+        allIndividuals.set(ind.name, ind);
+      });
+    }
+    // All Participants
+    if (group.allParticipants) {
+      group.allParticipants.forEach(ind => {
+        allParticipants.set(ind.name, ind);
+      });
+    }
+  });
+
+  const groupInfo = new GroupInfo({
+    name: 'Summary',
+    groupType: 'summary',
+    membersCount: allMembers.size,
+    membersMap: allMembers,
+    memberParticipantsCount: allMemberParticipants.size,
+    memberParticipants: allMemberParticipants.size > 0 ? Array.from(allMemberParticipants.values()) : [],
+    invitedExpertsCount: allInvitedExperts.size,
+    invitedExperts: allInvitedExperts.size > 0 ? Array.from(allInvitedExperts.values()) : [],
+    individualsCount: allIndividuals.size,
+    individuals: allIndividuals.size > 0 ? Array.from(allIndividuals.values()) : [],
+    staffsCount: allStaffs.size,
+    staffs: allStaffs.size > 0 ? Array.from(allStaffs.values()) : [],
+    allParticipantsCount: allParticipants.size,
+    allParticipants: allParticipants.size > 0 ? Array.from(allParticipants.values()) : [],
+    isException: false,  // some IGs, task forces and other groups, e.g. ab.
+    homepage: undefined
+  });
+  return groupInfo;
+}
+
 // すべてのグループ情報を取得（メイン関数）
 async function getAllGroupsInfo() {
   await loadData();
   const groups = extractGroups();
 
-  const result = groups.map(group => extractGroupInfo(group));
+  const groupsArray = groups.map(group => extractGroupInfo(group))
+  const summaryGroup = createSummaryGroup(groupsArray);
 
-  // _metadataを追加
-  result._metadata = globalApiData.groupsData._metadata;
+  const groupsInfo = {
+    groupsArray,
+    summaryGroup,
+    _metadata: globalApiData.groupsData._metadata
+  };
 
-  return result;
+  return groupsInfo;
 }
