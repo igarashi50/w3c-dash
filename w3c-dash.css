@@ -376,7 +376,11 @@ button {
 
 #participationsPopupTitle {
   font-weight: 600;
-  font-size: 16px;
+  font-size: clamp(14px, 3vw, 24px); /* 画面幅に応じて自動調整 */
+  max-width: 60vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #participationsPopupClose  {

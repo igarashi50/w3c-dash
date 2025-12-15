@@ -725,7 +725,7 @@ async function popupParticipationsSheet(groupInfo, initialFilter = 'members', on
   const checkSpan = document.getElementById('toggleonlyGroupParticipationsPopupCheck');
   const toggleBtnWrap = toggleBtn ? toggleBtn.parentElement : null;
   if (onlyGroupParticipationsSummaryGroup != null) {
-    // Only Group Participantsトグルボタンの表示制御
+    // Only Group Participantsトグルボタンの表示制御　toggleBtnWrap
     toggleBtnWrap.style.display = '';
 
     // トグルボタンのイベントハンドラ追加
@@ -966,9 +966,11 @@ async function _popupRenderMembersList(groupInfo, membersListContent, affiliatio
   // ボタンイベント
   nameSortBtn.addEventListener('click', () => {
     sortMode = 'name';
-    localStorage.setItem('popupParticipationsSortMode', sortMode);
+    localStorage.setItem('popupParticipantsSortMode', sortMode);
     nameSortBtn.classList.add('active');
     countSortBtn.classList.remove('active');
+    // popupParticipantsSortModeもグローバルに反映
+    window.popupParticipantsSortMode = sortMode;
     _popupRenderMembersListContent({
       groupInfo,
       members,
@@ -982,9 +984,11 @@ async function _popupRenderMembersList(groupInfo, membersListContent, affiliatio
   });
   countSortBtn.addEventListener('click', () => {
     sortMode = 'count';
-    localStorage.setItem('popupParticipationsSortMode', sortMode);
+    localStorage.setItem('popupParticipantsSortMode', sortMode);
     countSortBtn.classList.add('active');
     nameSortBtn.classList.remove('active');
+    // popupParticipantsSortModeもグローバルに反映
+    window.popupParticipantsSortMode = sortMode;
     _popupRenderMembersListContent({
       groupInfo,
       members,
@@ -1251,7 +1255,7 @@ async function _popupRenderParticipantsForMember(groupInfo, memberOrg) {
   participantsTitle.appendChild(sortBtnBar);
 
   // ソートモード
-  let sortMode = 'name';
+  let sortMode = localStorage.getItem('popupParticipantsSortMode') || 'name';
   function renderList() {
     participantsListContent.innerHTML = '';
     let sortedParticipants;
@@ -1301,12 +1305,18 @@ async function _popupRenderParticipantsForMember(groupInfo, memberOrg) {
   // ボタンイベント
   nameSortBtn.addEventListener('click', () => {
     sortMode = 'name';
+    localStorage.setItem('popupParticipantsSortMode', sortMode);
+    // popupParticipantsSortModeもグローバルに反映
+    window.popupParticipantsSortMode = sortMode;
     nameSortBtn.classList.add('active');
     numGroupsSortBtn.classList.remove('active');
     renderList();
   });
   numGroupsSortBtn.addEventListener('click', () => {
     sortMode = 'numGroups';
+    localStorage.setItem('popupParticipantsSortMode', sortMode);
+    // popupParticipantsSortModeもグローバルに反映
+    window.popupParticipantsSortMode = sortMode;
     numGroupsSortBtn.classList.add('active');
     nameSortBtn.classList.remove('active');
     renderList();
