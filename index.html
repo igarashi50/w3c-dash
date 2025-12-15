@@ -45,7 +45,41 @@
         <option value="team">Team ↓</option>
         <option value="individuals">Individuals ↓</option>
       </select>
-      <div id="summary-stats" class="small"></div>
+        <!-- Summary Row (HTML構造をJSから分離) -->
+        <section id="summarySection" style="border: 1px solid #ddd; border-radius: 4px; padding: 10px; background: #f8f9fa; margin-bottom: 1.5px; display: flex; flex-direction: column; gap: 2px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; width: 100%;">
+            <span style="font-size: 1.15em; font-weight: 700;">Summary <span id="dateStr" style="font-size:0.95em; font-weight:400; color:#666; margin-left:8px;"></span></span>
+            <button id="toggleOnlyGroupParticipants" type="button" style="padding: 0 3px; height: 12px; font-size: 0.65em; border: 1px solid #bbb; border-radius: 3px; background: #f3f3f3; cursor: pointer; display: flex; align-items: center; gap: 2px; min-width: 0; box-sizing: border-box; margin-left: auto;">
+              <span id="toggleOnlyGroupParticipantsCheck" style="display: inline-block; width: 8px; height: 8px; border: 1px solid #bbb; border-radius: 2px; background: #fff; text-align: center; font-size: 0.7em; line-height: 7px; color: #0969da; transition: background 0.2s; margin-right: 2px;"> </span>
+              <span style="font-size: 1.15em; color: #222; font-weight: 400; user-select: none;">Only Group Participants</span>
+            </button>
+          </div>
+          <div style="display: flex; font-size: 0.82em; gap: 7px; flex-wrap: wrap; line-height: 1.18; row-gap: 2px; margin-left: 10px;">
+            <span>Groups (G): <span id="summaryGroups" class="summary-count"></span></span>
+            <span>Members (M): <span class="clickable summary-count" id="summaryMembers" data-summary-type="members"></span></span>
+            <span>Member Participants (MP): <span class="clickable summary-count" id="summaryMemberParticipants" data-summary-type="memberParticipants"></span></span>
+            <span>Invited Experts (IE): <span class="clickable summary-count" id="summaryInvitedExperts" data-summary-type="invitedExperts"></span></span>
+            <span>Staffs (S): <span class="clickable summary-count" id="summaryStaffs" data-summary-type="staffs"></span></span>
+            <span>Individuals (Ind): <span class="clickable summary-count" id="summaryIndividuals" data-summary-type="individuals"></span></span>
+            <span>Participants (P): <span class="clickable summary-count" id="summaryAllParticipants" data-summary-type="allParticipants"></span></span>
+            <span style="font-size: 0.9em; color: #666;">Note: P=MP+IE+S+Ind</span>
+          </div>
+        </section>
+        <div id="summary-stats"></div>
+    </div>
+    <!-- グループ種別フィルタバーをgroupsDivの外側（上）に配置 -->
+    <div class="filter-bar">
+      <div style="display: flex; flex-direction: column; gap: 1px; padding: 10px; background: #f6f8fa; border-bottom: 1px solid #ddd;">
+        <div style="font-size: 1.15em; font-weight: 600; margin-bottom: 5px;">Groups</div>
+        <div id="groupTypeFilter" style="font-size: 0.95em; display: flex; gap: 1.5px; flex-wrap: wrap; margin-left: 10px;">
+          <button class="filter-btn" data-type="wg">Working Groups</button>
+          <button class="filter-btn" data-type="ig">Interest Groups</button>
+          <button class="filter-btn" data-type="cg">Community Groups</button>
+          <button class="filter-btn" data-type="tf">Task Forces</button>
+          <button class="filter-btn" data-type="other">Other Groups</button>
+          <button class="filter-btn" data-type="all">All Groups</button>
+        </div>
+      </div>
     </div>
     <div id="groups"></div>
     <div
@@ -74,9 +108,20 @@
     </div>
     <div id="participationsFilter"
       style="padding: 8px 12px; background: #f6f8fa; border-bottom: 1px solid #ddd; display: flex; flex-direction: column; gap: 8px;">
-      <span style="font-size: 18px; font-weight: 600;">Participations</span>
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-size: 18px; font-weight: 600;">Participations</span>
+        <button id="toggleOnlyGroupParticipantsPopup" type="button" style="padding: 0 3px; height: 18px; font-size: 0.75em; border: 1px solid #bbb; border-radius: 3px; background: #f3f3f3; cursor: pointer; display: flex; align-items: center; gap: 2px; min-width: 0; box-sizing: border-box; margin-left: auto;">
+          <span id="toggleOnlyGroupParticipantsPopupCheck" style="display: inline-block; width: 10px; height: 10px; border: 1px solid #bbb; border-radius: 2px; background: #fff; text-align: center; font-size: 0.8em; line-height: 9px; color: #0969da; transition: background 0.2s; margin-right: 2px;"> </span>
+          <span style="font-size: 1.05em; color: #222; font-weight: 400; user-select: none;">Only Group Participants</span>
+        </button>
+      </div>
       <div id="participationsButtonContainer" style="display: flex; gap: 4px; flex-wrap: wrap;">
-        <!-- Filter buttons will be added here -->
+        <button class="filter-btn" data-filter="members">Members: <span class="filter-count" id="filterCountMembers"></span></button>
+        <button class="filter-btn" data-filter="memberParticipants">Member participants: <span class="filter-count" id="filterCountMemberParticipants"></span></button>
+        <button class="filter-btn" data-filter="invitedExperts">Invited Experts: <span class="filter-count" id="filterCountInvitedExperts"></span></button>
+        <button class="filter-btn" data-filter="staffs">Staffs: <span class="filter-count" id="filterCountStaffs"></span></button>
+        <button class="filter-btn" data-filter="individuals">Individuals: <span class="filter-count" id="filterCountIndividuals"></span></button>
+        <button class="filter-btn" data-filter="allParticipants">All participants: <span class="filter-count" id="filterCountAllParticipants"></span></button>
       </div>
     </div>
     <div id="participationsPopupBody">

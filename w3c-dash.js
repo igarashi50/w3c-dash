@@ -121,12 +121,87 @@ document.addEventListener('keydown', (e) => {
 
 renderDashboard()
 // 描画終了
+// --- Only Group Participantsトグルの連動制御 ---
+function setOnlyGroupParticipantsToggleUI(isChecked) {
+  // Summary側
+  const btn1 = document.getElementById('toggleOnlyGroupParticipants');
+  const check1 = document.getElementById('toggleOnlyGroupParticipantsCheck');
+  // Popup側
+  const btn2 = document.getElementById('toggleOnlyGroupParticipantsPopup');
+  const check2 = document.getElementById('toggleOnlyGroupParticipantsPopupCheck');
+  if (btn1 && check1) {
+    if (isChecked) {
+      check1.style.background = '#0969da';
+      check1.textContent = '✓';
+      check1.style.color = '#fff';
+    } else {
+      check1.style.background = '#fff';
+      check1.textContent = ' ';
+      check1.style.color = '#0969da';
+    }
+  }
+  if (btn2 && check2) {
+    if (isChecked) {
+      check2.style.background = '#0969da';
+      check2.textContent = '✓';
+      check2.style.color = '#fff';
+    } else {
+      check2.style.background = '#fff';
+      check2.textContent = ' ';
+      check2.style.color = '#0969da';
+    }
+  }
+}
+
+function getOnlyGroupParticipantsToggle() {
+  return localStorage.onlyGroupParticipants === 'true';
+}
+
+function setOnlyGroupParticipantsToggle(val) {
+  localStorage.onlyGroupParticipants = val ? 'true' : 'false';
+  setOnlyGroupParticipantsToggleUI(val);
+  // 必要ならここで再描画やフィルタ適用処理を呼ぶ
+  // 例: renderDashboard();
+}
+
+function setupOnlyGroupParticipantsToggleListeners() {
+  const btn1 = document.getElementById('toggleOnlyGroupParticipants');
+  const btn2 = document.getElementById('toggleOnlyGroupParticipantsPopup');
+  if (btn1) {
+    btn1.onclick = () => {
+      const newVal = !getOnlyGroupParticipantsToggle();
+      setOnlyGroupParticipantsToggle(newVal);
+    };
+  }
+  if (btn2) {
+    btn2.onclick = () => {
+      const newVal = !getOnlyGroupParticipantsToggle();
+      setOnlyGroupParticipantsToggle(newVal);
+    };
+  }
+}
+
+// 初期化
+document.addEventListener('DOMContentLoaded', () => {
+  setOnlyGroupParticipantsToggleUI(getOnlyGroupParticipantsToggle());
+  setupOnlyGroupParticipantsToggleListeners();
+});
+
+// Popup表示時にもUI状態を同期
+if (typeof popupParticipationsSheet === 'function') {
+  const origPopupParticipationsSheet = popupParticipationsSheet;
+  window.popupParticipationsSheet = async function(...args) {
+    setTimeout(() => setOnlyGroupParticipantsToggleUI(getOnlyGroupParticipantsToggle()), 0);
+    return origPopupParticipationsSheet.apply(this, args);
+  };
+}
 
 /* 
 以下はmainパネルの表示用のサブ関数 '_main'で始まる関数
 */
 function _mainRenderSummary(summaryStatDiv, groupCounts, summaryGroup, lastChecked) {
   // Summary情報を表示
+  // 日付表示
   let dateStr = '';
   if (lastChecked) {
     const date = new Date(lastChecked);
@@ -136,51 +211,74 @@ function _mainRenderSummary(summaryStatDiv, groupCounts, summaryGroup, lastCheck
     const year = date.getUTCFullYear();
     dateStr = `as of ${month} ${day}, ${year}`;
   }
-  // タイトル右のdateStrに表示
   const dateStrSpan = document.getElementById('dateStr');
   if (dateStrSpan) {
     dateStrSpan.textContent = dateStr;
   }
-  summaryStatDiv.innerHTML = `
-    <section style="border: 1px solid #ddd; border-radius: 4px; padding: 10px; background: #f8f9fa; margin-bottom: 1.5px; display: flex; justify-content: space-between; align-items: flex-start;">
-      <div>
-        <div style="font-size: 1.25em; font-weight: 700; margin-bottom: 5px;">Summary</div>
-        <div style="display: flex; gap: 7px; flex-wrap: wrap; font-size: 1em; line-height: 1.18; row-gap: 2px; margin-left: 10px;">
-          <span>Groups (G): ${groupCounts}</span>
-          <span>Members (M): <span class="clickable" data-summary-type="members">${summaryGroup.membersCount}</span></span>
-          <span>Member Participants (MP): <span class="clickable" data-summary-type="memberParticipants">${summaryGroup.memberParticipantsCount}</span></span>
-          <span>Invited Experts (IE): <span class="clickable" data-summary-type="invitedExperts">${summaryGroup.invitedExpertsCount}</span></span>
-          <span>Staffs (S): <span class="clickable" data-summary-type="staffs">${summaryGroup.staffsCount}</span></span>
-          <span>Individuals (Ind): <span class="clickable" data-summary-type="individuals">${summaryGroup.individualsCount}</span></span>
-          <span>Participants (P): <span class="clickable" data-summary-type="allParticipants">${summaryGroup.allParticipantsCount}</span></span>
-          <span style="font-size: 1em; color: #666;">Note: P=MP+IE+S+Ind</span>
-        </div>
-      </div>
-    </section>
-  `;
 
+  // summary値の更新
+  const summaryGroups = document.getElementById('summaryGroups');
+  if (summaryGroups) summaryGroups.textContent = groupCounts;
+  const summaryMembers = document.getElementById('summaryMembers');
+  if (summaryMembers) summaryMembers.textContent = summaryGroup.membersCount;
+  const summaryMemberParticipants = document.getElementById('summaryMemberParticipants');
+  if (summaryMemberParticipants) summaryMemberParticipants.textContent = summaryGroup.memberParticipantsCount;
+  const summaryInvitedExperts = document.getElementById('summaryInvitedExperts');
+  if (summaryInvitedExperts) summaryInvitedExperts.textContent = summaryGroup.invitedExpertsCount;
+  const summaryStaffs = document.getElementById('summaryStaffs');
+  if (summaryStaffs) summaryStaffs.textContent = summaryGroup.staffsCount;
+  const summaryIndividuals = document.getElementById('summaryIndividuals');
+  if (summaryIndividuals) summaryIndividuals.textContent = summaryGroup.individualsCount;
+  const summaryAllParticipants = document.getElementById('summaryAllParticipants');
+  if (summaryAllParticipants) summaryAllParticipants.textContent = summaryGroup.allParticipantsCount;
+
+  // トグルボタンのイベントハンドラ追加
+  const toggleBtn = document.getElementById('toggleOnlyGroupParticipants');
+  const checkSpan = document.getElementById('toggleOnlyGroupParticipantsCheck');
+  if (toggleBtn && checkSpan) {
+    let onlyGroupParticipants = localStorage.getItem('onlyGroupParticipants') === 'true';
+    function updateToggleBtn() {
+      toggleBtn.style.background = '#f3f3f3';
+      toggleBtn.style.color = '#222';
+      checkSpan.style.background = '#fff';
+      checkSpan.style.borderColor = onlyGroupParticipants ? '#0969da' : '#bbb';
+      checkSpan.innerHTML = onlyGroupParticipants ? '✔' : '';
+      checkSpan.style.width = '8px';
+      checkSpan.style.height = '8px';
+      checkSpan.style.fontSize = '0.7em';
+      checkSpan.style.lineHeight = '7px';
+    }
+    updateToggleBtn();
+    toggleBtn.onclick = () => {
+      onlyGroupParticipants = !onlyGroupParticipants;
+      localStorage.setItem('onlyGroupParticipants', onlyGroupParticipants);
+      updateToggleBtn();
+      // 必要に応じて再描画やフィルタ処理をここで呼ぶ
+      // 例: renderDashboard();
+    };
+  }
+
+  // Summaryクリックイベント
   if (!attachedSummaryHandler) {
     attachedSummaryHandler = true;
-    // Summaryのクリックイベント
-    summary.addEventListener('click', ev => {
-      const target = ev.target.closest('.clickable');
-      if (!target) return;
-      const summaryType = target.getAttribute('data-summary-type');
-      if (summaryType) {
-        let initialFilter = summaryType;
-        popupParticipationsSheet(summaryGroup, initialFilter);
-      }
-    });
+    const summarySection = document.getElementById('summarySection');
+    if (summarySection) {
+      summarySection.addEventListener('click', ev => {
+        const target = ev.target.closest('.clickable');
+        if (!target) return;
+        const summaryType = target.getAttribute('data-summary-type');
+        if (summaryType) {
+          let initialFilter = summaryType;
+          popupParticipationsSheet(summaryGroup, initialFilter);
+        }
+      });
+    }
   }
 }
 
 // groupsDivの描画をまとめるサブ関数
 function _mainRenderGroups({ groupsDiv, groupsArray, sortedResults, filterType, sortBy }) {
   groupsDiv.innerHTML = '';
-
-  // ヘッダーコンテナを作成
-  const headerContainer = document.createElement('div');
-  headerContainer.className = 'table-header-container';
 
   // 各タイプのグループ数を計算
   const counts = {
@@ -221,23 +319,10 @@ function _mainRenderGroups({ groupsDiv, groupsArray, sortedResults, filterType, 
     { key: 'charts', label: 'Charts', sortable: false }
   ];
 
-  // フィルター行を別要素として作成
-  const filterBar = document.createElement('div');
-  filterBar.className = 'filter-bar';
-  filterBar.innerHTML = `
-    <div style="display: flex; flex-direction: column; gap: 1px; padding: 10px; background: #f6f8fa; border-bottom: 1px solid #ddd;">
-      <div style="font-size: 1em; font-weight: 600; margin-bottom: 5px;">Groups</div>
-      <div id="groupTypeFilter" style="display: flex; gap: 1.5px; flex-wrap: wrap; margin-left: 10px;">
-        <button class="filter-btn" data-type="wg">WG</button>
-        <button class="filter-btn" data-type="ig">IG</button>
-        <button class="filter-btn" data-type="cg">CG</button>
-        <button class="filter-btn" data-type="tf">TF</button>
-        <button class="filter-btn" data-type="other">Other</button>
-        <button class="filter-btn" data-type="all">All</button>
-      </div>
-    </div>
-  `;
-  headerContainer.appendChild(filterBar);
+
+  // ヘッダーコンテナを作成
+  const headerContainer = document.createElement('div');
+  headerContainer.className = 'table-header-container';
 
   // テーブル（ヘッダー用）を作成
   const headerTable = document.createElement('table');
@@ -341,22 +426,16 @@ function _mainRenderGroups({ groupsDiv, groupsArray, sortedResults, filterType, 
   headerContainer.appendChild(headerTable);
   groupsDiv.appendChild(headerContainer);
 
-  // フィルターボタンのイベントリスナー（テーブル再作成のたびに設定）
+  // フィルターボタンのイベントリスナーと値（数値）だけを設定
   setTimeout(() => {
-    const filterTypeLabels = {
-      'wg': 'Working Groups',
-      'ig': 'Interest Groups',
-      'cg': 'Community Groups',
-      'tf': 'Task Forces',
-      'other': 'Other Groups',
-      'all': 'All Groups'
-    };
     const groupTypeFilter = document.getElementById('groupTypeFilter');
     if (groupTypeFilter) {
       const currentFilterType = localStorage.getItem('groupTypeFilter') || 'wg';
       groupTypeFilter.querySelectorAll('.filter-btn').forEach(btn => {
         const type = btn.dataset.type;
-        const label = filterTypeLabels[type] || type.toUpperCase();
+        // ラベル部分はindex.htmlのまま、コロン以降の数値だけを更新
+        const labelMatch = btn.textContent.match(/^(.+?):/);
+        const label = labelMatch ? labelMatch[1] : btn.textContent;
         btn.textContent = `${label}: ${counts[type]}`;
         // アクティブクラスを設定
         if (btn.dataset.type === currentFilterType) {
@@ -365,12 +444,12 @@ function _mainRenderGroups({ groupsDiv, groupsArray, sortedResults, filterType, 
           btn.classList.remove('active');
         }
         // イベントリスナーを設定
-        btn.addEventListener('click', (e) => {
+        btn.onclick = (e) => {
           e.stopPropagation();
           const type = btn.dataset.type;
           localStorage.setItem('groupTypeFilter', type);
           renderDashboard();
-        });
+        };
       });
     }
   }, 0);
@@ -689,43 +768,38 @@ async function popupParticipationsSheet(groupInfo, initialFilter = 'members') {
 
   let currentFilter = initialFilter;
 
-  const filterBar = document.getElementById('participationsFilter');
-  if (filterBar) {
-    const buttonContainer = document.getElementById('participationsButtonContainer');
-    if (buttonContainer) {
-      buttonContainer.innerHTML = '';
-      const filters = ['members', 'memberParticipants', 'invitedExperts', 'staffs', 'individuals', 'allParticipants'];
-      const filterLabels = {
-        'members': 'Members',
-        'memberParticipants': 'Member participants',
-        'invitedExperts': 'Invited Experts',
-        'staffs': 'Staffs',
-        'individuals': 'Individuals',
-        'allParticipants': 'All participants'
-      };
-      filters.forEach(filter => {
-        const btn = document.createElement('button');
-        btn.className = 'filter-btn';
-        if (groupInfo.isException && (filter === 'members' || filter === 'memberParticipants' || filter === 'invitedExperts' || filter === 'individuals')) {
-          btn.classList.add('exception');
-        }
-        btn.setAttribute('data-filter', filter);
-        btn.textContent = `${filterLabels[filter]}: ${counts[filter]}`;
-        buttonContainer.appendChild(btn);
-      });
+  // 既存の静的ボタンのラベル・数値・例外状態を更新
+  const filters = ['members', 'memberParticipants', 'invitedExperts', 'staffs', 'individuals', 'allParticipants'];
+  filters.forEach(filter => {
+    const btn = document.querySelector(`#participationsButtonContainer .filter-btn[data-filter="${filter}"]`);
+    const countSpan = document.getElementById(`filterCount${filter.charAt(0).toUpperCase() + filter.slice(1)}`);
+    if (btn) {
+      // 例外グループの場合はexceptionクラスを付与
+      if (groupInfo.isException && (filter === 'members' || filter === 'memberParticipants' || filter === 'invitedExperts' || filter === 'individuals')) {
+        btn.classList.add('exception');
+      } else {
+        btn.classList.remove('exception');
+      }
     }
-  }
+    if (countSpan) {
+      countSpan.textContent = counts[filter];
+    }
+  });
 
-  // フィルターボタンのイベントリスナー
-  const filterButtons = document.querySelectorAll('#participationsFilter .filter-btn');
+  // フィルターボタンのイベントリスナー（静的HTML対応）
+  const filterButtons = document.querySelectorAll('#participationsButtonContainer .filter-btn');
   filterButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.onclick = () => {
       filterButtons.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentFilter = btn.dataset.filter;
       _popupRenderFilteredList(groupInfo, currentFilter, membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle);
-    });
+    };
   });
+  // 初期activeボタン設定
+  filterButtons.forEach(b => b.classList.remove('active'));
+  const initialBtn = document.querySelector(`#participationsButtonContainer .filter-btn[data-filter="${currentFilter}"]`);
+  if (initialBtn) initialBtn.classList.add('active');
 
   // 初期リストを表示
   await _popupRenderFilteredList(groupInfo, currentFilter, membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle);
@@ -936,8 +1010,8 @@ async function _popupRenderMembersList(groupInfo, membersListContent, affiliatio
 async function _popupRenderTypeList(groupInfo, typeKey, typeLabel, membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle) {
   _popupRenderParticipantsList({
     list: (typeKey === 'invitedExperts') ? (groupInfo.invitedExperts || []) :
-          (typeKey === 'staffs') ? (groupInfo.staffs || []) :
-          (typeKey === 'individuals') ? (groupInfo.individuals || []) : [],
+      (typeKey === 'staffs') ? (groupInfo.staffs || []) :
+        (typeKey === 'individuals') ? (groupInfo.individuals || []) : [],
     label: typeLabel,
     membersListContent,
     participantsListContent,
@@ -948,7 +1022,7 @@ async function _popupRenderTypeList(groupInfo, typeKey, typeLabel, membersListCo
 }
 
 // 共通化: 参加者リスト＋numGroups＋ソートUI
-function _popupRenderParticipantsList({list, label, membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle}) {
+function _popupRenderParticipantsList({ list, label, membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle }) {
   // 左ペインタイトル
   const div = document.createElement('div');
   div.className = 'member-item selected';
@@ -1115,7 +1189,7 @@ async function _popupRenderParticipantsForMember(groupInfo, memberOrg) {
   userDetailContent.innerHTML = '<p style="padding: 12px; color: #666;">Select a participant to view detail</p>';
 
   // membersMapから該当する組織のparticipantsを取得
-  const participants = groupInfo.membersMap && groupInfo.membersMap.get? groupInfo.membersMap.get(memberOrg) || [] : [];
+  const participants = groupInfo.membersMap && groupInfo.membersMap.get ? groupInfo.membersMap.get(memberOrg) || [] : [];
 
   const participantsTitle = document.querySelector('#participantsList h3');
   // --- タイトル右にソートボタン配置 ---
