@@ -42,16 +42,16 @@
         <option value="allParticipants">All Participants ↓</option>
         <option value="memberParticipants">Member Participants ↓</option>
         <option value="members">Members ↓</option>
-        <option value="team">Team ↓</option>
+        <option value="staffs">Staffs ↓</option>
         <option value="individuals">Individuals ↓</option>
       </select>
         <!-- Summary Row (HTML構造をJSから分離) -->
         <section id="summarySection" style="border: 1px solid #ddd; border-radius: 4px; padding: 10px; background: #f8f9fa; margin-bottom: 1.5px; display: flex; flex-direction: column; gap: 2px;">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; width: 100%;">
             <span style="font-size: 1.15em; font-weight: 700;">Summary <span id="dateStr" style="font-size:0.95em; font-weight:400; color:#666; margin-left:8px;"></span></span>
-            <button id="toggleOnlyGroupParticipants" type="button" style="padding: 0 3px; height: 12px; font-size: 0.65em; border: 1px solid #bbb; border-radius: 3px; background: #f3f3f3; cursor: pointer; display: flex; align-items: center; gap: 2px; min-width: 0; box-sizing: border-box; margin-left: auto;">
-              <span id="toggleOnlyGroupParticipantsCheck" style="display: inline-block; width: 8px; height: 8px; border: 1px solid #bbb; border-radius: 2px; background: #fff; text-align: center; font-size: 0.7em; line-height: 7px; color: #0969da; transition: background 0.2s; margin-right: 2px;"> </span>
-              <span style="font-size: 1.15em; color: #222; font-weight: 400; user-select: none;">Only Group Participants</span>
+            <button id="toggleonlyGroupParticipations" type="button" style="padding: 0 3px; height: 12px; font-size: 0.65em; border: 1px solid #bbb; border-radius: 3px; background: #f3f3f3; cursor: pointer; display: flex; align-items: center; gap: 2px; min-width: 0; box-sizing: border-box; margin-left: auto;">
+              <span id="toggleonlyGroupParticipationsCheck" style="display: inline-block; width: 8px; height: 8px; border: 1px solid #bbb; border-radius: 2px; background: #fff; text-align: center; font-size: 0.7em; line-height: 7px; color: #0969da; transition: background 0.2s; margin-right: 2px;"> </span>
+              <span style="font-size: 1.15em; color: #222; font-weight: 400; user-select: none;">Only Group Participations</span>
             </button>
           </div>
           <div style="display: flex; font-size: 0.82em; gap: 7px; flex-wrap: wrap; line-height: 1.18; row-gap: 2px; margin-left: 10px;">
@@ -110,9 +110,9 @@
       style="padding: 8px 12px; background: #f6f8fa; border-bottom: 1px solid #ddd; display: flex; flex-direction: column; gap: 8px;">
       <div style="display: flex; align-items: center; justify-content: space-between;">
         <span style="font-size: 18px; font-weight: 600;">Participations</span>
-        <button id="toggleOnlyGroupParticipantsPopup" type="button" style="padding: 0 3px; height: 18px; font-size: 0.75em; border: 1px solid #bbb; border-radius: 3px; background: #f3f3f3; cursor: pointer; display: flex; align-items: center; gap: 2px; min-width: 0; box-sizing: border-box; margin-left: auto;">
-          <span id="toggleOnlyGroupParticipantsPopupCheck" style="display: inline-block; width: 10px; height: 10px; border: 1px solid #bbb; border-radius: 2px; background: #fff; text-align: center; font-size: 0.8em; line-height: 9px; color: #0969da; transition: background 0.2s; margin-right: 2px;"> </span>
-          <span style="font-size: 1.05em; color: #222; font-weight: 400; user-select: none;">Only Group Participants</span>
+        <button id="toggleonlyGroupParticipationsPopup" type="button" style="padding: 0 3px; height: 18px; font-size: 0.75em; border: 1px solid #bbb; border-radius: 3px; background: #f3f3f3; cursor: pointer; display: flex; align-items: center; gap: 2px; min-width: 0; box-sizing: border-box; margin-left: auto;">
+          <span id="toggleonlyGroupParticipationsPopupCheck" style="display: inline-block; width: 10px; height: 10px; border: 1px solid #bbb; border-radius: 2px; background: #fff; text-align: center; font-size: 0.8em; line-height: 9px; color: #0969da; transition: background 0.2s; margin-right: 2px;"> </span>
+          <span style="font-size: 1.05em; color: #222; font-weight: 400; user-select: none;">Only Group Participations</span>
         </button>
       </div>
       <div id="participationsButtonContainer" style="display: flex; gap: 4px; flex-wrap: wrap;">

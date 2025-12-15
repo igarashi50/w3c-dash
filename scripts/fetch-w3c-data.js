@@ -11,7 +11,7 @@ function logVerbose(msg) { if (VERBOSE) console.log(msg); }
 
 // グローバル変数廃止。各Phase関数で都度ファイルロード・ローカル変数化。
 let fetchStartTime = ''; // 取得開始時刻（表示用）
-let fetchStartTimestamp = 0; // 取得開始時刻（タイムスタンプ）
+let fetchStartTimestamp = 0; // 取得開始時刻（タイムスタンプ）p
 let phaseRequestCount = 0; // 各PhaseのfetchJson呼び出し回数
 let phaseStartTimestamp = 0; // 各Phaseの開始時刻
 let totalRequestCount = 0; // 全体のfetchJson呼び出し回数

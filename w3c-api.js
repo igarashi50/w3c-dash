@@ -69,17 +69,22 @@ function findByDataUrl(targetUrl) {
 
 // data/w3c-*.json を読み込む
 async function loadData() {
-  const [groupsResponse, participationsResponse, usersResponse, affiliationsResponse] = await Promise.all([
+  const [dataResponse, groupsResponse, participationsResponse, usersResponse, affiliationsResponse] = await Promise.all([
+    fetch('data/w3c-data.json'),
     fetch('data/w3c-groups.json'),
     fetch('data/w3c-participations.json'),
     fetch('data/w3c-users.json'),
     fetch('data/w3c-affiliations.json')
   ]);
 
+  if (!dataResponse.ok) {
+    throw new Error(`Failed to load w3c-data.json: ${dataResponse.status}`);
+  }
+  const mainData = await dataResponse.json();
+
   if (!groupsResponse.ok) {
     throw new Error(`Failed to load w3c-groups.json: ${groupsResponse.status}`);
   }
-
   const groupsData = await groupsResponse.json();
 
   // その他のファイルは必須ではない（まだ存在しない場合がある）
@@ -104,7 +109,7 @@ async function loadData() {
     throw new Error(`Failed to load w3c-affiliations.json: ${affiliationsResponse.status}`);
   }
   // set setApiData
-  globalApiData = { groupsData, participationsData, usersData, affiliationsData };
+  globalApiData = { mainData, groupsData, participationsData, usersData, affiliationsData };
   window.findByDataUrl = findByDataUrl;
 }
 
@@ -620,18 +625,22 @@ async function getAllGroupsInfo() {
 
   const groupsArray = groups.map(group => extractGroupInfo(group))
 
-  let isOnlyGroupParticipants = false;
+  let isOnlyGroupParticipations = false;
+
   let summaryGroup = createSummaryGroup()
-  // let summaryGroup = null; // fordebug createSummaryGrupFromGroups(groupsArray);
+  let onlyGroupParticipationsSummaryGroup = createSummaryGroupFromGroups(groupsArray)
   if (!summaryGroup) {
-    summaryGroup = createSummaryGroupFromGroups(groupsArray);
-    if (summaryGroup) isOnlyGroupParticipants = true;
+    summaryGroup = onlyGroupParticipationsSummaryGroup;
+    onlyGroupParticipationsSummaryGroup = undefined;
+    isOnlyGroupParticipations = true;
   }
+
   const groupsInfo = {
     groupsArray,
     summaryGroup,
-    isOnlyGroupParticipants,
-    _metadata: globalApiData.groupsData._metadata
+    onlyGroupParticipationsSummaryGroup,
+    isOnlyGroupParticipations,
+    lastChecked: globalApiData.mainData._metadata.lastChecked
   };
   return groupsInfo;
 }

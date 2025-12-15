@@ -5,7 +5,6 @@ let attachedGroupsHandler = false;
 async function renderDashboard() {
   const loadingStatus = document.getElementById('status');
   const groupsDiv = document.getElementById('groups');
-  const summaryStatDiv = document.getElementById('summary-stats');
 
   if (loadingStatus) {
     loadingStatus.className = 'loading';
@@ -18,7 +17,7 @@ async function renderDashboard() {
   try {
     // 初回のみロード
     if (groupsInfo === null) {
-      ({ groupsInfo, groupPartipantsGroupInfo } = await getAllGroupsInfo());
+      groupsInfo = await getAllGroupsInfo();
     }
     const groupsArray = groupsInfo.groupsArray;
 
@@ -28,8 +27,14 @@ async function renderDashboard() {
       ? groupsArray
       : groupsArray.filter(g => g.groupType === filterType);
 
-    // ソート基準を取得
-    const sortBy = document.getElementById('sortBy').value;
+    // ソート基準をlocalStorageから取得し、なければselectの値を使う
+    const sortBySelect = document.getElementById('sortBy');
+    let sortBy = localStorage.getItem('sortBy');
+    if (!sortBy || !Array.from(sortBySelect.options).some(opt => opt.value === sortBy)) {
+      sortBy = sortBySelect.value;
+    } else {
+      sortBySelect.value = sortBy;
+    }
     let sortedResults;
     switch (sortBy) {
       case 'name':
@@ -46,7 +51,7 @@ async function renderDashboard() {
         sortedResults = [...filteredResults].sort((a, b) => (b.memberParticipants.length || 0) - (a.memberParticipants.length || 0));
         break;
       case 'members':
-        sortedResults = [...filteredResults].sort((a, b) => (b.members.length || 0) - (a.members.length || 0));
+        sortedResults = [...filteredResults].sort((a, b) => (b.membersMap.size || 0) - (a.membersMap.size || 0));
         break;
       case 'staffs':
         sortedResults = [...filteredResults].sort((a, b) => (b.staffs.length || 0) - (a.staffs.length || 0));
@@ -61,7 +66,7 @@ async function renderDashboard() {
     }
 
     // Summary表示をサブ関数に分離
-    _mainRenderSummary(summaryStatDiv, groupsArray.length, groupsInfo.summaryGroup, groupsInfo._metadata.lastChecked);
+    _mainRenderSummary(groupsArray.length, groupsInfo.summaryGroup, groupsInfo.onlyGroupParticipationsSummaryGroup, groupsInfo.lastChecked);
 
     _mainRenderGroups({ groupsDiv, groupsArray, sortedResults, filterType, sortBy });
 
@@ -79,7 +84,11 @@ async function renderDashboard() {
   }
 }
 
-document.getElementById('sortBy').addEventListener('change', () => renderDashboard());
+document.getElementById('sortBy').addEventListener('change', () => {
+  const sortBy = document.getElementById('sortBy').value;
+  localStorage.setItem('sortBy', sortBy);
+  renderDashboard();
+});
 document.getElementById('popupClose').addEventListener('click', () => {
   document.getElementById('popup').style.display = 'none';
   document.getElementById('popupOverlay').style.display = 'none';
@@ -93,11 +102,17 @@ document.getElementById('popupOverlay').addEventListener('click', () => {
 document.getElementById('participationsPopupClose').addEventListener('click', () => {
   document.getElementById('participationsPopup').style.display = 'none';
   document.getElementById('participationsPopupOverlay').style.display = 'none';
+  if (groupsInfo) {
+    _mainRenderSummaryStats(groupsInfo.groupsArray.length, groupsInfo.summaryGroup, groupsInfo.onlyGroupParticipationsSummaryGroup);
+  }
 });
 
 document.getElementById('participationsPopupOverlay').addEventListener('click', () => {
   document.getElementById('participationsPopup').style.display = 'none';
   document.getElementById('participationsPopupOverlay').style.display = 'none';
+  if (groupsInfo) {
+    _mainRenderSummaryStats(groupsInfo.groupsArray.length, groupsInfo.summaryGroup, groupsInfo.onlyGroupParticipationsSummaryGroup);
+  }
 });
 
 // ESCキーでポップアップを閉じる
@@ -119,87 +134,37 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-renderDashboard()
-// 描画終了
-// --- Only Group Participantsトグルの連動制御 ---
-function setOnlyGroupParticipantsToggleUI(isChecked) {
-  // Summary側
-  const btn1 = document.getElementById('toggleOnlyGroupParticipants');
-  const check1 = document.getElementById('toggleOnlyGroupParticipantsCheck');
-  // Popup側
-  const btn2 = document.getElementById('toggleOnlyGroupParticipantsPopup');
-  const check2 = document.getElementById('toggleOnlyGroupParticipantsPopupCheck');
-  if (btn1 && check1) {
-    if (isChecked) {
-      check1.style.background = '#0969da';
-      check1.textContent = '✓';
-      check1.style.color = '#fff';
-    } else {
-      check1.style.background = '#fff';
-      check1.textContent = ' ';
-      check1.style.color = '#0969da';
-    }
-  }
-  if (btn2 && check2) {
-    if (isChecked) {
-      check2.style.background = '#0969da';
-      check2.textContent = '✓';
-      check2.style.color = '#fff';
-    } else {
-      check2.style.background = '#fff';
-      check2.textContent = ' ';
-      check2.style.color = '#0969da';
-    }
-  }
+renderDashboard() // ループ
+// 以下は関数群
+
+function getonlyGroupParticipationsToggle() {
+  return localStorage.onlyGroupParticipations === 'true';   //
 }
 
-function getOnlyGroupParticipantsToggle() {
-  return localStorage.onlyGroupParticipants === 'true';
-}
+function fliponlyGroupParticipationsToggle(checkSpan) {
+  const isChecked = !getonlyGroupParticipationsToggle();
+  localStorage.onlyGroupParticipations = isChecked ? 'true' : 'false';  // 文字列で保存
 
-function setOnlyGroupParticipantsToggle(val) {
-  localStorage.onlyGroupParticipants = val ? 'true' : 'false';
-  setOnlyGroupParticipantsToggleUI(val);
-  // 必要ならここで再描画やフィルタ適用処理を呼ぶ
-  // 例: renderDashboard();
+  return updateonlyGroupParticipationsToggle(checkSpan);
 }
-
-function setupOnlyGroupParticipantsToggleListeners() {
-  const btn1 = document.getElementById('toggleOnlyGroupParticipants');
-  const btn2 = document.getElementById('toggleOnlyGroupParticipantsPopup');
-  if (btn1) {
-    btn1.onclick = () => {
-      const newVal = !getOnlyGroupParticipantsToggle();
-      setOnlyGroupParticipantsToggle(newVal);
-    };
+function updateonlyGroupParticipationsToggle(checkSpan) {
+  const isChecked = getonlyGroupParticipationsToggle();
+  if (isChecked) {
+    checkSpan.style.background = '#0969da';
+    checkSpan.textContent = '✓';
+    checkSpan.style.color = '#fff';
+  } else {
+    checkSpan.style.background = '#fff';
+    checkSpan.textContent = ' ';
+    checkSpan.style.color = '#0969da';
   }
-  if (btn2) {
-    btn2.onclick = () => {
-      const newVal = !getOnlyGroupParticipantsToggle();
-      setOnlyGroupParticipantsToggle(newVal);
-    };
-  }
-}
-
-// 初期化
-document.addEventListener('DOMContentLoaded', () => {
-  setOnlyGroupParticipantsToggleUI(getOnlyGroupParticipantsToggle());
-  setupOnlyGroupParticipantsToggleListeners();
-});
-
-// Popup表示時にもUI状態を同期
-if (typeof popupParticipationsSheet === 'function') {
-  const origPopupParticipationsSheet = popupParticipationsSheet;
-  window.popupParticipationsSheet = async function (...args) {
-    setTimeout(() => setOnlyGroupParticipantsToggleUI(getOnlyGroupParticipantsToggle()), 0);
-    return origPopupParticipationsSheet.apply(this, args);
-  };
+  return isChecked;
 }
 
 /* 
 以下はmainパネルの表示用のサブ関数 '_main'で始まる関数
 */
-function _mainRenderSummary(groupCounts, summaryGroup, lastChecked) {
+function _mainRenderSummary(groupCounts, summaryGroup, onlyGroupParticipationsSummaryGroup, lastChecked) {
   // Summary情報を表示
   // 日付表示
   let dateStr = '';
@@ -216,48 +181,16 @@ function _mainRenderSummary(groupCounts, summaryGroup, lastChecked) {
     dateStrSpan.textContent = dateStr;
   }
 
-  // summary値の更新
-  const summaryGroups = document.getElementById('summaryGroups');
-  if (summaryGroups) summaryGroups.textContent = groupCounts;
-  const summaryMembers = document.getElementById('summaryMembers');
-  if (summaryMembers) summaryMembers.textContent = summaryGroup.membersMap.size;
-  const summaryMemberParticipants = document.getElementById('summaryMemberParticipants');
-  if (summaryMemberParticipants) summaryMemberParticipants.textContent = summaryGroup.memberParticipants.length;
-  const summaryInvitedExperts = document.getElementById('summaryInvitedExperts');
-  if (summaryInvitedExperts) summaryInvitedExperts.textContent = summaryGroup.invitedExperts.length;
-  const summaryStaffs = document.getElementById('summaryStaffs');
-  if (summaryStaffs) summaryStaffs.textContent = summaryGroup.staffs.length;
-  const summaryIndividuals = document.getElementById('summaryIndividuals');
-  if (summaryIndividuals) summaryIndividuals.textContent = summaryGroup.individuals.length;
-  const summaryAllParticipants = document.getElementById('summaryAllParticipants');
-  if (summaryAllParticipants) summaryAllParticipants.textContent = summaryGroup.allParticipants.length;
-
   // トグルボタンのイベントハンドラ追加
-  const toggleBtn = document.getElementById('toggleOnlyGroupParticipants');
-  const checkSpan = document.getElementById('toggleOnlyGroupParticipantsCheck');
+  const toggleBtn = document.getElementById('toggleonlyGroupParticipations');
+  const checkSpan = document.getElementById('toggleonlyGroupParticipationsCheck');
   if (toggleBtn && checkSpan) {
-    let onlyGroupParticipants = localStorage.getItem('onlyGroupParticipants') === 'true';
-    function updateToggleBtn() {
-      toggleBtn.style.background = '#f3f3f3';
-      toggleBtn.style.color = '#222';
-      checkSpan.style.background = '#fff';
-      checkSpan.style.borderColor = onlyGroupParticipants ? '#0969da' : '#bbb';
-      checkSpan.innerHTML = onlyGroupParticipants ? '✔' : '';
-      checkSpan.style.width = '8px';
-      checkSpan.style.height = '8px';
-      checkSpan.style.fontSize = '0.7em';
-      checkSpan.style.lineHeight = '7px';
-    }
-    updateToggleBtn();
+    updateonlyGroupParticipationsToggle(checkSpan);
     toggleBtn.onclick = () => {
-      onlyGroupParticipants = !onlyGroupParticipants;
-      localStorage.setItem('onlyGroupParticipants', onlyGroupParticipants);
-      updateToggleBtn();
-      // 必要に応じて再描画やフィルタ処理をここで呼ぶ
-      // 例: renderDashboard();
+      fliponlyGroupParticipationsToggle(checkSpan);
+      _mainRenderSummaryStats(groupCounts, summaryGroup, onlyGroupParticipationsSummaryGroup);
     };
   }
-
   // Summaryクリックイベント
   if (!attachedSummaryHandler) {
     attachedSummaryHandler = true;
@@ -269,11 +202,41 @@ function _mainRenderSummary(groupCounts, summaryGroup, lastChecked) {
         const summaryType = target.getAttribute('data-summary-type');
         if (summaryType) {
           let initialFilter = summaryType;
-          popupParticipationsSheet(summaryGroup, initialFilter);
+          popupParticipationsSheet(summaryGroup, initialFilter, onlyGroupParticipationsSummaryGroup);
         }
       });
     }
   }
+  // 初期時点でのsummary値描画
+  _mainRenderSummaryStats(groupCounts, summaryGroup, onlyGroupParticipationsSummaryGroup);
+}
+
+function _mainRenderSummaryStats(groupCounts, summaryGroup, onlyGroupParticipationsSummaryGroup = null) {
+  const toggleonlyGroupParticipations = getonlyGroupParticipationsToggle();
+  const checkSpan = document.getElementById('toggleonlyGroupParticipationsCheck');
+  updateonlyGroupParticipationsToggle(checkSpan);
+
+  const useGroupInfo = (toggleonlyGroupParticipations && onlyGroupParticipationsSummaryGroup)
+    ? onlyGroupParticipationsSummaryGroup
+    : summaryGroup
+
+
+  // summary値の更新
+  const summfaryGroups = document.getElementById('summaryGroups');
+  if (summfaryGroups) summfaryGroups.textContent = groupCounts;
+  const summaryMembers = document.getElementById('summaryMembers');
+  if (summaryMembers) summaryMembers.textContent = useGroupInfo.membersMap.size;
+  const summaryMemberParticipants = document.getElementById('summaryMemberParticipants');
+  if (summaryMemberParticipants) summaryMemberParticipants.textContent = useGroupInfo.memberParticipants.length;
+  const summaryInvitedExperts = document.getElementById('summaryInvitedExperts');
+  if (summaryInvitedExperts) summaryInvitedExperts.textContent = useGroupInfo.invitedExperts.length;
+  const summaryStaffs = document.getElementById('summaryStaffs');
+  if (summaryStaffs) summaryStaffs.textContent = useGroupInfo.staffs.length;
+  const summaryIndividuals = document.getElementById('summaryIndividuals');
+  if (summaryIndividuals) summaryIndividuals.textContent = useGroupInfo.individuals.length;
+  const summaryAllParticipants = document.getElementById('summaryAllParticipants');
+  if (summaryAllParticipants) summaryAllParticipants.textContent = useGroupInfo.allParticipants.length;
+
 }
 
 // groupsDivの描画をまとめるサブ関数
@@ -740,7 +703,7 @@ function _maindrawBarChart(container, values, colors, maxValue) {
 /* ##
  popupParticipationsSheet()でPopupを表示, 利用されるサブ関数の名前は’_poupup’で始まる
  ### */
-async function popupParticipationsSheet(groupInfo, initialFilter = 'members') {
+async function popupParticipationsSheet(groupInfo, initialFilter = 'members', onlyGroupParticipationsSummaryGroup) {
   const popup = document.getElementById('participationsPopup');
   const overlay = document.getElementById('participationsPopupOverlay');
   const title = document.getElementById('participationsPopupTitle');
@@ -750,6 +713,74 @@ async function popupParticipationsSheet(groupInfo, initialFilter = 'members') {
 
   title.textContent = groupInfo.name
 
+  const affiliationsTitle = document.querySelector('#membersList h3');
+  const participantsTitle = document.querySelector('#participantsList h3');
+  affiliationsTitle.textContent = 'Affiliations';
+  if (groupInfo.isException) {
+    affiliationsTitle.classList.add('exception');
+  }
+  participantsTitle.textContent = 'allParticipants';
+
+  const toggleBtn = document.getElementById('toggleonlyGroupParticipationsPopup');
+  const checkSpan = document.getElementById('toggleonlyGroupParticipationsPopupCheck');
+  const toggleBtnWrap = toggleBtn ? toggleBtn.parentElement : null;
+  if (onlyGroupParticipationsSummaryGroup != null) {
+    // Only Group Participantsトグルボタンの表示制御
+    toggleBtnWrap.style.display = '';
+
+    // トグルボタンのイベントハンドラ追加
+    if (toggleBtn && checkSpan) {
+      updateonlyGroupParticipationsToggle(checkSpan);
+      toggleBtn.onclick = () => {
+        fliponlyGroupParticipationsToggle(checkSpan)
+        // シートを更新
+        _popupRenderSheet(groupInfo, onlyGroupParticipationsSummaryGroup, currentFilter, membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle);
+      };
+    }
+  } else {
+    toggleBtnWrap.style.display = 'none';
+  }
+
+  // localStorageからfilterを復元
+  let currentFilter = localStorage.getItem('popupParticipationsFilter') || initialFilter;
+  // フィルターボタンのイベントリスナー（静的HTML対応）
+  const filterButtons = document.querySelectorAll('#participationsButtonContainer .filter-btn');
+  filterButtons.forEach(btn => {
+    btn.onclick = () => {
+      filterButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      localStorage.setItem('popupParticipationsFilter', currentFilter);
+      // ソートを更新
+      _popupRenderSheet(groupInfo, onlyGroupParticipationsSummaryGroup, currentFilter, membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle);
+    };
+  });
+  // 初期activeボタン設定
+  filterButtons.forEach(b => b.classList.remove('active'));
+  const initialBtn = document.querySelector(`#participationsButtonContainer .filter-btn[data-filter="${currentFilter}"]`);
+  if (initialBtn) initialBtn.classList.add('active');
+
+  // 初期シートを表示
+  await _popupRenderSheet(groupInfo, onlyGroupParticipationsSummaryGroup, currentFilter, membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle);
+
+  popup.style.display = 'flex';
+  overlay.style.display = 'block';
+}
+
+async function _popupRenderSheet(groupInfo, onlyGroupParticipationsSummaryGroup, currentFilter, membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle) {
+  // トグルの値で使用するgroupInfoを切り替え
+  const useGroupInfo = (getonlyGroupParticipationsToggle() && onlyGroupParticipationsSummaryGroup)
+    ? onlyGroupParticipationsSummaryGroup
+    : groupInfo
+
+  // ステータス数値更新
+  _popupRenderParticipantsStats(useGroupInfo);
+  // 初期リストを表示
+  await _popupRenderFilteredList(useGroupInfo, currentFilter, membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle);
+}
+
+// countsを使って数値を更新するサブ関数
+function _popupRenderParticipantsStats(groupInfo) {
   const counts = {
     members: groupInfo.membersMap instanceof Map ? groupInfo.membersMap.size : 0,
     memberParticipants: groupInfo.memberParticipants ? groupInfo.memberParticipants.length : 0,
@@ -759,17 +790,6 @@ async function popupParticipationsSheet(groupInfo, initialFilter = 'members') {
     allParticipants: groupInfo.allParticipants ? groupInfo.allParticipants.length : 0
   };
 
-  const affiliationsTitle = document.querySelector('#membersList h3');
-  const participantsTitle = document.querySelector('#participantsList h3');
-  affiliationsTitle.textContent = 'Affiliations';
-  if (groupInfo.isException) {
-    affiliationsTitle.classList.add('exception');
-  }
-  participantsTitle.textContent = 'allParticipants';
-
-  let currentFilter = initialFilter;
-
-  // 既存の静的ボタンのラベル・数値・例外状態を更新
   const filters = ['members', 'memberParticipants', 'invitedExperts', 'staffs', 'individuals', 'allParticipants'];
   filters.forEach(filter => {
     const btn = document.querySelector(`#participationsButtonContainer .filter-btn[data-filter="${filter}"]`);
@@ -786,27 +806,6 @@ async function popupParticipationsSheet(groupInfo, initialFilter = 'members') {
       countSpan.textContent = counts[filter];
     }
   });
-
-  // フィルターボタンのイベントリスナー（静的HTML対応）
-  const filterButtons = document.querySelectorAll('#participationsButtonContainer .filter-btn');
-  filterButtons.forEach(btn => {
-    btn.onclick = () => {
-      filterButtons.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentFilter = btn.dataset.filter;
-      _popupRenderFilteredList(groupInfo, currentFilter, membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle);
-    };
-  });
-  // 初期activeボタン設定
-  filterButtons.forEach(b => b.classList.remove('active'));
-  const initialBtn = document.querySelector(`#participationsButtonContainer .filter-btn[data-filter="${currentFilter}"]`);
-  if (initialBtn) initialBtn.classList.add('active');
-
-  // 初期リストを表示
-  await _popupRenderFilteredList(groupInfo, currentFilter, membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle);
-
-  popup.style.display = 'flex';
-  overlay.style.display = 'block';
 }
 
 async function _popupRenderMemberParticipantsList(groupInfo, membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle) {
@@ -823,7 +822,7 @@ async function _popupRenderMemberParticipantsList(groupInfo, membersListContent,
 async function _popupRenderAllParticipantsList(groupInfo, membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle) {
   _popupRenderParticipantsList({
     list: groupInfo.allParticipants || [],
-    label: 'All Members+IE+S+Ind',
+    label: 'All Affiliations',
     membersListContent,
     participantsListContent,
     userDetailContent,
@@ -835,7 +834,8 @@ async function _popupRenderAllParticipantsList(groupInfo, membersListContent, pa
 async function _popupRenderMembersList(groupInfo, membersListContent, affiliationsTitle) {
   const members = groupInfo.membersMap ? Array.from(groupInfo.membersMap.keys()) : [];
   // デフォルトは組織名順
-  let sortMode = 'name';
+  // filter切り替え時も毎回localStorageからsortModeを復元
+  let sortMode = localStorage.getItem('popupParticipationsSortMode') || 'name';
   let sortedMembers = [...members].sort((a, b) => a.localeCompare(b));
 
   // --- タイトル右にソートボタン配置 ---
@@ -966,6 +966,7 @@ async function _popupRenderMembersList(groupInfo, membersListContent, affiliatio
   // ボタンイベント
   nameSortBtn.addEventListener('click', () => {
     sortMode = 'name';
+    localStorage.setItem('popupParticipationsSortMode', sortMode);
     nameSortBtn.classList.add('active');
     countSortBtn.classList.remove('active');
     _popupRenderMembersListContent({
@@ -981,6 +982,7 @@ async function _popupRenderMembersList(groupInfo, membersListContent, affiliatio
   });
   countSortBtn.addEventListener('click', () => {
     sortMode = 'count';
+    localStorage.setItem('popupParticipationsSortMode', sortMode);
     countSortBtn.classList.add('active');
     nameSortBtn.classList.remove('active');
     _popupRenderMembersListContent({
@@ -1048,14 +1050,14 @@ function _popupRenderParticipantsList({ list, label, membersListContent, partici
   nameSortBtn.style.fontSize = '11px';
   nameSortBtn.style.padding = '0 4px';
   nameSortBtn.style.lineHeight = '1.2';
-  nameSortBtn.title = '名前順';
+  nameSortBtn.title = 'name';
 
   const numGroupsSortBtn = document.createElement('button');
   numGroupsSortBtn.className = 'part-sort-btn';
   numGroupsSortBtn.style.fontSize = '11px';
   numGroupsSortBtn.style.padding = '0 4px';
   numGroupsSortBtn.style.lineHeight = '1.2';
-  numGroupsSortBtn.title = 'グループ数順';
+  numGroupsSortBtn.title = 'number of groups';
 
   const nameArrow = document.createElement('span');
   nameArrow.innerHTML = '&#8595;';
@@ -1074,14 +1076,15 @@ function _popupRenderParticipantsList({ list, label, membersListContent, partici
   nameSortBtn.appendChild(nameArrow);
 
   numGroupsSortBtn.innerHTML = '';
-  numGroupsSortBtn.appendChild(document.createTextNode('#G'));
+  numGroupsSortBtn.appendChild(document.createTextNode('G'));
   numGroupsSortBtn.appendChild(numGroupsArrow);
 
   sortBtnBar.appendChild(nameSortBtn);
   sortBtnBar.appendChild(numGroupsSortBtn);
   participantsTitle.appendChild(sortBtnBar);
 
-  let sortMode = 'name';
+  // Participants用のソート状態をlocalStorageから復元
+  let sortMode = localStorage.getItem('popupParticipantsSortMode') || 'name';
   function renderList() {
     participantsListContent.innerHTML = '';
     let sortedList;
@@ -1130,12 +1133,14 @@ function _popupRenderParticipantsList({ list, label, membersListContent, partici
   }
   nameSortBtn.addEventListener('click', () => {
     sortMode = 'name';
+    localStorage.setItem('popupParticipantsSortMode', sortMode);
     nameSortBtn.classList.add('active');
     numGroupsSortBtn.classList.remove('active');
     renderList();
   });
   numGroupsSortBtn.addEventListener('click', () => {
     sortMode = 'numGroups';
+    localStorage.setItem('popupParticipantsSortMode', sortMode);
     numGroupsSortBtn.classList.add('active');
     nameSortBtn.classList.remove('active');
     renderList();
@@ -1159,13 +1164,13 @@ async function _popupRenderFilteredList(groupInfo, currentFilter, membersListCon
   } else if (currentFilter === 'members') {
     await _popupRenderMembersList(groupInfo, membersListContent, affiliationsTitle);
   } else if (currentFilter == 'invitedExperts') {
-    await _popupRenderTypeList(groupInfo, 'invitedExperts', 'Invited Experts', membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle);
+    await _popupRenderTypeList(groupInfo, 'invitedExperts', 'W3C Invited Experts', membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle);
   } else if (currentFilter == 'staffs') {
-    await _popupRenderTypeList(groupInfo, 'staffs', 'Staffs', membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle);
+    await _popupRenderTypeList(groupInfo, 'staffs', 'W3C', membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle);
   } else if (currentFilter == 'individuals') {
     await _popupRenderTypeList(groupInfo, 'individuals', 'Individuals', membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle);
   } else {
-    console.warn('_popupRenderFilteredList Unknown filter:', currentFilter);
+    console.warn('_popupRenderSheet Unknown filter:', currentFilter);
   }
   const firstItem = membersListContent.querySelector('.member-item');
   if (firstItem) {
@@ -1238,7 +1243,7 @@ async function _popupRenderParticipantsForMember(groupInfo, memberOrg) {
   nameSortBtn.appendChild(nameArrow);
 
   numGroupsSortBtn.innerHTML = '';
-  numGroupsSortBtn.appendChild(document.createTextNode('#G'));
+  numGroupsSortBtn.appendChild(document.createTextNode('G'));
   numGroupsSortBtn.appendChild(numGroupsArrow);
 
   sortBtnBar.appendChild(nameSortBtn);
