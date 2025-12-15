@@ -3,17 +3,11 @@ class GroupInfo {
   constructor({
     name = 'Unknown',
     groupType = 'unknown',
-    membersCount = 0,
     membersMap = {},
-    memberParticipantsCount = 0,
     memberParticipants = [],
-    invitedExpertsCount = 0,
     invitedExperts = [],
-    individualsCount = 0,
     individuals = [],
-    staffsCount = 0,
     staffs = [],
-    allParticipantsCount = 0,
     allParticipants = [],
     isException = false,
     homepage = '',
@@ -21,17 +15,11 @@ class GroupInfo {
   } = {}) {
     this.name = name;
     this.groupType = groupType;
-    this.membersCount = membersCount;
     this.membersMap = membersMap;
-    this.memberParticipantsCount = memberParticipantsCount;
     this.memberParticipants = memberParticipants;
-    this.invitedExpertsCount = invitedExpertsCount;
     this.invitedExperts = invitedExperts;
-    this.individualsCount = individualsCount;
     this.individuals = individuals;
-    this.staffsCount = staffsCount;
     this.staffs = staffs;
-    this.allParticipantsCount = allParticipantsCount;
     this.allParticipants = allParticipants;
     this.isException = isException;
     this.homepage = homepage;
@@ -406,17 +394,11 @@ function extractGroupInfo(group) {
   const groupInfo = new GroupInfo({
     name,
     groupType,
-    membersCount: membersMap.size,
     membersMap: membersMap,
-    memberParticipantsCount: memberParticipantsMap.size,
     memberParticipants: memberParticipantsMap.size > 0 ? Array.from(memberParticipantsMap.values()) : [],
-    invitedExpertsCount: invitedExpertsMap.size,
     invitedExperts: invitedExpertsMap.size > 0 ? Array.from(invitedExpertsMap.values()) : [],
-    individualsCount: individualsMap.size,
     individuals: individualsMap.size > 0 ? Array.from(individualsMap.values()) : [],
-    staffsCount: staffsMap.size,
     staffs: staffsMap.size > 0 ? Array.from(staffsMap.values()) : [],
-    allParticipantsCount: allParticipantsArray.length,
     allParticipants: allParticipantsArray,
     isException: isIndivisualParticipationGroup,  // some IGs, task forces and other groups, e.g. ab.
     homepage
@@ -490,17 +472,11 @@ function createSummaryGroup() {
   const groupInfo = new GroupInfo({
     name: 'Summary',
     groupType: 'summary',
-    membersCount: allMembersMap.size,
     membersMap: allMembersMap,
-    memberParticipantsCount: allMemberParticipantsMap.size,
     memberParticipants: allMemberParticipantsMap.size > 0 ? Array.from(allMemberParticipantsMap.values()) : [],
-    invitedExpertsCount: allInvitedExpertsMap.size,
     invitedExperts: allInvitedExpertsMap.size > 0 ? Array.from(allInvitedExpertsMap.values()) : [],
-    individualsCount: allIndividualsMap.size,
     individuals: allIndividualsMap.size > 0 ? Array.from(allIndividualsMap.values()) : [],
-    staffsCount: allStaffsMap.size,
     staffs: allStaffsMap.size > 0 ? Array.from(allStaffsMap.values()) : [],
-    allParticipantsCount: allParticipantsMap.size,
     allParticipants: allParticipantsMap.size > 0 ? Array.from(allParticipantsMap.values()) : [],
     isException: false,  // some IGs, task forces and other groups, e.g. ab.
     homepage: undefined
@@ -624,17 +600,11 @@ function createSummaryGroupFromGroups(groups) {
   const groupInfos = new GroupInfo({
     name: 'Summary',
     groupType: 'summary',
-    membersCount: allMembers.size,
     membersMap: allMembers,
-    memberParticipantsCount: allMemberParticipants.size,
     memberParticipants: allMemberParticipants.size > 0 ? Array.from(allMemberParticipants.values()) : [],
-    invitedExpertsCount: allInvitedExperts.size,
     invitedExperts: allInvitedExperts.size > 0 ? Array.from(allInvitedExperts.values()) : [],
-    individualsCount: allIndividuals.size,
     individuals: allIndividuals.size > 0 ? Array.from(allIndividuals.values()) : [],
-    staffsCount: allStaffs.size,
     staffs: allStaffs.size > 0 ? Array.from(allStaffs.values()) : [],
-    allParticipantsCount: allParticipants.size,
     allParticipants: allParticipants.size > 0 ? Array.from(allParticipants.values()) : [],
     isException: false,  // some IGs, task forces and other groups, e.g. ab.
     homepage: undefined

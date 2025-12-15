@@ -18,7 +18,7 @@ async function renderDashboard() {
   try {
     // 初回のみロード
     if (groupsInfo === null) {
-      groupsInfo = await getAllGroupsInfo();
+      ({ groupsInfo, groupPartipantsGroupInfo } = await getAllGroupsInfo());
     }
     const groupsArray = groupsInfo.groupsArray;
 
@@ -40,23 +40,23 @@ async function renderDashboard() {
         });
         break;
       case 'allParticipants':
-        sortedResults = [...filteredResults].sort((a, b) => (b.allParticipantsCount || 0) - (a.allParticipantsCount || 0));
+        sortedResults = [...filteredResults].sort((a, b) => (b.allParticipants.length || 0) - (a.allParticipants.length || 0));
         break;
       case 'memberParticipants':
-        sortedResults = [...filteredResults].sort((a, b) => (b.memberParticipantsCount || 0) - (a.memberParticipantsCount || 0));
+        sortedResults = [...filteredResults].sort((a, b) => (b.memberParticipants.length || 0) - (a.memberParticipants.length || 0));
         break;
       case 'members':
-        sortedResults = [...filteredResults].sort((a, b) => (b.membersCount || 0) - (a.membersCount || 0));
+        sortedResults = [...filteredResults].sort((a, b) => (b.members.length || 0) - (a.members.length || 0));
         break;
       case 'staffs':
-        sortedResults = [...filteredResults].sort((a, b) => (b.staffsCount || 0) - (a.staffsCount || 0));
+        sortedResults = [...filteredResults].sort((a, b) => (b.staffs.length || 0) - (a.staffs.length || 0));
         break;
       case 'individuals':
-        sortedResults = [...filteredResults].sort((a, b) => (b.individualsCount || 0) - (a.individualsCount || 0));
+        sortedResults = [...filteredResults].sort((a, b) => (b.individuals.length || 0) - (a.individuals.length || 0));
         break;
       case 'invitedExperts':
       default:
-        sortedResults = [...filteredResults].sort((a, b) => (b.invitedExpertsCount || 0) - (a.invitedExpertsCount || 0));
+        sortedResults = [...filteredResults].sort((a, b) => (b.invitedExperts.length || 0) - (a.invitedExperts.length || 0));
         break;
     }
 
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Popup表示時にもUI状態を同期
 if (typeof popupParticipationsSheet === 'function') {
   const origPopupParticipationsSheet = popupParticipationsSheet;
-  window.popupParticipationsSheet = async function(...args) {
+  window.popupParticipationsSheet = async function (...args) {
     setTimeout(() => setOnlyGroupParticipantsToggleUI(getOnlyGroupParticipantsToggle()), 0);
     return origPopupParticipationsSheet.apply(this, args);
   };
@@ -199,7 +199,7 @@ if (typeof popupParticipationsSheet === 'function') {
 /* 
 以下はmainパネルの表示用のサブ関数 '_main'で始まる関数
 */
-function _mainRenderSummary(summaryStatDiv, groupCounts, summaryGroup, lastChecked) {
+function _mainRenderSummary(groupCounts, summaryGroup, lastChecked) {
   // Summary情報を表示
   // 日付表示
   let dateStr = '';
@@ -220,17 +220,17 @@ function _mainRenderSummary(summaryStatDiv, groupCounts, summaryGroup, lastCheck
   const summaryGroups = document.getElementById('summaryGroups');
   if (summaryGroups) summaryGroups.textContent = groupCounts;
   const summaryMembers = document.getElementById('summaryMembers');
-  if (summaryMembers) summaryMembers.textContent = summaryGroup.membersCount;
+  if (summaryMembers) summaryMembers.textContent = summaryGroup.membersMap.size;
   const summaryMemberParticipants = document.getElementById('summaryMemberParticipants');
-  if (summaryMemberParticipants) summaryMemberParticipants.textContent = summaryGroup.memberParticipantsCount;
+  if (summaryMemberParticipants) summaryMemberParticipants.textContent = summaryGroup.memberParticipants.length;
   const summaryInvitedExperts = document.getElementById('summaryInvitedExperts');
-  if (summaryInvitedExperts) summaryInvitedExperts.textContent = summaryGroup.invitedExpertsCount;
+  if (summaryInvitedExperts) summaryInvitedExperts.textContent = summaryGroup.invitedExperts.length;
   const summaryStaffs = document.getElementById('summaryStaffs');
-  if (summaryStaffs) summaryStaffs.textContent = summaryGroup.staffsCount;
+  if (summaryStaffs) summaryStaffs.textContent = summaryGroup.staffs.length;
   const summaryIndividuals = document.getElementById('summaryIndividuals');
-  if (summaryIndividuals) summaryIndividuals.textContent = summaryGroup.individualsCount;
+  if (summaryIndividuals) summaryIndividuals.textContent = summaryGroup.individuals.length;
   const summaryAllParticipants = document.getElementById('summaryAllParticipants');
-  if (summaryAllParticipants) summaryAllParticipants.textContent = summaryGroup.allParticipantsCount;
+  if (summaryAllParticipants) summaryAllParticipants.textContent = summaryGroup.allParticipants.length;
 
   // トグルボタンのイベントハンドラ追加
   const toggleBtn = document.getElementById('toggleOnlyGroupParticipants');
@@ -530,7 +530,7 @@ function _mainRenderTableBody(groupsArray, sortedResults) {
     membersCell.style.width = '50px';
     membersCell.style.minWidth = '50px';
     membersCell.style.maxWidth = '50px';
-    membersCell.innerHTML = `<span class="clickable ${g.isException ? 'exception' : ''}" data-index="${originalIndex}" data-type="members">${g.membersCount || 0}</span>`;
+    membersCell.innerHTML = `<span class="clickable ${g.isException ? 'exception' : ''}" data-index="${originalIndex}" data-type="members">${g.membersMap.size || 0}</span>`;
     row.appendChild(membersCell);
 
     // Member Participants
@@ -538,7 +538,7 @@ function _mainRenderTableBody(groupsArray, sortedResults) {
     memberParticipantsCell.style.width = '50px';
     memberParticipantsCell.style.minWidth = '50px';
     memberParticipantsCell.style.maxWidth = '50px';
-    memberParticipantsCell.innerHTML = `<span class="clickable ${g.isException ? 'exception' : ''}" data-index="${originalIndex}" data-type="memberParticipants">${g.memberParticipantsCount || 0}</span>`;
+    memberParticipantsCell.innerHTML = `<span class="clickable ${g.isException ? 'exception' : ''}" data-index="${originalIndex}" data-type="memberParticipants">${g.memberParticipants.length || 0}</span>`;
     row.appendChild(memberParticipantsCell);
 
     // Invited Experts
@@ -546,7 +546,7 @@ function _mainRenderTableBody(groupsArray, sortedResults) {
     invitedExpertsCell.style.width = '50px';
     invitedExpertsCell.style.minWidth = '50px';
     invitedExpertsCell.style.maxWidth = '50px';
-    invitedExpertsCell.innerHTML = `<span class="clickable ${g.isException ? 'exception' : ''}" data-index="${originalIndex}" data-type="invitedExperts">${g.invitedExpertsCount || 0}</span>`;
+    invitedExpertsCell.innerHTML = `<span class="clickable ${g.isException ? 'exception' : ''}" data-index="${originalIndex}" data-type="invitedExperts">${g.invitedExperts.length || 0}</span>`;
     if (g._error) {
       invitedExpertsCell.innerHTML += '<div class="error">(err)</div>';
     }
@@ -557,7 +557,7 @@ function _mainRenderTableBody(groupsArray, sortedResults) {
     staffsCell.style.width = '50px';
     staffsCell.style.minWidth = '50px';
     staffsCell.style.maxWidth = '50px';
-    staffsCell.innerHTML = `<span class="clickable" data-index="${originalIndex}" data-type="staffs">${g.staffsCount || 0}</span>`;
+    staffsCell.innerHTML = `<span class="clickable" data-index="${originalIndex}" data-type="staffs">${g.staffs.length || 0}</span>`;
     row.appendChild(staffsCell);
 
     // Individuals
@@ -565,7 +565,7 @@ function _mainRenderTableBody(groupsArray, sortedResults) {
     individualsCell.style.width = '50px';
     individualsCell.style.minWidth = '50px';
     individualsCell.style.maxWidth = '50px';
-    individualsCell.innerHTML = `<span class="clickable ${g.isException ? 'exception' : ''}" data-index="${originalIndex}" data-type="individuals">${g.individualsCount || 0}</span>`;
+    individualsCell.innerHTML = `<span class="clickable ${g.isException ? 'exception' : ''}" data-index="${originalIndex}" data-type="individuals">${g.individuals.length || 0}</span>`;
     row.appendChild(individualsCell);
 
     // All Participants
@@ -573,7 +573,7 @@ function _mainRenderTableBody(groupsArray, sortedResults) {
     allParticipantsCell.style.width = '50px';
     allParticipantsCell.style.minWidth = '50px';
     allParticipantsCell.style.maxWidth = '50px';
-    allParticipantsCell.innerHTML = `<span class="clickable" data-index="${originalIndex}" data-type="allParticipants">${g.allParticipantsCount || 0}</span>`;
+    allParticipantsCell.innerHTML = `<span class="clickable" data-index="${originalIndex}" data-type="allParticipants">${g.allParticipants.length || 0}</span>`;
     row.appendChild(allParticipantsCell);
 
     // Charts Cell (上下配置)
@@ -613,8 +613,8 @@ function _mainRenderTableBody(groupsArray, sortedResults) {
 
 function _mainDrawGroupsCharts(sortedResults) {
   // チャートを描画
-  const maxMembers = Math.max(...sortedResults.map(g => g.membersCount || 0));
-  const maxParticipants = Math.max(...sortedResults.map(g => g.allParticipantsCount || 0));
+  const maxMembers = Math.max(...sortedResults.map(g => g.membersMap instanceof Map ? g.membersMap.size : 0));
+  const maxParticipants = Math.max(...sortedResults.map(g => Array.isArray(g.allParticipants) ? g.allParticipants.length : 0));
   // 両方のチャートで同じスケールを使用
   const maxScale = Math.max(maxMembers, maxParticipants);
 
@@ -623,16 +623,17 @@ function _mainDrawGroupsCharts(sortedResults) {
     // Members Chart
     const membersDiv = document.getElementById(`members-chart-${i}`);
     if (membersDiv) {
-      _maindrawBarChart(membersDiv, [g.membersCount || 0], ['#0969da'], maxScale);
+      const membersCount = g.membersMap instanceof Map ? g.membersMap.size : 0;
+      _maindrawBarChart(membersDiv, [membersCount], ['#0969da'], maxScale);
     }
     // Participants Chart (Stacked: MP, IE, S, Ind, ソート順に応じて並び替え)
     const participantsDiv = document.getElementById(`participants-chart-${i}`);
     if (participantsDiv) {
       let stackOrder = [
-        { key: 'memberParticipants', value: g.memberParticipantsCount || 0, color: '#1f883d' },
-        { key: 'invitedExperts', value: g.invitedExpertsCount || 0, color: '#bf8700' },
-        { key: 'staffs', value: g.staffsCount || 0, color: '#cf222e' },
-        { key: 'individuals', value: g.individualsCount || 0, color: '#8250df' }
+        { key: 'memberParticipants', value: Array.isArray(g.memberParticipants) ? g.memberParticipants.length : 0, color: '#1f883d' },
+        { key: 'invitedExperts', value: Array.isArray(g.invitedExperts) ? g.invitedExperts.length : 0, color: '#bf8700' },
+        { key: 'staffs', value: Array.isArray(g.staffs) ? g.staffs.length : 0, color: '#cf222e' },
+        { key: 'individuals', value: Array.isArray(g.individuals) ? g.individuals.length : 0, color: '#8250df' }
       ];
       const sortBy = document.getElementById('sortBy').value;
       const idx = stackOrder.findIndex(s => s.key === sortBy);
