@@ -28,14 +28,11 @@
           </span>
         </div>
       </div>
-
       <!-- 右側：日付 -->
       <span id="dateStr" style="font-size: 0.8em; color: #666; white-space: nowrap;"></span>
     </div>
-
-
+    <div id="status"></div>
     <div id="summary">
-      <div id="status"></div>
       <select id="sortBy" style="display: none;">
         <option value="name">Group Name ↑</option>
         <option value="invitedExperts">Invited Experts ↓</option>
@@ -81,10 +78,9 @@
       </section>
       <div id="summary-stats"></div>
     </div>
-    <!-- グループ種別フィルタバーをgroupsDivの外側（上）に配置 -->
-    <div class="filter-bar">
-      <div
-        style="display: flex; flex-direction: column; gap: 1px; padding: 10px; background: #f6f8fa; border-bottom: 1px solid #ddd;">
+    <section class="groupsSection"
+      style="border: 1px solid #ddd; border-radius: 4px; padding: 10px; background: #f8f9fa; margin-bottom: 1.5px; display: flex; flex-direction: column; gap: 2px;">
+      <div>
         <div style="font-size: 1.15em; font-weight: 600; margin-bottom: 5px;">Groups</div>
         <div id="groupTypeFilter"
           style="font-size: 0.95em; display: flex; gap: 1.5px; flex-wrap: wrap; margin-left: 10px;">
@@ -96,14 +92,14 @@
           <button class="filter-btn" data-type="all">All Groups</button>
         </div>
       </div>
-    </div>
-    <div id="groups"></div>
+    </section>
+    <div id="groupsList"></div>
     <div
       style="padding: 0.5em; text-align: center; color: #aaa; font-size: 0.7em; border-top: 1px solid #eee; background: #fafbfc;">
       The source code of this web application is maintained at:
       <a href="https://github.com/igarashi50/w3c-dash" target="_blank">https://github.com/igarashi50/w3c-dash</a>
     </div>
-  </div>
+</div> <!-- end of #main -->
 
   <div id="popup">
     <div id="popupHeader">

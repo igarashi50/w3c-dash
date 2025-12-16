@@ -26,9 +26,12 @@ h1 {
   margin: 0 0 8px;
   margin-top: auto;
 }
+#status {
+  margin: 8px 0 12px;
+}
 
 #summary {
-  margin: 8px 0 12px;
+  margin: 8px 0;
 }
 
 #legend {
@@ -57,7 +60,7 @@ h1 {
   border: 1px solid rgba(0,0,0,0.1);
 }
 
-#groups {
+#groupsList{
   margin: 0 0 12px 0;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -480,4 +483,25 @@ button {
   display: none;
   z-index: 999;
   cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .groups-table-header th {
+    white-space: normal;
+    /* 折り返しを許可 */
+    word-break: break-word;
+    /* 長い単語も折り返し */
+    text-align: left;
+    /* 必要なら左寄せ */
+    padding: 4px 2px;
+    /* 上下の余白を少し増やすと2行でも見やすい */
+  }
+
+  /* MP, IE, S, Ind カラムを非表示 */
+  .col-mp,
+  .col-ie,
+  .col-s,
+  .col-ind {
+    display: none !important;
+  }
 }

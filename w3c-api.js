@@ -69,6 +69,7 @@ function findByDataUrl(targetUrl) {
 
 // data/w3c-*.json を読み込む
 async function loadData() {
+  const startedTime = performance.now();
   const [dataResponse, groupsResponse, participationsResponse, usersResponse, affiliationsResponse] = await Promise.all([
     fetch('data/w3c-data.json'),
     fetch('data/w3c-groups.json'),
@@ -111,6 +112,9 @@ async function loadData() {
   // set setApiData
   globalApiData = { mainData, groupsData, participationsData, usersData, affiliationsData };
   window.findByDataUrl = findByDataUrl;
+
+  const endedTime = performance.now();
+  console.log(`Data loaded successfully in ${(endedTime - startedTime).toFixed(2)} ms`);
 }
 
 // WG, IG, CG, TF, Other のグループリストを取得
