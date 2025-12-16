@@ -212,6 +212,11 @@ function _mainRenderSummary(groupCounts, summaryGroup, onlyGroupParticipationsSu
     toggleBtn.onclick = () => {
       fliponlyGroupParticipationsToggle(checkSpan);
       // currentFilterを必ず維持して渡す
+      _mainRenderSummaryStats(
+        groupsInfo.groupsArray.length,
+        groupsInfo.summaryGroup,
+        groupsInfo.onlyGroupParticipationsSummaryGroup
+      );
       _popupRenderSheet(groupInfo, onlyGroupParticipationsSummaryGroup, currentFilter, membersListContent, participantsListContent, userDetailContent, affiliationsTitle, participantsTitle);
     };
   }
