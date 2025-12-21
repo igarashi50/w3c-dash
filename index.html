@@ -4,21 +4,58 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>W3C Dash</title>
+  <title>W3C Dash - a dashboard of W3C statistics -</title>
+  <meta name="description"
+    content="W3C Dash is a dashboard for visualizing W3C statistics. Explore group participations of members, member participants, invited experts, W3C staffs and individuals interactively">
   <link rel="stylesheet" href="w3c-dash.css" />
   <link rel="icon" href="w3c-dash.svg" type="image/svg+xml">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="w3c-dash-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="w3c-dash-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="w3c-dash-512x512.png">
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Alternate links for SEO -->
+  <link rel="alternate" hreflang="en" href="https://igarashi50.github.io/w3c-dash/" />
+  <link rel="alternate" hreflang="x-default" href="https://igarashi50.github.io/w3c-dash/" />
+
+  <!-- Open Graph meta tags -->
+  <meta property="og:title" content="W3C Dash - a dashboard of W3C statistics -">
+  <meta property="og:description"
+    content="W3C Dash is a dashboard for visualizing W3C statistics. Explore group participations of members, member participants, invited experts, W3C staffs and individuals interactively.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://igarashi50.github.io/w3c-dash/">
+  <meta property="og:image" content="https://igarashi50.github.io/w3c-dash/w3c-dash-1200x630.png">
+  <!-- Twitter Card meta tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="W3C Dash - a dashboard of W3C statistics -">
+  <meta name="twitter:description"
+    content="W3C Dash is a dashboard for visualizing W3C statistics. Explore group participations of members, member participants, invited experts, W3C staffs and individuals interactively.">
+  <meta name="twitter:image" content="https://igarashi50.github.io/w3c-dash/w3c-dash-1200x630.png">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "W3C Dash - a dashboard of W3C statistics -",
+    "description": "W3C Dash is a dashboard for visualizing W3C statistics. Explore group participations of members, member participants, invited experts, W3C staffs and individuals interactively.",
+    "url": "https://igarashi50.github.io/w3c-dash/",
+    "applicationCategory": "Data visualization"
+  }
+  </script>
 </head>
 
 <body>
   <div id="main">
     <div id="titleRow" style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.5em;">
 
-      <!-- 左側：ロゴ + タイトル + サブタイトル -->
+      <!-- Left side: Logo + Title + Subtitle -->
       <div style="display: flex; align-items: center; gap: 1em;">
         <img src="w3c-dash.svg" width="32px" height="32px" alt="W3C Dash Logo" style="margin-left: 10px;">
 
-        <!-- タイトル + サブタイトル（横並びに変更） -->
-        <div style="display: flex; align-items: baseline; gap: 0.5em;">
+        <section style="display: flex; align-items: baseline; gap: 0.5em;">
           <h1 id="title" style="font-size:1.5em; font-weight:700; margin: 0;">
             W3C Dash
           </h1>
@@ -26,32 +63,25 @@
             - a dashboard of <a href="https://www.w3.org" target="_blank"
               style="color: #0969da; text-decoration: underline;">W3C</a> statistics -
           </span>
-        </div>
+          <p style="display: none;">W3C Dash is a dashboard for visualizing W3C statistics. Explore group participations
+            of members, member participants, invited experts, W3C staffs and individuals interactively.</p>
+        </section>
       </div>
-      <!-- 右側：日付 -->
-      <span id="dateStr" style="font-size: 0.8em; color: #666; white-space: nowrap;"></span>
+      <!-- Right side: Date -->
+      <span id="dateStr" style="font-size: 0.8em; color: #666; white-space: nowrap;">Updated date</span>
     </div>
     <div id="status"></div>
     <div id="summary">
-      <select id="sortBy" style="display: none;">
-        <option value="name">Group Name ↑</option>
-        <option value="invitedExperts">Invited Experts ↓</option>
-        <option value="allParticipants">All Participants ↓</option>
-        <option value="memberParticipants">Member Participants ↓</option>
-        <option value="members">Members ↓</option>
-        <option value="staffs">Staffs ↓</option>
-        <option value="individuals">Individuals ↓</option>
-      </select>
-      <!-- Summary Row (HTML構造をJSから分離) -->
+      <!-- Summary Row -->
       <section id="summarySection"
         style="border: 1px solid #ddd; border-radius: 4px; padding: 10px; background: #f8f9fa; margin-bottom: 1.5px; display: flex; flex-direction: column; gap: 2px;">
         <div
           style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; width: 100%;">
           <span style="font-size: 1.15em; font-weight: 700;">Summary <span id="dateStr"
               style="font-size:0.95em; font-weight:400; color:#666; margin-left:8px;"></span></span>
-          <button id="toggleonlyGroupParticipations" type="button"
+          <button id="toggleOnlyGroupParticipations" type="button"
             style="padding: 0 3px; height: 12px; font-size: 0.65em; border: 1px solid #bbb; border-radius: 3px; background: #f3f3f3; cursor: pointer; display: flex; align-items: center; gap: 2px; min-width: 0; box-sizing: border-box; margin-left: auto;">
-            <span id="toggleonlyGroupParticipationsCheck"
+            <span id="toggleOnlyGroupParticipationsCheck"
               style="display: inline-block; width: 8px; height: 8px; border: 1px solid #bbb; border-radius: 2px; background: #fff; text-align: center; font-size: 0.7em; line-height: 7px; color: #0969da; transition: background 0.2s; margin-right: 2px;">
             </span>
             <span style="font-size: 1.15em; color: #222; font-weight: 400; user-select: none;">Only Group
@@ -93,13 +123,25 @@
         </div>
       </div>
     </section>
-    <div id="groupsList"></div>
+    <!-- Hidden select for groupsList sort -->
+    <select id="groupsListSortBy" style="display: none;">
+      <option value="name">Group Name ↑</option>
+      <option value="members">Members ↓</option>
+      <option value="memberParticipants">Member Participants ↓</option>
+      <option value="invitedExperts">Invited Experts ↓</option>
+      <option value="staffs">Staffs ↓</option>
+      <option value="individuals">Individuals ↓</option>
+      <option value="allParticipants">All Participants ↓</option>
+    </select>
+    <div id="groupsList">
+      <p style='display: none;'>- groups content will be added here -</p>
+    </div>
     <div
       style="padding: 0.5em; text-align: center; color: #aaa; font-size: 0.7em; border-top: 1px solid #eee; background: #fafbfc;">
       The source code of this web application is maintained at:
       <a href="https://github.com/igarashi50/w3c-dash" target="_blank">https://github.com/igarashi50/w3c-dash</a>
     </div>
-</div> <!-- end of #main -->
+  </div> <!-- end of #main -->
 
   <div id="popup">
     <div id="popupHeader">
@@ -123,9 +165,9 @@
       <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
         <span style="font-size: 1.15em; font-weight: 700;">Participations</span>
         <div>
-          <button id="toggleonlyGroupParticipationsPopup" type="button"
+          <button id="toggleOnlyGroupParticipationsPopup" type="button"
             style="padding: 0 3px; height: 12px; font-size: 0.65em; border: 1px solid #bbb; border-radius: 3px; background: #f3f3f3; cursor: pointer; display: flex; align-items: center; gap: 2px; min-width: 0; box-sizing: border-box; margin-left: auto;">
-            <span id="toggleonlyGroupParticipationsPopupCheck"
+            <span id="toggleOnlyGroupParticipationsPopupCheck"
               style="display: inline-block; width: 8px; height: 8px; border: 1px solid #bbb; border-radius: 2px; background: #fff; text-align: center; font-size: 0.7em; line-height: 7px; color: #0969da; transition: background 0.2s; margin-right: 2px;">
             </span>
             <span style="font-size: 1.15em; color: #222; font-weight: 400; user-select: none;">Only Group
@@ -152,19 +194,19 @@
       <div id="membersList" class="pane">
         <h3>Affiliations</h3>
         <div id="membersListContent">
-          <!-- members content will be added here -->
+          <p style='display: none;'>- members content will be added here -</p>
         </div>
       </div>
       <div id="participantsList" class="pane">
         <h3>Participants</h3>
         <div id="participantsListContent">
-          <!-- participants content will be added here -->
+          <p style='display: none;'>- participants content will be added here -</p>
         </div>
       </div>
-      <div id="userDetail" class="pane">
-        <h3>User Detail</h3>
-        <div id="userDetailContent">
-          <!-- user detail content will be added here -->
+      <div id="userDetails" class="pane">
+        <h3>User Details</h3>
+        <div id="userDetailsContent">
+          <p style='display: none;'>- user details content will be added here -</p>
         </div>
       </div>
     </div>
@@ -173,6 +215,11 @@
   <div id="participationsPopupOverlay" class="popup-overlay"></div>
   <script src="w3c-api.js"></script>
   <script src="w3c-dash.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
 </body>
 
 </html>

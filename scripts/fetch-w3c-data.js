@@ -1,4 +1,4 @@
-// 先頭でデータ用変数を宣言
+// w3c-fetch-w3c-data.js
 const https = require('https');
 const http = require('http');
 const zlib = require('zlib');
@@ -100,8 +100,8 @@ async function compareAndWriteJson(dirPath, filename, collectedData) {
           const prevDataStripped = JSON.stringify(prevEntry.data);
           const newDataStripped = JSON.stringify(newEntry.data);
           if (prevDataStripped === newDataStripped) {
-            // dataが同じなら古いfetchedAtを使う
-            mergedData[k] = { ...newEntry, fetchedAt: prevEntry.fetchedAt };
+            // dataが同じなら古いfetchedAtとlastModifiedを使う
+            mergedData[k] = { ...newEntry, fetchedAt: prevEntry.fetchedAt, lastModified: prevEntry.lastModified };
           } else {
             // dataが違う場合は新しいまま
             mergedData[k] = newEntry;
@@ -134,7 +134,7 @@ async function compareAndWriteJson(dirPath, filename, collectedData) {
     const finalDataWithMetadata = {
       _metadata: {
         filename: filename,
-        lastChecked: new Date(fetchStartTimestamp).toISOString(),
+        lastChecked: new Date(fetchStartTimestamp).toUTCString(), // HTTP-date
         fetchStartTime: fetchStartTime,
         duration: durationStr,
         itemCount: Object.keys(mergedData).length
@@ -148,7 +148,7 @@ async function compareAndWriteJson(dirPath, filename, collectedData) {
   return true;  // finished
 };
 
-function fetchJson(url, retries = 6, backoffMs = 60000, timeoutMs = 180000, redirects = 5) {
+function fetchJson(url, retries = 6, backoffMs = 60000, timeoutMs = 180000, redirects = 5, verbose = false) {
   phaseRequestCount++;
   totalRequestCount++;
   return new Promise((resolve, reject) => {
@@ -162,12 +162,12 @@ function fetchJson(url, retries = 6, backoffMs = 60000, timeoutMs = 180000, redi
         'User-Agent': 'curl/8.0.1'
       };
 
-      if (VERBOSE && !process.env.SUPPRESS_REQUEST_LOG) console.log(`    [REQUEST] ${url}`);
+      if (verbose) console.log(`    [REQUEST] ${url}`);
       const req = lib.get(url, { headers, timeout: timeoutMs }, res => {
         if (res.statusCode >= 300 && res.statusCode < 400 && redirects > 0 && res.headers.location) {
           const next = new URL(res.headers.location, url).toString();
           res.resume();
-          return resolve(fetchJson(next, retries, backoffMs, timeoutMs, redirects - 1));
+          return resolve(fetchJson(next, retries, backoffMs, timeoutMs, redirects - 1, verbose));
         }
 
         let chunks = [];
@@ -177,7 +177,7 @@ function fetchJson(url, retries = 6, backoffMs = 60000, timeoutMs = 180000, redi
           const enc = (res.headers['content-encoding'] || '').toLowerCase();
 
           // [RESPONSE] ログ出力（status, content-length, Last-Modified）
-          if (VERBOSE && !process.env.SUPPRESS_REQUEST_LOG) {
+          if (verbose) {
             const status = res.statusCode;
             const clen = res.headers['content-length'] || raw.length;
             const lastModified = res.headers['last-modified'] || '';
@@ -191,19 +191,19 @@ function fetchJson(url, retries = 6, backoffMs = 60000, timeoutMs = 180000, redi
               const waitMs = Number.isFinite(ra) ? ra * 1000 : backoffMs;
               console.warn(`429 for ${url}, wait ${waitMs}ms (${retries - 1} retries left)`);
               await new Promise(r => setTimeout(r, waitMs));
-              return fetchJson(url, retries - 1, Math.round(backoffMs * 1.5), timeoutMs, redirects).then(resolve).catch(reject);
+              return fetchJson(url, retries - 1, Math.round(backoffMs * 1.5), timeoutMs, redirects, verbose).then(resolve).catch(reject);
             }
             // 5xx系はリトライ対象
             if (res.statusCode >= 500 && res.statusCode < 600 && retries > 0) {
               const retryNum = 7 - retries;
               const msg = `[RETRY] ${url} (HTTP ${res.statusCode}) (${retryNum}/6) wait ${backoffMs}ms`;
-              if (VERBOSE) {
+              if (verbose) {
                 console.warn(msg + ` [RESPONSE BODY]`);
               } else {
                 console.warn(msg);
               }
               await new Promise(r => setTimeout(r, backoffMs));
-              return fetchJson(url, retries - 1, Math.round(backoffMs * 1.5), timeoutMs, redirects).then(resolve).catch(reject);
+              return fetchJson(url, retries - 1, Math.round(backoffMs * 1.5), timeoutMs, redirects, verbose).then(resolve).catch(reject);
             }
             let bodyText = '';
             try {
@@ -221,30 +221,36 @@ function fetchJson(url, retries = 6, backoffMs = 60000, timeoutMs = 180000, redi
             } catch (decompErr) {
               bodyText = `[decompression error: ${decompErr}]`;
             }
-            const errorDetail = {
-              statusCode: res.statusCode,
+            const notJsonResult = {
+              e: "Not JSON response",  // e is specified error message
               url,
+              statusCode: res.statusCode,
               headers: res.headers,
               message: `HTTP error ${res.statusCode}`,
               body: bodyText
             };
-            return reject(errorDetail);
+            return reject(notJsonResult);
           }
 
           const finish = (buf) => {
             try {
               const text = buf.toString('utf8');
               const data = JSON.parse(text);
-              return resolve(data);
+              const result = {
+                lastModified: res.headers['last-modified'] || null,
+                data: data
+              }
+              return resolve(result);
             } catch (e) {
               // パース失敗時はテキストも記録
-              return reject({
-                error: e,
+              const errorDetail = {
+                error: e,  // e is specified error message
                 url,
                 statusCode: res.statusCode,
                 headers: res.headers,
                 rawText: buf.toString('utf8')
-              });
+              }
+              return reject(errorDetail);
             }
           };
 
@@ -261,24 +267,24 @@ function fetchJson(url, retries = 6, backoffMs = 60000, timeoutMs = 180000, redi
       req.on('error', async (err) => {
         // 詳細なエラー情報をコンソールに出力
         const retryNum = 7 - retries;
-        const msg = `[RETRY] request error for ${url}: message=${err.message} code=${err.code || ''} (retry ${retryNum}/6)`;
+        const msg = `    [RETRY] request error for ${url}: message=${err.message} code=${err.code || ''} (retry ${retryNum}/6)`;
         if (retries > 0) {
-          if (VERBOSE) {
+          if (verbose) {
             console.warn(msg + ` stack=${err.stack || ''}`);
           } else {
             console.warn(msg);
           }
           const wait = backoffMs;
-          console.warn(`[RETRY] ${url} (${retryNum}/6) wait ${wait}ms`);
+          console.warn(`    [RETRY] ${url} (${retryNum}/6) wait ${wait}ms`);
           await new Promise(r => setTimeout(r, wait));
-          return fetchJson(url, retries - 1, Math.round(backoffMs * 1.5), timeoutMs, redirects).then(resolve).catch(reject);
+          return fetchJson(url, retries - 1, Math.round(backoffMs * 1.5), timeoutMs, redirects, verbose).then(resolve).catch(reject);
         }
         // JSONにも詳細を記録
         reject({
-          message: err.message,
+          e: err.message,   // e is specified error message
+          url,
           code: err.code,
           stack: err.stack,
-          url
         });
       });
 
@@ -291,7 +297,8 @@ function fetchJson(url, retries = 6, backoffMs = 60000, timeoutMs = 180000, redi
   });
 }
 
-async function fetchData(startUrl) {
+// fetchApiData is the exactly same in w3c-api.js and  fetch-data.js 
+async function fetchApiData(startUrl, verbose = false) {
   if (!startUrl) return undefined;
 
   const pages = [];
@@ -302,16 +309,22 @@ async function fetchData(startUrl) {
     url += (url.includes('?') ? '&' : '?') + 'items=500';
   }
   let page = 1; // 初期ページ
-  let lastError = undefined;
-
+  let lastModified = null;
   while (url) {
     let fetchStart = Date.now();
     let fetchEnd;
     try {
-      const r = await fetchJson(url, 6, 60000, 120000);
-      pages.push(r);
+      const result = await fetchJson(url, 6, 60000, 120000, 5, verbose);
+      if (result.data == undefined) {
+        throw new Error(`No data in response for ${url}`);
+      }
+      const data = result.data;
+      pages.push(data);
+      if (lastModified == null) {
+        lastModified = result.lastModified;
+      }
       // レスポンスから総ページ数を取得して次のURLを構築
-      const totalPages = r.pages || 1;
+      const totalPages = data.pages || 1;
       if (page < totalPages) {
         page += 1;
         let baseUrl = startUrl.split('?')[0];
@@ -322,9 +335,8 @@ async function fetchData(startUrl) {
         url = null; // 最後のページに到達
       }
     } catch (err) {
-      lastError = err;
-      console.log(`    [ERROR] fetchData error for ${url}: ${JSON.stringify(err).substring(0, 200)}`);
-      break;
+      console.log(`    [ERROR] fetchApiData error for ${url}: ${JSON.stringify(err).substring(0, 200)}`);
+      throw (err);
     } finally {
       fetchEnd = Date.now();
     }
@@ -333,57 +345,67 @@ async function fetchData(startUrl) {
     if (sleepMs > 0) {
       await sleep(sleepMs);
     }
-    if (VERBOSE) { console.log(`    [INFO] elapsed ${elapsed}ms  sleep ${sleepMs}ms`); }
-    if (lastError) break;
+    if (verbose) { console.log(`    [INFO] elapsed ${elapsed}ms  sleep ${sleepMs}ms`); }
   }
 
-  // ページが1つだけの場合
-  if (pages.length === 1) {
-    return pages[0];
-  }
-  // 複数ページの場合、正常ページのみマージ。全ページエラーならundefined
-  const validPages = pages.filter(p => !p.error);
-  if (validPages.length > 0) {
-    const merged = {
-      page: 1,
-      limit: 0,
-      pages: 1,
-      total: 0,
-      _links: {}
-    };
-    const allItems = [];
-    let dataKey = null;
-    for (const page of validPages) {
-      if (!dataKey && page._links) {
-        for (const key of Object.keys(page._links)) {
-          if (Array.isArray(page._links[key])) {
-            dataKey = key;
-            break;
+  let data = undefined;
+  if (pages.length === 1) {   // ページが1つだけの場合
+    data = pages[0];
+  } else {
+    // 複数ページの場合、正常ページのみマージ。全ページエラーならundefined
+    const validPages = pages.filter(p => !p.error);
+
+    if (validPages.length > 0) {
+      const merged = {
+        page: 1,
+        limit: 0,
+        pages: 1,
+        total: 0,
+        _links: {}
+      };
+      const allItems = [];
+      let dataKey = null;
+      for (const page of validPages) {
+        if (!dataKey && page._links) {
+          for (const key of Object.keys(page._links)) {
+            if (Array.isArray(page._links[key])) {
+              dataKey = key;
+              break;
+            }
+          }
+        }
+        if (dataKey && page._links && Array.isArray(page._links[dataKey])) {
+          allItems.push(...page._links[dataKey]);
+        }
+        if (page._links) {
+          if (page._links.up && !merged._links.up) {
+            merged._links.up = page._links.up;
           }
         }
       }
-      if (dataKey && page._links && Array.isArray(page._links[dataKey])) {
-        allItems.push(...page._links[dataKey]);
+      merged.total = allItems.length;
+      merged.limit = allItems.length;
+      if (dataKey) {
+        merged._links[dataKey] = allItems;
       }
-      if (page._links) {
-        if (page._links.up && !merged._links.up) {
-          merged._links.up = page._links.up;
-        }
-      }
+      merged._links.self = { href: startUrl };
+      merged._links.first = { href: startUrl };
+      merged._links.last = { href: startUrl };
+
+      data = merged // 複数のページのデータをマージした結果
+    } else {
+      throw (Error('cannot fetch any pages'));
     }
-    merged.total = allItems.length;
-    merged.limit = allItems.length;
-    if (dataKey) {
-      merged._links[dataKey] = allItems;
-    }
-    merged._links.self = { href: startUrl };
-    merged._links.first = { href: startUrl };
-    merged._links.last = { href: startUrl };
-    return merged;
-  } else {
-    return undefined;
   }
+
+  const ret = {
+    lastModified: lastModified,
+    data: data,
+  };
+
+  return ret
 }
+
 
 async function fetchTypeGroups(type, testGroupShortNames = null) {
   const typeName = type.toUpperCase();
@@ -399,12 +421,19 @@ async function fetchTypeGroups(type, testGroupShortNames = null) {
   let fetchedCount = 0;
 
   let groupsArray = [];
-  let data = {};
+  let dataEntry = {
+    fetchedAt: new Date().toUTCString(), // HTTP date format
+    lastModified: undefined,
+    data: undefined
+  }
   try {
     if (VERBOSE) console.log(`  → Fetching data from ${typeUrl}`);
     fetchCount++;
 
-    data = await fetchData(typeUrl);
+    const { lastModified, data } = await fetchApiData(typeUrl, VERBOSE);
+    dataEntry.lastModified = lastModified;
+    dataEntry.data = data;
+
     // Extract groups from the merged result
     groupsArray = data?._links?.groups || [];
     if (VERBOSE) console.log(`Found ${groupsArray.length} ${typeName} groups`);
@@ -420,16 +449,11 @@ async function fetchTypeGroups(type, testGroupShortNames = null) {
     fetchedCount++;
   } catch (e) {
     console.error(`Failed to fetch ${typeName} list: ${e.message}`);
-    fetchCount++;
+    errorCount++;
 
-    data = {
-      "_error": String(e)
-    }
+    dataEntry.data = { _error: String(e) };
   }
-  collectedTypeGroupsData[typeUrl] = {
-    fetchedAt: new Date().toISOString(),
-    data: data
-  };
+  collectedTypeGroupsData[typeUrl] = dataEntry;
 
   for (let i = 0; i < groupsArray.length; i++) {
     const g = groupsArray[i];
@@ -438,22 +462,28 @@ async function fetchTypeGroups(type, testGroupShortNames = null) {
     const groupHref = g.href;
     let urls = new Set();
     if (groupHref) {
-      let groupData = {};
+      let dataEntry = {
+        fetchedAt: new Date().toUTCString(), // HTTP date format
+        lastModified: undefined,
+        data: undefined
+      }
       // Fetch group details
       try {
         if (VERBOSE) console.log(`  → Fetching group data from ${groupHref}`);
         fetchCount++;
 
-        groupData = await fetchData(groupHref);
+        const { lastModified, data } = await fetchApiData(groupHref, VERBOSE);
+        dataEntry.lastModified = lastModified;
+        dataEntry.data = data;
 
-        const partHref = groupData._links?.participations?.href;
+        const partHref = data._links?.participations?.href;
         if (partHref) {   // https://api.w3.org/groups/{type}/{shortname}/participations
           if (!reGroupsParticipations.test(partHref)) {
             console.warn(`Warning: Unexpected groups participations URL format: ${partHref}`);
           }
           urls.add(partHref);
         }
-        const usersHref = groupData._links?.users?.href;
+        const usersHref = data._links?.users?.href;
         if (usersHref) {   // https://api.w3.org/groups/{type}/{shortname}/users
           if (!reGroupsUsers.test(usersHref)) {
             console.warn(`Warning: Unexpected groups users URL format: ${usersHref}`);
@@ -466,38 +496,37 @@ async function fetchTypeGroups(type, testGroupShortNames = null) {
         console.warn(`  error fetching group data ${groupHref}: ${String(e)}`);
         errorCount++;
 
-        groupData = { _error: String(e) };
+        dataEntry.data = { _error: String(e) };
       }
-      collectedTypeGroupsData[groupHref] = {
-        fetchedAt: new Date().toISOString(),
-        data: groupData
-      }
+      collectedTypeGroupsData[groupHref] = dataEntry;
     }
 
     // Fetch the urls for the group
-    const urlsArray = Array.from(urls);w
+    const urlsArray = Array.from(urls);
     console.log(`  Found ${urlsArray.length} data URLs to fetch for group`);
     for (let j = 0; j < urlsArray.length; j++) {
-
       const url = urlsArray[j];
-      let data = {}
+      let dataEntry = {
+        fetchedAt: new Date().toUTCString(), // HTTP-date形式
+        lastModified: undefined,
+        data: undefined
+      }
       try {
         if (VERBOSE) console.log(`  → Fetching data from ${url}`);
         fetchCount++;
 
-        data = await fetchData(url)
+        const { lastModified, data } = await fetchApiData(url, VERBOSE);
+        dataEntry.lastModified = lastModified;
+        dataEntry.data = data;
 
         if (VERBOSE) console.log(`    ✓ Data  fetched from ${url}`);
         fetchedCount++;
       } catch (e) {
         console.warn(`  error fetching ${url}: ${String(e)}`);
         errorCount++;
-        data = { "_error": String(e) };
+        dataEntry.data = { "_error": String(e) };
       }
-      collectedTypeGroupsData[url] = {
-        fetchedAt: new Date().toISOString(),
-        data: data
-      }
+      collectedTypeGroupsData[url] = dataEntry
     }
     // 100件ごとにProgress
     if (fetchCount % 100 === 0 || i === groupsArray.length - 1) {
@@ -538,13 +567,20 @@ async function fetchParticipations(collectedGroupsData, collectedParticipationsD
     console.log(`[${i + 1}/${allParticipationsArray.length}] Processing: ${allParticipationsArray[i]}`);
     const partHref = allParticipationsArray[i];  // 
     // 1. リストページ（/groups/.../participations）をfetch
-    let detailData = {};
+    let dataEntry = {
+      fetchedAt: new Date().toUTCString(), // HTTP-date形式
+      lastModified: undefined,
+      data: undefined
+    }
     try {
       if (VERBOSE) console.log(`  → Fetching participation list from ${partHref}`);
       fetchCount++;
 
-      detailData = await fetchData(partHref);
-      const participationsObj = detailData && detailData._links && detailData._links.participations;
+      const { lastModified, data } = await fetchApiData(partHref, VERBOSE);
+      dataEntry.lastModified = lastModified;
+      dataEntry.data = data;
+
+      const participationsObj = data._links && data._links.participations;
       if (participationsObj && typeof participationsObj === 'object') {
         for (const key in participationsObj) {   // https://api.w3.org/groups/{type}/{shortname}/participations
           const p = participationsObj[key];
@@ -557,12 +593,10 @@ async function fetchParticipations(collectedGroupsData, collectedParticipationsD
       console.warn(`  error fetching participation list ${partHref}: ${String(e)}`);
       errorCount++;
 
-      detailData = { _error: String(e) };
+      dataEntry.data = { _error: String(e) };
     }
-    collectedParticipationsData[partHref] = {
-      fetchedAt: new Date().toISOString(),
-      data: detailData
-    };
+    collectedParticipationsData[partHref] = dataEntry;
+
     // 進捗表示（100件ごと, 最後の1件）
     if (i % 100 === 0 || i === allParticipationsArray.length - 1) {
       const duration = Date.now() - fetchStartTimestamp;
@@ -577,20 +611,24 @@ async function fetchParticipations(collectedGroupsData, collectedParticipationsD
   for (let i = 0; i < participationsArray.length; i++) {
     const participationHref = participationsArray[i];
     if (VERBOSE) console.log(`[${fetchCount + 1}] Fetching: ${participationHref}`);
-    let participationData = {};
+
+    let dataEntry = {
+      fetchedAt: new Date().toUTCString(), // HTTP-date形式
+      lastModified: undefined,
+      data: undefined
+    }
     try {
       if (VERBOSE) console.log(`  → Fetching participation detail from ${participationHref}`);
       fetchCount++;
 
-      participationData = await fetchData(participationHref);
-      collectedParticipationsData[participationHref] = {
-        fetchedAt: new Date().toISOString(),
-        data: participationData !== undefined ? participationData : { _error: 'Failed to fetch participation detail' }
-      };
+      const { lastModified, data } = await fetchApiData(participationHref, VERBOSE);
+      dataEntry.lastModified = lastModified;
+      dataEntry.data = data;
+      collectedParticipationsData[participationHref] = dataEntry;
       // 組織参加の場合（individual === false）で _links.participants.href があれば追加
-      if (participationData && participationData.individual === false && participationData._links && participationData._links.participants && typeof participationData._links.participants.href === 'string') {
+      if (dataEntry.data && dataEntry.data.individual === false && data._links && data._links.participants && typeof data._links.participants.href === 'string') {
         // https://api.w3.org/participations/{participation}/participants
-        const href = participationData._links.participants.href;
+        const href = data._links.participants.href;
         if (!reParticipationsParticipants.test(href)) {
           console.warn(`Warning: Unexpected participation participants URL format: ${href}`);
         }
@@ -603,12 +641,9 @@ async function fetchParticipations(collectedGroupsData, collectedParticipationsD
       console.warn(`    error fetching participation detail ${participationHref}: ${String(e)}`);
       errorCount++;
 
-      participationData = { _error: String(e) };
+      dataEntry.data = { _error: String(e) };
     }
-    collectedParticipationsData[participationHref] = {
-      fetchedAt: new Date().toISOString(),
-      data: participationData
-    };
+    collectedParticipationsData[participationHref] = dataEntry;
 
     // 進捗表示（100件ごと, 最後の1件）
     if (i % 100 === 0 || i === participationsArray.length - 1) {
@@ -623,12 +658,18 @@ async function fetchParticipations(collectedGroupsData, collectedParticipationsD
     const participantsHref = participantsArray[i];
     if (VERBOSE) console.log(`[${fetchCount + 1}] Fetching: ${participantsHref}`);
 
-    let participantsData = {};
+    let dataEntry = {
+      fetchedAt: new Date().toUTCString(), // HTTP-date形式
+      lastModified: undefined,
+      data: undefined
+    }
     try {
       if (VERBOSE) console.log(`[${fetchCount}] Fetching: ${participantsHref}`);
       fetchCount++;
 
-      participantsData = await fetchData(participantsHref);
+      const { lastModified, data } = await fetchApiData(participantsHref, VERBOSE);
+      dataEntry.lastModified = lastModified;
+      dataEntry.data = data;
 
       if (VERBOSE) console.log(`    ✓ Participants data fetched`);
       fetchedCount++;
@@ -636,12 +677,9 @@ async function fetchParticipations(collectedGroupsData, collectedParticipationsD
       console.warn(`  error fetching participant data ${participantsHref}: ${String(e)}`);
       errorCount++;
 
-      participantsData = { _error: String(e) };
+      dataEntry.data = { _error: String(e) };
     }
-    collectedParticipationsData[participantsHref] = {
-      fetchedAt: new Date().toISOString(),
-      data: participantsData
-    };
+    collectedParticipationsData[participantsHref] = dataEntry;
     // 進捗表示（100件ごと, 最後の1件）
     if (i % 100 === 0 || i === participantsArray.length - 1) {
       const duration = Date.now() - fetchStartTimestamp;
@@ -747,17 +785,23 @@ async function fetchUsersData(allUsers) {
       console.log(`[${i + 1}/${allUsersArray.length}] Fetching: ${userHref}`);
     }
     if (userHref) {
-      let userData = {};
+      let dataEntry = {
+        fetchedAt: new Date().toUTCString(), // HTTP-date形式
+        lastModified: undefined,
+        data: undefined
+      }
       try {
         if (VERBOSE) console.log(`  → Fetching user data from ${userHref}`);
         fetchCount++;
 
         // 全Phaseで[REQUEST][RESPONSE]を出す
-        userData = await fetchData(userHref);
-        if (userData && userData._links && userData._links.affiliations) {
+        const { lastModified, data } = await fetchApiData(userHref, VERBOSE);
+        dataEntry.lastModified = lastModified;
+        dataEntry.data = data;
+        if (data && data._links && data._links.affiliations) {
           // affiliationsが配列の場合
-          if (Array.isArray(userData._links.affiliations)) {
-            for (const aff of userData._links.affiliations) {
+          if (Array.isArray(data._links.affiliations)) {
+            for (const aff of data._links.affiliations) {
               // e.g. https://api.w3.org/users/${hash}/affiliations
               if (aff && aff.href) {
                 if (!reUsersAffiliations.test(aff.href)) {
@@ -766,17 +810,17 @@ async function fetchUsersData(allUsers) {
                 userAfflications.add(aff.href);
               }
             }
-          } else if (typeof userData._links.affiliations === 'object' && userData._links.affiliations.href) {
+          } else if (typeof data._links.affiliations === 'object' && data._links.affiliations.href) {
             //  https://api.w3.org/users/${hash}/affiliations
-            if (!reUsersAffiliations.test(userData._links.affiliations.href)) {
-              console.warn(`Warning: Unexpected users affiliation URL format: ${userData._links.affiliations.href}`);
+            if (!reUsersAffiliations.test(data._links.affiliations.href)) {
+              console.warn(`Warning: Unexpected users affiliation URL format: ${data._links.affiliations.href}`);
             }
-            userAfflications.add(userData._links.affiliations.href);
+            userAfflications.add(data._links.affiliations.href);
           }
         }
-        if (userData && userData._links && userData._links.groups) {
-          if (Array.isArray(userData._links.groups)) {
-            for (const grp of userData._links.groups) {
+        if (data && data._links && data._links.groups) {
+          if (Array.isArray(data._links.groups)) {
+            for (const grp of data._links.groups) {
               if (grp && grp.href) {
                 // e.g. https://api.w3.org/users/${hash}/groups
                 if (!reUsersGroups.test(grp.href)) {
@@ -785,11 +829,11 @@ async function fetchUsersData(allUsers) {
                 userGroups.add(grp.href);
               }
             }
-          } else if (typeof userData._links.groups === 'object' && userData._links.groups.href) {
-            if (!reUsersGroups.test(userData._links.groups.href)) {
-              console.warn(`Warning: Unexpected users groups URL format: ${userData._links.groups.href}`);
+          } else if (typeof data._links.groups === 'object' && data._links.groups.href) {
+            if (!reUsersGroups.test(data._links.groups.href)) {
+              console.warn(`Warning: Unexpected users groups URL format: ${data._links.groups.href}`);
             }
-            userGroups.add(userData._links.groups.href);
+            userGroups.add(data._links.groups.href);
           }
         }
         if (VERBOSE) {
@@ -800,14 +844,11 @@ async function fetchUsersData(allUsers) {
         console.warn(`  error fetching user data ${userHref}: ${String(e)}`);
         errorCount++;
 
-        userData = {
+        dataEntry.data = {
           error: String(e)
         }
       }
-      collectedUsersData[userHref] = {
-        fetchedAt: new Date().toISOString(),
-        data: userData
-      };
+      collectedUsersData[userHref] = dataEntry;
     }
     // 進捗表示（100件ごと、または最後）
     if (i % 100 === 0 || i === allUsersArray.length - 1) {
@@ -819,12 +860,18 @@ async function fetchUsersData(allUsers) {
   console.log(`Found ${userAfflicationsArray.length} user affiliations to fetch`);
   for (let i = 0; i < userAfflicationsArray.length; i++) {
     const affHref = userAfflicationsArray[i];
-    let affData = {};
+    let dataEntry = {
+      fetchedAt: new Date().toUTCString(), // HTTP-date形式
+      lastModified: undefined,
+      data: undefined
+    }
     try {
       if (VERBOSE) console.log(`[${i + 1}/${userAfflicationsArray.length}] Fetching: ${affHref}`);
       fetchCount++;
 
-      affData = await fetchData(affHref);
+      const { lastModified, data } = await fetchApiData(affHref, VERBOSE);
+      dataEntry.lastModified = lastModified;
+      dataEntry.data = data;
 
       if (VERBOSE) console.log(`    ✓ user affiliation data fetched`);
       fetchedCount++;
@@ -832,12 +879,9 @@ async function fetchUsersData(allUsers) {
       console.warn(`  error fetching user affiliation data ${affHref}: ${String(e)}`);
       errorCount++;
 
-      affData = { error: String(e) };
+      dataEntry.data = { error: String(e) };
     }
-    collectedUsersData[affHref] = {
-      fetchedAt: new Date().toISOString(),
-      data: affData
-    };
+    collectedUsersData[affHref] = dataEntry;
 
     if (fetchCount % 100 === 0 || i === userAfflicationsArray.length - 1) {
       const duration = Date.now() - fetchStartTimestamp;
@@ -849,12 +893,19 @@ async function fetchUsersData(allUsers) {
   console.log(`Found ${userGroupsArray.length} users groups to fetch`);
   for (let i = 0; i < userGroupsArray.length; i++) {
     const groupHref = userGroupsArray[i];
-    let groupData = {};
+
+    let dataEntry = {
+      fetchedAt: new Date().toUTCString(), // HTTP-date形式
+      lastModified: undefined,
+      data: undefined
+    }
     try {
       if (VERBOSE) console.log(`[${i + 1}/${userGroupsArray.length}] Fetching: ${groupHref}`);
       fetchCount++;
 
-      groupData = await fetchData(groupHref);
+      const { lastModified, data } = await fetchApiData(groupHref, VERBOSE);
+      dataEntry.lastModified = lastModified;
+      dataEntry.data = data;
 
       if (VERBOSE) console.log(`    ✓ user group data fetched`);
       fetchedCount++;
@@ -862,12 +913,9 @@ async function fetchUsersData(allUsers) {
       console.warn(`  error fetching user group group data ${groupHref}: ${String(e)}`);
       errorCount++;
 
-      groupData = { error: String(e) };
+      dataEntry.data = { error: String(e) };
     }
-    collectedUsersData[groupHref] = {
-      fetchedAt: new Date().toISOString(),
-      data: groupData
-    };
+    collectedUsersData[groupHref] = dataEntry;
 
     if (fetchCount % 100 === 0 || i === userGroupsArray.length - 1) {
       const duration = Date.now() - fetchStartTimestamp;
@@ -945,13 +993,19 @@ async function fetchAffiliations(collectedParticipationsData, collectedUsersData
   } else {
     // 3. affiliationsリストをfetchして全affiliationsのURLを取得
     const affUrl = `https://api.w3.org/affiliations/`;
-    let affList = {};
+    let dataEntry = {
+      fetchedAt: new Date().toUTCString(), // HTTP-date形式
+      lastModified: undefined,
+      data: undefined
+    }
     let affiliationsArrayFromList = [];
     console.log(`Fetching the list of all affiliations: ${affUrl}, this may take a few minutes`);
     try {
       fetchCount++;
-      affList = await fetchData(affUrl);
-      for (const affiliation of affList._links.affiliations) {
+      const { lastModified, data } = await fetchApiData(affUrl, VERBOSE);
+      dataEntry.lastModified = lastModified;
+      dataEntry.data = data;
+      for (const affiliation of data._links.affiliations) {
         affiliationsArrayFromList.push(affiliation.href);
       }
       if (VERBOSE) console.log(`    ✓ the affiliation list fetched`);
@@ -962,12 +1016,10 @@ async function fetchAffiliations(collectedParticipationsData, collectedUsersData
       }
       errorCount++;
 
-      affList = { error: String(e) };
+      dataEntry = { error: String(e) };
     }
-    collectedAffiliationsData[affUrl] = {
-      fetchedAt: new Date().toISOString(),
-      data: affList
-    };
+    collectedAffiliationsData[affUrl] = dataEntry;
+
     // 4. フェッチするaffiliationsリストを決定
     console.log(`Found ${affiliationsArrayFromList.length} affiliations from the affiliation list`);
     affiliationsArray = affiliationsArrayFromList;
@@ -978,16 +1030,22 @@ async function fetchAffiliations(collectedParticipationsData, collectedUsersData
   const participantsFromAffiliations = new Set();
   for (let i = 0; i < affiliationsArray.length; i++) {
     const affHref = affiliationsArray[i];
-    let affData = {};
+    let dataEntry = {
+      fetchedAt: new Date().toUTCString(), // HTTP-date形式
+      lastModified: undefined,
+      data: undefined
+    }
     try {
       if (VERBOSE) console.log(`[${i + 1}/${affiliationsArray.length}] Fetching affiliation: ${affHref}`);
       fetchCount++;
 
-      affData = await fetchData(affHref);
+      const { lastModified, data } = await fetchApiData(affHref, VERBOSE);
+      dataEntry.lastModified = lastModified;
+      dataEntry.data = data;
 
       // affiliationのparticipantsエンドポイントをparticipantsリストに追加
-      if (affData._links && affData._links.participants && affData._links.participants.href) {
-        participantsFromAffiliations.add(affData._links.participants.href);
+      if (data._links && data._links.participants && data._links.participants.href) {
+        participantsFromAffiliations.add(data._links.participants.href);
       }
 
       if (VERBOSE) console.log(`    ✓ affiliation data fetched`);
@@ -998,12 +1056,9 @@ async function fetchAffiliations(collectedParticipationsData, collectedUsersData
       }
       errorCount++;
 
-      affData = { error: String(e) };
+      dataEntry.data = { error: String(e) };
     }
-    collectedAffiliationsData[affHref] = {
-      fetchedAt: new Date().toISOString(),
-      data: affData
-    };
+    collectedAffiliationsData[affHref] = dataEntry
 
     if (i % 100 === 0 || i === affiliationsArray.length - 1) {
       const duration = Date.now() - fetchStartTimestamp;
@@ -1016,12 +1071,19 @@ async function fetchAffiliations(collectedParticipationsData, collectedUsersData
   console.log(`Found ${participantsArray.length} affiliation participants to fetch`);
   for (let i = 0; i < participantsArray.length; i++) {
     const participantsHref = participantsArray[i];
-    let participantsData = {};
+
+    let dataEntry = {
+      fetchedAt: new Date().toUTCString(), // HTTP-date形式
+      lastModified: undefined,
+      data: undefined
+    }
     try {
       if (VERBOSE) console.log(`[${i + 1}/${participantsArray.length}] Fetching: ${participantsHref}`);
       fetchCount++;
 
-      participantsData = await fetchData(participantsHref);
+      const { lastModified, data } = await fetchApiData(participantsHref, VERBOSE);
+      dataEntry.lastModified = lastModified;
+      dataEntry.data = data;
 
       if (VERBOSE) console.log(`    ✓ affiliation participants data fetched`);
       fetchedCount++;
@@ -1029,12 +1091,10 @@ async function fetchAffiliations(collectedParticipationsData, collectedUsersData
       console.warn(`  error fetching affiliation participant data ${participantsHref}: ${String(e)}`);
       errorCount++;
 
-      participantsData = { error: String(e) };
+      dataEntry.data = { error: String(e) };
     }
-    collectedAffiliationsData[participantsHref] = {
-      fetchedAt: new Date().toISOString(),
-      data: participantsData
-    };
+    collectedAffiliationsData[participantsHref] = dataEntry;
+
     if (fetchCount % 100 === 0 || i === participantsArray.length - 1) {
       const duration = Date.now() - fetchStartTimestamp;
       console.log(`    --- Progress: ${i + 1}/${participantsArray.length} affiliation participants (${formatDuration(duration)})`);
@@ -1369,10 +1429,9 @@ async function createDataJson(dirPath, usedFilenames, dataFileName, testGroups) 
   }
   if (files.length == usedFilenames.length) {
     // testMode時はtestGroupsリストを_metadataに追加
-    const nowIso = new Date().toISOString();
     const metadata = {
       filename: dataFileName,
-      lastChecked: nowIso
+      lastChecked: new Date().toUTCString() // HTTP-date
     };
     if (testGroups) {
       metadata.testGroups = testGroups;

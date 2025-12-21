@@ -1,4 +1,4 @@
-// ES6 GroupInfoクラス定義
+// w3c-api.js
 class GroupInfo {
   constructor({
     name = 'Unknown',
@@ -26,9 +26,217 @@ class GroupInfo {
     this._error = _error;
   }
 }
+
 // グローバルapiDataを参照し、URLでデータを検索する関数
 let globalApiData = null;
-function findByDataUrl(targetUrl) {
+
+// The code of fetchApiData functions is copeied from fetch-data.js
+// The fetch Json uses the fetch() function of browsers to fetch Data from the W3C API via the Internet
+// グローバル変数廃止。各Phase関数で都度ファイルロード・ローカル変数化。
+let totalRequestCount = 0; // 全体のfetchJson呼び出し回数
+
+function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+// 統一されたリクエスト間隔
+// W3C API制限: 6000 requests per IP every 10 minutes
+// 200ms間隔 = 5 requests/sec = 300 requests/min = 3000 requests/10min (制限の50%使用)
+// const REQUEST_INTERVAL = 200;
+const REQUEST_INTERVAL = 0; // No need to wait between requests in browser environment  
+
+async function fetchJson(url, retries = 6, backoffMs = 60000, timeoutMs = 180000, redirects = 5, verbose=false) { // no need to support redirects for fetch()
+  totalRequestCount++;
+
+  for (let attempt = 0; attempt < retries; attempt++) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      if (verbose) {
+        console.log(`    [REQUEST] ${url}`);
+      }
+      const res = await fetch(url, {
+        headers: { 'Accept': 'application/json' },
+        signal: controller.signal,
+        redirect: 'follow'
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        // 429/5xxはリトライ
+        if ((res.status === 429 || (res.status >= 500 && res.status < 600)) && attempt < retries - 1) {
+          let wait = backoffMs;
+          if (res.status === 429) {
+            const retryAfter = res.headers.get('retry-after');
+            if (retryAfter) {
+              const ra = parseInt(retryAfter, 10);
+              if (!isNaN(ra)) wait = ra * 1000;
+            }
+          }
+          if (verbose) {
+            console.warn(`    [RETRY] ${url} (HTTP ${res.status}) (${attempt + 1}/${retries}) wait ${wait}ms`);
+          }
+          await new Promise(r => setTimeout(r, wait));
+          continue;
+        }
+        // それ以外はエラー返却
+        throw {
+          statusCode: res.status,
+          url,
+          headers: Object.fromEntries(res.headers.entries()),
+          message: `HTTP error ${res.status}`,
+          body: text
+        };
+      }
+      // 正常時
+      const data = await res.json();
+      // [RESPONSE] ログ出力（status, content-length, Last-Modified）
+      if (verbose) {
+        const status = res.status;
+        const clen = res.headers.get('content-length')|| 0;
+        const lastModified = res.headers.get('last-modified') || '';
+        console.log(`    [RESPONSE] status=${status} content-length=${clen} last-modified=${lastModified}`);
+      }
+      const ret = {
+        lastModified: res.headers.get('last-modified') || undefined,
+        data: data
+      }
+      return ret;
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        if (attempt < retries - 1) {
+          if (verbose) {
+            console.warn(`    [RETRY] timeout for ${url} (${attempt + 1}/${retries}) wait ${backoffMs}ms`);
+          }
+          await new Promise(r => setTimeout(r, backoffMs));
+          continue;
+        }
+        throw { message: `timeout ${timeoutMs}ms for ${url}`, url };
+      }
+      if (attempt >= retries - 1) throw err;
+      if (verbose) {
+        console.warn(`    [RETRY] fetch error for ${url}: ${err.message || err} (${attempt + 1}/${retries}) wait ${backoffMs}ms`);
+      }
+      await new Promise(r => setTimeout(r, backoffMs));
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+  throw { message: `Failed to fetch ${url} after ${retries} attempts` };
+}
+
+// fetchApiData is the exactly same in w3c-api.js and  fetch-data.js 
+async function fetchApiData(startUrl, verbose = false) {
+  if (!startUrl) return undefined;
+
+  const pages = [];
+  let url = startUrl;
+  if (url.endsWith('/')) url = url.slice(0, -1);
+  // items=500を常に付与
+  if (!url.includes('items=')) {
+    url += (url.includes('?') ? '&' : '?') + 'items=500';
+  }
+  let page = 1; // 初期ページ
+  let lastModified = null;
+  while (url) {
+    let fetchStart = Date.now();
+    let fetchEnd;
+    try {
+      const result = await fetchJson(url, 6, 60000, 120000, 5, verbose);
+      if (result.data == undefined) {
+        throw new Error(`No data in response for ${url}`);
+      }
+      const data = result.data;
+      pages.push(data);
+      if (lastModified == null) {
+        lastModified = result.lastModified;
+      }
+      // レスポンスから総ページ数を取得して次のURLを構築
+      const totalPages = data.pages || 1;
+      if (page < totalPages) {
+        page += 1;
+        let baseUrl = startUrl.split('?')[0];
+        if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+        // items=500とpageを両方付与
+        url = `${baseUrl}?items=500&page=${page}`;
+      } else {
+        url = null; // 最後のページに到達
+      }
+    } catch (err) {
+      console.log(`    [ERROR] fetchApiData error for ${url}: ${JSON.stringify(err).substring(0, 200)}`);
+      throw (err);
+    } finally {
+      fetchEnd = Date.now();
+    }
+    const elapsed = fetchEnd - fetchStart;
+    const sleepMs = REQUEST_INTERVAL - elapsed;
+    if (sleepMs > 0) {
+      await sleep(sleepMs);
+    }
+    if (verbose) { console.log(`    [INFO] elapsed ${elapsed}ms  sleep ${sleepMs}ms`); }
+  }
+
+  let data = undefined;
+  if (pages.length === 1) {   // ページが1つだけの場合
+    data = pages[0];
+  } else {
+    // 複数ページの場合、正常ページのみマージ。全ページエラーならundefined
+    const validPages = pages.filter(p => !p.error);
+
+    if (validPages.length > 0) {
+      const merged = {
+        page: 1,
+        limit: 0,
+        pages: 1,
+        total: 0,
+        _links: {}
+      };
+      const allItems = [];
+      let dataKey = null;
+      for (const page of validPages) {
+        if (!dataKey && page._links) {
+          for (const key of Object.keys(page._links)) {
+            if (Array.isArray(page._links[key])) {
+              dataKey = key;
+              break;
+            }
+          }
+        }
+        if (dataKey && page._links && Array.isArray(page._links[dataKey])) {
+          allItems.push(...page._links[dataKey]);
+        }
+        if (page._links) {
+          if (page._links.up && !merged._links.up) {
+            merged._links.up = page._links.up;
+          }
+        }
+      }
+      merged.total = allItems.length;
+      merged.limit = allItems.length;
+      if (dataKey) {
+        merged._links[dataKey] = allItems;
+      }
+      merged._links.self = { href: startUrl };
+      merged._links.first = { href: startUrl };
+      merged._links.last = { href: startUrl };
+
+      data = merged // 複数のページのデータをマージした結果
+    } else {
+      throw (Error('cannot fetch any pages'));
+    }
+  }
+
+  const ret = {
+    lastModified: lastModified,
+    data: data,
+  };
+
+  return ret
+}
+
+async function fetchDataAsync(targetUrl) { 
+  const entry =  await fetchApiData(targetUrl, false);
+  return entry && entry.data !== undefined ? entry.data : null;
+}
+
+function getData(targetUrl) {
   try {
     if (!globalApiData) {
       console.warn('globalApiData is not loaded');
@@ -62,7 +270,7 @@ function findByDataUrl(targetUrl) {
     }
     return data;
   } catch (e) {
-    console.error(`Exception in findByDataUrl for URL ${targetUrl}: ${String(e)}`);
+    console.error(`Exception in getData for URL ${targetUrl}: ${String(e)}`);
     return null;
   }
 }
@@ -111,7 +319,7 @@ async function loadData() {
   }
   // set setApiData
   globalApiData = { mainData, groupsData, participationsData, usersData, affiliationsData };
-  window.findByDataUrl = findByDataUrl;
+  window.getData = getData;
 
   const endedTime = performance.now();
   console.log(`Data loaded successfully in ${(endedTime - startedTime).toFixed(2)} ms`);
@@ -124,7 +332,7 @@ function extractGroups() {
 
   for (const type of types) {
     const url = `https://api.w3.org/groups/${type}`;
-    const data = findByDataUrl(url);
+    const data = getData(url);
     if (!data) {
       console.warn(`Warning: No data found for URL: ${url}, skipping`);
       continue;
@@ -153,7 +361,7 @@ function getParticipationsClassificationMaps(groupType, participationsUrl) {
 
   if (participationsUrl) {
     try {
-      const participationsData = findByDataUrl(participationsUrl);
+      const participationsData = getData(participationsUrl);
       let participationsArray = participationsData?._links?.participations || [];
       if (participationsArray && typeof participationsArray === 'object' && !Array.isArray(participationsArray)) {
         participationsArray = Object.values(participationsArray);
@@ -162,13 +370,13 @@ function getParticipationsClassificationMaps(groupType, participationsUrl) {
         for (const part of participationsArray) {
           try {
             let isMember = false;
-            const partDetail = findByDataUrl(part.href);
+            const partDetail = getData(part.href);
             // Members: individual=false, invited-expert=false
             if (partDetail['individual'] === false) {
               const orgTitle = partDetail._links?.organization?.title || part.title || 'Unknown';
               const affiliationHref = partDetail._links?.organization?.href;
               if (affiliationHref) {
-                const affData = findByDataUrl(affiliationHref);
+                const affData = getData(affiliationHref);
                 if (affData) {
                   isMember = affData['is-member']
                   if (!isMember) {
@@ -191,7 +399,7 @@ function getParticipationsClassificationMaps(groupType, participationsUrl) {
               }
               const participantsHref = partDetail._links?.participants?.href;
               if (participantsHref) {
-                const participantsData = findByDataUrl(participantsHref);  // // participatonsの場合はaffiliationsは一つだけ
+                const participantsData = getData(participantsHref);  // // participatonsの場合はaffiliationsは一つだけ
                 let participantItems = participantsData?._links?.participants || [];
                 if (participantItems && typeof participantItems === 'object' && !Array.isArray(participantItems)) {
                   participantItems = Object.values(participantItems);
@@ -219,7 +427,7 @@ function getParticipationsClassificationMaps(groupType, participationsUrl) {
                 addParticipantToMap(participant, invitedExpertsMap);
               } else {        // Indivisuals or Staffs: individual=true, invited-expert=false
                 if (userHref) {
-                  const userData = findByDataUrl(userHref);
+                  const userData = getData(userHref);
                   const afflicationsHref = userData?._links?.affiliations?.href;
                   const affName = userData?._links?.affiliations?.title || 'Unknown';
                   if (!afflicationsHref) {
@@ -261,7 +469,7 @@ function checkAffiliations(affiliationsHref) {
   let afflications = [];
 
   try {
-    const affiliationsEntry = findByDataUrl(affiliationsHref);
+    const affiliationsEntry = getData(affiliationsHref);
     let affs = affiliationsEntry?._links?.affiliations;
     // affsがundefined/nullなら空配列、配列でなければObject.valuesで配列化
     if (!affs) {
@@ -275,7 +483,7 @@ function checkAffiliations(affiliationsHref) {
         console.warn(`Warning: User ${userTitle}'s affiliation ${aff} has no affiliation href`);
         continue;
       }
-      const affData = findByDataUrl(affiliationHref);
+      const affData = getData(affiliationHref);
       if (!affData) {
         console.warn(`Warning: Organization data not found for href ${affiliationHref} of ${userTitle}`);
         continue;
@@ -305,7 +513,7 @@ function getUsersClassificationMaps(groupType, usersUrl) {
 
   let usersMap = new Map();
   try {
-    const usersData = findByDataUrl(usersUrl);
+    const usersData = getData(usersUrl);
     const usersArray = usersData?._links?.users || [];
     if (Array.isArray(usersArray) && usersArray.length > 0) {
       usersMap = new Map(usersArray.map(u => [u.href, u]));
@@ -317,9 +525,9 @@ function getUsersClassificationMaps(groupType, usersUrl) {
   for (const user of usersMap.values()) {
     try {
       const userHref = user.href;
-      const userDetail = findByDataUrl(userHref);
+      const userDetails = getData(userHref);
       const userTitle = user.title || 'Unknown';
-      const affiliationsHref = userDetail?._links?.affiliations?.href;
+      const affiliationsHref = userDetails?._links?.affiliations?.href;
       const participant = makeParticipant(userHref, userTitle);
       if (affiliationsHref) {
         let { isMember, isW3CStaff, isInvitedExpert, afflications } = checkAffiliations(affiliationsHref);
@@ -360,7 +568,7 @@ function extractGroupInfo(group) {
   const name = group.title || group.name || 'Unknown Group';
   const groupType = group.groupType || 'unknown';
   // グループ詳細
-  const groupDetail = findByDataUrl(group.href);
+  const groupDetail = getData(group.href);
   const homepage = groupDetail?._links?.homepage?.href;
 
 
@@ -424,7 +632,7 @@ function createSummaryGroup() {
   const allIndividualsMap = new Map();
   const allParticipantsMap = new Map()
 
-  const allAffEntry = findByDataUrl('https://api.w3.org/affiliations/');
+  const allAffEntry = getData('https://api.w3.org/affiliations/');
   if (!allAffEntry || allAffEntry.length === 0) {
     return undefined
   }
@@ -432,12 +640,12 @@ function createSummaryGroup() {
   const afflications = allAffEntry._links?.affiliations || [];
   for (const affEntry of afflications) {
     const participantsArray = [];
-    const affData = findByDataUrl(affEntry.href);
+    const affData = getData(affEntry.href);
     const affName = affData?.name || 'Unknown';
     if (affData) {
       const participantsHref = affData._links?.participants?.href;
       if (participantsHref) {
-        const participantsData = findByDataUrl(participantsHref);  // // participatonsの場合はaffiliationsは一つだけ
+        const participantsData = getData(participantsHref);  // // participatonsの場合はaffiliationsは一つだけ
         let participantItems = participantsData?._links?.participants || [];
         if (participantItems && typeof participantItems === 'object' && !Array.isArray(participantItems)) {
           participantItems = Object.values(participantItems);
@@ -531,11 +739,11 @@ function checkOverlapParticipants(allParticipantsMap, allMemberParticipantsMap, 
 
 function makeParticipant(userHref, name) {
   let numGroups = 0
-  const userData = findByDataUrl(userHref);
+  const userData = getData(userHref);
   if (userData) {
     const groupsHref = userData?._links?.groups?.href;
     if (groupsHref) {
-      const groupsData = findByDataUrl(groupsHref);
+      const groupsData = getData(groupsHref);
       let groupsArray = groupsData?._links?.groups || [];
       if (Array.isArray(groupsArray)) {
         numGroups = Object.values(groupsArray).length;

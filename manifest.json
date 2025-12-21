@@ -1,0 +1,13 @@
+{
+  "name": "W3C Dash",
+  "short_name": "W3C Dash",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0969da",
+  "description": "A dashboard for visualizing W3C statistics.",
+  "icons": [
+    { "src": "w3c-dash-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "w3c-dash-512x512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
