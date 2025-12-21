@@ -1,3 +1,5 @@
+// w3c-dash.js
+
 let groupsInfo = null; // 初回のみロード
 let attachedSummaryHandler = false;
 let attachedGroupsHandler = false;
@@ -1150,10 +1152,8 @@ async function _popupRenderUserDetails(userHref, userName) {
     return;
   }
 
-  userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">Loading...</p>';
-
   let user = window.getData ? window.getData(userHref) : null;
-  const fetchAlways = true; // for debuging
+  const fetchAlways = false; // true only for debuging
   if (!user || fetchAlways) {
     // ローカルにデータがない場合
     const dl = document.createElement('dl');
@@ -1169,7 +1169,7 @@ async function _popupRenderUserDetails(userHref, userName) {
       fetchBtn.disabled = true;
       fetchBtn.textContent = 'Fetching...';
       try {
-        const apiUser = window.fetchDataAsync ? await window.fetchDataAsync(userHref) : null;
+        const apiUser = await window.fetchDataAsync(userHref);
         if (apiUser) {
           renderUserDetailsContent(apiUser, true); // useFetchDataAsync
         } else {
@@ -1190,7 +1190,7 @@ async function _popupRenderUserDetails(userHref, userName) {
 }
 
 // 詳細描画ロジックを分離
-async function renderUserDetailsContent(user, useFetchData = false) {
+async function renderUserDetailsContent(user, useFetchDataAsync = false) {
   const userDetailsContent = document.getElementById('userDetailsContent');
   const dl = document.createElement('dl');
 
@@ -1231,7 +1231,7 @@ async function renderUserDetailsContent(user, useFetchData = false) {
   let affiliationsList = [];
   if (user._links && user._links.affiliations && user._links.affiliations.href) {
     try {
-      const affApiRes = fetchDataAsync ? await window.fetchDataAsync(user._links.affiliations.href) : window.getData(user._links.affiliations.href);
+      const affApiRes = useFetchDataAsync ? await window.fetchDataAsync(user._links.affiliations.href) : window.getData(user._links.affiliations.href);
       let affArr = [];
       if (affApiRes && affApiRes._links && affApiRes._links.affiliations) {
         // affiliationsが数値キー付きオブジェクトの場合はObject.valuesで配列化
@@ -1252,22 +1252,13 @@ async function renderUserDetailsContent(user, useFetchData = false) {
   if (user._links && user._links.groups && user._links.groups.href) {
     try {
       const href = user._links.groups.href;
-      const grpApiRes = fetchDataAsync ? await window.fetchDataAsync(href) : window.getData(href);
+      const grpApiRes = useFetchDataAsync ? await window.fetchDataAsync(href) : window.getData(href);
       if (grpApiRes && grpApiRes._links && grpApiRes._links.groups) {
         let grpArr = grpApiRes._links.groups;
         if (!Array.isArray(grpArr)) {
           grpArr = Object.values(grpArr);
         }
-        groupsList = await Promise.all(grpArr.map(async (g) => {
-          const href = g.href;
-          let groupObj;
-          if (fetchDataAsync) {
-            groupObj = await window.fetchDataAsync(href); // async
-          } else {
-            groupObj = window.getData(href); // sync
-          }
-          return groupObj && groupObj.data && groupObj.data.title ? groupObj.data.title : (g.title || g.href);
-        }));
+        groupsList = grpArr.map(a => a.title || a.href).filter(Boolean);
       }
     } catch (e) {
       console.error('Groups fetch error:', e);
@@ -1462,6 +1453,7 @@ function renderParticipantsListWithSort({
       let startIdx = 0;
       let endIdx = totalRows;
 
+      // console.log(`updateVisibleRows: buffer=${buffer}, totalRows=${totalRows}, viewportHeight=${viewportHeight}, totalHeight=${totalHeight} startIdx=${startIdx}, endIdx=${endIdx}`);
       // 短いリストは全件表示・スクロールバーなし
       if (totalHeight <= viewportHeight) {
         startIdx = 0;
@@ -1474,9 +1466,10 @@ function renderParticipantsListWithSort({
         startIdx = Math.max(0, startIdx);
         endIdx = Math.min(totalRows, startIdx + Math.ceil(viewportHeight / rowHeight) + 2 * buffer);
 
-        // 一番下で下端に揃うよう調整
-        if (endIdx === totalRows) {
+        // // 下端までスクロールしたときだけ、一番下で下端に揃うよう調整
+        if (endIdx === totalRows && scrollTop + viewportHeight >= totalHeight - 1) {
           startIdx = Math.max(0, totalRows - Math.ceil(viewportHeight / rowHeight) - buffer);
+          // console.log(`Adjusting for bottom alignment: startIdx=${startIdx}, endIdx=${endIdx}`);
         }
         spacer.style.height = totalHeight + 'px';
         listDiv.style.top = (startIdx * rowHeight + listDivPaddingTop) + 'px';

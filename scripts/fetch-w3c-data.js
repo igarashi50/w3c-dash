@@ -1,4 +1,4 @@
-// 先頭でデータ用変数を宣言
+// w3c-fetch-w3c-data.js
 const https = require('https');
 const http = require('http');
 const zlib = require('zlib');

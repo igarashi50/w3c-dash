@@ -37,7 +37,7 @@ If you want to run locally or update the data yourself:
    ```bash
    node scripts/fetch-w3c-data.js
    ```
-2. Start a local server (optional, for CORS):
+2. Start a local server:
    ```bash
    python3 -m http.server 8000
    # Then open http://localhost:8000 in your browser
@@ -54,16 +54,16 @@ If you want to run locally or update the data yourself:
 ## Data Flow
 1. **Data Fetching**: Run `node scripts/fetch-w3c-data.js` to fetch the latest W3C API data and save it to `data/*.json`.
 2. **Data Loading**: The dashboard loads these JSON files in the browser and processes them via `w3c-api.js`.
-3. **UI Rendering**: `index.html` and `w3c-dash.js` builds tables and popups for interactive exploration.
+3. **UI Rendering**: `index.html` and `w3c-dash.js` build tables and popups for interactive exploration.
 
 ## Dependencies
-No npm or package.json required
+No npm or package.json is required
 
 ## License
 See [LICENSE](LICENSE) for details.
 
 ## Disclaimer
-The information provided by this application is based on data fetched from the public W3C API. However, the accuracy, completeness, or reliability of the data is not guaranteed. Use of the fetched data is subject to the terms and conditions set by the W3C API.
+The information provided by this application is based on data fetched from the public W3C API. However, the accuracy, completeness, or reliability of the information and data is not guaranteed. Use of the fetched data is subject to the terms and conditions set by the W3C API.
 
 ## Author
 Maintained by @igarashi50

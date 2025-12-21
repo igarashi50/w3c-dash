@@ -1,3 +1,4 @@
+// w3c-api.js
 class GroupInfo {
   constructor({
     name = 'Unknown',
@@ -42,7 +43,7 @@ function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 // const REQUEST_INTERVAL = 200;
 const REQUEST_INTERVAL = 0; // No need to wait between requests in browser environment  
 
-async function fetchJson(url, retries = 6, backoffMs = 60000, timeoutMs = 180000, verbose=false) {
+async function fetchJson(url, retries = 6, backoffMs = 60000, timeoutMs = 180000, redirects = 5, verbose=false) { // no need to support redirects for fetch()
   totalRequestCount++;
 
   for (let attempt = 0; attempt < retries; attempt++) {

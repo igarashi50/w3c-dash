@@ -9,10 +9,17 @@
     content="W3C Dash is a dashboard for visualizing W3C statistics. Explore group participations of members, member participants, invited experts, W3C staffs and individuals interactively">
   <link rel="stylesheet" href="w3c-dash.css" />
   <link rel="icon" href="w3c-dash.svg" type="image/svg+xml">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="w3c-dash-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="w3c-dash-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="w3c-dash-512x512.png">
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="manifest.json">
 
   <!-- Alternate links for SEO -->
-  <link rel="alternate" hreflang="en" href="https://igarashi50.github.io/w3c-dash/"/> 
-  <link rel="alternate" hreflang="x-default" href="https://igarashi50.github.io/w3c-dash/"/> 
+  <link rel="alternate" hreflang="en" href="https://igarashi50.github.io/w3c-dash/" />
+  <link rel="alternate" hreflang="x-default" href="https://igarashi50.github.io/w3c-dash/" />
 
   <!-- Open Graph meta tags -->
   <meta property="og:title" content="W3C Dash - a dashboard of W3C statistics -">
@@ -20,13 +27,13 @@
     content="W3C Dash is a dashboard for visualizing W3C statistics. Explore group participations of members, member participants, invited experts, W3C staffs and individuals interactively.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://igarashi50.github.io/w3c-dash/">
-  <meta property="og:image" content="https://igarashi50.github.io/w3c-dash/w3c-dash-1200-630.png">
+  <meta property="og:image" content="https://igarashi50.github.io/w3c-dash/w3c-dash-1200x630.png">
   <!-- Twitter Card meta tags -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="W3C Dash - a dashboard of W3C statistics -">
   <meta name="twitter:description"
     content="W3C Dash is a dashboard for visualizing W3C statistics. Explore group participations of members, member participants, invited experts, W3C staffs and individuals interactively.">
-  <meta name="twitter:image" content="https://igarashi50.github.io/w3c-dash/w3c-dash-1200-630.png">
+  <meta name="twitter:image" content="https://igarashi50.github.io/w3c-dash/w3c-dash-1200x630.png">
 
   <script type="application/ld+json">
   {
@@ -124,7 +131,7 @@
       <option value="invitedExperts">Invited Experts ↓</option>
       <option value="staffs">Staffs ↓</option>
       <option value="individuals">Individuals ↓</option>
-            <option value="allParticipants">All Participants ↓</option>
+      <option value="allParticipants">All Participants ↓</option>
     </select>
     <div id="groupsList">
       <p style='display: none;'>- groups content will be added here -</p>
@@ -208,6 +215,11 @@
   <div id="participationsPopupOverlay" class="popup-overlay"></div>
   <script src="w3c-api.js"></script>
   <script src="w3c-dash.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
 </body>
 
 </html>
