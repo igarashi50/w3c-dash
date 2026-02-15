@@ -1,9 +1,9 @@
 {
   "_metadata": {
     "filename": "w3c-groups.json",
-    "lastChecked": "Sun, 08 Feb 2026 02:37:03 GMT",
-    "fetchStartTime": "20260208-023703",
-    "duration": "3m26s",
+    "lastChecked": "Sun, 15 Feb 2026 02:24:25 GMT",
+    "fetchStartTime": "20260215-022425",
+    "duration": "3m31s",
     "itemCount": 794
   },
   "https://api.w3.org/groups/cg": {
@@ -1118,13 +1118,13 @@
     }
   },
   "https://api.w3.org/groups/cg/a11yedge/participations": {
-    "fetchedAt": "Sun, 25 Jan 2026 02:00:12 GMT",
-    "lastModified": "Sun, 18 Jan 2026 02:57:39 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:06 GMT",
+    "lastModified": "Wed, 11 Feb 2026 19:54:47 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 55,
+      "total": 56,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/a11yedge"
@@ -1349,6 +1349,10 @@
           {
             "href": "https://api.w3.org/participations/46923",
             "title": "W. W. Norton & Company"
+          },
+          {
+            "href": "https://api.w3.org/participations/47105",
+            "title": "Jenia Walker"
           }
         ],
         "self": {
@@ -1364,13 +1368,13 @@
     }
   },
   "https://api.w3.org/groups/cg/a11yedge/users": {
-    "fetchedAt": "Sun, 25 Jan 2026 02:00:12 GMT",
-    "lastModified": "Sun, 18 Jan 2026 02:57:39 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:06 GMT",
+    "lastModified": "Wed, 11 Feb 2026 19:54:47 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 54,
+      "total": 55,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/a11yedge"
@@ -1594,6 +1598,11 @@
           {
             "href": "https://api.w3.org/users/3sl52ri6lv8kcok88cc8gcs4wsogko0",
             "title": "Cybozu W3C",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/pm8y91w5g8gs84o48w04ck40g444go4",
+            "title": "Jenia Walker",
             "former": false
           },
           {
@@ -4152,13 +4161,13 @@
     }
   },
   "https://api.w3.org/groups/cg/agentprotocol/participations": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:37:47 GMT",
-    "lastModified": "Fri, 06 Feb 2026 16:24:24 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:11 GMT",
+    "lastModified": "Tue, 10 Feb 2026 07:31:53 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 149,
+      "total": 151,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/agentprotocol"
@@ -4759,6 +4768,14 @@
           {
             "href": "https://api.w3.org/participations/47073",
             "title": "Sunny Amrat-Nath"
+          },
+          {
+            "href": "https://api.w3.org/participations/47094",
+            "title": "sudocode AI"
+          },
+          {
+            "href": "https://api.w3.org/participations/47095",
+            "title": "Unimal"
           }
         ],
         "self": {
@@ -4774,13 +4791,13 @@
     }
   },
   "https://api.w3.org/groups/cg/agentprotocol/users": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:37:48 GMT",
-    "lastModified": "Fri, 06 Feb 2026 16:24:24 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:11 GMT",
+    "lastModified": "Thu, 12 Feb 2026 06:00:26 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 185,
+      "total": 188,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/agentprotocol"
@@ -5287,6 +5304,11 @@
             "former": false
           },
           {
+            "href": "https://api.w3.org/users/2ety3fserrr4ck4coskwck0o44sgkgg",
+            "title": "Alex Ngai",
+            "former": false
+          },
+          {
             "href": "https://api.w3.org/users/alzu7bb52e0c8gs8sgs0s40s8kggswg",
             "title": "Marcel Nieslony",
             "former": false
@@ -5542,6 +5564,11 @@
             "former": false
           },
           {
+            "href": "https://api.w3.org/users/qjvltuc4be8o0g84oo884c0c8884c0o",
+            "title": "haipeng wu",
+            "former": false
+          },
+          {
             "href": "https://api.w3.org/users/8057hxtymwg88gokk8wswwwk8k4osw0",
             "title": "Heyi Wu",
             "former": false
@@ -5589,6 +5616,11 @@
           {
             "href": "https://api.w3.org/users/qd579oigssgwc0cw48w8scw4c04w8o0",
             "title": "Dexter Yang",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/842oq5fj3rocw08848800sccwwsc8c0",
+            "title": "Mantaroh Yoshinaga",
             "former": false
           },
           {
@@ -5763,13 +5795,13 @@
     }
   },
   "https://api.w3.org/groups/cg/ai-content-disclosure/participations": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:37:48 GMT",
-    "lastModified": "Sat, 07 Feb 2026 19:36:32 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:12 GMT",
+    "lastModified": "Mon, 09 Feb 2026 11:44:26 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 16,
+      "total": 17,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/ai-content-disclosure"
@@ -5838,6 +5870,10 @@
           {
             "href": "https://api.w3.org/participations/47079",
             "title": "Elijah Wright"
+          },
+          {
+            "href": "https://api.w3.org/participations/47089",
+            "title": "Wikimedia Foundation"
           }
         ],
         "self": {
@@ -5853,13 +5889,13 @@
     }
   },
   "https://api.w3.org/groups/cg/ai-content-disclosure/users": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:37:48 GMT",
-    "lastModified": "Sat, 07 Feb 2026 19:36:32 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:12 GMT",
+    "lastModified": "Mon, 09 Feb 2026 11:44:37 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 16,
+      "total": 17,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/ai-content-disclosure"
@@ -5931,6 +5967,11 @@
             "former": false
           },
           {
+            "href": "https://api.w3.org/users/s49xpzu70cg0wss8swkkgc0sg8kw480",
+            "title": "Derek Torsani",
+            "former": false
+          },
+          {
             "href": "https://api.w3.org/users/ncppio1qf8088gkkgogw8wgsscc0ggk",
             "title": "Dan Walter",
             "former": false
@@ -5997,13 +6038,13 @@
     }
   },
   "https://api.w3.org/groups/cg/aikr/participations": {
-    "fetchedAt": "Sun, 18 Jan 2026 01:56:55 GMT",
-    "lastModified": "Sat, 17 Jan 2026 05:54:06 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:13 GMT",
+    "lastModified": "Mon, 09 Feb 2026 08:19:02 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 108,
+      "total": 109,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/aikr"
@@ -6155,7 +6196,7 @@
           },
           {
             "href": "https://api.w3.org/participations/29322",
-            "title": "Ontotext"
+            "title": "Graphwise"
           },
           {
             "href": "https://api.w3.org/participations/29339",
@@ -6440,6 +6481,10 @@
           {
             "href": "https://api.w3.org/participations/46920",
             "title": "The IMC Lab"
+          },
+          {
+            "href": "https://api.w3.org/participations/47087",
+            "title": "Joshua Cornejo"
           }
         ],
         "self": {
@@ -6455,13 +6500,13 @@
     }
   },
   "https://api.w3.org/groups/cg/aikr/users": {
-    "fetchedAt": "Sun, 18 Jan 2026 01:56:55 GMT",
-    "lastModified": "Sat, 17 Jan 2026 05:54:06 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:13 GMT",
+    "lastModified": "Mon, 09 Feb 2026 08:19:02 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 106,
+      "total": 107,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/aikr"
@@ -6575,6 +6620,11 @@
           {
             "href": "https://api.w3.org/users/n7euochmhw08cwg0ckkc4wg8kcwgosk",
             "title": "Olivier Corby",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/fx935owbifc4kkwo4g840s44cww848k",
+            "title": "Joshua Cornejo",
             "former": false
           },
           {
@@ -10066,13 +10116,13 @@
     }
   },
   "https://api.w3.org/groups/cg/aria-at/users": {
-    "fetchedAt": "Sun, 01 Feb 2026 02:31:03 GMT",
-    "lastModified": "Wed, 28 Jan 2026 17:08:28 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:15 GMT",
+    "lastModified": "Wed, 11 Feb 2026 15:12:25 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 129,
+      "total": 128,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/aria-at"
@@ -10566,11 +10616,6 @@
           {
             "href": "https://api.w3.org/users/37fo7xets3k00ckg0g4s0s84ks8cws4",
             "title": "Glen Sasek",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/mhyke4sbk28c80k0gk0w4c8wg4gwggk",
-            "title": "James Scholes",
             "former": false
           },
           {
@@ -11320,13 +11365,13 @@
     }
   },
   "https://api.w3.org/groups/cg/atag/participations": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:37:54 GMT",
-    "lastModified": "Mon, 02 Feb 2026 19:04:22 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:17 GMT",
+    "lastModified": "Tue, 10 Feb 2026 16:46:11 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 75,
+      "total": 77,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/atag"
@@ -11631,6 +11676,14 @@
           {
             "href": "https://api.w3.org/participations/47025",
             "title": "Rajath Tirumangalam"
+          },
+          {
+            "href": "https://api.w3.org/participations/47096",
+            "title": "Evelyn Wightman"
+          },
+          {
+            "href": "https://api.w3.org/participations/47099",
+            "title": "Eli Lilly and Company"
           }
         ],
         "self": {
@@ -11646,13 +11699,13 @@
     }
   },
   "https://api.w3.org/groups/cg/atag/users": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:37:54 GMT",
-    "lastModified": "Mon, 02 Feb 2026 19:04:22 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:18 GMT",
+    "lastModified": "Tue, 10 Feb 2026 16:46:11 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 75,
+      "total": 77,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/atag"
@@ -11939,6 +11992,11 @@
             "former": false
           },
           {
+            "href": "https://api.w3.org/users/9j3wavuedtcs8ok48w804wo8oscwo88",
+            "title": "Andrew Puchle",
+            "former": false
+          },
+          {
             "href": "https://api.w3.org/users/fj8c92794p44cs0cskkwokok0k8cow8",
             "title": "Wendy Reid",
             "former": false
@@ -12011,6 +12069,11 @@
           {
             "href": "https://api.w3.org/users/r4btzf4l2rk4wwgwogsgc04844os888",
             "title": "Kevin White",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/oxql4hcvzb404g0ckg0s40oo4044k4w",
+            "title": "Evelyn Wightman",
             "former": false
           },
           {
@@ -22245,13 +22308,13 @@
     }
   },
   "https://api.w3.org/groups/cg/credentials/participations": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:38:06 GMT",
-    "lastModified": "Sat, 07 Feb 2026 07:25:52 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:30 GMT",
+    "lastModified": "Sat, 14 Feb 2026 19:23:38 GMT",
     "data": {
       "page": 1,
-      "limit": 538,
+      "limit": 537,
       "pages": 1,
-      "total": 538,
+      "total": 537,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/credentials"
@@ -22876,10 +22939,6 @@
           {
             "href": "https://api.w3.org/participations/27874",
             "title": "Vineet Singh"
-          },
-          {
-            "href": "https://api.w3.org/participations/27889",
-            "title": "Anil John"
           },
           {
             "href": "https://api.w3.org/participations/27916",
@@ -24194,10 +24253,6 @@
             "title": "AuvoDigital OU"
           },
           {
-            "href": "https://api.w3.org/participations/43802",
-            "title": "CONNECTHEALTH"
-          },
-          {
             "href": "https://api.w3.org/participations/44015",
             "title": "Open Security and Identity inc."
           },
@@ -24408,6 +24463,10 @@
           {
             "href": "https://api.w3.org/participations/47077",
             "title": "Takumi Otsuka"
+          },
+          {
+            "href": "https://api.w3.org/participations/47120",
+            "title": "Avik Pal"
           }
         ],
         "self": {
@@ -24423,13 +24482,13 @@
     }
   },
   "https://api.w3.org/groups/cg/credentials/users": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:38:07 GMT",
-    "lastModified": "Sat, 07 Feb 2026 07:25:53 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:32 GMT",
+    "lastModified": "Sat, 14 Feb 2026 19:23:38 GMT",
     "data": {
       "page": 1,
-      "limit": 579,
+      "limit": 577,
       "pages": 1,
-      "total": 579,
+      "total": 577,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/credentials"
@@ -25621,11 +25680,6 @@
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/p07erxkje3kgs0o8wgccokwkc0scs4k",
-            "title": "Anil John",
-            "former": false
-          },
-          {
             "href": "https://api.w3.org/users/hr17fqmkmzkkosk4wgoowgwg8k40ck8",
             "title": "Anil John",
             "former": false
@@ -25858,11 +25912,6 @@
           {
             "href": "https://api.w3.org/users/awjj48qsha0wkcwc0ksw884kog80ook",
             "title": "Zachary Larson",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/2id9n298b7swwowksk08okogcg0g8cc",
-            "title": "Fernando Latorre",
             "former": false
           },
           {
@@ -30742,7 +30791,7 @@
     }
   },
   "https://api.w3.org/groups/cg/dataspaces/participations": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:38:15 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:40 GMT",
     "lastModified": "Fri, 06 Feb 2026 14:58:42 GMT",
     "data": {
       "page": 1,
@@ -30880,7 +30929,7 @@
           },
           {
             "href": "https://api.w3.org/participations/42703",
-            "title": "Ontotext"
+            "title": "Graphwise"
           },
           {
             "href": "https://api.w3.org/participations/42755",
@@ -31810,13 +31859,13 @@
     }
   },
   "https://api.w3.org/groups/cg/design-tokens/participations": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:38:16 GMT",
-    "lastModified": "Wed, 04 Feb 2026 19:41:43 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:41 GMT",
+    "lastModified": "Mon, 09 Feb 2026 04:02:02 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 473,
+      "total": 474,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/design-tokens"
@@ -33713,6 +33762,10 @@
           {
             "href": "https://api.w3.org/participations/47053",
             "title": "Yannick Schetrite"
+          },
+          {
+            "href": "https://api.w3.org/participations/47085",
+            "title": "Huy Anh AZH"
           }
         ],
         "self": {
@@ -33728,13 +33781,13 @@
     }
   },
   "https://api.w3.org/groups/cg/design-tokens/users": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:38:17 GMT",
-    "lastModified": "Wed, 04 Feb 2026 19:41:43 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:42 GMT",
+    "lastModified": "Mon, 09 Feb 2026 10:01:17 GMT",
     "data": {
       "page": 1,
-      "limit": 520,
+      "limit": 522,
       "pages": 1,
-      "total": 520,
+      "total": 522,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/design-tokens"
@@ -33863,6 +33916,11 @@
           {
             "href": "https://api.w3.org/users/9qesi5g3v1ooc8c4kc8kg804s0o0og0",
             "title": "Namık Özgür Aydın",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/lg58wlpdyzkko8c4s8kwksw8k8ks0c0",
+            "title": "Huy Anh AZH",
             "former": false
           },
           {
@@ -34888,6 +34946,11 @@
           {
             "href": "https://api.w3.org/users/nvd2p4npjuo4kwwwgo04wk8gcw4wwgw",
             "title": "Christian Klotz",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/bsdhvqi044ook4s08ckc8s4044gsk8k",
+            "title": "ryota kobayashi",
             "former": false
           },
           {
@@ -36683,13 +36746,13 @@
     }
   },
   "https://api.w3.org/groups/cg/docs-cg/participations": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:38:18 GMT",
-    "lastModified": "Thu, 05 Feb 2026 17:03:44 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:44 GMT",
+    "lastModified": "Wed, 11 Feb 2026 21:04:10 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 36,
+      "total": 37,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/docs-cg"
@@ -36838,6 +36901,10 @@
           {
             "href": "https://api.w3.org/participations/47066",
             "title": "Apple Inc."
+          },
+          {
+            "href": "https://api.w3.org/participations/47106",
+            "title": "bridget fahey"
           }
         ],
         "self": {
@@ -36853,8 +36920,8 @@
     }
   },
   "https://api.w3.org/groups/cg/docs-cg/users": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:38:19 GMT",
-    "lastModified": "Thu, 05 Feb 2026 17:07:24 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:44 GMT",
+    "lastModified": "Wed, 11 Feb 2026 21:04:10 GMT",
     "data": {
       "page": 1,
       "limit": 500,
@@ -36951,6 +37018,11 @@
             "former": false
           },
           {
+            "href": "https://api.w3.org/users/f4b7w8lja884go0k08ksw0ckg44ko4s",
+            "title": "bridget fahey",
+            "former": false
+          },
+          {
             "href": "https://api.w3.org/users/4bpqodzdhewwowc8g4owkgw4skwo4kc",
             "title": "Marie-Claire Forgue",
             "former": false
@@ -36963,11 +37035,6 @@
           {
             "href": "https://api.w3.org/users/ltb258eue0gs0ko0soo4wgwg8k0o4cc",
             "title": "Dominique Hazaël-Massieux",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/265ee1i18g4ks0gwkc0s4o00s4woggw",
-            "title": "Melissa Henderson",
             "former": false
           },
           {
@@ -37142,13 +37209,13 @@
     }
   },
   "https://api.w3.org/groups/cg/dpvcg/participations": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:38:14 GMT",
-    "lastModified": "Fri, 06 Feb 2026 12:12:53 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:39 GMT",
+    "lastModified": "Tue, 10 Feb 2026 14:28:28 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 107,
+      "total": 108,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/dpvcg"
@@ -37581,6 +37648,10 @@
           {
             "href": "https://api.w3.org/participations/47071",
             "title": "Christian Henke"
+          },
+          {
+            "href": "https://api.w3.org/participations/47097",
+            "title": "IDmachines LLC"
           }
         ],
         "self": {
@@ -37596,13 +37667,13 @@
     }
   },
   "https://api.w3.org/groups/cg/dpvcg/users": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:38:15 GMT",
-    "lastModified": "Fri, 06 Feb 2026 12:12:53 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:39 GMT",
+    "lastModified": "Thu, 12 Feb 2026 07:51:43 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 112,
+      "total": 114,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/dpvcg"
@@ -37681,6 +37752,11 @@
           {
             "href": "https://api.w3.org/users/k5y89l0wbwgwgwc0c8cc0sgoskc8088",
             "title": "David Clarke",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/9xf1n6roox4o4k4ok8o80gcsg0kc48g",
+            "title": "Salvatore D'Agostino",
             "former": false
           },
           {
@@ -37861,6 +37937,11 @@
           {
             "href": "https://api.w3.org/users/4m0zrl8lrg8w0kkco0sw0ooso4ogw4w",
             "title": "Georg Philip Krog",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/fai13r0z6a888scccgckoosokcskkg4",
+            "title": "Kalyan Kulkarni",
             "former": false
           },
           {
@@ -42188,7 +42269,7 @@
     }
   },
   "https://api.w3.org/groups/cg/fibo/participations": {
-    "fetchedAt": "Sat, 20 Dec 2025 18:18:03 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:49 GMT",
     "lastModified": "Fri, 22 Aug 2025 13:10:19 GMT",
     "data": {
       "page": 1,
@@ -42306,7 +42387,7 @@
           },
           {
             "href": "https://api.w3.org/participations/21243",
-            "title": "Ontotext"
+            "title": "Graphwise"
           },
           {
             "href": "https://api.w3.org/participations/21539",
@@ -44600,13 +44681,13 @@
     }
   },
   "https://api.w3.org/groups/cg/gen-ui/participations": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:38:26 GMT",
-    "lastModified": "Fri, 06 Feb 2026 11:18:03 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:51 GMT",
+    "lastModified": "Mon, 09 Feb 2026 09:10:05 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 10,
+      "total": 12,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/gen-ui"
@@ -44651,6 +44732,14 @@
           {
             "href": "https://api.w3.org/participations/47070",
             "title": "Huawei"
+          },
+          {
+            "href": "https://api.w3.org/participations/47080",
+            "title": "Xiaoyuzhou"
+          },
+          {
+            "href": "https://api.w3.org/participations/47088",
+            "title": "Ant Group Co., Ltd."
           }
         ],
         "self": {
@@ -44666,13 +44755,13 @@
     }
   },
   "https://api.w3.org/groups/cg/gen-ui/users": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:38:26 GMT",
-    "lastModified": "Fri, 06 Feb 2026 11:19:07 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:51 GMT",
+    "lastModified": "Mon, 09 Feb 2026 09:10:21 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 11,
+      "total": 15,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/gen-ui"
@@ -44704,13 +44793,33 @@
             "former": false
           },
           {
+            "href": "https://api.w3.org/users/3eo3qh45dla80g8g8c4gkwck0ogkgw4",
+            "title": "zhaosong huang",
+            "former": false
+          },
+          {
             "href": "https://api.w3.org/users/20uvo1k1wmkkgwoc40404cg0kw0k0wo",
             "title": "Iris Johnson",
             "former": false
           },
           {
+            "href": "https://api.w3.org/users/oipwhga6n68cwwo4k40sg0g44gc00c4",
+            "title": "Qi Pan",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/7o4ri7skneccs0k0cg40occww408ok0",
+            "title": "Jim Peng",
+            "former": false
+          },
+          {
             "href": "https://api.w3.org/users/7u0azic9fv0o84sosgw4840c0sg8ok8",
             "title": "Ruoxi Ran",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/1rrzobj4daboc00ws0sk40ggkg08co4",
+            "title": "Hai Rao",
             "former": false
           },
           {
@@ -48090,13 +48199,13 @@
     }
   },
   "https://api.w3.org/groups/cg/hclscg/participations": {
-    "fetchedAt": "Sun, 28 Dec 2025 01:58:27 GMT",
-    "lastModified": "Tue, 23 Dec 2025 22:25:53 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:42 GMT",
+    "lastModified": "Sat, 14 Feb 2026 10:13:57 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 53,
+      "total": 54,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/hclscg"
@@ -48313,6 +48422,10 @@
           {
             "href": "https://api.w3.org/participations/46797",
             "title": "Teja Sunku"
+          },
+          {
+            "href": "https://api.w3.org/participations/47118",
+            "title": "Kabul Kurniawan"
           }
         ],
         "self": {
@@ -48328,13 +48441,13 @@
     }
   },
   "https://api.w3.org/groups/cg/hclscg/users": {
-    "fetchedAt": "Sun, 28 Dec 2025 01:58:27 GMT",
-    "lastModified": "Tue, 23 Dec 2025 22:25:53 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:42 GMT",
+    "lastModified": "Sat, 14 Feb 2026 10:13:57 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 50,
+      "total": 51,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/hclscg"
@@ -48448,6 +48561,11 @@
           {
             "href": "https://api.w3.org/users/7j0dp9r27jkskw4og8cs08w0kscsw0o",
             "title": "Gerhard Kober",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/8b14iqxljz0gk8kc08c4kco044wog8k",
+            "title": "Kabul Kurniawan",
             "former": false
           },
           {
@@ -52336,13 +52454,13 @@
     }
   },
   "https://api.w3.org/groups/cg/idaan/participations": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:38:33 GMT",
-    "lastModified": "Sun, 01 Feb 2026 23:46:44 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:59 GMT",
+    "lastModified": "Thu, 12 Feb 2026 09:22:25 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 10,
+      "total": 12,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/idaan"
@@ -52387,6 +52505,14 @@
           {
             "href": "https://api.w3.org/participations/47018",
             "title": "Rajath Tirumangalam"
+          },
+          {
+            "href": "https://api.w3.org/participations/47107",
+            "title": "asmita jadhav"
+          },
+          {
+            "href": "https://api.w3.org/participations/47108",
+            "title": "Priyanka Jejurkar Jejurkar"
           }
         ],
         "self": {
@@ -52402,13 +52528,13 @@
     }
   },
   "https://api.w3.org/groups/cg/idaan/users": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:38:34 GMT",
-    "lastModified": "Sun, 01 Feb 2026 23:46:44 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:59 GMT",
+    "lastModified": "Thu, 12 Feb 2026 09:22:25 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 10,
+      "total": 12,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/idaan"
@@ -52425,8 +52551,18 @@
             "former": false
           },
           {
+            "href": "https://api.w3.org/users/gziljmmxeog8sc8sgkswkokc8ck800k",
+            "title": "asmita jadhav",
+            "former": false
+          },
+          {
             "href": "https://api.w3.org/users/f8otngqy034s4ows8o0g4s48s04w4os",
             "title": "Shikha Jain",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/rghn3j3t8b4c8444c88g4sg80g48cwo",
+            "title": "Priyanka Jejurkar Jejurkar",
             "former": false
           },
           {
@@ -53300,13 +53436,13 @@
     }
   },
   "https://api.w3.org/groups/cg/immersive-web/participations": {
-    "fetchedAt": "Sun, 18 Jan 2026 01:57:39 GMT",
-    "lastModified": "Sat, 17 Jan 2026 05:52:40 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:56 GMT",
+    "lastModified": "Fri, 13 Feb 2026 18:26:01 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 257,
+      "total": 256,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/immersive-web"
@@ -54073,10 +54209,6 @@
             "title": "Philip Lamb"
           },
           {
-            "href": "https://api.w3.org/participations/33926",
-            "title": "Blair MacIntyre"
-          },
-          {
             "href": "https://api.w3.org/participations/34526",
             "title": "MITRE Corporation"
           },
@@ -54354,13 +54486,13 @@
     }
   },
   "https://api.w3.org/groups/cg/immersive-web/users": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:38:31 GMT",
-    "lastModified": "Sun, 01 Feb 2026 15:09:26 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:57 GMT",
+    "lastModified": "Fri, 13 Feb 2026 18:26:01 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 303,
+      "total": 302,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/immersive-web"
@@ -55184,11 +55316,6 @@
           {
             "href": "https://api.w3.org/users/6jjmm0j2lc004oc4w48wwgg0kw8ows4",
             "title": "Houda M.",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/ha2idrsq0gocw0gc4888gw4o0o0so40",
-            "title": "Blair MacIntyre",
             "former": false
           },
           {
@@ -62352,7 +62479,7 @@
     }
   },
   "https://api.w3.org/groups/cg/kg-construct/participations": {
-    "fetchedAt": "Sun, 01 Feb 2026 02:31:53 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:05 GMT",
     "lastModified": "Fri, 30 Jan 2026 13:24:37 GMT",
     "data": {
       "page": 1,
@@ -62470,7 +62597,7 @@
           },
           {
             "href": "https://api.w3.org/participations/29320",
-            "title": "Ontotext"
+            "title": "Graphwise"
           },
           {
             "href": "https://api.w3.org/participations/29326",
@@ -64125,13 +64252,13 @@
     }
   },
   "https://api.w3.org/groups/cg/lbd/participations": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:38:40 GMT",
-    "lastModified": "Wed, 04 Feb 2026 13:50:25 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:05 GMT",
+    "lastModified": "Tue, 10 Feb 2026 17:44:05 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 214,
+      "total": 215,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/lbd"
@@ -64992,6 +65119,10 @@
           {
             "href": "https://api.w3.org/participations/47048",
             "title": "SingularLogic S.A."
+          },
+          {
+            "href": "https://api.w3.org/participations/47100",
+            "title": "Michael Campbell"
           }
         ],
         "self": {
@@ -65007,13 +65138,13 @@
     }
   },
   "https://api.w3.org/groups/cg/lbd/users": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:38:41 GMT",
-    "lastModified": "Wed, 04 Feb 2026 13:50:25 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:06 GMT",
+    "lastModified": "Tue, 10 Feb 2026 17:44:05 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 256,
+      "total": 257,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/lbd"
@@ -65177,6 +65308,11 @@
           {
             "href": "https://api.w3.org/users/59iy8ng3rnok80c80cwo08o8s4480co",
             "title": "Jonas Bülow",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/7d0mu8duapgcc4w00w8so0kggw4gscc",
+            "title": "Michael Campbell",
             "former": false
           },
           {
@@ -77665,7 +77801,7 @@
     }
   },
   "https://api.w3.org/groups/cg/oki/participations": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:38:51 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:17 GMT",
     "lastModified": "Tue, 03 Feb 2026 09:38:27 GMT",
     "data": {
       "page": 1,
@@ -77703,7 +77839,7 @@
           },
           {
             "href": "https://api.w3.org/participations/46202",
-            "title": "Ontotext"
+            "title": "Graphwise"
           },
           {
             "href": "https://api.w3.org/participations/46205",
@@ -77963,13 +78099,13 @@
     }
   },
   "https://api.w3.org/groups/cg/ontolex/participations": {
-    "fetchedAt": "Sat, 20 Dec 2025 18:18:29 GMT",
-    "lastModified": "Fri, 17 Oct 2025 10:27:07 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:18 GMT",
+    "lastModified": "Tue, 10 Feb 2026 13:54:29 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 146,
+      "total": 145,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/ontolex"
@@ -78376,10 +78512,6 @@
             "title": "Maria Pia di Buono"
           },
           {
-            "href": "https://api.w3.org/participations/31047",
-            "title": "Bruno Almeida"
-          },
-          {
             "href": "https://api.w3.org/participations/31369",
             "title": "Rumi Weaver"
           },
@@ -78573,13 +78705,13 @@
     }
   },
   "https://api.w3.org/groups/cg/ontolex/users": {
-    "fetchedAt": "Sat, 20 Dec 2025 18:18:30 GMT",
-    "lastModified": "Fri, 05 Dec 2025 07:32:05 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:19 GMT",
+    "lastModified": "Fri, 13 Feb 2026 14:12:01 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 150,
+      "total": 148,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/ontolex"
@@ -78623,16 +78755,6 @@
           {
             "href": "https://api.w3.org/users/1phjth2tklgksg0sw88k8s00oco04s4",
             "title": "Paul Alagna",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/flq7ipv7w60ck0wgooko0cg8c880cco",
-            "title": "Bruno Almeida",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/4ui5usawp8g0g88sc448s488kwokc8s",
-            "title": "Morris Alper",
             "former": false
           },
           {
@@ -83313,13 +83435,13 @@
     }
   },
   "https://api.w3.org/groups/cg/patcg/users": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:38:59 GMT",
-    "lastModified": "Tue, 03 Feb 2026 17:55:26 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:25 GMT",
+    "lastModified": "Thu, 12 Feb 2026 17:14:31 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 408,
+      "total": 409,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/patcg"
@@ -84143,6 +84265,11 @@
           {
             "href": "https://api.w3.org/users/s8h2xs7ek8gs48kgg4ocsk4og04ks84",
             "title": "Kim Laine",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/py6pysbnri80gkskcccw0occos8o8gs",
+            "title": "Rowena Lam",
             "former": false
           },
           {
@@ -87240,13 +87367,13 @@
     }
   },
   "https://api.w3.org/groups/cg/privacycg/users": {
-    "fetchedAt": "Sun, 25 Jan 2026 02:01:26 GMT",
-    "lastModified": "Thu, 22 Jan 2026 21:54:30 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:23 GMT",
+    "lastModified": "Mon, 09 Feb 2026 08:30:36 GMT",
     "data": {
       "page": 1,
-      "limit": 532,
+      "limit": 533,
       "pages": 1,
-      "total": 532,
+      "total": 533,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/privacycg"
@@ -89413,6 +89540,11 @@
             "former": false
           },
           {
+            "href": "https://api.w3.org/users/f1elvtyzydwskc0g8cw0g8kg0gsg40s",
+            "title": "Harsh Singhal",
+            "former": false
+          },
+          {
             "href": "https://api.w3.org/users/3quwig41qlmogo0o0skg04wcs4osss0",
             "title": "Hirsch Singhal",
             "former": false
@@ -89964,8 +90096,8 @@
     }
   },
   "https://api.w3.org/groups/cg/publishingcg/participations": {
-    "fetchedAt": "Sun, 01 Feb 2026 02:32:15 GMT",
-    "lastModified": "Fri, 30 Jan 2026 17:26:57 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:26 GMT",
+    "lastModified": "Thu, 12 Feb 2026 17:23:38 GMT",
     "data": {
       "page": 1,
       "limit": 500,
@@ -90187,10 +90319,6 @@
           {
             "href": "https://api.w3.org/participations/33581",
             "title": "Misako Nomura"
-          },
-          {
-            "href": "https://api.w3.org/participations/33772",
-            "title": "ISI"
           },
           {
             "href": "https://api.w3.org/participations/33842",
@@ -90527,6 +90655,10 @@
           {
             "href": "https://api.w3.org/participations/47007",
             "title": "Instituto Federal de Alagoas - IFAL"
+          },
+          {
+            "href": "https://api.w3.org/participations/47104",
+            "title": "Giacomo D'Angelo"
           }
         ],
         "self": {
@@ -90542,8 +90674,8 @@
     }
   },
   "https://api.w3.org/groups/cg/publishingcg/users": {
-    "fetchedAt": "Sun, 01 Feb 2026 02:32:15 GMT",
-    "lastModified": "Fri, 30 Jan 2026 17:26:57 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:27 GMT",
+    "lastModified": "Thu, 12 Feb 2026 17:23:38 GMT",
     "data": {
       "page": 1,
       "limit": 500,
@@ -90697,6 +90829,11 @@
           {
             "href": "https://api.w3.org/users/1ccs96i0dsskkggcgcocsk04cgk40c4",
             "title": "Jenny Cundill",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/8ifavuve018o0kc8wwc8swo0g8cgo88",
+            "title": "Giacomo D'Angelo",
             "former": false
           },
           {
@@ -91347,11 +91484,6 @@
           {
             "href": "https://api.w3.org/users/ky5yeyl336oks4gss4k8o4ckw48ssos",
             "title": "Lars Wallin",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/auvt4bu802ogcock008sg0so0gswsso",
-            "title": "VINCENT WARTELLE",
             "former": false
           },
           {
@@ -93401,7 +93533,7 @@
     }
   },
   "https://api.w3.org/groups/cg/rdf-tests/participations": {
-    "fetchedAt": "Sun, 01 Feb 2026 02:32:19 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:30 GMT",
     "lastModified": "Tue, 27 Jan 2026 09:17:52 GMT",
     "data": {
       "page": 1,
@@ -93475,7 +93607,7 @@
           },
           {
             "href": "https://api.w3.org/participations/30727",
-            "title": "Ontotext"
+            "title": "Graphwise"
           },
           {
             "href": "https://api.w3.org/participations/32284",
@@ -94783,13 +94915,13 @@
     }
   },
   "https://api.w3.org/groups/cg/reconciliation/participations": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:38:20 GMT",
-    "lastModified": "Tue, 03 Feb 2026 19:13:18 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:45 GMT",
+    "lastModified": "Thu, 12 Feb 2026 14:20:23 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 50,
+      "total": 49,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/reconciliation"
@@ -94837,7 +94969,7 @@
           },
           {
             "href": "https://api.w3.org/participations/29045",
-            "title": "Ontotext"
+            "title": "Graphwise"
           },
           {
             "href": "https://api.w3.org/participations/29050",
@@ -94978,10 +95110,6 @@
           {
             "href": "https://api.w3.org/participations/44584",
             "title": "Victor Lu"
-          },
-          {
-            "href": "https://api.w3.org/participations/46161",
-            "title": "Antonin Delpeuch"
           },
           {
             "href": "https://api.w3.org/participations/46551",
@@ -96981,7 +97109,7 @@
     }
   },
   "https://api.w3.org/groups/cg/s-agent-comm/participations": {
-    "fetchedAt": "Sun, 25 Jan 2026 02:01:42 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:40 GMT",
     "lastModified": "Thu, 22 Jan 2026 08:49:45 GMT",
     "data": {
       "page": 1,
@@ -97003,7 +97131,7 @@
           },
           {
             "href": "https://api.w3.org/participations/46536",
-            "title": "Ontotext"
+            "title": "Graphwise"
           },
           {
             "href": "https://api.w3.org/participations/46541",
@@ -98133,7 +98261,7 @@
     }
   },
   "https://api.w3.org/groups/cg/schemabibex/participations": {
-    "fetchedAt": "Sat, 20 Dec 2025 18:18:44 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:34 GMT",
     "lastModified": "Fri, 08 Aug 2025 17:14:46 GMT",
     "data": {
       "page": 1,
@@ -98351,7 +98479,7 @@
           },
           {
             "href": "https://api.w3.org/participations/15325",
-            "title": "Ontotext"
+            "title": "Graphwise"
           },
           {
             "href": "https://api.w3.org/participations/15809",
@@ -100872,13 +101000,13 @@
     }
   },
   "https://api.w3.org/groups/cg/schemaorg/users": {
-    "fetchedAt": "Sun, 01 Feb 2026 02:32:25 GMT",
-    "lastModified": "Sun, 25 Jan 2026 21:34:18 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:36 GMT",
+    "lastModified": "Fri, 13 Feb 2026 21:12:08 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 491,
+      "total": 490,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/schemaorg"
@@ -103190,11 +103318,6 @@
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/b1go065914owowsc0cgo848kgs08ssg",
-            "title": "Matthias Wiesmann",
-            "former": false
-          },
-          {
             "href": "https://api.w3.org/users/gpe6xsexbmog00k48wg0cgokgsgsgks",
             "title": "Simon Wijckmans",
             "former": false
@@ -104561,7 +104684,7 @@
     }
   },
   "https://api.w3.org/groups/cg/shex/participations": {
-    "fetchedAt": "Sat, 20 Dec 2025 18:18:53 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:42 GMT",
     "lastModified": "Wed, 01 Oct 2025 09:35:18 GMT",
     "data": {
       "page": 1,
@@ -104755,7 +104878,7 @@
           },
           {
             "href": "https://api.w3.org/participations/44224",
-            "title": "Ontotext"
+            "title": "Graphwise"
           },
           {
             "href": "https://api.w3.org/participations/44613",
@@ -105322,13 +105445,13 @@
     }
   },
   "https://api.w3.org/groups/cg/socialcg/participations": {
-    "fetchedAt": "Sun, 01 Feb 2026 02:32:32 GMT",
-    "lastModified": "Wed, 28 Jan 2026 11:31:22 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:43 GMT",
+    "lastModified": "Fri, 13 Feb 2026 06:34:39 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 200,
+      "total": 203,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/socialcg"
@@ -106133,6 +106256,18 @@
           {
             "href": "https://api.w3.org/participations/46874",
             "title": "th hck"
+          },
+          {
+            "href": "https://api.w3.org/participations/47101",
+            "title": "Voxa Limited"
+          },
+          {
+            "href": "https://api.w3.org/participations/47110",
+            "title": "Spencer McCullough"
+          },
+          {
+            "href": "https://api.w3.org/participations/47113",
+            "title": "Steve Bate"
           }
         ],
         "self": {
@@ -106148,13 +106283,13 @@
     }
   },
   "https://api.w3.org/groups/cg/socialcg/users": {
-    "fetchedAt": "Sun, 01 Feb 2026 02:32:32 GMT",
-    "lastModified": "Wed, 28 Jan 2026 11:31:22 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:43 GMT",
+    "lastModified": "Fri, 13 Feb 2026 06:34:39 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 205,
+      "total": 208,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/socialcg"
@@ -106233,6 +106368,11 @@
           {
             "href": "https://api.w3.org/users/rr0j0a9veyskco0cwoc08ss4ks448gg",
             "title": "Ann Bassetti",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/kq7nilyom3kksco84g0w0o80w4w0so8",
+            "title": "Steve Bate",
             "former": false
           },
           {
@@ -106711,6 +106851,11 @@
             "former": false
           },
           {
+            "href": "https://api.w3.org/users/kpi5jtkugdsskook8o48g4k0sk84ogc",
+            "title": "Spencer McCullough",
+            "former": false
+          },
+          {
             "href": "https://api.w3.org/users/718jcn9t1uskg444w8woow48gs88gsc",
             "title": "Angus McLeod",
             "former": false
@@ -106868,6 +107013,11 @@
           {
             "href": "https://api.w3.org/users/2yarudt6romccoowks0go048k4gock8",
             "title": "Manton Reece",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/oxh2sj5kb2ssc0844044o0kwk80wscs",
+            "title": "Leo Riviera",
             "former": false
           },
           {
@@ -107237,13 +107387,13 @@
     }
   },
   "https://api.w3.org/groups/cg/solid/participations": {
-    "fetchedAt": "Sun, 01 Feb 2026 02:32:33 GMT",
-    "lastModified": "Wed, 28 Jan 2026 18:02:05 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:44 GMT",
+    "lastModified": "Wed, 11 Feb 2026 07:46:25 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 287,
+      "total": 286,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/solid"
@@ -107660,10 +107810,6 @@
           {
             "href": "https://api.w3.org/participations/33503",
             "title": "Datavillage"
-          },
-          {
-            "href": "https://api.w3.org/participations/33514",
-            "title": "Jegan Davies-Jones"
           },
           {
             "href": "https://api.w3.org/participations/33516",
@@ -108411,8 +108557,8 @@
     }
   },
   "https://api.w3.org/groups/cg/solid/users": {
-    "fetchedAt": "Sun, 01 Feb 2026 02:32:33 GMT",
-    "lastModified": "Wed, 28 Jan 2026 18:02:06 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:45 GMT",
+    "lastModified": "Wed, 11 Feb 2026 07:46:25 GMT",
     "data": {
       "page": 1,
       "limit": 500,
@@ -108766,11 +108912,6 @@
           {
             "href": "https://api.w3.org/users/ixlji1lgpnw48gsg40840skwgcww84s",
             "title": "Alan Davies",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/267qrq1i66kkogosgg8gc88osogo8so",
-            "title": "Jegan Davies-Jones",
             "former": false
           },
           {
@@ -109964,6 +110105,11 @@
             "former": false
           },
           {
+            "href": "https://api.w3.org/users/6dkpv9ut61wk0cccwsocswk0cg0k8ow",
+            "title": "Zhixian Zhuang",
+            "former": false
+          },
+          {
             "href": "https://api.w3.org/users/m1r1atazz8gg0cwsggc0wk8o4wc0oks",
             "title": "Antoine Zimmermann",
             "former": false
@@ -110030,7 +110176,7 @@
     }
   },
   "https://api.w3.org/groups/cg/sparql-dev/participations": {
-    "fetchedAt": "Sat, 20 Dec 2025 18:18:56 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:45 GMT",
     "lastModified": "Thu, 11 Dec 2025 16:04:57 GMT",
     "data": {
       "page": 1,
@@ -110124,7 +110270,7 @@
           },
           {
             "href": "https://api.w3.org/participations/28388",
-            "title": "Ontotext"
+            "title": "Graphwise"
           },
           {
             "href": "https://api.w3.org/participations/28389",
@@ -115142,13 +115288,13 @@
     }
   },
   "https://api.w3.org/groups/cg/tmcg/participations": {
-    "fetchedAt": "Sat, 20 Dec 2025 18:19:01 GMT",
-    "lastModified": "Wed, 05 Nov 2025 06:10:25 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:51 GMT",
+    "lastModified": "Thu, 12 Feb 2026 14:51:04 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 64,
+      "total": 65,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/tmcg"
@@ -115409,6 +115555,10 @@
           {
             "href": "https://api.w3.org/participations/46377",
             "title": "xiaol bi"
+          },
+          {
+            "href": "https://api.w3.org/participations/47109",
+            "title": "Tzviya Siegman"
           }
         ],
         "self": {
@@ -115424,8 +115574,8 @@
     }
   },
   "https://api.w3.org/groups/cg/tmcg/users": {
-    "fetchedAt": "Sat, 20 Dec 2025 18:19:01 GMT",
-    "lastModified": "Wed, 05 Nov 2025 06:10:25 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:51 GMT",
+    "lastModified": "Thu, 12 Feb 2026 14:51:04 GMT",
     "data": {
       "page": 1,
       "limit": 500,
@@ -115592,11 +115742,6 @@
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/p07erxkje3kgs0o8wgccokwkc0scs4k",
-            "title": "Anil John",
-            "former": false
-          },
-          {
             "href": "https://api.w3.org/users/lk8juav998g0ggc8ow8w8swo4ckswck",
             "title": "Thomas Jones",
             "former": false
@@ -115724,6 +115869,11 @@
           {
             "href": "https://api.w3.org/users/3umc0oi7q9kw0g44kgg8k4o8sk48goo",
             "title": "Amir Sharif",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/jhywkkw0080gg4g8w4gw8ckgcoco40w",
+            "title": "Tzviya Siegman",
             "former": false
           },
           {
@@ -116682,13 +116832,13 @@
     }
   },
   "https://api.w3.org/groups/cg/uhds/participations": {
-    "fetchedAt": "Sun, 01 Feb 2026 02:32:42 GMT",
-    "lastModified": "Sat, 31 Jan 2026 02:22:11 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:54 GMT",
+    "lastModified": "Sat, 14 Feb 2026 02:27:58 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 4,
+      "total": 5,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/uhds"
@@ -116709,6 +116859,10 @@
           {
             "href": "https://api.w3.org/participations/47011",
             "title": "Muezza Wani"
+          },
+          {
+            "href": "https://api.w3.org/participations/47117",
+            "title": "ANTIFRAUD SERVICES INC"
           }
         ],
         "self": {
@@ -116724,13 +116878,13 @@
     }
   },
   "https://api.w3.org/groups/cg/uhds/users": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:39:27 GMT",
-    "lastModified": "Wed, 04 Feb 2026 12:57:06 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:54 GMT",
+    "lastModified": "Sat, 14 Feb 2026 02:27:58 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 6,
+      "total": 7,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/uhds"
@@ -116744,6 +116898,11 @@
           {
             "href": "https://api.w3.org/users/l7q5yeyplhc0sk04kgsk0skkkssswk",
             "title": "Irtiqa Latif",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/2id9n298b7swwowksk08okogcg0g8cc",
+            "title": "Fernando Latorre",
             "former": false
           },
           {
@@ -116818,13 +116977,13 @@
     }
   },
   "https://api.w3.org/groups/cg/uispec/participations": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:39:25 GMT",
-    "lastModified": "Sun, 01 Feb 2026 17:39:39 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:52 GMT",
+    "lastModified": "Fri, 13 Feb 2026 20:31:59 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 4,
+      "total": 6,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/uispec"
@@ -116845,6 +117004,14 @@
           {
             "href": "https://api.w3.org/participations/46599",
             "title": "Bitloops"
+          },
+          {
+            "href": "https://api.w3.org/participations/47081",
+            "title": "Just Eat Takeaway.com"
+          },
+          {
+            "href": "https://api.w3.org/participations/47116",
+            "title": "Mastercard Incorporated"
           }
         ],
         "self": {
@@ -116860,13 +117027,13 @@
     }
   },
   "https://api.w3.org/groups/cg/uispec/users": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:39:25 GMT",
-    "lastModified": "Sun, 01 Feb 2026 17:39:39 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:52 GMT",
+    "lastModified": "Fri, 13 Feb 2026 20:32:35 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 8,
+      "total": 10,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/uispec"
@@ -116898,6 +117065,11 @@
             "former": false
           },
           {
+            "href": "https://api.w3.org/users/8e6gk6oryk08s84ww808k8wk4gssw8w",
+            "title": "Barra O'Leary",
+            "former": false
+          },
+          {
             "href": "https://api.w3.org/users/f6j11jibf6okoscgg8skw8gk0kwsk08",
             "title": "Sergio Pereira",
             "former": false
@@ -116905,6 +117077,11 @@
           {
             "href": "https://api.w3.org/users/t5tk5b7sytcw0cgg80skwck4808g4cs",
             "title": "Pedro Pisandelli",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/hoifqy7iu1w0w8g0s4wkw48c0ww4kgg",
+            "title": "Geri Reid",
             "former": false
           },
           {
@@ -123207,8 +123384,8 @@
     }
   },
   "https://api.w3.org/groups/cg/webagents/participations": {
-    "fetchedAt": "Sun, 25 Jan 2026 02:00:24 GMT",
-    "lastModified": "Sat, 24 Jan 2026 05:27:22 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:19 GMT",
+    "lastModified": "Fri, 13 Feb 2026 17:52:15 GMT",
     "data": {
       "page": 1,
       "limit": 500,
@@ -123402,10 +123579,6 @@
           {
             "href": "https://api.w3.org/participations/40734",
             "title": "Arthur Casals"
-          },
-          {
-            "href": "https://api.w3.org/participations/40746",
-            "title": "Wouter Termont"
           },
           {
             "href": "https://api.w3.org/participations/40778",
@@ -123754,6 +123927,10 @@
           {
             "href": "https://api.w3.org/participations/46965",
             "title": "Copenhagen AI"
+          },
+          {
+            "href": "https://api.w3.org/participations/47114",
+            "title": "Craig Campbell"
           }
         ],
         "self": {
@@ -123769,8 +123946,8 @@
     }
   },
   "https://api.w3.org/groups/cg/webagents/users": {
-    "fetchedAt": "Sun, 25 Jan 2026 02:00:24 GMT",
-    "lastModified": "Sat, 24 Jan 2026 05:27:22 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:20 GMT",
+    "lastModified": "Fri, 13 Feb 2026 17:52:15 GMT",
     "data": {
       "page": 1,
       "limit": 500,
@@ -123869,6 +124046,11 @@
           {
             "href": "https://api.w3.org/users/rb7q4rygudc4gw88w4swws0cokss40k",
             "title": "Jean-Paul Calbimonte",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/l2iuz1308lc0ooww8cwow4c4kwggkk0",
+            "title": "Craig Campbell",
             "former": false
           },
           {
@@ -124452,11 +124634,6 @@
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/ro3lhg1xna8gk0gsswkgk0oow0g8g8w",
-            "title": "Wouter Termont",
-            "former": false
-          },
-          {
             "href": "https://api.w3.org/users/68oel573sm0wc8s4wsc4ckwok44ocow",
             "title": "Danai Vachtsevanou",
             "former": false
@@ -124628,13 +124805,13 @@
     }
   },
   "https://api.w3.org/groups/cg/webassembly/participations": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:39:44 GMT",
-    "lastModified": "Thu, 05 Feb 2026 15:49:34 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:27:12 GMT",
+    "lastModified": "Fri, 13 Feb 2026 18:40:24 GMT",
     "data": {
       "page": 1,
-      "limit": 1503,
+      "limit": 1505,
       "pages": 1,
-      "total": 1503,
+      "total": 1505,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/webassembly"
@@ -130651,6 +130828,14 @@
           {
             "href": "https://api.w3.org/participations/47033",
             "title": "Reda Boudrouss"
+          },
+          {
+            "href": "https://api.w3.org/participations/47111",
+            "title": "Dominik Muc"
+          },
+          {
+            "href": "https://api.w3.org/participations/47115",
+            "title": "German Aerospace Center (DLR)"
           }
         ],
         "self": {
@@ -130666,13 +130851,13 @@
     }
   },
   "https://api.w3.org/groups/cg/webassembly/users": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:39:55 GMT",
-    "lastModified": "Thu, 05 Feb 2026 15:49:34 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:27:23 GMT",
+    "lastModified": "Fri, 13 Feb 2026 18:40:24 GMT",
     "data": {
       "page": 1,
-      "limit": 1750,
+      "limit": 1752,
       "pages": 1,
-      "total": 1750,
+      "total": 1752,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/webassembly"
@@ -133734,6 +133919,11 @@
             "former": false
           },
           {
+            "href": "https://api.w3.org/users/s23630fr5hwss4g00wsgk4kc8sksssc",
+            "title": "Florian Hartung",
+            "former": false
+          },
+          {
             "href": "https://api.w3.org/users/cvqkg0hp994cos0okgc44oks4k44gsg",
             "title": "Sami Havonen",
             "former": false
@@ -136001,6 +136191,11 @@
           {
             "href": "https://api.w3.org/users/np613yxynqoosogowcs08sk88w4oskw",
             "title": "Lei Mu",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/mpz2wemtp74ccc0swws0kwswoc08ko0",
+            "title": "Dominik Muc",
             "former": false
           },
           {
@@ -141926,13 +142121,13 @@
     }
   },
   "https://api.w3.org/groups/cg/webextensions/participations": {
-    "fetchedAt": "Sun, 18 Jan 2026 01:59:15 GMT",
-    "lastModified": "Thu, 15 Jan 2026 20:58:51 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:27:31 GMT",
+    "lastModified": "Thu, 12 Feb 2026 21:55:00 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 126,
+      "total": 127,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/webextensions"
@@ -142441,6 +142636,10 @@
           {
             "href": "https://api.w3.org/participations/46906",
             "title": "Pau Swe"
+          },
+          {
+            "href": "https://api.w3.org/participations/47112",
+            "title": "MCP-B"
           }
         ],
         "self": {
@@ -142456,13 +142655,13 @@
     }
   },
   "https://api.w3.org/groups/cg/webextensions/users": {
-    "fetchedAt": "Sun, 25 Jan 2026 02:02:33 GMT",
-    "lastModified": "Thu, 22 Jan 2026 21:34:00 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:27:31 GMT",
+    "lastModified": "Thu, 12 Feb 2026 21:55:00 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 197,
+      "total": 198,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/webextensions"
@@ -143066,6 +143265,11 @@
           {
             "href": "https://api.w3.org/users/bm4c402mt1ws0sc40gkw04kw4k480s4",
             "title": "Shirish Munukuntla",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/8nnf7pogg2cc0gcco8k0skwwkwoosk8",
+            "title": "Alex Nahas",
             "former": false
           },
           {
@@ -143703,8 +143907,8 @@
     }
   },
   "https://api.w3.org/groups/cg/webhistory/participations": {
-    "fetchedAt": "Sat, 20 Dec 2025 18:19:08 GMT",
-    "lastModified": "Thu, 18 Sep 2025 22:36:31 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:26:59 GMT",
+    "lastModified": "Mon, 09 Feb 2026 19:54:36 GMT",
     "data": {
       "page": 1,
       "limit": 500,
@@ -143718,10 +143922,6 @@
           {
             "href": "https://api.w3.org/participations/921",
             "title": "Gerald Oskoboiny"
-          },
-          {
-            "href": "https://api.w3.org/participations/1000",
-            "title": "Dan Connolly"
           },
           {
             "href": "https://api.w3.org/participations/1453",
@@ -143974,6 +144174,10 @@
           {
             "href": "https://api.w3.org/participations/46020",
             "title": "Lorenzo Lomartire"
+          },
+          {
+            "href": "https://api.w3.org/participations/47093",
+            "title": "Dan Connolly"
           }
         ],
         "self": {
@@ -144338,13 +144542,13 @@
     }
   },
   "https://api.w3.org/groups/cg/webmachinelearning/participations": {
-    "fetchedAt": "Sun, 01 Feb 2026 02:32:48 GMT",
-    "lastModified": "Wed, 28 Jan 2026 00:22:09 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:27:01 GMT",
+    "lastModified": "Wed, 11 Feb 2026 14:20:39 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 141,
+      "total": 144,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/webmachinelearning"
@@ -144913,6 +145117,18 @@
           {
             "href": "https://api.w3.org/participations/46979",
             "title": "Block, Inc."
+          },
+          {
+            "href": "https://api.w3.org/participations/47092",
+            "title": "Shopify"
+          },
+          {
+            "href": "https://api.w3.org/participations/47102",
+            "title": "Tania Millan"
+          },
+          {
+            "href": "https://api.w3.org/participations/47103",
+            "title": "Xiaoyuzhou"
           }
         ],
         "self": {
@@ -144928,13 +145144,13 @@
     }
   },
   "https://api.w3.org/groups/cg/webmachinelearning/users": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:39:33 GMT",
-    "lastModified": "Thu, 05 Feb 2026 16:07:47 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:27:01 GMT",
+    "lastModified": "Wed, 11 Feb 2026 14:20:39 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 233,
+      "total": 236,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/webmachinelearning"
@@ -145286,6 +145502,11 @@
             "former": false
           },
           {
+            "href": "https://api.w3.org/users/av2rxz0j1340kgkwckcgwcg80os8s84",
+            "title": "Ates Goral",
+            "former": false
+          },
+          {
             "href": "https://api.w3.org/users/jt1cdbkgur4o8c0okkkw4kksosskwg4",
             "title": "Reilly Grant",
             "former": false
@@ -145606,6 +145827,11 @@
             "former": false
           },
           {
+            "href": "https://api.w3.org/users/dzlgujcaaa88sw0w4k08wcwc840k8co",
+            "title": "Tania Millan",
+            "former": false
+          },
+          {
             "href": "https://api.w3.org/users/48xe04va794w0kskswg8s08g0ccwcc0",
             "title": "Ender Minyard",
             "former": false
@@ -145688,6 +145914,11 @@
           {
             "href": "https://api.w3.org/users/gjrsabfjx4owc0ko4cgwskwk0w8kk0w",
             "title": "Kamalesh Palanisamy",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/oipwhga6n68cwwo4k40sg0g44gc00c4",
+            "title": "Qi Pan",
             "former": false
           },
           {
@@ -148309,13 +148540,13 @@
     }
   },
   "https://api.w3.org/groups/cg/wicg/participations": {
-    "fetchedAt": "Sun, 01 Feb 2026 02:32:53 GMT",
-    "lastModified": "Sat, 31 Jan 2026 17:34:09 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:27:05 GMT",
+    "lastModified": "Tue, 10 Feb 2026 15:25:02 GMT",
     "data": {
       "page": 1,
-      "limit": 555,
+      "limit": 556,
       "pages": 1,
-      "total": 555,
+      "total": 556,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/wicg"
@@ -150540,6 +150771,10 @@
           {
             "href": "https://api.w3.org/participations/47016",
             "title": "Lorenzo Lomartire"
+          },
+          {
+            "href": "https://api.w3.org/participations/47098",
+            "title": "Luke Lucas"
           }
         ],
         "self": {
@@ -150555,8 +150790,8 @@
     }
   },
   "https://api.w3.org/groups/cg/wicg/users": {
-    "fetchedAt": "Sun, 01 Feb 2026 02:32:55 GMT",
-    "lastModified": "Sat, 31 Jan 2026 17:34:09 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:27:07 GMT",
+    "lastModified": "Tue, 10 Feb 2026 15:25:02 GMT",
     "data": {
       "page": 1,
       "limit": 1105,
@@ -152723,11 +152958,6 @@
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/p07erxkje3kgs0o8wgccokwkc0scs4k",
-            "title": "Anil John",
-            "former": false
-          },
-          {
             "href": "https://api.w3.org/users/jqxj0ndvpeokooss0coskks8occc084",
             "title": "Christopher Johnson",
             "former": false
@@ -153465,6 +153695,11 @@
           {
             "href": "https://api.w3.org/users/rclm2lcfw6ook4css8gwc8o0sw0s4oo",
             "title": "Andrei Lubalin",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/ns8vzqi8d9cg0wc8kc084g8kc0ow8wk",
+            "title": "Luke Lucas",
             "former": false
           },
           {
@@ -159056,7 +159291,7 @@
     }
   },
   "https://api.w3.org/groups/cg/xformsusers/participations": {
-    "fetchedAt": "Sat, 20 Dec 2025 18:19:37 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:27:32 GMT",
     "lastModified": "Mon, 02 Jun 2025 07:52:04 GMT",
     "data": {
       "page": 1,
@@ -159122,7 +159357,7 @@
           },
           {
             "href": "https://api.w3.org/participations/15323",
-            "title": "Ontotext"
+            "title": "Graphwise"
           },
           {
             "href": "https://api.w3.org/participations/21096",
@@ -161592,13 +161827,13 @@
     }
   },
   "https://api.w3.org/groups/ig/me/participations": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:37:36 GMT",
-    "lastModified": "Fri, 06 Feb 2026 23:00:06 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:24:59 GMT",
+    "lastModified": "Mon, 09 Feb 2026 02:53:28 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 50,
+      "total": 53,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/ig/me"
@@ -161803,6 +162038,18 @@
           {
             "href": "https://api.w3.org/participations/46739",
             "title": "Discord"
+          },
+          {
+            "href": "https://api.w3.org/participations/47082",
+            "title": "John Simmons"
+          },
+          {
+            "href": "https://api.w3.org/participations/47083",
+            "title": "Christopher Lorenzo"
+          },
+          {
+            "href": "https://api.w3.org/participations/47084",
+            "title": "Kazuyuki Ashimura"
           }
         ],
         "self": {
@@ -161818,13 +162065,13 @@
     }
   },
   "https://api.w3.org/groups/ig/me/users": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:37:37 GMT",
-    "lastModified": "Fri, 06 Feb 2026 23:00:06 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:24:59 GMT",
+    "lastModified": "Mon, 09 Feb 2026 02:53:29 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 119,
+      "total": 122,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/ig/me"
@@ -161833,6 +162080,11 @@
           {
             "href": "https://api.w3.org/users/pd4j50y22n4kskg4sw408c8koo4s8c4",
             "title": "Yoshiki Aoki",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/81b749io48w0wow0s8o44goosgs0k8g",
+            "title": "Kazuyuki Ashimura",
             "former": false
           },
           {
@@ -162146,6 +162398,11 @@
             "former": false
           },
           {
+            "href": "https://api.w3.org/users/bpsxrlnv3xw88gw84owwgkww4g0c040",
+            "title": "Christopher Lorenzo",
+            "former": false
+          },
+          {
             "href": "https://api.w3.org/users/2h2wajvn4uioso04g04sgcgg80kgwog",
             "title": "Erik Mannens",
             "former": false
@@ -162303,6 +162560,11 @@
           {
             "href": "https://api.w3.org/users/1e06k7sxiqhw8w8cw8g4wgw08o00ocg",
             "title": "Daniel Silhavy",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/4wtlcol5y0owk8o44wsgo84owsowwsg",
+            "title": "John Simmons",
             "former": false
           },
           {
@@ -163651,13 +163913,13 @@
     }
   },
   "https://api.w3.org/groups/ig/security/users": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:37:38 GMT",
-    "lastModified": "Thu, 05 Feb 2026 10:20:11 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:02 GMT",
+    "lastModified": "Tue, 10 Feb 2026 20:18:01 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 48,
+      "total": 49,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/ig/security"
@@ -163801,6 +164063,11 @@
           {
             "href": "https://api.w3.org/users/d7qafwtqn7s4c44skgwo0o8cggc8s04",
             "title": "Rob Padula",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/k2fq3nmit6ow0wc04gsgoooogscc0s0",
+            "title": "Julia Pagnucco",
             "former": false
           },
           {
@@ -164995,13 +165262,13 @@
     }
   },
   "https://api.w3.org/groups/ig/webai/participations": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:37:40 GMT",
-    "lastModified": "Mon, 02 Feb 2026 06:44:20 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:03 GMT",
+    "lastModified": "Mon, 09 Feb 2026 19:07:22 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 22,
+      "total": 24,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/ig/webai"
@@ -165094,6 +165361,14 @@
           {
             "href": "https://api.w3.org/participations/47020",
             "title": "China Mobile Communications Corporation"
+          },
+          {
+            "href": "https://api.w3.org/participations/47090",
+            "title": "Philippe Le Hegaret"
+          },
+          {
+            "href": "https://api.w3.org/participations/47091",
+            "title": "Google LLC"
           }
         ],
         "self": {
@@ -165109,13 +165384,13 @@
     }
   },
   "https://api.w3.org/groups/ig/webai/users": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:37:40 GMT",
-    "lastModified": "Mon, 02 Feb 2026 06:44:39 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:25:03 GMT",
+    "lastModified": "Mon, 09 Feb 2026 19:07:34 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 34,
+      "total": 36,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/ig/webai"
@@ -165207,8 +165482,18 @@
             "former": false
           },
           {
+            "href": "https://api.w3.org/users/bhwxjqwlrjksk8go8sgwsok0cc00sg8",
+            "title": "Philippe Le Hegaret",
+            "former": false
+          },
+          {
             "href": "https://api.w3.org/users/9f5rsazeq24ogwosokccgw88o4kksss",
             "title": "Mihai Maftei",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/mldd63emz5cs84oc8okgokowskw84s4",
+            "title": "Jason Mayes",
             "former": false
           },
           {
@@ -166479,13 +166764,13 @@
     }
   },
   "https://api.w3.org/groups/other/tag/users": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:40:29 GMT",
-    "lastModified": "Fri, 06 Feb 2026 10:18:59 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:27:57 GMT",
+    "lastModified": "Thu, 12 Feb 2026 15:49:07 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 14,
+      "total": 15,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/other/tag"
@@ -166514,6 +166799,11 @@
           {
             "href": "https://api.w3.org/users/d3sh0ism2z488wcoo4gs8g0g0s0ws8k",
             "title": "Sarven Capadisli",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/5dohyrkzuwco4ksww84wo4swcsg0ow4",
+            "title": "Heather Flanagan",
             "former": false
           },
           {
@@ -182294,8 +182584,8 @@
     }
   },
   "https://api.w3.org/groups/wg/did/users": {
-    "fetchedAt": "Sun, 04 Jan 2026 01:57:42 GMT",
-    "lastModified": "Wed, 31 Dec 2025 23:00:02 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:24:32 GMT",
+    "lastModified": "Tue, 10 Feb 2026 13:42:23 GMT",
     "data": {
       "page": 1,
       "limit": 500,
@@ -182519,11 +182809,6 @@
           {
             "href": "https://api.w3.org/users/j62wdwffhp4c80g0844gssosk408sgo",
             "title": "Yue Jing",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/p07erxkje3kgs0o8wgccokwkc0scs4k",
-            "title": "Anil John",
             "former": false
           },
           {
@@ -182769,6 +183054,11 @@
           {
             "href": "https://api.w3.org/users/i5y21d0k17kg00ck8c80o0c48cg8okk",
             "title": "Dmitri Zagidulin",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/r0k1fg9ruc0ckwk4gosk08woow0og4s",
+            "title": "Aiyao Zhang",
             "former": false
           },
           {
@@ -183686,8 +183976,8 @@
     }
   },
   "https://api.w3.org/groups/wg/fedid/users": {
-    "fetchedAt": "Sun, 01 Feb 2026 02:30:23 GMT",
-    "lastModified": "Tue, 27 Jan 2026 19:01:12 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:24:34 GMT",
+    "lastModified": "Tue, 10 Feb 2026 14:52:51 GMT",
     "data": {
       "page": 1,
       "limit": 500,
@@ -183919,11 +184209,6 @@
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/p07erxkje3kgs0o8wgccokwkc0scs4k",
-            "title": "Anil John",
-            "former": false
-          },
-          {
             "href": "https://api.w3.org/users/m438uly12m80c88ww4okccokg8g8o8",
             "title": "Michael Jones",
             "former": false
@@ -184086,6 +184371,11 @@
           {
             "href": "https://api.w3.org/users/rjzk116da34c84okwookwoc8wws88gk",
             "title": "SURESH POTTI",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/3sj1os9p79ycgwksckg4wso8og884kg",
+            "title": "Jonathan Prisby",
             "former": false
           },
           {
@@ -184291,13 +184581,13 @@
     }
   },
   "https://api.w3.org/groups/wg/gpu/participations": {
-    "fetchedAt": "Sun, 18 Jan 2026 01:56:17 GMT",
-    "lastModified": "Tue, 13 Jan 2026 15:39:34 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:24:35 GMT",
+    "lastModified": "Mon, 09 Feb 2026 13:59:29 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 25,
+      "total": 24,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/wg/gpu"
@@ -184368,10 +184658,6 @@
             "title": "Datadog"
           },
           {
-            "href": "https://api.w3.org/participations/42853",
-            "title": "Xiaoshen X"
-          },
-          {
             "href": "https://api.w3.org/participations/43399",
             "title": "ARM Limited"
           },
@@ -184417,13 +184703,13 @@
     }
   },
   "https://api.w3.org/groups/wg/gpu/users": {
-    "fetchedAt": "Sun, 18 Jan 2026 01:56:17 GMT",
-    "lastModified": "Tue, 13 Jan 2026 15:36:12 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:24:35 GMT",
+    "lastModified": "Mon, 09 Feb 2026 13:59:29 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 66,
+      "total": 65,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/wg/gpu"
@@ -184717,11 +185003,6 @@
           {
             "href": "https://api.w3.org/users/f3n6kqgz3xw8skokccccgs4wwk4os4s",
             "title": "Mike Wyrzykowski",
-            "former": false
-          },
-          {
-            "href": "https://api.w3.org/users/5qwi04qltao80884c0440ggogssw4sk",
-            "title": "Xiaoshen X",
             "former": false
           },
           {
@@ -186219,13 +186500,13 @@
     }
   },
   "https://api.w3.org/groups/wg/json-ld/participations": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:37:15 GMT",
-    "lastModified": "Wed, 04 Feb 2026 11:43:03 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:24:37 GMT",
+    "lastModified": "Mon, 09 Feb 2026 07:32:11 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 13,
+      "total": 14,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/wg/json-ld"
@@ -186282,6 +186563,10 @@
           {
             "href": "https://api.w3.org/participations/47045",
             "title": "Apache Software Foundation"
+          },
+          {
+            "href": "https://api.w3.org/participations/47086",
+            "title": "Chinese Academy of Sciences"
           }
         ],
         "self": {
@@ -188308,13 +188593,13 @@
     }
   },
   "https://api.w3.org/groups/wg/pat/users": {
-    "fetchedAt": "Sun, 18 Jan 2026 01:56:25 GMT",
-    "lastModified": "Mon, 12 Jan 2026 22:25:58 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:24:42 GMT",
+    "lastModified": "Thu, 12 Feb 2026 17:13:50 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 62,
+      "total": 63,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/wg/pat"
@@ -188468,6 +188753,11 @@
           {
             "href": "https://api.w3.org/users/eeoeqfg42aokgk0sgs4skccwokw4o0o",
             "title": "Watson Ladd",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/py6pysbnri80gkskcccw0occos8o8gs",
+            "title": "Rowena Lam",
             "former": false
           },
           {
@@ -188860,13 +189150,13 @@
     }
   },
   "https://api.w3.org/groups/wg/payments/users": {
-    "fetchedAt": "Sun, 01 Feb 2026 02:30:43 GMT",
-    "lastModified": "Fri, 30 Jan 2026 15:18:04 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:24:54 GMT",
+    "lastModified": "Fri, 13 Feb 2026 16:57:52 GMT",
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 128,
+      "total": 129,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/wg/payments"
@@ -189035,6 +189325,11 @@
           {
             "href": "https://api.w3.org/users/7i2gkilmibcw0cok840o8sc8ck4w08c",
             "title": "Zane Durkin",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/8hat571adxs84c8g8w088o0og04gcc8",
+            "title": "John Earnshaw",
             "former": false
           },
           {
@@ -191348,7 +191643,7 @@
     }
   },
   "https://api.w3.org/groups/wg/rdf-star/participations": {
-    "fetchedAt": "Sat, 20 Dec 2025 18:16:59 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:24:43 GMT",
     "lastModified": "Thu, 20 Nov 2025 12:43:34 GMT",
     "data": {
       "page": 1,
@@ -191438,7 +191733,7 @@
           },
           {
             "href": "https://api.w3.org/participations/39297",
-            "title": "Ontotext"
+            "title": "Graphwise"
           },
           {
             "href": "https://api.w3.org/participations/39920",
@@ -192041,7 +192336,7 @@
     }
   },
   "https://api.w3.org/groups/wg/secondscreen": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:37:22 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:24:44 GMT",
     "lastModified": "Wed, 02 Oct 2019 00:37:48 GMT",
     "data": {
       "id": 74168,
@@ -192091,7 +192386,7 @@
       },
       "type": "working group",
       "start-date": "2014-10-13",
-      "end-date": "2026-07-31"
+      "end-date": "2026-01-31"
     }
   },
   "https://api.w3.org/groups/wg/secondscreen/participations": {
@@ -193551,8 +193846,8 @@
     }
   },
   "https://api.w3.org/groups/wg/vc/users": {
-    "fetchedAt": "Sun, 08 Feb 2026 02:37:25 GMT",
-    "lastModified": "Fri, 06 Feb 2026 03:04:03 GMT",
+    "fetchedAt": "Sun, 15 Feb 2026 02:24:48 GMT",
+    "lastModified": "Tue, 10 Feb 2026 14:58:09 GMT",
     "data": {
       "page": 1,
       "limit": 500,
@@ -193829,11 +194124,6 @@
             "former": false
           },
           {
-            "href": "https://api.w3.org/users/p07erxkje3kgs0o8wgccokwkc0scs4k",
-            "title": "Anil John",
-            "former": false
-          },
-          {
             "href": "https://api.w3.org/users/m438uly12m80c88ww4okccokg8g8o8",
             "title": "Michael Jones",
             "former": false
@@ -194001,6 +194291,11 @@
           {
             "href": "https://api.w3.org/users/7o4ri7skneccs0k0cg40occww408ok0",
             "title": "Jim Peng",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/3sj1os9p79ycgwksckg4wso8og884kg",
+            "title": "Jonathan Prisby",
             "former": false
           },
           {
