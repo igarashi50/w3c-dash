@@ -1,15 +1,32 @@
 // w3c-dash.js
 
-let groupsInfo = null; // 初回のみロード
-let attachedSummaryHandler = false;
-let attachedGroupsHandler = false;
+import { makeStats, getDataEntry } from './w3c-stats.js';
+import { loadApiDataAsync, fetchDataEntryAsync } from './w3c-api.js';
+
+let w3cStats = null; // 初回のみロード
 let loadingDotsTimer = null;
+let loadingDotsCount = 0;
+
+const labels = {
+  wg: 'Working Groups',
+  ig: 'Interest Groups',
+  cg: 'Community Groups',
+  tf: 'Task Forces',
+  other: 'Other Groups',
+  all: 'All Groups'
+};
+
+const params = new URLSearchParams(window.location.search);
+const dataParam = params.get('data')
+const url = dataParam || 'data/w3c-data.json'; // relative 
+// Relative / Absolute 両対応で正規化
+const apiDataUrl = new URL(url, location.href);
+// const piDataUrl = 'data-new/w3c-data.json';
 
 async function renderDashboard() {
   const loadingStatus = document.getElementById('status');
-  const groupsListDiv = document.getElementById('groupsList');
-  const summarySection = document.getElementById('summarySection');
-  const groupsSection = document.querySelector('.groupsSection');
+  const summarySection = document.getElementById('summary');
+  const groupsSection = document.getElementById('groups');
 
   // ローディング開始時はsummarySection, groupsSectionを非表示
   if (summarySection) summarySection.style.display = 'none';
@@ -32,60 +49,19 @@ async function renderDashboard() {
 
   try {
     // 初回のみロード
-    if (groupsInfo === null) {
-      groupsInfo = await getAllGroupsInfo();
+    if (w3cStats === null) {
+      const apiData = await loadApiDataAsync(apiDataUrl);
+      w3cStats = makeStats(apiData); // ES Moduleのw3c-stats.jsのの関数
+      if (!w3cStats) {
+        alert("w3c stats is not avaiable")
+      }
     }
-    const groupsArray = groupsInfo.groupsArray;
-
-    // フィルター・ソートはgroupsInfo.groupsArrayのみ参照
-    const filterType = localStorage.getItem('groupTypeFilter') || 'wg';
-    const filteredResults = filterType === 'all'
-      ? groupsArray
-      : groupsArray.filter(g => g.groupType === filterType);
-
-    // ソート基準をlocalStorageから取得し、なければselectの値を使う
-    const sortBySelect = document.getElementById('groupsListSortBy');
-    let sortBy = localStorage.getItem('groupsListSortBy');
-    if (!sortBy || !Array.from(sortBySelect.options).some(opt => opt.value === sortBy)) {
-      sortBy = sortBySelect.value;
-    } else {
-      sortBySelect.value = sortBy;
-    }
-    let sortedResults;
-    switch (sortBy) {
-      case 'members':
-        sortedResults = [...filteredResults].sort((a, b) => (b.membersMap.size || 0) - (a.membersMap.size || 0));
-        break;
-      case 'memberParticipants':
-        sortedResults = [...filteredResults].sort((a, b) => (b.memberParticipants.length || 0) - (a.memberParticipants.length || 0));
-        break;
-      case 'invitedExperts':
-        sortedResults = [...filteredResults].sort((a, b) => (b.invitedExperts.length || 0) - (a.invitedExperts.length || 0));
-        break;
-      case 'staffs':
-        sortedResults = [...filteredResults].sort((a, b) => (b.staffs.length || 0) - (a.staffs.length || 0));
-        break;
-      case 'individuals':
-        sortedResults = [...filteredResults].sort((a, b) => (b.individuals.length || 0) - (a.individuals.length || 0));
-        break;
-
-      case 'allParticipants':
-        sortedResults = [...filteredResults].sort((a, b) => (b.allParticipants.length || 0) - (a.allParticipants.length || 0));
-        break;
-      case 'name':
-      default:
-        sortedResults = [...filteredResults].sort((a, b) => {
-          const nameA = (a.name || '').toLowerCase();
-          const nameB = (b.name || '').toLowerCase();
-          return nameA.localeCompare(nameB);
-        });
-        break;
-    }
+    const groupsArray = w3cStats.groupsArray;
 
     // Summary表示をサブ関数に分離
-    _mainRenderSummary(groupsArray.length, groupsInfo.summaryGroup, groupsInfo.onlyGroupParticipationsSummaryGroup, groupsInfo.lastChecked);
+    _mainRenderSummary(groupsArray.length, w3cStats.summaryGroup, w3cStats.onlyGroupParticipationsSummaryGroup, w3cStats.lastChecked);
 
-    _mainRenderGroups({ groupsListDiv, groupsArray, sortedResults, filterType, sortBy });
+    _mainRenderGroups(groupsArray);
 
     // ローディング完了後に表示
     if (summarySection) summarySection.style.display = '';
@@ -114,44 +90,29 @@ document.getElementById('popupClose').addEventListener('click', () => {
   document.getElementById('popup').style.display = 'none';
   document.getElementById('popupOverlay').style.display = 'none';
   document.body.classList.remove('modal-open');  // enable body scroll
+  if (w3cStats) {
+    _mainRenderSummaryStats(w3cStats.groupsArray.length, w3cStats.summaryGroup, w3cStats.onlyGroupParticipationsSummaryGroup);
+  }
 });
 
 document.getElementById('popupOverlay').addEventListener('click', () => {
   document.getElementById('popup').style.display = 'none';
   document.getElementById('popupOverlay').style.display = 'none';
-});
-
-document.getElementById('participationsPopupClose').addEventListener('click', () => {
-  document.getElementById('participationsPopup').style.display = 'none';
-  document.getElementById('participationsPopupOverlay').style.display = 'none';
-  if (groupsInfo) {
-    _mainRenderSummaryStats(groupsInfo.groupsArray.length, groupsInfo.summaryGroup, groupsInfo.onlyGroupParticipationsSummaryGroup);
+  document.body.classList.remove('modal-open');  // enable body scroll
+  if (w3cStats) {
+    _mainRenderSummaryStats(w3cStats.groupsArray.length, w3cStats.summaryGroup, w3cStats.onlyGroupParticipationsSummaryGroup);
   }
 });
 
-document.getElementById('participationsPopupOverlay').addEventListener('click', () => {
-  document.getElementById('participationsPopup').style.display = 'none';
-  document.getElementById('participationsPopupOverlay').style.display = 'none';
-  if (groupsInfo) {
-    _mainRenderSummaryStats(groupsInfo.groupsArray.length, groupsInfo.summaryGroup, groupsInfo.onlyGroupParticipationsSummaryGroup);
-  }
-});
-
-// ESCキーでポップアップを閉じる
+// ESCキー対応も同様
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     const popup = document.getElementById('popup');
     const popupOverlay = document.getElementById('popupOverlay');
-    const participationsPopup = document.getElementById('participationsPopup');
-    const participationsPopupOverlay = document.getElementById('participationsPopupOverlay');
-
-    if (popup.style.display === 'block') {
+    if (popup.style.display === 'flex') {
       popup.style.display = 'none';
       popupOverlay.style.display = 'none';
-    }
-    if (participationsPopup.style.display === 'flex') {
-      participationsPopup.style.display = 'none';
-      participationsPopupOverlay.style.display = 'none';
+      document.body.classList.remove('modal-open'); // ← 追加
     }
   }
 });
@@ -159,31 +120,23 @@ document.addEventListener('keydown', (e) => {
 renderDashboard() // ループ
 // 以下は関数群
 
-function getonlyGroupParticipationsToggle() {
+function getOnlyGroupParticipationsToggle() {
   return localStorage.onlyGroupParticipations === 'true';   //
 }
 
-function fliponlyGroupParticipationsToggle(checkSpan) {
-  const isChecked = !getonlyGroupParticipationsToggle();
+function flipOnlyGroupParticipationsToggle(toggleBtn) {
+  const isChecked = !getOnlyGroupParticipationsToggle();
   localStorage.onlyGroupParticipations = isChecked ? 'true' : 'false';  // 文字列で保存
 
-  return updateonlyGroupParticipationsToggle(checkSpan);
+  return updateOnlyGroupParticipationsToggle(toggleBtn);
 }
-function updateonlyGroupParticipationsToggle(checkSpan) {
-  const isChecked = getonlyGroupParticipationsToggle();
-  if (isChecked) {
-    checkSpan.style.background = '#0969da';
-    checkSpan.textContent = '✓';
-    checkSpan.style.color = '#fff';
-  } else {
-    checkSpan.style.background = '#fff';
-    checkSpan.textContent = ' ';
-    checkSpan.style.color = '#0969da';
-  }
+function updateOnlyGroupParticipationsToggle(toggleBtn) {
+  const checkSpan = toggleBtn.querySelector('.check-mark');
+  const isChecked = getOnlyGroupParticipationsToggle();
+  toggleBtn.classList.toggle('checked', isChecked);
   return isChecked;
 }
-
-/* 
+/*
 以下はmainパネルの表示用のサブ関数 '_main'で始まる関数
 */
 function _mainRenderSummary(groupCounts, summaryGroup, onlyGroupParticipationsSummaryGroup, lastChecked) {
@@ -205,54 +158,51 @@ function _mainRenderSummary(groupCounts, summaryGroup, onlyGroupParticipationsSu
 
   // トグルボタンのイベントハンドラ追加
   const toggleBtn = document.getElementById('toggleOnlyGroupParticipations');
-  const checkSpan = document.getElementById('toggleOnlyGroupParticipationsCheck');
-  if (toggleBtn && checkSpan) {
-    updateonlyGroupParticipationsToggle(checkSpan);
+  if (toggleBtn) {
+    updateOnlyGroupParticipationsToggle(toggleBtn);
     toggleBtn.onclick = () => {
-      fliponlyGroupParticipationsToggle(checkSpan);
+      flipOnlyGroupParticipationsToggle(toggleBtn);
       // currentFilterを必ず維持して渡す
       _mainRenderSummaryStats(
-        groupsInfo.groupsArray.length,
-        groupsInfo.summaryGroup,
-        groupsInfo.onlyGroupParticipationsSummaryGroup
+        w3cStats.groupsArray.length,
+        w3cStats.summaryGroup,
+        w3cStats.onlyGroupParticipationsSummaryGroup
       );
-      _popupRenderSheet(groupInfo, onlyGroupParticipationsSummaryGroup, currentFilter, membersListContent, participantsListContent, userDetailsContent, affiliationsTitle, participantsTitle);
     };
   }
   // Summaryクリックイベント
-  if (!attachedSummaryHandler) {
-    attachedSummaryHandler = true;
-    const summarySection = document.getElementById('summarySection');
-    function handleSummaryClick(ev) {
-      console.log('[summary click/touch]', ev.type, ev.target);
-      const target = ev.target.closest('.clickable');
-      if (!target) return;
-      const summaryType = target.getAttribute('data-summary-type');
-      if (summaryType) {
-        let initialFilter = summaryType;
-        popupParticipationsSheet(summaryGroup, initialFilter, onlyGroupParticipationsSummaryGroup);
-      }
+  const summarySection = document.getElementById('summary');
+  function handleSummaryClick(ev) {
+    const target = ev.target.closest('.clickable');
+    if (!target) return;
+    const summaryType = target.getAttribute('data-summary-type');
+    if (summaryType) {
+      let initialFilter = summaryType;
+
+      const tableSwitcher = document.getElementById('tableSwitcher');
+      const isShowBoth = tableSwitcher == undefined || tableSwitcher.style.display == 'none';
+      popupSheet(summaryGroup, initialFilter, onlyGroupParticipationsSummaryGroup, isShowBoth);
     }
-    if (summarySection) {
-      summarySection.addEventListener('click', handleSummaryClick);
-      summarySection.addEventListener('touchend', handleSummaryClick);
-    }
+  }
+  if (summarySection) {
+    summarySection.addEventListener('click', handleSummaryClick);
+    summarySection.addEventListener('touchend', handleSummaryClick);
   }
   // 初期時点でのsummary値描画
   _mainRenderSummaryStats(groupCounts, summaryGroup, onlyGroupParticipationsSummaryGroup);
 }
 
 function _mainRenderSummaryStats(groupCounts, summaryGroup, onlyGroupParticipationsSummaryGroup = null) {
-  const toggleOnlyGroupParticipations = getonlyGroupParticipationsToggle();
-  const checkSpan = document.getElementById('toggleOnlyGroupParticipationsCheck');
-  updateonlyGroupParticipationsToggle(checkSpan);
+  const toggleOnlyGroupParticipations = getOnlyGroupParticipationsToggle();
+  const toggleBtn = document.getElementById('toggleOnlyGroupParticipations');
+  updateOnlyGroupParticipationsToggle(toggleBtn);
 
   const useGroupInfo = (toggleOnlyGroupParticipations && onlyGroupParticipationsSummaryGroup)
     ? onlyGroupParticipationsSummaryGroup
     : summaryGroup
 
 
-  // summary値の更新
+  // participations summary値の更新
   const summfaryGroups = document.getElementById('summaryGroups');
   if (summfaryGroups) summfaryGroups.textContent = groupCounts;
   const summaryMembers = document.getElementById('summaryMembers');
@@ -268,13 +218,161 @@ function _mainRenderSummaryStats(groupCounts, summaryGroup, onlyGroupParticipati
   const summaryAllParticipants = document.getElementById('summaryAllParticipants');
   if (summaryAllParticipants) summaryAllParticipants.textContent = useGroupInfo.allParticipants.length;
 
+  // specifications  summary値の更新
+  const summarySpecifications = document.getElementById('summarySpecifications');
+  if (summarySpecifications) summarySpecifications.textContent = useGroupInfo.specsMap.size;
+  const summaryRecommendations = document.getElementById('summaryRecommendations');
+  if (summaryRecommendations) summaryRecommendations.textContent = useGroupInfo.recommendations.length;
+  const summaryCandidateRecommendations = document.getElementById('summaryCandidateRecommendations');
+  if (summaryCandidateRecommendations) summaryCandidateRecommendations.textContent = useGroupInfo.candidateRecommendations.length;
+  const summaryDraftStandards = document.getElementById('summaryDraftStandards');
+
+  if (summaryDraftStandards) summaryDraftStandards.textContent = useGroupInfo.draftStandards.length;
+  const summaryRetiredSpecs = document.getElementById('summaryRetiredSpecs');
+  if (summaryRetiredSpecs) summaryRetiredSpecs.textContent = useGroupInfo.retiredSpecs.length;
+  const summaryOtherSpecs = document.getElementById('summaryOtherSpecs');
+  if (summaryOtherSpecs) summaryOtherSpecs.textContent = useGroupInfo.otherSpecs.length;
+  const summaryAllVersions = document.getElementById('summaryAllVersions');
+  if (summaryAllVersions) summaryAllVersions.textContent = useGroupInfo.allVersions.length;
 }
 
-// groupsListDivの描画をまとめるサブ関数
-function _mainRenderGroups({ groupsListDiv, groupsArray, sortedResults, filterType, sortBy }) {
-  groupsListDiv.innerHTML = '';
+function _mainFilterAndSortGroups(groupsArray, filterType, sortBy) {
+  console.log(`[FilterAndSort] filterType=${filterType}, sortBy=${sortBy}`);
+  const startTime = performance.now();
 
-  // 各タイプのグループ数を計算
+  const filteredResults = filterType === 'all'
+    ? groupsArray
+    : groupsArray.filter(g => g.groupType === filterType);
+
+  let sortedResults;
+  switch (sortBy) {
+    case 'members':
+      sortedResults = [...filteredResults].sort((a, b) => (b.membersMap.size || 0) - (a.membersMap.size || 0));
+      break;
+    case 'memberParticipants':
+      sortedResults = [...filteredResults].sort((a, b) => (b.memberParticipants.length || 0) - (a.memberParticipants.length || 0));
+      break;
+    case 'invitedExperts':
+      sortedResults = [...filteredResults].sort((a, b) => (b.invitedExperts.length || 0) - (a.invitedExperts.length || 0));
+      break;
+    case 'staffs':
+      sortedResults = [...filteredResults].sort((a, b) => (b.staffs.length || 0) - (a.staffs.length || 0));
+      break;
+    case 'individuals':
+      sortedResults = [...filteredResults].sort((a, b) => (b.individuals.length || 0) - (a.individuals.length || 0));
+      break;
+
+    case 'allParticipants':
+      sortedResults = [...filteredResults].sort((a, b) => (b.allParticipants.length || 0) - (a.allParticipants.length || 0));
+      break;
+
+    case 'specifications':
+      sortedResults = [...filteredResults].sort((a, b) => (b.specsMap.size || 0) - (a.specsMap.size || 0));
+      break;
+    case 'recommendations':
+      sortedResults = [...filteredResults].sort((a, b) => (b.recommendations.length || 0) - (a.recommendations.length || 0));
+      break;
+    case 'candidateRecommendations':
+      sortedResults = [...filteredResults].sort((a, b) => (b.candidateRecommendations.length || 0) - (a.candidateRecommendations.length || 0));
+      break;
+    case 'draftStandards':
+      sortedResults = [...filteredResults].sort((a, b) => (b.draftStandards.length || 0) - (a.draftStandards.length || 0));
+      break;
+    case 'retiredSpecs':
+      sortedResults = [...filteredResults].sort((a, b) => (b.retiredSpecs.length || 0) - (a.retiredSpecs.length || 0));
+      break;
+    case 'otherSpecs':
+      sortedResults = [...filteredResults].sort((a, b) => (b.otherSpecs.length || 0) - (a.otherSpecs.length || 0));
+      break;
+
+    case 'allVersions':
+      sortedResults = [...filteredResults].sort((a, b) => (b.allVersions.length || 0) - (a.allVersions.length || 0));
+      break;
+
+    case 'name':
+    default:
+      sortedResults = [...filteredResults].sort((a, b) => {
+        const nameA = (a.name || '').toLowerCase();
+        const nameB = (b.name || '').toLowerCase();
+        return nameA.localeCompare(nameB);
+      });
+      break;
+  }
+  const endTime = performance.now();
+  console.log(`[FilterAndSort] Completed in ${(endTime - startTime).toFixed(2)} ms`);
+  return sortedResults
+}
+
+
+function _mainRenderGroups(groupsArray) {
+  _mainInitTableSwitcher();
+
+  _mainRenderGroupsFilter(groupsArray);
+  _mainRenderGroupsList(groupsArray);
+}
+
+function _mainInitTableSwitcher() {
+  const tableSwitcher = document.getElementById('tableSwitcher');
+  if (tableSwitcher == null || tableSwitcher.style.display == 'none') {
+    return;
+  }
+  const groupsList = document.getElementById('groupsList');
+
+  // 初期状態復元
+  const show = localStorage.getItem('groupsColumnMode') || 'participations';
+  // active UI
+  tableSwitcher.querySelectorAll('.segment')
+    .forEach(b => {
+      if (b.dataset.show === show) {
+        b.classList.add('active')
+      } else {
+        b.classList.remove('active')
+      }
+    });
+  // aria
+  tableSwitcher.querySelectorAll('.segment')
+    .forEach(b => {
+      if (b.dataset.show === show) {
+        b.setAttribute('aria-selected', 'true');
+      } else {
+        b.setAttribute('aria-selected', 'false');
+      }
+    });
+
+  // クラス切り替えで、participations/specificationsの表示制御
+  groupsList.classList.remove('only-participations', 'only-specifications');
+  groupsList.classList.add(`only-${show}`);
+
+  tableSwitcher.querySelectorAll('.segment')
+    .forEach(btn => {
+      btn.onclick = () => {
+        const show = btn.dataset.show;
+        const currentColumnMode = localStorage.getItem('groupsColumnMode');
+        if (currentColumnMode != show) {
+          // active UI
+          tableSwitcher.querySelectorAll('.segment')
+            .forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          // aria
+          tableSwitcher.querySelectorAll('.segment')
+            .forEach(b => b.setAttribute('aria-selected', 'false'));
+          btn.setAttribute('aria-selected', 'true');
+
+          groupsList.classList.remove('only-participations', 'only-specifications');
+          groupsList.classList.add(`only-${show}`);
+
+          localStorage.setItem('groupsColumnMode', show);
+        }
+      }
+    });
+}
+
+function _mainRenderGroupsFilter(groupsArray) {
+  // 選択したフィルターのグループ名ヘッダーのラベル更新
+  const filterType = localStorage.getItem('groupTypeFilter') || 'wg';
+
+  // 各タイプのグループ数を計算して、GroupSectionのフィルターのラベルの値を更新
   const counts = {
     wg: 0,
     ig: 0,
@@ -283,6 +381,7 @@ function _mainRenderGroups({ groupsListDiv, groupsArray, sortedResults, filterTy
     other: 0,
     all: groupsArray.length
   };
+
   groupsArray.forEach(g => {
     const type = g.groupType;
     if (counts.hasOwnProperty(type)) {
@@ -292,560 +391,552 @@ function _mainRenderGroups({ groupsListDiv, groupsArray, sortedResults, filterTy
     }
   });
 
-  // カラム定義
-  const filterTypeLabels = {
-    'wg': 'Working Groups',
-    'ig': 'Interest Groups',
-    'cg': 'Community Groups',
-    'tf': 'Task Forces',
-    'other': 'Other Groups',
-    'all': 'All Groups'
-  };
-  const filterTypeLabel = filterTypeLabels[filterType] || 'Groups';
-  const columns = [
-    { key: 'name', label: `${filterTypeLabel}: ${sortedResults.length}`, sortable: true },
-    { key: 'members', label: 'M', sortable: true },
-    { key: 'memberParticipants', label: 'MP', sortable: true },
-    { key: 'invitedExperts', label: 'IE', sortable: true },
-    { key: 'staffs', label: 'S', sortable: true },
-    { key: 'individuals', label: 'Ind', sortable: true },
-    { key: 'allParticipants', label: 'P', sortable: true },
-    { key: 'charts', label: 'Charts', sortable: false }
-  ];
+  const groupTypeFilter = document.getElementById('groupTypeFilter');
+  groupTypeFilter.querySelectorAll('.filter-btn').forEach(btn => {
+    const type = btn.dataset.type;
+    const countSpan = btn.querySelector('.count');
 
-
-  // ヘッダーコンテナを作成
-  const headerContainer = document.createElement('div');
-  headerContainer.className = 'table-header-container';
-
-  // テーブル（ヘッダー用）を作成
-  const headerTable = document.createElement('table');
-  headerTable.className = 'groups-table groups-table-header';
-
-  // テーブルヘッダー
-  const thead = document.createElement('thead');
-
-  // Column headers
-  const headerRow = document.createElement('tr');
-
-  columns.forEach((col, index) => {
-    const th = document.createElement('th');
-
-    // 列幅を明示的に設定
-    if (index === 0) {
-      th.style.width = 'auto';
-    } else if (index >= 1 && index <= 6) {
-      th.style.width = '50px';
-      th.style.minWidth = '50px';
-      th.style.maxWidth = '50px';
-    } else if (index === 7) {
-      th.style.width = 'auto';
-      th.style.minWidth = '180px';
-      th.style.maxWidth = '1fr';
+    // 数値のみ更新
+    if (countSpan && counts[type] !== undefined) {
+      countSpan.textContent = counts[type];
     }
 
-    // ソート矢印色を統一
-    const arrowColorActive = '#0969da';
-    const arrowColorInactive = '#bbb';
+    // 初期アクティブ状態
+    btn.classList.toggle('active', type === filterType);
 
-    if (col.key === 'name') {
-      th.style.cursor = 'pointer';
-      th.className = sortBy === 'name' ? 'sorted' : '';
-      th.onclick = () => {
-        document.getElementById('groupsListSortBy').value = col.key;
-        localStorage.setItem('groupsListSortBy', col.key); //
-        renderDashboard();
-      };
-      const arrow = document.createElement('span');
-      arrow.className = 'sort-icon';
-      arrow.innerHTML = '↓';
-      arrow.style.marginLeft = '2px';
-      arrow.style.color = sortBy === 'name' ? arrowColorActive : arrowColorInactive;
-      th.innerHTML = '';
-      th.appendChild(document.createTextNode(col.label));
-      th.appendChild(arrow);
-    } else if (col.sortable) {
-      th.style.cursor = 'pointer';
-      th.className = sortBy === col.key ? 'sorted' : '';
-      th.onclick = () => {
-        document.getElementById('groupsListSortBy').value = col.key;
-        localStorage.setItem('groupsListSortBy', col.key); //
-        renderDashboard();
-      };
-      const arrow = document.createElement('span');
-      arrow.className = 'sort-icon';
-      arrow.innerHTML = '↓';
-      arrow.style.marginLeft = '2px';
-      arrow.style.color = sortBy === col.key ? arrowColorActive : arrowColorInactive;
-      th.innerHTML = '';
-      th.appendChild(document.createTextNode(col.label));
-      th.appendChild(arrow);
-    } else if (col.key === 'charts') {
-      th.innerHTML = `
-        <div style="display: flex; flex-wrap: wrap; gap: 2px 3px; align-items: center; font-size: 0.8em; line-height: 1.2; min-height: 1.5em;">
-          <div style="display: flex; align-items: center; gap: 2px;">
-            <div style="width: 8px; height: 8px; background-color: #0969da;"></div>
-            <span>M</span>
-          </div>
-          <div style="display: flex; align-items: center; gap: 2px;">
-            <div style="width: 8px; height: 8px; background-color: #1f883d;"></div>
-            <span>MP</span>
-          </div>
-          <div style="display: flex; align-items: center; gap: 2px;">
-            <div style="width: 8px; height: 8px; background-color: #bf8700;"></div>
-            <span>IE</span>
-          </div>
-          <div style="display: flex; align-items: center; gap: 2px;">
-            <div style="width: 8px; height: 8px; background-color: #cf222e;"></div>
-            <span>S</span>
-          </div>
-          <div style="display: flex; align-items: center; gap: 2px;">
-            <div style="width: 8px; height: 8px; background-color: #8250df;"></div>
-            <span>Ind</span>
-          </div>
-          <div style="display: flex; align-items: center; gap: 2px;">
-            <div style="width: 8px; height: 8px; border: 1px solid #000;"></div>
-            <span>P = MP+IE+S+Ind</span>
-          </div>
-        </div>
-      `;
-      th.style.cursor = 'default';
-    } else {
-      th.textContent = col.label;
-      th.style.cursor = 'default';
-    }
+    // クリックイベント
+    btn.onclick = (e) => {
+      e.stopPropagation();
 
-    // 横幅小さい時に消すためのクラスを追加
-    if (col.key === 'name') th.classList.add('col-name');
-    if (col.key === 'members') th.classList.add('col-m');
-    if (col.key === 'memberParticipants') th.classList.add('col-mp');
-    if (col.key === 'invitedExperts') th.classList.add('col-ie');
-    if (col.key === 'staffs') th.classList.add('col-s');
-    if (col.key === 'individuals') th.classList.add('col-ind');
-    if (col.key === 'allParticipants') th.classList.add('col-ap');
-    if (col.key === 'charts') th.classList.add('col-charts');
+      // active 切り替え
+      groupTypeFilter
+        .querySelectorAll('.filter-btn')
+        .forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
 
-    headerRow.appendChild(th);
+      // 状態保存
+      localStorage.setItem('groupTypeFilter', type);
+
+      _mainDrawTableBodyContainer(groupsArray);
+    };
+  });
+}
+
+function _mainRenderGroupsList(groupsArray) {
+  const sortBy = localStorage.getItem('groupsListSortBy') || 'name';
+
+  const headerRow = document.getElementById('groupsHeaderRow');
+
+  headerRow.querySelectorAll('th.sortable').forEach(th => {
+    const key = th.dataset.key;
+
+    // 初期状態
+    th.classList.toggle('sorted', key === sortBy);
+
+    th.onclick = () => {
+      // reset
+      headerRow.querySelectorAll('th.sortable')
+        .forEach(t => t.classList.remove('sorted'));
+
+      // activate
+      th.classList.add('sorted');
+
+      localStorage.setItem('groupsListSortBy', key);
+
+      // 再描画
+      _mainDrawTableBodyContainer(groupsArray);
+    };
   });
 
-  thead.appendChild(headerRow);
-  headerTable.appendChild(thead);
-  headerContainer.appendChild(headerTable);
-  groupsListDiv.appendChild(headerContainer);
-
-  // フィルターボタンのイベントリスナーと値（数値）だけを設定
-  setTimeout(() => {
-    const groupTypeFilter = document.getElementById('groupTypeFilter');
-    if (groupTypeFilter) {
-      const currentFilterType = localStorage.getItem('groupTypeFilter') || 'wg';
-      groupTypeFilter.querySelectorAll('.filter-btn').forEach(btn => {
-        const type = btn.dataset.type;
-        // ラベル部分はindex.htmlのまま、コロン以降の数値だけを更新
-        const labelMatch = btn.textContent.match(/^(.+?):/);
-        const label = labelMatch ? labelMatch[1] : btn.textContent;
-        btn.textContent = `${label}: ${counts[type]}`;
-        // アクティブクラスを設定
-        if (btn.dataset.type === currentFilterType) {
-          btn.classList.add('active');
-        } else {
-          btn.classList.remove('active');
-        }
-        // イベントリスナーを設定
-        btn.onclick = (e) => {
-          e.stopPropagation();
-          const type = btn.dataset.type;
-          localStorage.setItem('groupTypeFilter', type);
-          renderDashboard();
-        };
-      });
-    }
-  }, 0);
-
-  // テーブルボディ描画をサブ関数に分離
-  const bodyContainer = _mainRenderTableBody(groupsArray, sortedResults);
-  groupsListDiv.appendChild(bodyContainer);
-  // チャート描画はbodyContainer追加後に必ず呼ぶ
-  _mainDrawGroupsCharts(sortedResults);
-
-  if (!attachedGroupsHandler) {
-    attachedGroupsHandler = true
-    groupsListDiv.addEventListener('click', ev => {
-      const target = ev.target.closest('.clickable');
-      if (!target) return;
-
-      const index = parseInt(target.getAttribute('data-index'));
-      const type = target.getAttribute('data-type');
-      if (isNaN(index) || !groupsArray[index]) return;
-
-      // Membersの場合は特別な3ペインポップアップを表示
-      let initialFilter = 'members';
-      if (type === 'members') {
-        initialFilter = 'members';
-      } else if (type === 'allParticipants') {
-        initialFilter = 'allParticipants';
-      } else if (type === 'memberParticipants') {
-        initialFilter = 'memberParticipants';
-      } else if (type === 'invitedExperts') {
-        initialFilter = 'invitedExperts';
-      } else if (type === 'staffs') {
-        initialFilter = 'staffs';
-      } else if (type === 'individuals') {
-        initialFilter = 'individuals';
-      }
-      popupParticipationsSheet(groupsArray[index], initialFilter);
-    });
-  }
+  // 初回描画
+  _mainDrawTableBodyContainer(groupsArray);
 }
 
-function _mainRenderTableBody(groupsArray, sortedResults) {
-  // ボディコンテナを作成
-  const bodyContainer = document.createElement('div');
-  bodyContainer.className = 'table-body-container';
+function _mainDrawTableBodyContainer(groupsArray) {
+  const filterType = localStorage.getItem('groupTypeFilter') || 'wg';
+  // ソート基準をlocalStorageから取得し、なければselectの値を使う
+  const sortBy = localStorage.getItem('groupsListSortBy');
 
-  // テーブル（ボディ用）を作成
-  const bodyTable = document.createElement('table');
-  bodyTable.className = 'groups-table groups-table-body';
+  const groupListContainer = document.getElementById('groupsListContainer');
+  // テーブルボディ生成して描画
+  const frag = _mainCreateTableBody(groupsArray, filterType, sortBy);
+  groupListContainer.replaceChildren(frag);
 
-  // テーブルボディ
-  const tbody = document.createElement('tbody');
-
-  for (let i = 0; i < sortedResults.length; i++) {
-    const g = sortedResults[i];
-    const row = document.createElement('tr');
-
-    // 元のインデックスを保存
-    const originalIndex = groupsArray.indexOf(g);
-
-    // グループ名
-    const nameCell = document.createElement('td');
-    nameCell.className = 'name-cell col-name';
-    if (g.homepage) {
-      const link = document.createElement('a');
-      link.href = g.homepage;
-      link.target = '_blank';
-      link.textContent = g.name;
-      link.style.color = '#0366d6';
-      link.style.textDecoration = 'none';
-      nameCell.appendChild(link);
-    } else {
-      nameCell.textContent = g.name;
-    }
-    row.appendChild(nameCell);
-
-    // Members
-    const membersCell = document.createElement('td');
-    membersCell.className = 'number-cell col-m';
-    membersCell.style.width = '50px';
-    membersCell.style.minWidth = '50px';
-    membersCell.style.maxWidth = '50px';
-    membersCell.innerHTML = `<span class="clickable ${g.isException ? 'exception' : ''}" data-index="${originalIndex}" data-type="members">${g.membersMap.size || 0}</span>`;
-    row.appendChild(membersCell);
-
-    // Member Participants
-    const memberParticipantsCell = document.createElement('td');
-    memberParticipantsCell.className = 'number-cell col-mp';
-    memberParticipantsCell.style.width = '50px';
-    memberParticipantsCell.style.minWidth = '50px';
-    memberParticipantsCell.style.maxWidth = '50px';
-    memberParticipantsCell.innerHTML = `<span class="clickable ${g.isException ? 'exception' : ''}" data-index="${originalIndex}" data-type="memberParticipants">${g.memberParticipants.length || 0}</span>`;
-    row.appendChild(memberParticipantsCell);
-
-    // Invited Experts
-    const invitedExpertsCell = document.createElement('td');
-    invitedExpertsCell.className = 'number-cell col-ie';
-    invitedExpertsCell.style.width = '50px';
-    invitedExpertsCell.style.minWidth = '50px';
-    invitedExpertsCell.style.maxWidth = '50px';
-    invitedExpertsCell.innerHTML = `<span class="clickable ${g.isException ? 'exception' : ''}" data-index="${originalIndex}" data-type="invitedExperts">${g.invitedExperts.length || 0}</span>`;
-    if (g._error) {
-      invitedExpertsCell.innerHTML += '<div class="error">(err)</div>';
-    }
-    row.appendChild(invitedExpertsCell);
-
-    // Staffs
-    const staffsCell = document.createElement('td');
-    staffsCell.className = 'number-cell col-s';
-    staffsCell.style.width = '50px';
-    staffsCell.style.minWidth = '50px';
-    staffsCell.style.maxWidth = '50px';
-    staffsCell.innerHTML = `<span class="clickable" data-index="${originalIndex}" data-type="staffs">${g.staffs.length || 0}</span>`;
-    row.appendChild(staffsCell);
-
-    // Individuals
-    const individualsCell = document.createElement('td');
-    individualsCell.className = 'number-cell col-ind';
-    individualsCell.style.width = '50px';
-    individualsCell.style.minWidth = '50px';
-    individualsCell.style.maxWidth = '50px';
-    individualsCell.innerHTML = `<span class="clickable ${g.isException ? 'exception' : ''}" data-index="${originalIndex}" data-type="individuals">${g.individuals.length || 0}</span>`;
-    row.appendChild(individualsCell);
-
-    // All Participants
-    const allParticipantsCell = document.createElement('td');
-    allParticipantsCell.className = 'number-cell col-ap';
-    allParticipantsCell.style.width = '50px';
-    allParticipantsCell.style.minWidth = '50px';
-    allParticipantsCell.style.maxWidth = '50px';
-    allParticipantsCell.innerHTML = `<span class="clickable" data-index="${originalIndex}" data-type="allParticipants">${g.allParticipants.length || 0}</span>`;
-    row.appendChild(allParticipantsCell);
-
-    // Charts Cell (上下配置)
-    const chartsCell = document.createElement('td');
-    chartsCell.className = 'charts-cell col-charts';
-    chartsCell.style.width = 'auto';
-    chartsCell.style.minWidth = '180px';
-    chartsCell.style.maxWidth = '1fr';
-    chartsCell.style.padding = '2px';
-
-    // Members Chart
-    const membersChartDiv = document.createElement('div');
-    membersChartDiv.style.height = '16px';
-    membersChartDiv.style.marginBottom = '0';
-    const membersDiv = document.createElement('div');
-    membersDiv.id = `members-chart-${i}`;
-    membersDiv.className = 'chart-bar';
-    membersChartDiv.appendChild(membersDiv);
-    chartsCell.appendChild(membersChartDiv);
-
-    // Participants Chart
-    const participantsChartDiv = document.createElement('div');
-    participantsChartDiv.style.height = '16px';
-    const participantsDiv = document.createElement('div');
-    participantsDiv.id = `participants-chart-${i}`;
-    participantsDiv.className = 'chart-bar';
-    participantsChartDiv.appendChild(participantsDiv);
-    chartsCell.appendChild(participantsChartDiv);
-
-    row.appendChild(chartsCell);
-    tbody.appendChild(row);
-  }
-
-  bodyTable.appendChild(tbody);
-  bodyContainer.appendChild(bodyTable);
-  return bodyContainer;
 }
 
-function _mainDrawGroupsCharts(sortedResults) {
+function _mainCreateTableBody(groupsArray, filterType, sortBy) {
+  const sortedResults = _mainFilterAndSortGroups(groupsArray, filterType, sortBy);
+
+  const nameHeaderLabel = document.querySelector('.col-name .label');
+  if (nameHeaderLabel) {
+    nameHeaderLabel.textContent =
+      `${labels[filterType]}: ${sortedResults.length}`;
+  }
+
+
   // チャートを描画
   const maxMembers = Math.max(...sortedResults.map(g => g.membersMap instanceof Map ? g.membersMap.size : 0));
   const maxParticipants = Math.max(...sortedResults.map(g => Array.isArray(g.allParticipants) ? g.allParticipants.length : 0));
   // 両方のチャートで同じスケールを使用
-  const maxScale = Math.max(maxMembers, maxParticipants);
+  const maxValueOfParticipations = Math.max(maxMembers, maxParticipants);
+  const maxRecomendations = Math.max(...sortedResults.map(g => g.recomendations ? g.recomendations.length : 0));
+  const maxSpecifications = Math.max(...sortedResults.map(g => g.specsMap ? g.specsMap.size : 0));
+  // 両方のチャートで同じスケールを使用
+  const maxValueOfSpecifications = Math.max(maxRecomendations, maxSpecifications);
 
+  // テーブル本体
+  const bodyTable = document.createElement('table');
+  bodyTable.className = 'groups-table groups-table-body';
+
+  // tbody生成
+  const tbody = document.createElement('tbody');
+
+  // HTML文字列を一括生成
+  let html = '';
   for (let i = 0; i < sortedResults.length; i++) {
     const g = sortedResults[i];
-    // Members Chart
-    const membersDiv = document.getElementById(`members-chart-${i}`);
-    if (membersDiv) {
-      const membersCount = g.membersMap instanceof Map ? g.membersMap.size : 0;
-      _maindrawBarChart(membersDiv, [membersCount], ['#0969da'], maxScale);
-    }
-    // Participants Chart (Stacked: MP, IE, S, Ind, ソート順に応じて並び替え)
-    const participantsDiv = document.getElementById(`participants-chart-${i}`);
-    if (participantsDiv) {
-      let stackOrder = [
-        { key: 'memberParticipants', value: Array.isArray(g.memberParticipants) ? g.memberParticipants.length : 0, color: '#1f883d' },
-        { key: 'invitedExperts', value: Array.isArray(g.invitedExperts) ? g.invitedExperts.length : 0, color: '#bf8700' },
-        { key: 'staffs', value: Array.isArray(g.staffs) ? g.staffs.length : 0, color: '#cf222e' },
-        { key: 'individuals', value: Array.isArray(g.individuals) ? g.individuals.length : 0, color: '#8250df' }
-      ];
-      const sortBy = document.getElementById('groupsListSortBy').value;
-      const idx = stackOrder.findIndex(s => s.key === sortBy);
-      if (idx > 0) {
-        const [item] = stackOrder.splice(idx, 1);
-        stackOrder.unshift(item);
-      }
-      _maindrawBarChart(
-        participantsDiv,
-        stackOrder.map(s => s.value),
-        stackOrder.map(s => s.color),
-        maxScale
-      );
-    }
+    const originalIndex = groupsArray.indexOf(g);
+    const memberChartHtml = _mainCreateMemberChartsHtml(g, maxValueOfParticipations);
+    const participantChartHtml = _mainCreateparticipantsChartsHtml(g, maxValueOfParticipations, sortBy);
+    const specChartHtml = _mainCreateSpecificationsCharts(g, maxSpecifications, sortBy);
+    const recomendationsChartHtml = _mainCreateRecomendationChartsHtml(g, maxValueOfSpecifications);
+    const isCG = g.groupType == 'cg';   // IEs are not applied for CGs
+
+    html += `<tr>
+      <td class="name-cell col-name">${g.homepage
+        ? `<a href="${g.homepage}" target="_blank" style="color:#0366d6;text-decoration:none;">${escapeHtml(g.name)}</a>`
+        : escapeHtml(g.name)
+      }</td>
+      <td class="number-cell col-m col-participations"><span class="clickable${g.isException ? ' exception' : ''}" data-index="${originalIndex}" data-type="members">${g.membersMap.size || 0}</span></td>
+      <td class="number-cell col-mp col-participations"><span class="clickable${g.isException ? ' exception' : ''}" data-index="${originalIndex}" data-type="memberParticipants">${g.memberParticipants.length || 0}</span></td>
+      <td class="number-cell col-ie col-participations"><span class="clickable${(g.isException || isCG) ? ' exception' : ''}" data-index="${originalIndex}" data-type="invitedExperts">${g.invitedExperts.length || 0}</span>${g._error ? '<div class="error">(err)</div>' : ''}</td>
+      <td class="number-cell col-s col-participations"><span class="clickable" data-index="${originalIndex}" data-type="staffs">${g.staffs.length || 0}</span></td>
+      <td class="number-cell col-ind col-participations"><span class="clickable${g.isException ? ' exception' : ''}" data-index="${originalIndex}" data-type="individuals">${g.individuals.length || 0}</span></td>
+      <td class="number-cell col-ap col-participations"><span class="clickable" data-index="${originalIndex}" data-type="allParticipants">${g.allParticipants.length || 0}</span></td>
+      <td class="number-cell col-specs col-specifications"><span class="clickable" data-index="${originalIndex}" data-type="specifications">${g.specsMap.size || 0}</span></td>
+      <td class="number-cell col-rec col-specifications"><span class="clickable" data-index="${originalIndex}" data-type="recommendations">${g.recommendations.length || 0}</span></td>
+      <td class="number-cell col-cr col-specifications"><span class="clickable" data-index="${originalIndex}" data-type="candidateRecommendations">${g.candidateRecommendations.length || 0}</span></td>
+      <td class="number-cell col-ds col-specifications"><span class="clickable" data-index="${originalIndex}" data-type="draftStandards">${g.draftStandards.length || 0}</span></td>
+      <td class="number-cell col-ret col-specifications"><span class="clickable" data-index="${originalIndex}" data-type="retiredSpecs">${g.retiredSpecs.length || 0}</span></td>
+      <td class="number-cell col-oth col-specifications"><span class="clickable" data-index="${originalIndex}" data-type="otherSpecs">${g.otherSpecs.length || 0}</span></td>
+      <td class="number-cell col-vers col-specifications"><span class="clickable" data-index="${originalIndex}" data-type="allVersions">${g.allVersions.length || 0}</span></td>
+      <td class="charts-cell col-charts col-participations">
+        <div id="members-chart-${i}" class="chart-bar">${memberChartHtml}</div>
+        <div id="participants-chart-${i}" class="chart-bar">${participantChartHtml}</div>
+      </td>
+      <td class="charts-cell col-charts col-specifications">
+        <div id="specs-chart-${i}" class="chart-bar">${specChartHtml}</div>
+        <div id="recs-chart-${i}" class="chart-bar"">${recomendationsChartHtml}</div>
+      </td>
+    </tr>`;
   }
+
+  // 一括挿入
+  tbody.innerHTML = html;
+  bodyTable.appendChild(tbody);
+
+  // 必要ならイベントリスナを後付け
+  tbody.querySelectorAll('.clickable').forEach(el => {
+    el.addEventListener('click', function (e) {
+      const index = this.getAttribute('data-index');
+      const type = this.getAttribute('data-type');
+
+      const tableSwitcher = document.getElementById('tableSwitcher');
+      const isShowBoth = tableSwitcher == undefined || tableSwitcher.style.display == 'none';
+
+      // 例: 詳細ポップアップ
+      popupSheet(groupsArray[index], type, undefined, isShowBoth);
+      e.stopPropagation();
+    });
+  });
+
+  // DocumentFragmentで返す場合
+  const frag = document.createDocumentFragment();
+  frag.appendChild(bodyTable);
+  return frag;
 }
 
-// 棒グラフを描画する関数
-function _maindrawBarChart(container, values, colors, maxValue) {
-  container.innerHTML = '';
-  container.style.height = '16px';
-  container.style.width = '100%';
-  container.style.position = 'relative';
-  container.style.background = '#f5f5f5';
-  container.style.border = '1px solid #ddd';
-  container.style.borderRadius = '2px';
-  container.style.overflow = 'hidden';
-  container.style.display = 'flex';
-  container.style.alignItems = 'center';
+// HTMLエスケープ関数
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
-  const isSingleBar = values.length === 1;
-  const totalValue = values.reduce((sum, val) => sum + val, 0);
 
-  // バーコンテナ
-  const barContainer = document.createElement('div');
-  barContainer.style.height = '100%';
-  barContainer.style.position = 'relative';
-  container.appendChild(barContainer);
+function _mainCreateMemberChartsHtml(g, maxValue) {
+  const count = g.membersMap instanceof Map ? g.membersMap.size : 0;
+  return _mainCreateBarChartHtml(
+    [{ value: count, key: 'members' }],
+    maxValue
+  );
+}
 
+function _mainCreateRecomendationChartsHtml(g, maxValue) {
+  const count = g.recommendations ? g.recommendations.length : 0;
+  return _mainCreateBarChartHtml(
+    [{ value: count, key: 'recommendations' }],
+    maxValue
+  );
+}
+
+function _mainCreateparticipantsChartsHtml(g, maxValue, sortBy) {
+  let stack = [
+    { key: 'memberParticipants', value: g.memberParticipants?.length ?? 0 },
+    { key: 'invitedExperts', value: g.invitedExperts?.length ?? 0 },
+    { key: 'staffs', value: g.staffs?.length ?? 0 },
+    { key: 'individuals', value: g.individuals?.length ?? 0 }
+  ];
+
+  const idx = stack.findIndex(s => s.key === sortBy);
+  if (idx > 0) {
+    const [item] = stack.splice(idx, 1);
+    stack.unshift(item);
+  }
+
+  return _mainCreateBarChartHtml(stack, maxValue);
+}
+
+function _mainCreateSpecificationsCharts(g, maxValue, sortBy) {
+  let stack = [
+    { key: 'recommendations', value: g.recommendations?.length ?? 0 },
+    { key: 'candidateRecommendations', value: g.candidateRecommendations?.length ?? 0 },
+    { key: 'draftStandards', value: g.draftStandards?.length ?? 0 },
+    { key: 'retiredSpecs', value: g.retiredSpecs?.length ?? 0 },
+    { key: 'otherSpecs', value: g.otherSpecs?.length ?? 0 }
+  ];
+
+  const idx = stack.findIndex(s => s.key === sortBy);
+  if (idx > 0) {
+    const [item] = stack.splice(idx, 1);
+    stack.unshift(item);
+  }
+
+  return _mainCreateBarChartHtml(stack, maxValue);
+}
+function _mainCreateBarChartHtml(items, maxValue) {
+  if (!items || !maxValue || maxValue === 0) return '';
+
+  const values = items.map(i => i.value);
+  const totalValue = values.reduce((s, v) => s + v, 0);
+  const isSingle = items.length === 1;
+
+  let barsHtml = '';
   let totalBarWidthPercent = 0;
 
-  if (isSingleBar) {
-    // 単一バーの場合
-    const value = values[0];
+  if (isSingle) {
+    const { value, key } = items[0];
     if (value > 0) {
-      const bar = document.createElement('div');
-      const barWidthPercent = value / maxValue * 100;
-      totalBarWidthPercent = barWidthPercent;
-      bar.style.height = '100%';
-      bar.style.width = '100%';
-      bar.style.background = colors[0];
-      barContainer.appendChild(bar);
+      barsHtml = `
+        <div class="chart-bar-segment chart-color-${key}" style="width:100%;"></div>
+      `;
+      totalBarWidthPercent = (value / maxValue) * 100;
     }
   } else {
-    // スタックバーの場合（Pチャートの合計幅内で各スタックを分割）]
-    totalBarWidthPercent = totalValue / maxValue * 100;
-    let currentX = 0;
-    values.forEach((value, index) => {
-      if (value > 0) {
-        const bar = document.createElement('div');
-        // Pチャートの合計幅内で各スタックの幅を計算
-        const barWidthPercent = value / totalValue * 100;
-        bar.style.height = '100%';
-        bar.style.width = barWidthPercent + '%';
-        bar.style.background = colors[index];
-        bar.style.position = 'absolute';
-        bar.style.left = currentX + '%';
-        bar.style.display = 'flex';
-        bar.style.alignItems = 'center';
-        bar.style.justifyContent = 'center';
-        bar.style.color = 'white';
-        bar.style.fontSize = '8px';
-        bar.style.fontWeight = 'bold';
-        // バー幅が十分広い時のみ数字を表示
-        if (value / maxValue >= 0.05) {
-          bar.textContent = value;
-        }
-        barContainer.appendChild(bar);
-        currentX += barWidthPercent;
-      }
+    let sum = 0;
+
+    items.forEach(({ value, key }) => {
+      if (value <= 0) return;
+
+      const width = (value / totalValue) * 100;
+      const left = (sum / totalValue) * 100;
+      const showLabel = (width * totalValue / maxValue) > 5;
+
+      barsHtml += `
+        <div class="chart-bar-segment chart-color-${key}"
+             style="width:${width}%; left:${left}%;">
+          ${showLabel ? value : ''}
+        </div>
+      `;
+      sum += value;
     });
 
+    totalBarWidthPercent = (totalValue / maxValue) * 100;
   }
 
-  // バーコンテナの幅をバーの実際の幅に設定（ピクセル単位）
-  const containerWidth = container.offsetWidth;
-  const barWidthPx = totalBarWidthPercent / 100 * containerWidth;
-  barContainer.style.width = barWidthPx + 'px';
+  const digits = maxValue.toString().length;
+  const labelHtml = totalValue > 0
+    ? `<div class="chart-total-label" style="width:${digits}ch;">${totalValue}</div>`
+    : '';
 
-  // 右側に合計数を表示（バーコンテナのすぐ右側）
-  if (totalValue > 0) {
-    const label = document.createElement('div');
-    label.style.marginLeft = '4px';
-    label.style.marginRight = '8px'; // 右側にマージン追加
-    label.style.color = '#000';
-    label.style.fontSize = '8px';
-    label.style.fontWeight = 'bold';
-    label.style.flexShrink = '0';
-    label.textContent = totalValue;
-    container.appendChild(label);
-  }
+  const pad = 100 - totalBarWidthPercent;
+  const padHtml = pad > 0
+    ? `<div class="chart-pad" style="width:${pad}%;"></div>`
+    : '';
+
+  return `
+    <div class="chart-wrapper">
+      <div class="chart-bar" style="width:${totalBarWidthPercent}%;">
+        ${barsHtml}
+      </div>
+      ${labelHtml}
+      ${padHtml}
+    </div>
+  `;
 }
 
+
 /* ##
- popupParticipationsSheet()でPopupを表示, 利用されるサブ関数の名前は’_poupup’で始まる
+ popupSheet()でPopupを表示, 利用されるサブ関数の名前は’_poupup’で始まる
  ### */
-async function popupParticipationsSheet(groupInfo, initialFilter = 'members', onlyGroupParticipationsSummaryGroup) {
-  const popup = document.getElementById('participationsPopup');
-  const overlay = document.getElementById('participationsPopupOverlay');
-  const title = document.getElementById('participationsPopupTitle');
-  const membersListContent = document.getElementById('membersListContent');
-  const participantsListContent = document.getElementById('participantsListContent');
-  const userDetailsContent = document.getElementById('userDetailsContent');
+async function popupSheet(groupInfo, initialFilter, onlyGroupParticipationsSummaryGroup, isShowBoth = true) {
+  const popup = document.getElementById('popup');
+  const overlay = document.getElementById('popupOverlay');
+  const title = document.getElementById('popupTitle');
+  title.textContent = groupInfo.name;
 
   // まず枠だけ即時表示
   popup.style.display = 'flex';
   overlay.style.display = 'block';
   document.body.classList.add('modal-open');  // disable body scroll (i.e. behind popup)
 
-  title.textContent = groupInfo.name;
+  let initialFilterParticipations = 'members';
+  let initialFilterSpecifications = 'specifications';
+  switch (initialFilter) {
+    case 'members':
+    case 'memberParticipants':
+    case 'invitedExperts':
+    case 'staffs':
+    case 'individuals':
+    case 'allParticipants':
+      initialFilterParticipations = initialFilter;
+      initialFilterSpecifications = isShowBoth ? localStorage.getItem('popupSpecificationsFilter') || 'specifications' : null;
+      break;
+    case 'specifications':
+    case 'recommendations':
+    case 'candidateRecommendations':
+    case 'draftStandards':
+    case 'retiredSpecs':
+    case 'otherSpecs':
+    case 'allVersions':
+      initialFilterParticipations = isShowBoth ? localStorage.getItem('popupParticipationsFilter') || 'members' : null;
+      initialFilterSpecifications = initialFilter;
+      break;
+    default:
+      // デフォルト値を使用
+      break;
+  }
 
-  const affiliationsTitle = document.querySelector('#membersList h3');
-  const participantsTitle = document.querySelector('#participantsList h3');
+  const popupParticipationsBody = document.getElementById('popupParticipationsBody')
+  const popupSpecificationsBody = document.getElementById('popupSpecificationsBody')
+  popupParticipationsBody.style.display = 'none'
+  popupSpecificationsBody.style.display = 'none'
+
+  if (initialFilterParticipations) {
+    popupParticipationsBody.style.display = 'flex'
+    popupRenderParticipationsSection(groupInfo, initialFilterParticipations, onlyGroupParticipationsSummaryGroup);
+  }
+
+  if (initialFilterSpecifications) {
+    popupSpecificationsBody.style.display = 'flex'
+    popupRenderSpecificationsSection(groupInfo, initialFilterSpecifications, onlyGroupParticipationsSummaryGroup);
+  }
+}
+
+function popupSetupResizer(container) {
+  let isDragging = false;
+  let startX = 0;
+  let leftPane = null;
+  let rightPane = null;
+  let startLeftWidth = 0;
+  let startRightWidth = 0;
+  let MIN_PAIN_WIDTH = 40;  // use this if css is not specified
+
+  function startDrag(clientX, resizer) {
+    if (!resizer) {
+      return
+    }
+    isDragging = true;
+    startX = clientX;
+
+    leftPane = document.getElementById(resizer.dataset.left);
+    rightPane = document.getElementById(resizer.dataset.right);
+
+    const leftRect = leftPane.getBoundingClientRect();
+    const rightRect = rightPane.getBoundingClientRect();
+
+    startLeftWidth = leftRect.width;
+    startRightWidth = rightRect.width;
+
+    container.style.cursor = 'col-resize';
+    container.style.userSelect = 'none';
+
+    resizer.classList.add('dragging');
+  }
+
+  function doDrag(clientX) {
+    if (!isDragging || !leftPane || !rightPane) return;
+
+    const dx = clientX - startX;
+    let newLeftWidth = startLeftWidth + dx;
+    let newRightWidth = startRightWidth - dx;
+
+    const leftMin = parseInt(getComputedStyle(leftPane).minWidth) || MIN_PAIN_WIDTH;
+    const rightMin = parseInt(getComputedStyle(rightPane).minWidth) || MIN_PAIN_WIDTH;
+
+    if (newLeftWidth < leftMin) {
+      newLeftWidth = leftMin;
+      newRightWidth = startLeftWidth + startRightWidth - newLeftWidth;
+    }
+    if (newRightWidth < rightMin) {
+      newRightWidth = rightMin;
+      newLeftWidth = startLeftWidth + startRightWidth - newRightWidth;
+    }
+
+    leftPane.style.width = newLeftWidth + 'px';
+    rightPane.style.width = newRightWidth + 'px';
+    leftPane.style.flex = 'none';
+    rightPane.style.flex = 'none';
+  }
+
+  function endDrag() {
+    if (!isDragging) return;
+    isDragging = false;
+    leftPane = null;
+    rightPane = null;
+    container.style.cursor = '';
+    container.style.userSelect = '';
+
+    container.querySelectorAll('.pane-resizer.dragging').forEach(r => r.classList.remove('dragging'));
+  }
+
+  container.querySelectorAll('.pane-resizer').forEach(r => {
+    // マウス対応
+    r.addEventListener('mousedown', e => {
+      startDrag(e.clientX, r);
+    });
+
+    // タッチ対応
+    r.addEventListener('touchstart', e => {
+      e.preventDefault(); // スクロール防止
+      startDrag(e.touches[0].clientX, r);
+    }, { passive: false });
+
+    r.addEventListener('pointerdown', startDrag);
+  });
+
+  // ドラッグ中
+  function onMove(e) {
+    // ドラッグしていないなら何もしない
+    if (!isDragging) return;
+
+    // touch のときだけスクロールを止める
+    if (e.type === 'touchmove') {
+      e.preventDefault(); // ← ドラッグ中のみ
+    }
+
+    const clientX =
+      e.type === 'mousemove'
+        ? e.clientX
+        : e.touches[0].clientX;
+
+    doDrag(clientX);
+  }
+
+
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('touchmove', onMove, { passive: false });
+  document.addEventListener('mouseup', endDrag);
+  document.addEventListener('touchend', endDrag);
+
+  document.addEventListener('pointerup', endDrag);
+  document.addEventListener('pointercancel', endDrag);
+
+
+  // ウィンドウリサイズ時に割合を維持
+  window.addEventListener('resize', () => {
+    const wrappers = container.querySelectorAll('.pane-wrapper');
+    let sumPx = 0;
+
+    wrappers.forEach(wrapper => {
+      const w = wrapper.getBoundingClientRect().width;
+      sumPx += w;
+    })
+
+    wrappers.forEach(wrapper => {
+      const w = wrapper.getBoundingClientRect().width;
+      const percent = (w / sumPx) * 100;
+      wrapper.style.width = percent + '%';
+      wrapper.style.flex = 'none';
+    });
+  });
+}
+
+
+// participationsシートの描画をまとめるサブ関数
+async function popupRenderParticipationsSection(groupInfo, initialFilter = 'members', onlyGroupParticipationsSummaryGroup) {
+  const participationsContent = document.getElementById('participationsContent')
+  popupSetupResizer(participationsContent);
+
+  const affiliationsTitle = document.querySelector('#membersList .title');
+  const participantsTitle = document.querySelector('#participantsList .title');
   affiliationsTitle.textContent = 'Affiliations';
   if (groupInfo.isException) {
     affiliationsTitle.classList.add('exception');
   }
-  participantsTitle.textContent = 'allParticipants';
+  participantsTitle.textContent = 'Participants';
 
-  const toggleBtn = document.getElementById('toggleOnlyGroupParticipationsPopup');
-  const checkSpan = document.getElementById('toggleOnlyGroupParticipationsPopupCheck');
+  // setup toggleOnlyGoupparticipants
+  const toggleBtn = document.getElementById('popupToggleOnlyGroupParticipations');
   const toggleBtnWrap = toggleBtn ? toggleBtn.parentElement : null;
   if (onlyGroupParticipationsSummaryGroup != null) {
     // Only Group Participantsトグルボタンの表示制御　toggleBtnWrap
     toggleBtnWrap.style.display = '';
 
     // トグルボタンのイベントハンドラ追加
-    if (toggleBtn && checkSpan) {
-      updateonlyGroupParticipationsToggle(checkSpan);
+    if (toggleBtn) {
+      updateOnlyGroupParticipationsToggle(toggleBtn);
       toggleBtn.onclick = () => {
-        fliponlyGroupParticipationsToggle(checkSpan)
-        // シートを更新
-        let currentFilter = localStorage.getItem('popupParticipationsFilter') || initialFilter;
-        _popupRenderSheet(groupInfo, onlyGroupParticipationsSummaryGroup, currentFilter, membersListContent, participantsListContent, userDetailsContent, affiliationsTitle, participantsTitle);
+        flipOnlyGroupParticipationsToggle(toggleBtn)
+        // update
+        _popupRenderParticipations(groupInfo, onlyGroupParticipationsSummaryGroup);
       };
     }
   } else {
     toggleBtnWrap.style.display = 'none';
   }
-
-  // localStorageからfilterを復元
-  let currentFilter = localStorage.getItem('popupParticipationsFilter') || initialFilter;
-  // フィルターボタンのイベントリスナー（静的HTML対応）
+  // setup filter buttons
   const filterButtons = document.querySelectorAll('#participationsButtonContainer .filter-btn');
   filterButtons.forEach(btn => {
     btn.onclick = () => {
       filterButtons.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      currentFilter = btn.dataset.filter;
+      const currentFilter = btn.dataset.filter;
       localStorage.setItem('popupParticipationsFilter', currentFilter);
-      _popupRenderSheet(groupInfo, onlyGroupParticipationsSummaryGroup, currentFilter, membersListContent, participantsListContent, userDetailsContent, affiliationsTitle, participantsTitle);
+      // update
+      _popupRenderParticipations(groupInfo, onlyGroupParticipationsSummaryGroup);
     };
   });
-  // 初期activeボタン設定
   filterButtons.forEach(b => b.classList.remove('active'));
-  const initialBtn = document.querySelector(`#participationsButtonContainer .filter-btn[data-filter="${currentFilter}"]`);
-  if (initialBtn) initialBtn.classList.add('active');
-
-  // 初期シートを表示
-  _popupRenderSheet(groupInfo, onlyGroupParticipationsSummaryGroup, initialFilter, membersListContent, participantsListContent, userDetailsContent, affiliationsTitle, participantsTitle);
+  const initialBtn = document.querySelector(`#participationsButtonContainer .filter-btn[data-filter="${initialFilter}"]`);
+  if (initialBtn) {
+    initialBtn.classList.add('active');
+    localStorage.setItem('popupParticipationsFilter', initialFilter);
+  }
+  // the inital rendering 
+  _popupRenderParticipations(groupInfo, onlyGroupParticipationsSummaryGroup);
 }
 
-function _popupRenderSheet(groupInfo, onlyGroupParticipationsSummaryGroup, currentFilter, membersListContent, participantsListContent, userDetailsContent, affiliationsTitle, participantsTitle) {
-  console.log("_popupRenderSheet called");
-  const useGroupInfo = (getonlyGroupParticipationsToggle() && onlyGroupParticipationsSummaryGroup)
+function _popupRenderParticipations(groupInfo, onlyGroupParticipationsSummaryGroup) {
+  console.log("_popupRenderParticipations called");
+  const useGroupInfo = (getOnlyGroupParticipationsToggle() && onlyGroupParticipationsSummaryGroup)
     ? onlyGroupParticipationsSummaryGroup
     : groupInfo
-
 
   // リスト描画など重い処理は遅延実行
   requestAnimationFrame(() => { // requestAnimationFrame で1フレーム待つこれで「Popupの再描画→次のフレームで重い処理
     setTimeout(() => {
-      // ステータス数値更新
-      // console.log("_popupRenderParticipantsStats called");
-      const startTime1 = performance.now();
-      _popupRenderParticipantsStats(useGroupInfo);
-      const startTime2 = performance.now();
-      //console.log("_popupRenderMembersList called");
-      _popupRenderFilteredList(useGroupInfo, currentFilter, membersListContent, participantsListContent, userDetailsContent, affiliationsTitle, participantsTitle);
-      console.log(`_popupRenderParticipantsStats took ${performance.now() - startTime1} ms`);
-      console.log(`_popupRenderFilteredList took ${performance.now() - startTime2} ms`);
-      console.log("_popupRenderFilteredList completed");
+      _popupRenderParticipationsStats(useGroupInfo);
+      _popupRenderParticipationsContent(useGroupInfo);
     }, 0); // setTimeout(..., 0)をrequestAnimationFrameの中で使うと、さらに「描画→次のタスク→重い処理」となり、より確実にUIが先に出ます
   });
 }
 
 // countsを使って数値を更新するサブ関数
-function _popupRenderParticipantsStats(groupInfo) {
+function _popupRenderParticipationsStats(groupInfo) {
   const counts = {
     members: groupInfo.membersMap instanceof Map ? groupInfo.membersMap.size : 0,
     memberParticipants: groupInfo.memberParticipants ? groupInfo.memberParticipants.length : 0,
@@ -873,274 +964,195 @@ function _popupRenderParticipantsStats(groupInfo) {
   });
 }
 
-async function _popupRenderMemberParticipantsList(groupInfo, membersListContent, participantsListContent, userDetailsContent, affiliationsTitle, participantsTitle) {
-  _popupRenderParticipantsList({
-    list: groupInfo.memberParticipants || [],
-    label: 'All Members',
-    membersListContent,
-    participantsListContent,
-    userDetailsContent,
-    affiliationsTitle,
-    participantsTitle
-  });
-}
-async function _popupRenderAllParticipantsList(groupInfo, membersListContent, participantsListContent, userDetailsContent, affiliationsTitle, participantsTitle) {
-  _popupRenderParticipantsList({
-    list: groupInfo.allParticipants || [],
-    label: 'All Affiliations',
-    membersListContent,
-    participantsListContent,
-    userDetailsContent,
-    affiliationsTitle,
-    participantsTitle
-  });
-}
+function _popupRenderMembersListContent(groupInfo) {
+  const membersListContent = document.getElementById('membersListContent');
+  membersListContent.innerHTML = '';
 
-async function _popupRenderMembersList(groupInfo, membersListContent, affiliationsTitle) {
-  const members = groupInfo.membersMap ? Array.from(groupInfo.membersMap.keys()) : [];
-  // デフォルトは組織名順
-  // filter切り替え時も毎回localStorageからsortModeを復元
-  let sortMode = localStorage.getItem('popupMembersSortMode') || 'name';
+  // ソートモード
+  const sortMode = localStorage.getItem('popupMembersSortMode');
 
-  // --- タイトル右にソートボタン配置 ---
-  // 既存のボタンがあれば削除
-  let sortBtnBar = affiliationsTitle.querySelector('.aff-sort-btn-bar');
-  if (sortBtnBar) affiliationsTitle.removeChild(sortBtnBar);
-  sortBtnBar = document.createElement('span');
-  sortBtnBar.className = 'aff-sort-btn-bar';
-  sortBtnBar.style.display = 'inline-flex';
-  sortBtnBar.style.gap = '2px';
-  sortBtnBar.style.marginLeft = '8px';
-  sortBtnBar.style.float = 'right';
-  sortBtnBar.style.justifyContent = 'flex-end';
+  // ソートボタン
+  const sortBtnBar = document.querySelector('#membersList .list-sort-bar');
+  const nameSortBtn = sortBtnBar?.querySelector('.name-sort-btn');
+  const groupCountSortBtn = sortBtnBar?.querySelector('.gCount-sort-btn');
+  const mpCountSortBtn = sortBtnBar?.querySelector('.mpCount-sort-btn');
 
-  // ボタン生成
-  const nameSortBtn = document.createElement('button');
-  nameSortBtn.className = 'aff-sort-btn active';
-  nameSortBtn.style.fontSize = '11px';
-  nameSortBtn.style.padding = '0 4px';
-  nameSortBtn.style.lineHeight = '1.2';
-  nameSortBtn.title = 'abc';
+  // member一覧取得
+  const members = groupInfo.specsMap
+    ? Array.from(groupInfo.membersMap.keys())
+    : [];
 
-  const countSortBtn = document.createElement('button');
-  countSortBtn.className = 'aff-sort-btn';
-  countSortBtn.style.fontSize = '11px';
-  countSortBtn.style.padding = '0 4px';
-  countSortBtn.style.lineHeight = '1.2';
-  countSortBtn.title = 'MP';
+  /* ===== ソート ===== */
+  const sortedMembers = [...members].sort((a, b) => {
+    const entryA = groupInfo.membersMap.get(a);
+    const entryB = groupInfo.membersMap.get(b);
 
-  // 矢印spanを分離して色を制御
-  const nameArrow = document.createElement('span');
-  nameArrow.innerHTML = '&#8595;';
-  nameArrow.style.fontSize = '10px';
-  nameArrow.style.verticalAlign = 'middle';
-  nameArrow.style.marginLeft = '1px';
-
-  const countArrow = document.createElement('span');
-  countArrow.innerHTML = '&#8595;';
-  countArrow.style.fontSize = '10px';
-  countArrow.style.verticalAlign = 'middle';
-  countArrow.style.marginLeft = '1px';
-
-  nameSortBtn.innerHTML = '';
-  nameSortBtn.appendChild(document.createTextNode('abc'));
-  nameSortBtn.appendChild(nameArrow);
-
-  countSortBtn.innerHTML = '';
-  countSortBtn.appendChild(document.createTextNode('MP'));
-  countSortBtn.appendChild(countArrow);
-
-  sortBtnBar.appendChild(nameSortBtn);
-  sortBtnBar.appendChild(countSortBtn);
-  affiliationsTitle.appendChild(sortBtnBar);
-
-  // グローバル関数として分離
-  function _popupRenderMembersListContent({
-    groupInfo,
-    members,
-    membersListContent,
-    affiliationsTitle,
-    sortBtnBar,
-    sortMode,
-    nameArrow,
-    countArrow
-  }) {
-    let sortedMembers;
-    // 既存リスト削除
-    membersListContent.innerHTML = '';
-    // ソート
-    if (sortMode === 'name') {
-      sortedMembers = [...members].sort((a, b) => a.localeCompare(b));
-      if (nameArrow) nameArrow.style.color = '#0969da';
-      if (countArrow) countArrow.style.color = '#bbb';
-    } else {
-      sortedMembers = [...members].sort((a, b) => {
-        const countA = Array.isArray(groupInfo.membersMap.get(a)) ? groupInfo.membersMap.get(a).length : 0;
-        const countB = Array.isArray(groupInfo.membersMap.get(b)) ? groupInfo.membersMap.get(b).length : 0;
-        // 降順
-        return countB - countA || a.localeCompare(b);
-      });
-      if (nameArrow) nameArrow.style.color = '#bbb';
-      if (countArrow) countArrow.style.color = '#0969da';
-    }
-    sortedMembers.forEach((member, index) => {
-      const div = document.createElement('div');
-      div.className = 'member-item';
-      if (groupInfo.isException) {
-        div.classList.add('exception');
+    if (sortMode === 'gCount') {
+      const countA = entryA?.groupsSet?.size ?? 0;
+      const countB = entryB?.groupsSet?.size ?? 0;
+      if (countA != countB) {
+        return countB - countA;
       }
-      // 参加者数を取得
-      const count = Array.isArray(groupInfo.membersMap.get(member)) ? groupInfo.membersMap.get(member).length : 0;
-      // カスタムレイアウト: 名前左寄せ、MP数右寄せ、間隔広め、MP数は黒
-      div.style.display = 'flex';
-      div.style.justifyContent = 'space-between';
-      div.style.alignItems = 'center';
-      // div.style.gap = '32px';
-      // 名前（左寄せ）
-      const nameSpan = document.createElement('span');
-      nameSpan.className = 'span-name';
-      nameSpan.textContent = member;
-      nameSpan.style.textAlign = 'left';
-      nameSpan.style.flex = '1';
-      nameSpan.style.paddingRight = '16px';
-      nameSpan.style.overflowWrap = 'anywhere';
+    } else if (sortMode === 'mpCount') {
+      const countA = entryA?.participants.length ?? 0;
+      const countB = entryB?.participants.length ?? 0;
+      if (countA != countB) {
+        return countB - countA;
+      }
+    }
+    // num or count with equals
+    return (entryA?.title || '').localeCompare(entryB?.title || '');
+  });
 
-      nameSpan.title = member;
-      // バーチャルリストでは１行固定なので省略スタイルをここで追加
-      nameSpan.style.whiteSpace = 'nowrap';
-      nameSpan.style.overflow = 'hidden';
-      nameSpan.style.textOverflow = 'ellipsis';
 
-      // MP数（右寄せ）
-      const countSpan = document.createElement('span');
-      countSpan.className = 'span-number';
-      countSpan.textContent = count;
-      countSpan.style.textAlign = 'right';
-      countSpan.style.flex = '0 0 10px';
-      countSpan.style.fontWeight = 'normal';
-      countSpan.style.color = '#000';
-      countSpan.style.fontSize = 'inherit';
-      countSpan.style.fontFamily = 'inherit';
-      div.appendChild(nameSpan);
-      div.appendChild(countSpan);
-      div.dataset.member = member;
-      div.dataset.index = index;
-      div.addEventListener('click', async () => {
-        document.querySelectorAll('.member-item').forEach(el => el.classList.remove('selected'));
-        div.classList.add('selected');
-        await _popupRenderParticipantsForMember(groupInfo, member);
-      });
-      membersListContent.appendChild(div);
-    });
-    affiliationsTitle.textContent = `Affiliations: ${sortedMembers.length}`;
-    affiliationsTitle.appendChild(sortBtnBar);
+
+  // ソートボタン状態
+  if (sortBtnBar) {
+    nameSortBtn?.classList.toggle('active', sortMode === 'name');
+    groupCountSortBtn?.classList.toggle('active', sortMode === 'gCount');
+    mpCountSortBtn?.classList.toggle('active', sortMode === 'mpCount');
   }
 
-  // ボタンイベント
-  nameSortBtn.addEventListener('click', () => {
-    sortMode = 'name';
-    localStorage.setItem('popupMembersSortMode', sortMode);
-    nameSortBtn.classList.add('active');
-    countSortBtn.classList.remove('active');
-    // popupParticipantsSortModeもグローバルに反映
-    window.popupMembersSortMode = sortMode;
-    _popupRenderMembersListContent({
-      groupInfo,
-      members,
-      membersListContent,
-      affiliationsTitle,
-      sortBtnBar,
-      sortMode,
-      nameArrow,
-      countArrow
-    });
-  });
-  countSortBtn.addEventListener('click', () => {
-    sortMode = 'count';
-    localStorage.setItem('popupMembersSortMode', sortMode);
-    countSortBtn.classList.add('active');
-    nameSortBtn.classList.remove('active');
-    // popupParticipantsSortModeもグローバルに反映
-    window.popupMembersSortMode = sortMode;
-    _popupRenderMembersListContent({
-      groupInfo,
-      members,
-      membersListContent,
-      affiliationsTitle,
-      sortBtnBar,
-      sortMode,
-      nameArrow,
-      countArrow
-    });
-  });
+  /* ===== 描画 ===== */
+  sortedMembers.forEach((affUrl, index) => {
+    const entry = groupInfo.membersMap.get(affUrl);
 
-  // 初期表示
-  _popupRenderMembersListContent({
-    groupInfo,
-    members,
-    membersListContent,
-    affiliationsTitle,
-    sortBtnBar,
-    sortMode,
-    nameArrow,
-    countArrow
+    const item = document.createElement('div');
+    item.className = 'list-item list-item--member';
+
+    if (groupInfo.isException) {
+      item.classList.add('exception');
+    }
+
+    const gCount = entry?.groupsSet?.size ?? 0;
+    const mpCount = entry?.participants.length ?? 0;
+
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'item-name';
+    nameSpan.textContent = entry.title;
+    nameSpan.title = entry.title;
+
+    const gCountSpan = document.createElement('span');
+    gCountSpan.className = 'item-number';
+    gCountSpan.textContent = gCount;
+
+    const mpCountSpan = document.createElement('span');
+    mpCountSpan.className = 'item-number';
+    mpCountSpan.textContent = mpCount;
+
+    item.appendChild(nameSpan);
+    item.appendChild(gCountSpan);
+    item.appendChild(mpCountSpan);
+
+    item.dataset.affUrl = affUrl;
+    item.dataset.index = index;
+
+    item.addEventListener('click', async () => {
+      document.querySelectorAll('#membersListContent .list-item.selected')
+        .forEach(el => el.classList.remove('selected'));
+
+      item.classList.add('selected');
+      await _popupRenderParticipantsForMember(groupInfo, affUrl);
+    });
+
+    membersListContent.appendChild(item);
   });
 }
 
-async function _popupRenderTypeList(groupInfo, typeKey, typeLabel, membersListContent, participantsListContent, userDetailsContent, affiliationsTitle, participantsTitle) {
-  _popupRenderParticipantsList({
-    list: (typeKey === 'invitedExperts') ? (groupInfo.invitedExperts || []) :
-      (typeKey === 'staffs') ? (groupInfo.staffs || []) :
-        (typeKey === 'individuals') ? (groupInfo.individuals || []) : [],
-    label: typeLabel,
-    membersListContent,
-    participantsListContent,
-    userDetailsContent,
-    affiliationsTitle,
-    participantsTitle
+
+function _popupRenderMembersList(groupInfo) {
+  const membersTitle = document.querySelector('#membersList .title');
+  membersTitle.textContent = `Affiliations: ${groupInfo.membersMap.size}`;
+
+  let sortBtnBar = document.querySelector('#membersList .list-sort-bar');
+  if (sortBtnBar) {
+    const nameSortBtn = sortBtnBar.querySelector('.name-sort-btn');
+    const gCountSortBtn = sortBtnBar.querySelector('.gCount-sort-btn');
+    const mpCountSortBtn = sortBtnBar.querySelector('.mpCount-sort-btn');
+    // ボタンイベント
+    // ボタンイベント
+    nameSortBtn.addEventListener('click', () => {
+      nameSortBtn.classList.add('active');
+      gCountSortBtn.classList.remove('active');
+      mpCountSortBtn.classList.remove('active');
+      localStorage.setItem('popupMembersSortMode', 'name');
+      _popupRenderMembersListContent(groupInfo);
+    });
+    gCountSortBtn.addEventListener('click', () => {
+      gCountSortBtn.classList.add('active');
+      nameSortBtn.classList.remove('active');
+      mpCountSortBtn.classList.remove('active');
+      localStorage.setItem('popupMembersSortMode', 'gCount');
+      _popupRenderMembersListContent(groupInfo);
+    });
+    mpCountSortBtn.addEventListener('click', () => {
+      nameSortBtn.classList.add('active');
+      gCountSortBtn.classList.remove('active');
+      mpCountSortBtn.classList.remove('active');
+
+      localStorage.setItem('popupMembersSortMode', 'mpCount');
+      _popupRenderMembersListContent(groupInfo);
+    });
+  }
+
+  let sortMode = localStorage.getItem('popupMembersSortMode');
+  if (!sortMode) {
+    sortMode = 'name';  // initial
+    localStorage.setItem('popupMembersSortMode', sortMode);
+  }
+  const sortButtons = document.querySelectorAll('#membersList .sort-btn');
+  sortButtons.forEach(b => {
+    b.disabled = false;
+    b.classList.remove('active');
   });
+  const activeButton = document.querySelector(`#specificationsFilter .filter-btn[data-filter="${sortMode}"]`);
+  if (activeButton) {
+    activeButton.classList.add('active');
+  }
+
+  // 初期表示
+  _popupRenderMembersListContent(groupInfo);
 }
 
 // 共通化: 参加者リスト＋numGroups＋ソートUI
-function _popupRenderParticipantsList({ list, label, membersListContent, participantsListContent, userDetailsContent, affiliationsTitle, participantsTitle }) {
-  // 左ペインタイトル
-  const div = document.createElement('div');
-  div.className = 'member-item selected';
-  div.textContent = label;
-  membersListContent.appendChild(div);
-  participantsListContent.innerHTML = '';
-  userDetailsContent.innerHTML = '<p style="font-size:14px; padding: 12px; color: #666;">Select a participant to view details</p>';
-
+function _popupRenderParticipantsList(list) {
   // タイトル右にソートボタン
-  let sortBtnBar = participantsTitle.querySelector('.part-sort-btn-bar');
-  if (sortBtnBar) participantsTitle.removeChild(sortBtnBar);
-  sortBtnBar = createParticipantsSortBar();
-  participantsTitle.appendChild(sortBtnBar);
+  const sortBtnBar = document.querySelector('#participantsList .list-sort-bar')
+  // ソートボタンイベント
+  if (sortBtnBar) {
+    const nameSortBtn = sortBtnBar.querySelector('.name-sort-btn');
+    const gCountSortBtn = sortBtnBar.querySelector('.gCount-sort-btn');
+    nameSortBtn.onclick = () => {
+      localStorage.setItem('popupParticipantsSortMode', 'name');
+      nameSortBtn.classList.add('active');
+      gCountSortBtn.classList.remove('active');
+      _popupRenderParticipantsListContent(list);;
+    };
+    gCountSortBtn.onclick = () => {
+      nameSortBtn.classList.remove('active');
+      gCountSortBtn.classList.add('active');
 
-  renderParticipantsListWithSort({
-    list,
-    participantsListContent,
-    participantsTitle,
-    sortBtnBar,
-    initialSortMode: 'name',
-    onClickParticipant: async (participant, div) => {
-      document.querySelectorAll('.participant-item').forEach(el => el.classList.remove('selected'));
-      div.classList.add('selected');
-      if (participant.userHref) {
-        await _popupRenderUserDetails(participant.userHref, participant.name);
-      }
-    }
+      localStorage.setItem('popupParticipantsSortMode', 'num');
+      _popupRenderParticipantsListContent(list);
+    };
+  }
+
+  let sortMode = localStorage.getItem('popupParticipantsSortMode');
+  if (!sortMode) {
+    sortMode = 'name';    // inital
+    localStorage.setItem('popupParticipantsSortMode', sortMode);
+  }
+  const sortButtons = document.querySelectorAll('#participantsList .sort-btn');
+  sortButtons.forEach(b => {
+    b.disabled = false;
+    b.classList.remove('active');
   });
-}
+  const activeButton = document.querySelector(`#participantsList .sort-btn[data-sort="${sortMode}"]`);
+  if (activeButton) {
+    activeButton.classList.add('active');
+  }
 
-// HTMLエスケープ関数
-function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+  _popupRenderParticipantsListContent(list);
 }
 
 async function _popupRenderUserDetails(userHref, userName) {
@@ -1148,30 +1160,27 @@ async function _popupRenderUserDetails(userHref, userName) {
   userDetailsContent.style.overflowY = 'auto';
 
   if (!userHref) {
-    userDetailsContent.innerHTML = '<p style="padding: 12px; color: #666;">No user data available</p>';
+    userDetailsContent.innerHTML = '<p>No user data available</p>';
     return;
   }
 
-  let user = window.getData ? window.getData(userHref) : null;
+  let user = getDataEntry(userHref); // w3c-api.jsの関数
   const fetchAlways = false; // true only for debuging
   if (!user || fetchAlways) {
     // ローカルにデータがない場合
     const dl = document.createElement('dl');
-    dl.style.padding = '0 12px 12px 12px';
-    dl.style.fontSize = '14px';
     dl.innerHTML = `<dt>Name:</dt><dd>${escapeHtml(userName || 'Unknown')}</dd>`;
-    dl.innerHTML += `<p style="margin-top: 12px; color: #999; font-size: 0.9em;">Detailed user information not available locally.</p>`;
+    dl.innerHTML += `<p>Detailed user information not available locally.</p>`;
 
     const fetchBtn = document.createElement('button');
     fetchBtn.textContent = 'Fetch from W3C API';
-    fetchBtn.style.marginTop = '8px';
     fetchBtn.onclick = async () => {
       fetchBtn.disabled = true;
       fetchBtn.textContent = 'Fetching...';
       try {
-        const apiUser = await window.fetchDataAsync(userHref);
-        if (apiUser) {
-          renderUserDetailsContent(apiUser, true); // useFetchDataAsync
+        const userByApi = await fetchDataEntryAsync(userHref);  // w3c-api.jsの関数
+        if (userByApi) {
+          renderUserDetailsContent(userByApi, true); // useFetchDataAsync
         } else {
           fetchBtn.textContent = 'Failed to fetch';
         }
@@ -1188,6 +1197,7 @@ async function _popupRenderUserDetails(userHref, userName) {
 
   await renderUserDetailsContent(user, false);  // not useFetchDataAsync
 }
+
 
 // 詳細描画ロジックを分離
 async function renderUserDetailsContent(user, useFetchDataAsync = false) {
@@ -1211,13 +1221,13 @@ async function renderUserDetailsContent(user, useFetchDataAsync = false) {
     // オブジェクトの場合は配列化
     if (!Array.isArray(accounts)) accounts = Object.values(accounts);
     if (accounts.length > 0) {
-      dl.innerHTML += `<dt>Connected Accounts:</dt>`;
+      dl.innerHTML += `<dt class='acount'>Connected Accounts:</dt>`;
       accounts.forEach(account => {
         let icon = '';
         if (account.service === 'github' && account['profile-picture']) {
-          icon = `<img src='${escapeHtml(account['profile-picture'])}' alt='github' style='height:16px;vertical-align:middle;margin-right:4px;'>`;
+          icon = `<img src='${escapeHtml(account['profile-picture'])}' alt='github'>`;
         }
-        dl.innerHTML += `<dd>${icon}<a href="${escapeHtml(account.href)}" target="_blank">${escapeHtml(account.nickname || account.name || account.id || 'N/A')}</a> (${escapeHtml(account.service || 'Unknown')})</dd>`;
+        dl.innerHTML += `<dd class='${account.service}'>${icon}<a href="${escapeHtml(account.href)}" target="_blank">${escapeHtml(account.nickname || account.name || account.id || 'N/A')}</a> (${escapeHtml(account.service || 'Unknown')})</dd>`;
       });
     }
   }
@@ -1231,28 +1241,51 @@ async function renderUserDetailsContent(user, useFetchDataAsync = false) {
   let affiliationsList = [];
   if (user._links && user._links.affiliations && user._links.affiliations.href) {
     try {
-      const affApiRes = useFetchDataAsync ? await window.fetchDataAsync(user._links.affiliations.href) : window.getData(user._links.affiliations.href);
+      const affApiRes = useFetchDataAsync ? await fetchDataEntryAsync(user._links.affiliations.href) : getDataEntry(user._links.affiliations.href);
       let affArr = [];
       if (affApiRes && affApiRes._links && affApiRes._links.affiliations) {
         // affiliationsが数値キー付きオブジェクトの場合はObject.valuesで配列化
         affArr = Object.values(affApiRes._links.affiliations);
       }
       // affiliationsListにtitleまたはhrefを格納
-      affiliationsList = affArr.map(a => a.title || a.href).filter(Boolean);
+      for (const aff of affArr) {
+        const affDetailsApiRes = useFetchDataAsync ? await fetchDataEntryAsync(aff.href) : getDataEntry(aff.href);
+        let className = 'non-member';
+        let label = '';
+        if (affDetailsApiRes['is-member']) {
+          className = 'member';
+          label = ' (M)';
+        } else if (affDetailsApiRes['is-member-association']) {
+          className = 'member-association';
+          label = ' (MA)';
+        } else if (affDetailsApiRes['is-partner-member']) {
+          className = 'partner-member';
+          label = ' (PM)';
+        } else if (affDetailsApiRes.name === 'W3C') {
+          className = 'staff';
+        }
+        affiliationsList.push({
+          name: affDetailsApiRes.name,
+          className: className,
+          label: label
+        });
+      }
     } catch (e) {
       console.error('Affiliations fetch error:', e);
     }
   }
   if (affiliationsList.length > 0) {
-    dl.innerHTML += `<dt>Affiliations:</dt><dd>${affiliationsList.map(a => escapeHtml(a)).join('<br>')}</dd>`;
+    dl.innerHTML += `
+    <dt>Affiliations:</dt>
+    ${affiliationsList.map(a => `<dd class='aff ${a.className}'>${escapeHtml(a.name)}</dd>`).join('')}
+  `;
   }
-
   // Groups名取得（getDataのみ使用、配列化対応）
   let groupsList = [];
   if (user._links && user._links.groups && user._links.groups.href) {
     try {
       const href = user._links.groups.href;
-      const grpApiRes = useFetchDataAsync ? await window.fetchDataAsync(href) : window.getData(href);
+      const grpApiRes = useFetchDataAsync ? await fetchDataEntryAsync(href) : getDataEntry(href);
       if (grpApiRes && grpApiRes._links && grpApiRes._links.groups) {
         let grpArr = grpApiRes._links.groups;
         if (!Array.isArray(grpArr)) {
@@ -1265,7 +1298,12 @@ async function renderUserDetailsContent(user, useFetchDataAsync = false) {
     }
   }
   if (groupsList.length > 0) {
-    dl.innerHTML += `<dt>Groups:</dt><dd>${groupsList.map(g => escapeHtml(g)).join('<br>')}</dd>`;
+    {
+      dl.innerHTML += `
+    <dt>Groups:</dt>
+    ${groupsList.map(g => `<dd>${escapeHtml(g)}</dd>`).join('')}
+  `;
+    }
   }
 
   userDetailsContent.innerHTML = '';
@@ -1273,82 +1311,15 @@ async function renderUserDetailsContent(user, useFetchDataAsync = false) {
 
 }
 
-async function _popupRenderParticipantsForMember(groupInfo, memberOrg) {
+async function _popupRenderParticipantsForMember(groupInfo, affUrl) {
   const participantsListContent = document.getElementById('participantsListContent');
   const userDetailsContent = document.getElementById('userDetailsContent');
   participantsListContent.innerHTML = '';
-  userDetailsContent.innerHTML = '<p style="font-size:14px; padding: 12px; color: #666;">Select a participant to view detail</p>';
+  userDetailsContent.innerHTML = '<p>Select a participant to view detail</p>';
 
-  const participants = groupInfo.membersMap && groupInfo.membersMap.get ? groupInfo.membersMap.get(memberOrg) || [] : [];
-  const participantsTitle = document.querySelector('#participantsList h3');
-  let sortBtnBar = participantsTitle.querySelector('.part-sort-btn-bar');
-  if (sortBtnBar) participantsTitle.removeChild(sortBtnBar);
-  sortBtnBar = createParticipantsSortBar();
-  participantsTitle.appendChild(sortBtnBar);
+  const participants = groupInfo.membersMap.get(affUrl)?.participants || [];
 
-  renderParticipantsListWithSort({
-    list: participants,
-    participantsListContent,
-    participantsTitle,
-    sortBtnBar,
-    initialSortMode: 'name',
-    onClickParticipant: async (participant, div) => {
-      document.querySelectorAll('.participant-item').forEach(el => el.classList.remove('selected'));
-      div.classList.add('selected');
-      if (participant.userHref) {
-        await _popupRenderUserDetails(participant.userHref, participant.name);
-      }
-    }
-  });
-}
-
-function createParticipantsSortBar() {
-  const sortBtnBar = document.createElement('span');
-  sortBtnBar.className = 'part-sort-btn-bar';
-  sortBtnBar.style.display = 'inline-flex';
-  sortBtnBar.style.gap = '2px';
-  sortBtnBar.style.marginLeft = '8px';
-  sortBtnBar.style.float = 'right';
-  sortBtnBar.style.justifyContent = 'flex-end';
-
-  const nameSortBtn = document.createElement('button');
-  nameSortBtn.className = 'part-sort-btn name-sort-btn active';
-  nameSortBtn.style.fontSize = '11px';
-  nameSortBtn.style.padding = '0 4px';
-  nameSortBtn.style.lineHeight = '1.2';
-  nameSortBtn.title = 'name';
-
-  const numGroupsSortBtn = document.createElement('button');
-  numGroupsSortBtn.className = 'part-sort-btn numgroups-sort-btn';
-  numGroupsSortBtn.style.fontSize = '11px';
-  numGroupsSortBtn.style.padding = '0 4px';
-  numGroupsSortBtn.style.lineHeight = '1.2';
-  numGroupsSortBtn.title = 'number of groups';
-
-  const nameArrow = document.createElement('span');
-  nameArrow.className = 'name-arrow';
-  nameArrow.innerHTML = '&#8595;';
-  nameArrow.style.fontSize = '10px';
-  nameArrow.style.verticalAlign = 'middle';
-  nameArrow.style.marginLeft = '1px';
-
-  const numGroupsArrow = document.createElement('span');
-  numGroupsArrow.className = 'numgroups-arrow';
-  numGroupsArrow.innerHTML = '&#8595;';
-  numGroupsArrow.style.fontSize = '10px';
-  numGroupsArrow.style.verticalAlign = 'middle';
-  numGroupsArrow.style.marginLeft = '1px';
-
-  nameSortBtn.appendChild(document.createTextNode('abc'));
-  nameSortBtn.appendChild(nameArrow);
-
-  numGroupsSortBtn.appendChild(document.createTextNode('G'));
-  numGroupsSortBtn.appendChild(numGroupsArrow);
-
-  sortBtnBar.appendChild(nameSortBtn);
-  sortBtnBar.appendChild(numGroupsSortBtn);
-
-  return sortBtnBar;
+  _popupRenderParticipantsList(participants);
 }
 
 function getParticipantItemHeight() {
@@ -1369,29 +1340,674 @@ function getParticipantItemHeight() {
   return height;
 }
 
-function renderParticipantsListWithSort({
-  list,
-  participantsListContent,
-  participantsTitle,
-  sortBtnBar,
-  initialSortMode = 'name',
-  onClickParticipant
-}) {
-  let sortMode = localStorage.getItem('popupParticipantsSortMode') || initialSortMode;
-  let sortedList = [];
+
+function _popupRenderParticipantsListContent(list) {
+  const participantsListContent = document.getElementById('participantsListContent');
+
+  // タイトル更新
+  const participantsTitle = document.querySelector('#participantsList .title');
+  participantsTitle.textContent = `Participants: ${list.length}`;
+
+  const sortMode = localStorage.getItem('popupParticipantsSortMode');
 
   // 仮想リスト用パラメータ
-  const rowHeight = getParticipantItemHeight(); // px
+  const rowHeight = getParticipantItemHeight(); // .list-item の高さ
+  const buffer = 10;
+
+  // 初期化
+  participantsListContent.innerHTML = '';
+  participantsListContent.scrollTop = 0;
+  participantsListContent.style.position = 'relative';
+
+  if (!list || list.length === 0) {
+    participantsListContent.innerHTML =
+      '<p class="item-list">No items available</p>';
+    return;
+  }
+
+  /* ===== ソート ===== */
+  const sortedList = [...list].sort((a, b) => {
+    if (sortMode == 'num') {
+      const diff = (b.numGroups || 0) - (a.numGroups || 0);
+      if (diff != 0) {
+        return diff
+      }
+    }
+    // sortMode == 'name' or num with equals
+    return (a.name || '').localeCompare(b.name || '');
+  });
+
+  /* ===== padding 取得 ===== */
+  const containerStyle = window.getComputedStyle(participantsListContent);
+  const paddingTop = parseInt(containerStyle.paddingTop, 10);
+  const paddingBottom = parseInt(containerStyle.paddingBottom, 10);
+  const paddingLeft = parseInt(containerStyle.paddingLeft, 10);
+  const paddingRight = parseInt(containerStyle.paddingRight, 10);
+
+  /* ===== spacer ===== */
+  const spacer = document.createElement('div');
+  spacer.className = 'virtual-list-spacer';
+  spacer.style.position = 'absolute';
+  spacer.style.top = paddingTop + 'px';
+  spacer.style.left = paddingLeft + 'px';
+  spacer.style.right = paddingRight + 'px';
+  participantsListContent.appendChild(spacer);
+
+  /* ===== 実体描画用 ===== */
+  const listDiv = document.createElement('div');
+  listDiv.className = 'virtual-list-content';
+  listDiv.style.position = 'absolute';
+  listDiv.style.left = paddingLeft + 'px';
+  listDiv.style.right = paddingRight + 'px';
+  listDiv.style.top = paddingTop + 'px';
+  listDiv.style.bottom = paddingBottom + 'px';
+  participantsListContent.appendChild(listDiv);
+
+  /* ===== 初期 spacer 高さ ===== */
+  const totalHeight = sortedList.length * rowHeight;
+  spacer.style.height = Math.max(
+    totalHeight + paddingBottom,
+    participantsListContent.clientHeight
+  ) + 'px';
+
+  /* ===== 行更新 ===== */
+  function updateVisibleRows() {
+    const totalRows = sortedList.length;
+    const viewportHeight = participantsListContent.clientHeight;
+    const scrollTop = participantsListContent.scrollTop;
+    const totalHeight = totalRows * rowHeight;
+
+    let startIdx = 0;
+    let endIdx = totalRows;
+
+    if (totalHeight > viewportHeight) {
+      startIdx = Math.floor(scrollTop / rowHeight) - buffer;
+      startIdx = Math.max(0, startIdx);
+      endIdx = Math.min(
+        totalRows,
+        startIdx + Math.ceil(viewportHeight / rowHeight) + buffer * 2
+      );
+
+      if (endIdx === totalRows && scrollTop + viewportHeight >= totalHeight - 1) {
+        startIdx = Math.max(
+          0,
+          totalRows - Math.ceil(viewportHeight / rowHeight) - buffer
+        );
+      }
+
+      spacer.style.height = totalHeight + 'px';
+      listDiv.style.top = (startIdx * rowHeight + paddingTop) + 'px';
+    } else {
+      listDiv.style.top = paddingTop + 'px';
+      spacer.style.height = viewportHeight + 'px';
+    }
+
+    listDiv.innerHTML = '';
+
+    for (let i = startIdx; i < endIdx; i++) {
+      const participant = sortedList[i];
+
+      const item = document.createElement('div');
+      item.className = 'list-item list-item-participant virtaul-list-item';
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'item-name';
+      nameSpan.textContent = participant.name || '';
+      nameSpan.title = participant.name || '';
+
+      // each list-item of the virtual list is the single line by the following styles.
+      nameSpan.style.whiteSpace = 'nowrap';
+      nameSpan.style.overflow = 'hidden';
+      nameSpan.style.textOverflow = 'ellipsis';
+      nameSpan.style.display = 'block';     // ← virtual-list では重要
+      nameSpan.style.width = '100%';         // ← 必須
+
+      const numSpan = document.createElement('span');
+      numSpan.className = 'item-number';
+      numSpan.textContent = participant.numGroups ?? 0;
+
+      item.appendChild(nameSpan);
+      item.appendChild(numSpan);
+
+      item.addEventListener('click', () => {
+        document
+          .querySelectorAll('#participantsListContent .list-item.selected')
+          .forEach(el => el.classList.remove('selected'));
+
+        item.classList.add('selected');
+
+        if (participant.userHref) {
+          _popupRenderUserDetails(participant.userHref, participant.name);
+        }
+      });
+
+      listDiv.appendChild(item);
+    }
+  }
+
+  /* ===== 初回 & scroll ===== */
+  updateVisibleRows();
+  participantsListContent.onscroll = updateVisibleRows;
+}
+
+async function _popupRenderParticipationsContent(groupInfo) {
+  const currentFilter = localStorage.getItem('popupParticipationsFilter');
+  const filterButtons = document.querySelectorAll('#participationsFilter .filter-btn');
+  filterButtons.forEach(b => b.classList.remove('active'));
+  const activeButton = document.querySelector(`#participationsFilter .filter-btn[data-filter="${currentFilter}"]`);
+  if (activeButton) {
+    activeButton.classList.add('active');
+  }
+
+  if (currentFilter === 'members') {
+    _popupRenderMembersList(groupInfo);
+  } else {
+    let list = undefined;
+    let label = '';
+    switch (currentFilter) {
+      case 'memberParticipants':
+        list = groupInfo.memberParticipants;
+        label = "All Members' affilications";
+        break;
+      case 'invitedExperts':
+        list = groupInfo.invitedExperts;
+        label = 'W3C Invited Experts';
+        break;
+      case 'staffs':
+        list = groupInfo.staffs;
+        label = 'W3C';
+        break;
+      case 'individuals':
+        list = groupInfo.individuals;
+        label = 'Individuals';
+        break;
+      case 'allParticipants':
+        list = groupInfo.allParticipants;
+        label = 'All affilications';
+        break;
+      default:
+        console.warn('_popupRenderParticipations Unknown filter:', currentFilter);
+        list = [];
+        label = 'unkown';
+    }
+    // render the left pane
+    const membersTitle = document.querySelector('#membersList .title');
+    membersTitle.textContent = `Affiliations`;
+    const sortButtons = document.querySelectorAll('#membersList .sort-btn');
+    sortButtons.forEach(b => {
+      b.disabled = true;
+    });
+    const membersListContent = document.getElementById('membersListContent')
+    membersListContent.innerHTML = '';
+    const div = document.createElement('div');
+    div.className = 'list-item selected';
+    div.textContent = label;
+    if (groupInfo.isException) {
+      div.classList.add('exception');
+    }
+    membersListContent.appendChild(div);
+    // render the right pane
+    const userDetailsContent = document.getElementById('userDetailsContent');
+    userDetailsContent.innerHTML = '<p>Select a user to view the details</p>';
+    // render the center pane
+    _popupRenderParticipantsList(list);
+  }
+  const firstItem = membersListContent.querySelector('.list-item');
+  if (firstItem) {
+    firstItem.classList.add('selected');
+    if (firstItem.dataset.affUrl) {
+      await _popupRenderParticipantsForMember(groupInfo, firstItem.dataset.affUrl);
+    }
+  } else {
+    const participantsListContent = document.getElementById('participantsListContent');
+    const userDetailsContent = document.getElementById('userDetailsContent')
+    participantsListContent.innerHTML = '<p class="list-item">No participant</p>';
+    userDetailsContent.innerHTML = '<p>No information</p>';
+  }
+}
+
+/*
+  the following subfunctions for popupSpecificationsSheet as well as those for popupParticipationsSheet
+*/
+
+async function popupRenderSpecificationsSection(groupInfo, initialFilter = 'specifications', onlyGroupParticipationsSummaryGroup) {
+  const specificationsContent = document.getElementById('specificationsContent')
+  popupSetupResizer(specificationsContent);
+
+  // setup Filter buttons
+  const filterButtons = document.querySelectorAll('#specificationsButtonContainer .filter-btn');
+  filterButtons.forEach(btn => {
+    btn.onclick = () => {
+      filterButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const currentFilter = btn.dataset.filter;
+      localStorage.setItem('popupSpecificationsFilter', currentFilter);
+      // update
+      _popupRenderSpecifications(groupInfo, onlyGroupParticipationsSummaryGroup);
+    };
+  });
+  filterButtons.forEach(b => b.classList.remove('active'));
+  const initialBtn = document.querySelector(`#specificationsButtonContainer .filter-btn[data-filter="${initialFilter}"]`);
+  if (initialBtn) {
+    initialBtn.classList.add('active');
+    localStorage.setItem('popupSpecificationsFilter', initialFilter);
+  }
+
+  // the inital rendering 
+  _popupRenderSpecifications(groupInfo, onlyGroupParticipationsSummaryGroup);
+}
+
+function _popupRenderSpecifications(groupInfo, onlyGroupParticipationsSummaryGroup) {
+  const useGroupInfo = groupInfo
+
+  // リスト描画など重い処理は遅延実行
+  requestAnimationFrame(() => { // requestAnimationFrame で1フレーム待つこれで「Popupの再描画→次のフレームで重い処理
+    setTimeout(() => {
+      _popupRenderSpecificationsStats(useGroupInfo);
+      _popupRenderSpecificationsContent(useGroupInfo);
+    }, 0); // setTimeout(..., 0)をrequestAnimationFrameの中で使うと、さらに「描画→次のタスク→重い処理」となり、より確実にUIが先に出ます
+  });
+}
+
+// countsを使って数値を更新するサブ関数
+function _popupRenderSpecificationsStats(groupInfo) {
+  const counts = {
+    specifications: groupInfo.specsMap.size,
+    recommendations: groupInfo.recommendations.length,
+    candidateRecommendations: groupInfo.candidateRecommendations.length,
+    draftStandards: groupInfo.draftStandards.length,
+    retiredSpecs: groupInfo.retiredSpecs.length,
+    otherSpecs: groupInfo.otherSpecs.length,
+    allVersions: groupInfo.allVersions.length
+  };
+
+  const filters = ['specifications', 'recommendations', 'candidateRecommendations', 'draftStandards', 'retiredSpecs', 'otherSpecs', 'allVersions'];
+  filters.forEach(filter => {
+    const btn = document.querySelector(`#specificationsButtonContainer .filter-btn[data-filter="${filter}"]`);
+    const countSpan = document.getElementById(`filterCount${filter.charAt(0).toUpperCase() + filter.slice(1)}`);
+    if (countSpan) {
+      countSpan.textContent = counts[filter];
+    }
+  });
+}
+
+function _popupRenderSpecificationsListContent(groupInfo) {
+  const specificationsListContent =
+    document.getElementById('specificationsListContent');
+  specificationsListContent.innerHTML = '';
+
+  const sortMode = localStorage.getItem('popupSpecificationsSortMode');
+
+  const specifications = groupInfo.specsMap
+    ? Array.from(groupInfo.specsMap.keys())
+    : [];
+
+  /* ===== ソート ===== */
+  const sortedSpecifications = [...specifications].sort((a, b) => {
+    const entryA = groupInfo.specsMap.get(a);
+    const entryB = groupInfo.specsMap.get(b);
+
+    if (sortMode === 'name') {
+      return (entryA.title || '').localeCompare(entryB.title || '');
+    } else if (sortMode === 'stat') {
+      const orderA = entryA.statusOrder?.order ?? 0;
+      const orderB = entryB.statusOrder?.order ?? 0;
+      if (orderA !== orderB) {
+        return orderA - orderB;
+      }
+    }
+
+    // year  stat with eqauls and fallback
+    const timeA = entryA.latestDate
+      ? new Date(entryA.latestDate).getTime()
+      : -Infinity;
+    const timeB = entryB.latestDate
+      ? new Date(entryB.latestDate).getTime()
+      : -Infinity;
+
+    return timeB - timeA;
+  });
+
+  /* ===== 描画 ===== */
+  sortedSpecifications.forEach((specUrl, index) => {
+    const entry = groupInfo.specsMap.get(specUrl);
+
+    const item = document.createElement('div');
+    item.className = 'list-item list-item-spec virtual-list-item';
+
+    if (groupInfo.isException) {
+      item.classList.add('exception');
+    }
+
+    if (entry.latestStatus === 'Retired') {
+      item.classList.add('retired');
+    }
+
+    /* name */
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'item-name';
+    nameSpan.textContent = entry.title || '';
+    nameSpan.title = entry.title || '';
+
+    /* status */
+    const statSpan = document.createElement('span');
+    statSpan.className = 'item-stat';
+    statSpan.textContent = entry.statusOrder?.shortName ?? '';
+
+    /* year */
+    const yearSpan = document.createElement('span');
+    yearSpan.className = 'item-year';
+    const date = entry.latestDate;
+    yearSpan.textContent =
+      typeof date === 'string' && /^\d{4}/.test(date)
+        ? date.slice(0, 4)
+        : '????';
+
+    item.appendChild(nameSpan);
+    item.appendChild(statSpan);
+    item.appendChild(yearSpan);
+
+    item.dataset.url = specUrl;
+    item.dataset.index = index;
+
+    item.addEventListener('click', async () => {
+      document
+        .querySelectorAll(
+          '#specificationsListContent .list-item.selected'
+        )
+        .forEach(el => el.classList.remove('selected'));
+
+      item.classList.add('selected');
+      await _popupRenderVersionsForSpecification(groupInfo, specUrl);
+    });
+
+    specificationsListContent.appendChild(item);
+  });
+}
+
+async function _popupRenderSpecificationsList(groupInfo) {
+  const specificationsTitle = document.querySelector('#specificationsList .title');
+  specificationsTitle.textContent = `Specifications: ${groupInfo.specsMap.size}`;
+
+  const sortBtnBar = document.querySelector('#specificationsList .list-sort-bar')
+  if (sortBtnBar) {
+    const nameSortBtn = sortBtnBar.querySelector('.name-sort-btn');
+    const statSortBtn = sortBtnBar.querySelector('.stat-sort-btn');
+    const yearSortBtn = sortBtnBar.querySelector('.year-sort-btn');
+
+    // ボタンイベント
+    nameSortBtn.addEventListener('click', () => {
+      nameSortBtn.classList.add('active');
+      statSortBtn.classList.remove('active');
+      yearSortBtn.classList.remove('active');
+
+      localStorage.setItem('popupSpecificationsSortMode', 'name');
+      _popupRenderSpecificationsListContent(groupInfo);
+    });
+
+    // ボタンイベント
+    statSortBtn.addEventListener('click', () => {
+      nameSortBtn.classList.remove('active');
+      statSortBtn.classList.add('active');
+      yearSortBtn.classList.remove('active');
+
+      localStorage.setItem('popupSpecificationsSortMode', 'stat');
+      _popupRenderSpecificationsListContent(groupInfo);
+    });
+
+
+    yearSortBtn.addEventListener('click', () => {
+      nameSortBtn.classList.remove('active');
+      statSortBtn.classList.remove('active');
+      yearSortBtn.classList.add('active');
+
+      localStorage.setItem('popupSpecificationsSortMode', 'year');
+      _popupRenderSpecificationsListContent(groupInfo);
+    });
+  }
+
+  let sortMode = localStorage.getItem('popupSpecificationsSortMode');
+  if (!sortMode) {
+    sortMode = 'name';    // initial
+    localStorage.setItem('popupSpecificationsSortMode', sortMode);
+  }
+  const sortButtons = document.querySelectorAll('#specificationsList .sort-btn');
+  sortButtons.forEach(b => {
+    b.disabled = false;
+    b.classList.remove('active');
+  });
+  const activeButton = document.querySelector(`#specificationsList .sort-btn[data-sort="${sortMode}"]`);
+  if (activeButton) {
+    activeButton.classList.add('active');
+  }
+  // 初期表示
+  _popupRenderSpecificationsListContent(groupInfo);
+}
+
+// 共通化: 参加者リスト＋numGroups＋ソートUI
+function _popupRenderVersionsList(list) {
+  // タイトル右にソートボタン
+  const sortBtnBar = document.querySelector('#versionsList .list-sort-bar')
+  // ソートボタンイベント
+  if (sortBtnBar) {
+    const nameSortBtn = sortBtnBar.querySelector('.name-sort-btn');
+    const statSortBtn = sortBtnBar.querySelector('.stat-sort-btn');
+    const yearSortBtn = sortBtnBar.querySelector('.year-sort-btn');
+    nameSortBtn.onclick = () => {
+      nameSortBtn.classList.add('active');
+      statSortBtn.classList.remove('active');
+      yearSortBtn.classList.remove('active');
+
+      localStorage.setItem('popupVersionsSortMode', 'name');
+      _popupRenderVersionsListContent(list);;
+    };
+    statSortBtn.onclick = () => {
+      nameSortBtn.classList.remove('active');
+      statSortBtn.classList.add('active');
+      yearSortBtn.classList.remove('active');
+
+      localStorage.setItem('popupVersionsSortMode', 'stat');
+      _popupRenderVersionsListContent(list);
+    };
+    yearSortBtn.onclick = () => {
+      nameSortBtn.classList.remove('active');
+      statSortBtn.classList.remove('active');
+      yearSortBtn.classList.add('active');
+
+      localStorage.setItem('popupVersionsSortMode', 'year');
+      _popupRenderVersionsListContent(list);
+    };
+  }
+
+  let sortMode = localStorage.getItem('popupVersionsSortMode');
+  if (!sortMode) {
+    sortMode = 'name';  // inital
+    localStorage.setItem('popupVersionsSortMode', sortMode);
+  }
+  const sortButtons = document.querySelectorAll('#versionsList .sort-btn');
+  sortButtons.forEach(b => b.classList.remove('active'));
+  const activeButton = document.querySelector(`#versionsList  .sort-btn[data-sort="${sortMode}"]`);
+  if (activeButton) {
+    activeButton.classList.add('active');
+  }
+
+  _popupRenderVersionsListContent(list);
+}
+
+function _popupRenderVersionDetails(versionEntry) {
+  const versionDetailsContent = document.getElementById('versionDetailsContent');
+  versionDetailsContent.style.overflowY = 'auto';
+
+  let versionHref = versionEntry.url;
+  if (!versionHref) {
+    versionDetailsContent.innerHTML = '<p>No version data available</p>';
+    return;
+  }
+
+  const versionTitle = versionEntry.title;
+  let version = getDataEntry(versionHref); // w3c-api.jsの関数
+  const fetchAlways = false; // true only for debuging
+  if (!version || fetchAlways) {
+    // ローカルにデータがない場合
+    const dl = document.createElement('dl');
+    dl.innerHTML = `<dt>Name:</dt><dd>${escapeHtml(versionTitle || 'Unknown')}</dd>`;
+    dl.innerHTML += `<dt>Detailed user information not available locally.</dt>`;
+
+    const fetchBtn = document.createElement('button');
+    fetchBtn.textContent = 'Fetch from W3C API';
+    fetchBtn.style.marginTop = '8px';
+    fetchBtn.onclick = async () => {
+      fetchBtn.disabled = true;
+      fetchBtn.textContent = 'Fetching...';
+      try {
+        const versionByApi = await fetchDataEntryAsync(versionHref);  // w3c-api.jsの関数
+        if (versionByApi) {
+          renderVersionDetailsContent(versionByApi, true); // useFetchDataAsync
+        } else {
+          fetchBtn.textContent = 'Failed to fetch';
+        }
+      } catch (e) {
+        fetchBtn.textContent = 'Error';
+      }
+    };
+    dl.appendChild(fetchBtn);
+
+    versionDetailsContent.innerHTML = '';
+    versionDetailsContent.appendChild(dl);
+    return;
+  }
+
+  renderVersionDetailsContent(version, false);  // not useFetchDataAsync
+}
+
+
+// 詳細描画ロジックを分離
+async function renderVersionDetailsContent(version, useFetchDataAsync = false) {
+  const versionDetailsContent = document.getElementById('versionDetailsContent');
+  const dl = document.createElement('dl');
+
+  const successor = version._links?.['successor-version'] // This is the same as the VersionEntry.isOutdated
+  const isRetired = version.status == 'Retired';
+
+  // 基本情報
+  if (version.title) dl.innerHTML += `<dt>Title:</dt><dd>${escapeHtml(version.title)}</dd>`;
+  if (version.status) dl.innerHTML += `<dt>Status:</dt><dd>${escapeHtml(version.status)}<span class="retired">${isRetired ? " This spec is retired!" : ""}</span></dd>`;
+  if (version.date) dl.innerHTML += `<dt>Date:</dt><dd>${escapeHtml(version.date)}<span class="outdated">${successor ? " This version is outdated!" : ""}</span></dd>`;
+  if (typeof version.informative !== 'undefined') dl.innerHTML += `<dt>Informative:</dt><dd>${version.informative ? 'Yes' : 'No'}</dd>`;
+  if (typeof version['rec-track'] !== 'undefined') dl.innerHTML += `<dt>REC Track:</dt><dd>${version['rec-track'] ? 'Yes' : 'No'}</dd>`;
+  if (version.shortlink) dl.innerHTML += `<dt>Shortlink:</dt><dd><a href="${escapeHtml(version.shortlink)}" target="_blank" rel="noopener">${escapeHtml(version.shortlink)}</a></dd>`;
+  if (version.uri) dl.innerHTML += `<dt>URI:</dt><dd><a href="${escapeHtml(version.uri)}" target="_blank" rel="noopener">${escapeHtml(version.uri)}</a></dd>`;
+  if (version.description) dl.innerHTML += `<dt>Description:</dt><dd>${escapeHtml(version.description)}</dd>`;
+  if (typeof version['editor-draft'] !== 'undefined') dl.innerHTML += `<dt>Editor Draft:</dt><dd><a href="${escapeHtml(version['editor-draft'])}" target="_blank" rel="noopener">${escapeHtml(version['editor-draft'])}</a></dd>`;
+  if (typeof version['process-rules'] !== 'undefined') dl.innerHTML += `<dt>Process Rules:</dt><dd><a href="${escapeHtml(version['process-rules'])}" target="_blank" rel="noopener">${escapeHtml(version['process-rules'])}</a></dd>`;
+
+
+
+  if (version._links?.supersedes) {
+    const sup = version._links.supersedes;
+    let supersedesTitles = [];
+    if (sup && sup.href) {
+      // まずキャッシュ取得、なければ必要に応じて fetch
+      let supRes = getDataEntry(sup.href);
+      if (!supRes && useFetchDataAsync) {
+        try { supRes = await fetchDataEntryAsync(sup.href); } catch (e) { supRes = null; }
+      }
+      if (supRes && supRes.data && supRes.data._links && Array.isArray(supRes.data._links.supersedes)) {
+        supersedesTitles = supRes.data._links.supersedes.map(s => s.title || s.href).filter(Boolean);
+      }
+      dl.innerHTML += `<dt>Supersedes:</dt><dd>${supersedesTitles.length ? supersedesTitles.map(t => escapeHtml(t)).join('<br>') : ''}</dd>`;
+    }
+  }
+  if (version._links?.['superseded-by']) {
+    const sup = version._links['superseded-by'];
+    let supersededByTitles = [];
+    if (sup && sup.href) {
+      // まずキャッシュ取得、なければ必要に応じて fetch
+      let supRes = getDataEntry(sup.href);
+      if (!supRes && useFetchDataAsync) {
+        try { supRes = await fetchDataEntryAsync(sup.href); } catch (e) { supRes = null; }
+      }
+      if (supRes && supRes.data && supRes.data._links && Array.isArray(supRes.data._links.supersedes)) {
+        supersededByTitles = supRes.data._links['superseded-by'].map(s => s.title || s.href).filter(Boolean);
+      }
+      dl.innerHTML += `<dt>Superseded By:</dt><dd>${supersededByTitles.length ? supersededByTitles.map(t => escapeHtml(t)).join('<br>') : ''}</dd>`;
+    }
+  }
+
+  versionDetailsContent.innerHTML = '';
+  versionDetailsContent.appendChild(dl);
+}
+
+async function _popupRenderVersionsForSpecification(groupInfo, versionUrl) {
+  const versionsListContent = document.getElementById('versionsListContent');
+  const versionDetailsContent = document.getElementById('versionDetailsContent');
+  versionsListContent.innerHTML = '';
+  versionDetailsContent.innerHTML = '<p>Select a version to view the detail</p>';
+
+  const versionEntry = groupInfo.specsMap && groupInfo.specsMap.get(versionUrl) || [];
+  const versionEntries = versionEntry.versionEntries || [];
+
+  _popupRenderVersionsList(versionEntries);
+}
+
+
+function getVersionItemHeight() {
+  // ダミー要素を作成
+  const dummy = document.createElement('div');
+  dummy.className = 'version-item';
+  dummy.style.visibility = 'hidden';
+  dummy.style.position = 'absolute';
+  dummy.textContent = 'Sample';
+  document.body.appendChild(dummy);
+
+  // 高さを取得
+  const height = dummy.offsetHeight;
+
+  // ダミー要素を削除
+  document.body.removeChild(dummy);
+
+  return height;
+}
+
+function _popupRenderVersionsListContent(list) {
+  const versionsListContent = document.getElementById('versionsListContent');
+  const versionsTitle = document.querySelector('#versionsList .title');
+
+  versionsTitle.textContent = `Versions: ${list.length}`;
+
+  let sortMode = localStorage.getItem('popupVersionsSortMode');
+  let sortedList = [];
+  // ソート
+  if (sortMode === 'name') {
+    sortedList = [...list].sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+  } else if (sortMode === 'stat') {
+    sortedList = [...list].sort((a, b) => {
+      const statA = a.statusOrder;
+      const statB = b.statusOrder;
+      if (statA.order !== statB.order) {
+        return statA.order - statB.order;
+      }
+      const timeA = a.date ? new Date(a.date).getTime() : -Infinity;
+      const timeB = b.date ? new Date(b.date).getTime() : -Infinity;
+      return timeB - timeA;
+    });
+  } else {
+    sortedList = [...list].sort((a, b) => {
+      const timeA = a.date ? new Date(a.date).getTime() : -Infinity;
+      const timeB = b.date ? new Date(b.date).getTime() : -Infinity;
+      return timeB - timeA;
+    });
+  }
+
+  // 仮想リスト用パラメータ
+  const rowHeight = getVersionItemHeight(); // px
   const buffer = 10;    // 余分に描画する行数
 
-  // 仮想リスト用のラッパーdivを用意
-  participantsListContent.innerHTML = '';
-  participantsListContent.style.position = 'relative';
-  participantsListContent.style.overflowY = 'auto';
-  participantsListContent.style.height = '400px'; // 必要に応じて調整
-  participantsListContent.scrollTop = 0;  // interHTMLを変えてもスクロール位置は維持されるため、リセット
+  versionsListContent.innerHTML = '';
+  versionsListContent.style.position = 'relative';
+  versionsListContent.scrollTop = 0;  // interHTMLを変えてもスクロール位置は維持されるため、リセット
 
-  const spacerStyle = window.getComputedStyle(participantsListContent);
+  const spacerStyle = window.getComputedStyle(versionsListContent);
   const spacerPaddingTop = parseInt(spacerStyle.paddingTop, 10);
   const spacerPaddingLeft = parseInt(spacerStyle.paddingLeft, 10);
   const spacerPaddingRight = parseInt(spacerStyle.paddingRight, 10);
@@ -1404,10 +2020,10 @@ function renderParticipantsListWithSort({
   spacer.style.left = spacerPaddingLeft + 'px';
   spacer.style.right = spacerPaddingRight + 'px';
 
-  participantsListContent.appendChild(spacer);
+  versionsListContent.appendChild(spacer);
 
   let listDiv = document.createElement('div');
-  const listStyle = window.getComputedStyle(participantsListContent);
+  const listStyle = window.getComputedStyle(versionsListContent);
   const listDivPaddingTop = parseInt(listStyle.paddingTop, 10);
   const listDivPaddingLeft = parseInt(listStyle.paddingLeft, 10);
   const listDivPaddingRight = parseInt(listStyle.paddingRight, 10);
@@ -1418,171 +2034,186 @@ function renderParticipantsListWithSort({
   listDiv.style.right = listDivPaddingRight + 'px';
   listDiv.style.top = listDivPaddingTop + 'px';
   listDiv.style.bottom = listDivPaddingBottom + 'px';
-  participantsListContent.appendChild(listDiv);
+  versionsListContent.appendChild(listDiv);
 
-  function doRender() {
-    if (!list || list.length === 0) {
-      participantsListContent.innerHTML = '<p style="padding: 12px; color: #666; font-style: italic;">No items available</p>';
-      return;
-    }
-    // ソート
-    if (sortMode === 'name') {
-      sortedList = [...list].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-      if (sortBtnBar) {
-        sortBtnBar.querySelector('.name-arrow').style.color = '#0969da';
-        sortBtnBar.querySelector('.numgroups-arrow').style.color = '#bbb';
-      }
+
+  if (!list || list.length === 0) {
+    versionsListContent.innerHTML =
+      '<p class="list-item">No items available</p>';
+    return;
+  }
+
+  // 仮想リストの高さを設定（表示領域より小さい場合はclientHeightを優先）
+  const spacerHeight = Math.max(sortedList.length * rowHeight + spacerPaddingBottom, versionsListContent.clientHeight);
+  spacer.style.height = spacerHeight + 'px';
+
+  // スクロールイベントで表示範囲を更新
+  function updateVisibleRows() {
+    const totalRows = sortedList.length;
+    const viewportHeight = versionsListContent.clientHeight;
+    const totalHeight = totalRows * rowHeight;
+
+    let startIdx = 0;
+    let endIdx = totalRows;
+
+    // console.log(`updateVisibleRows: buffer=${buffer}, totalRows=${totalRows}, viewportHeight=${viewportHeight}, totalHeight=${totalHeight} startIdx=${startIdx}, endIdx=${endIdx}`);
+    // 短いリストは全件表示・スクロールバーなし
+    if (totalHeight <= viewportHeight) {
+      startIdx = 0;
+      endIdx = totalRows;
+      listDiv.style.top = listDivPaddingTop + 'px';
+      spacer.style.height = viewportHeight + 'px';
     } else {
-      sortedList = [...list].sort((a, b) => (b.numGroups || 0) - (a.numGroups || 0) || (a.name || '').localeCompare(b.name || ''));
-      if (sortBtnBar) {
-        sortBtnBar.querySelector('.name-arrow').style.color = '#bbb';
-        sortBtnBar.querySelector('.numgroups-arrow').style.color = '#0969da';
+      const scrollTop = versionsListContent.scrollTop;
+      startIdx = Math.floor(scrollTop / rowHeight) - buffer;
+      startIdx = Math.max(0, startIdx);
+      endIdx = Math.min(totalRows, startIdx + Math.ceil(viewportHeight / rowHeight) + 2 * buffer);
+
+      // // 下端までスクロールしたときだけ、一番下で下端に揃うよう調整
+      if (endIdx === totalRows && scrollTop + viewportHeight >= totalHeight - 1) {
+        startIdx = Math.max(0, totalRows - Math.ceil(viewportHeight / rowHeight) - buffer);
+        // console.log(`Adjusting for bottom alignment: startIdx=${startIdx}, endIdx=${endIdx}`);
       }
+      spacer.style.height = totalHeight + 'px';
+      listDiv.style.top = (startIdx * rowHeight + listDivPaddingTop) + 'px';
     }
 
-    // 仮想リストの高さを設定（表示領域より小さい場合はclientHeightを優先）
-    const spacerHeight = Math.max(sortedList.length * rowHeight + spacerPaddingBottom, participantsListContent.clientHeight);
-    spacer.style.height = spacerHeight + 'px';
+    listDiv.innerHTML = '';
+    for (let i = startIdx; i < endIdx; i++) {
+      const versionEntry = sortedList[i];
+      const div = document.createElement('div');
+      div.className = 'list-item list-item-version virtual-list-item';
 
-    // スクロールイベントで表示範囲を更新
-    function updateVisibleRows() {
-      const totalRows = sortedList.length;
-      const viewportHeight = participantsListContent.clientHeight;
-      const totalHeight = totalRows * rowHeight;
+      // 名前
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'item-name';
+      nameSpan.textContent = versionEntry.title;
+      nameSpan.title = versionEntry.title;  // title will be shown on overflow
+      //  Note each list-item of the virtual list is the single line by the following styles.
+      nameSpan.style.whiteSpace = 'nowrap';
+      nameSpan.style.overflow = 'hidden';
+      nameSpan.style.textOverflow = 'ellipsis';
+      nameSpan.style.display = 'block';     // ← virtual-list では重要
+      nameSpan.style.width = '100%';         // ← 必須
 
-      let startIdx = 0;
-      let endIdx = totalRows;
+      // stat
+      const shortName = versionEntry.statusOrder.shortName;
+      const statSpan = document.createElement('span');
+      statSpan.className = 'item-stat';
+      statSpan.textContent = shortName;
 
-      // console.log(`updateVisibleRows: buffer=${buffer}, totalRows=${totalRows}, viewportHeight=${viewportHeight}, totalHeight=${totalHeight} startIdx=${startIdx}, endIdx=${endIdx}`);
-      // 短いリストは全件表示・スクロールバーなし
-      if (totalHeight <= viewportHeight) {
-        startIdx = 0;
-        endIdx = totalRows;
-        listDiv.style.top = listDivPaddingTop + 'px';
-        spacer.style.height = viewportHeight + 'px';
-      } else {
-        const scrollTop = participantsListContent.scrollTop;
-        startIdx = Math.floor(scrollTop / rowHeight) - buffer;
-        startIdx = Math.max(0, startIdx);
-        endIdx = Math.min(totalRows, startIdx + Math.ceil(viewportHeight / rowHeight) + 2 * buffer);
+      // date
+      const date = versionEntry.date;
+      const year = typeof date === 'string' && /^\d{4}/.test(date) ? date.slice(0, 4) : '????';
+      const yearSpan = document.createElement('span');
+      yearSpan.className = 'item-year';
+      yearSpan.textContent = year;
 
-        // // 下端までスクロールしたときだけ、一番下で下端に揃うよう調整
-        if (endIdx === totalRows && scrollTop + viewportHeight >= totalHeight - 1) {
-          startIdx = Math.max(0, totalRows - Math.ceil(viewportHeight / rowHeight) - buffer);
-          // console.log(`Adjusting for bottom alignment: startIdx=${startIdx}, endIdx=${endIdx}`);
-        }
-        spacer.style.height = totalHeight + 'px';
-        listDiv.style.top = (startIdx * rowHeight + listDivPaddingTop) + 'px';
+      if (versionEntry.isOutdated) {
+        div.classList.add('outdated');
+      }
+      if (versionEntry.status == 'Retired') {
+        div.classList.add('retired');
       }
 
-      listDiv.innerHTML = '';
-      for (let i = startIdx; i < endIdx; i++) {
-        const participant = sortedList[i];
-        const div = document.createElement('div');
-        div.className = 'participant-item';
+      div.appendChild(nameSpan);
+      div.appendChild(statSpan);
+      div.appendChild(yearSpan);
 
-        // 名前
-        const nameSpan = document.createElement('span');
-        nameSpan.class = 'span-name';
-        nameSpan.textContent = participant.name;
-        // バーチャルリストでは１行固定なので省略スタイルをここで追加
-        nameSpan.style.whiteSpace = 'nowrap';
-        nameSpan.style.overflow = 'hidden';
-        nameSpan.style.textOverflow = 'ellipsis';
-
-        // numGroups
-        const numGroupsSpan = document.createElement('span');
-        numGroupsSpan.class = 'span-number';
-        numGroupsSpan.textContent = (participant.numGroups != null ? participant.numGroups : 0);
-
-        div.appendChild(nameSpan);
-        div.appendChild(numGroupsSpan);
-
-        // クリック時はonClickParticipantを呼ぶ
-        if (onClickParticipant) {
-          div.addEventListener('click', () => onClickParticipant(participant, div));
+      // クリック時はonClickVersionを呼ぶ
+      div.addEventListener('click', async () => {
+        document
+          .querySelectorAll('#versionsListContent .list-item.selected')
+          .forEach(el => el.classList.remove('selected'));
+        div.classList.add('selected');
+        if (versionEntry) {
+          _popupRenderVersionDetails(versionEntry);
         }
-        listDiv.appendChild(div);
-      }
+      });
+
+      listDiv.appendChild(div);
     }
-
-
-    // 初回描画
-    updateVisibleRows();
-
-    // スクロールイベント
-    participantsListContent.onscroll = updateVisibleRows;
-
-    // タイトル
-    participantsTitle.textContent = `Participants: ${sortedList.length}`;
-    participantsTitle.appendChild(sortBtnBar);
   }
-
-  // ソートボタンイベント
-  if (sortBtnBar) {
-    const nameSortBtn = sortBtnBar.querySelector('.name-sort-btn');
-    const numGroupsSortBtn = sortBtnBar.querySelector('.numgroups-sort-btn');
-    nameSortBtn.onclick = () => {
-      sortMode = 'name';
-      localStorage.setItem('popupParticipantsSortMode', sortMode);
-      nameSortBtn.classList.add('active');
-      numGroupsSortBtn.classList.remove('active');
-      doRender();
-    };
-    numGroupsSortBtn.onclick = () => {
-      sortMode = 'numGroups';
-      localStorage.setItem('popupParticipantsSortMode', sortMode);
-      numGroupsSortBtn.classList.add('active');
-      nameSortBtn.classList.remove('active');
-      doRender();
-    };
-  }
-
-  doRender();
+  // 初回描画
+  updateVisibleRows();
+  // スクロールイベント
+  versionsListContent.onscroll = updateVisibleRows;
 }
 
-async function _popupRenderFilteredList(
-  groupInfo,
-  currentFilter,
-  membersListContent,
-  participantsListContent,
-  userDetailsContent,
-  affiliationsTitle,
-  participantsTitle
-) {
-  membersListContent.innerHTML = '';
-  membersListContent.style.minWidth = '200px';
-  const filterButtons = document.querySelectorAll('#participationsFilter .filter-btn');
+async function _popupRenderSpecificationsContent(groupInfo) {
+  const currentFilter = localStorage.getItem('popupSpecificationsFilter');
+  const filterButtons = document.querySelectorAll('#specificationsFilter .filter-btn');
   filterButtons.forEach(b => b.classList.remove('active'));
-  const activeButton = document.querySelector(`#participationsFilter .filter-btn[data-filter="${currentFilter}"]`);
+  const activeButton = document.querySelector(`#specificationsFilter .filter-btn[data-filter="${currentFilter}"]`);
   if (activeButton) {
     activeButton.classList.add('active');
   }
-  if (currentFilter === 'memberParticipants') {
-    await _popupRenderMemberParticipantsList(groupInfo, membersListContent, participantsListContent, userDetailsContent, affiliationsTitle, participantsTitle);
-  } else if (currentFilter === 'allParticipants') {
-    await _popupRenderAllParticipantsList(groupInfo, membersListContent, participantsListContent, userDetailsContent, affiliationsTitle, participantsTitle);
-  } else if (currentFilter === 'members') {
-    await _popupRenderMembersList(groupInfo, membersListContent, affiliationsTitle);
-  } else if (currentFilter == 'invitedExperts') {
-    await _popupRenderTypeList(groupInfo, 'invitedExperts', 'W3C Invited Experts', membersListContent, participantsListContent, userDetailsContent, affiliationsTitle, participantsTitle);
-  } else if (currentFilter == 'staffs') {
-    await _popupRenderTypeList(groupInfo, 'staffs', 'W3C', membersListContent, participantsListContent, userDetailsContent, affiliationsTitle, participantsTitle);
-  } else if (currentFilter == 'individuals') {
-    await _popupRenderTypeList(groupInfo, 'individuals', 'Individuals', membersListContent, participantsListContent, userDetailsContent, affiliationsTitle, participantsTitle);
+
+  if (currentFilter === 'specifications') {
+    await _popupRenderSpecificationsList(groupInfo);
   } else {
-    console.warn('_popupRenderSheet Unknown filter:', currentFilter);
+    let list = undefined;
+    let label = '';
+    switch (currentFilter) {
+      case 'allVersions':
+        list = groupInfo.allVersions || [];
+        label = 'All Versions';
+        break;
+      case 'recommendations':
+        list = groupInfo.recommendations || [];
+        label = 'Recommendations';
+        break;
+      case 'candidateRecommendations':
+        list = groupInfo.candidateRecommendations || [];
+        label = 'Candidate Recommendations';
+        break;
+      case 'draftStandards':
+        list = groupInfo.draftStandards || [];
+        label = 'Draft Standards';
+        break;
+      case 'retiredSpecs':
+        list = groupInfo.retiredSpecs || [];
+        label = 'Retired Specs';
+        break;
+      case 'otherSpecs':
+        list = groupInfo.otherSpecs || [];
+        label = 'Other Specs';
+        break;
+      default:
+        console.warn('_popupRenderSpecifications Unknown filter:', currentFilter);
+        list = [];
+        label = 'Unknown';
+    }
+    // render the left pane
+    const specificationsTitle = document.querySelector('#specificationsList .title');
+    specificationsTitle.textContents = 'Specifications'
+    const sortButtons = document.querySelectorAll('#specificationsList .sort-btn');
+    sortButtons.forEach(b => {
+      b.disabled = true
+    });
+    const specificationsListContent = document.getElementById('specificationsListContent');
+    specificationsListContent.innerHTML = '';
+    const div = document.createElement('div');
+    div.className = 'list-item selected';
+    div.textContent = label;
+    specificationsListContent.appendChild(div);
+    // render the right pane
+    const versionDetailsContent = document.getElementById('versionDetailsContent');
+    versionDetailsContent.innerHTML = '<p>Select a version to view the detail</p>';
+    // render the center pane
+    _popupRenderVersionsList(list);
   }
-  const firstItem = membersListContent.querySelector('.member-item');
+
+  const firstItem = specificationsListContent.querySelector('.list-item');
   if (firstItem) {
     firstItem.classList.add('selected');
-    if (firstItem.dataset.member) {
-      await _popupRenderParticipantsForMember(groupInfo, firstItem.dataset.member);
-    } else if (firstItem.dataset.afftype) {
-      firstItem.click();
+    if (firstItem.dataset.url) {
+      await _popupRenderVersionsForSpecification(groupInfo, firstItem.dataset.url);
     }
   } else {
-    participantsListContent.innerHTML = '<p style="font-size:14px;padding: 12px; color: #666; font-style: italic;">No items available</p>';
-    userDetailsContent.innerHTML = '<p style="font-size:14px; padding: 12px; color: #666;">Select a participant to view detail</p>';
+    const versionsListContent = document.getElementById('versionsListContent');
+    const versionDetailsContent = document.getElementById('versionDetailsContent');
+    versionsListContent.innerHTML = '<p class="list-item">No version available</p>';
+    versionDetailsContent.innerHTML = '<p>No information</p>';
   }
 }

@@ -1,152 +1,278 @@
 name: Fetch W3C API Data
 
 on:
-  # 毎週日曜日 0:00 UTC に実行（日本時間 9:00）
-  schedule:
-    - cron: '0 0 * * 0'
-  
-  # 手動実行も可能にする
   workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 0'  # 毎週日曜日 0:00 UTC
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: fetch-w3c-data
+  cancel-in-progress: true
 
 jobs:
-  fetch-data:
+  phase1:
     runs-on: ubuntu-latest
-    timeout-minutes: 360  # 6時間でタイムアウト（最大値）
-    
+    timeout-minutes: 360
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+        with:
+         fetch-depth: 0
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      
-      - name: Create data directory
-        run: mkdir -p data
-      
-      - name: Fetch W3C API data
+
+      - name: Remove w3c-data.json to check for release
         run: |
-          echo "[INFO] Fetching ALL W3C groups"
-          node scripts/fetch-w3c-data.js
-      
-      - name: Check for changes
-        id: check_changes
-        run: |
-          echo "=== Checking for file changes ==="
-          ls -la data/
-          echo ""
-          
-          git add data/
-          if git diff --staged --quiet; then
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-            echo "has_release_changes=false" >> $GITHUB_OUTPUT
-            echo "No changes detected"
-          else
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-            CHANGED_FILES=$(git diff --staged --name-only | grep '^data/' || true)
-            echo "Changed files: $CHANGED_FILES"
-            # w3c-data.json以外が変更されていればリリース
-            RELEASE_FILES=$(echo "$CHANGED_FILES" | grep -v 'w3c-data.json' || true)
-            if [ -n "$RELEASE_FILES" ]; then
-              echo "has_release_changes=true" >> $GITHUB_OUTPUT
-            else
-              echo "has_release_changes=false" >> $GITHUB_OUTPUT
-            fi
-            echo ""
-            echo "Change statistics:"
-            git diff --staged --stat
+          if [ -f data/w3c-data.json ]; then
+            rm data/w3c-data.json
           fi
 
-      - name: Commit changes before pull
-        if: steps.check_changes.outputs.has_changes == 'true'
+      - name: Fetch Phase1
+        run: |
+          node scripts/fetch-w3c-data.js --phase1
+          ls -l data/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase1-data
+          path: data
+
+  phase2:
+    needs: phase1
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: phase1-data
+          path: data
+
+      - name: Fetch Phase2
+        run: |
+          node scripts/fetch-w3c-data.js --phase2
+          ls -l data/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase2-data
+          path: data
+
+  phase3:
+    needs: phase2
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: phase2-data
+          path: data
+
+      - name: Fetch Phase3
+        run: |
+          node scripts/fetch-w3c-data.js --phase3
+          ls -l data/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase3-data
+          path: data
+  
+  phase4:
+    needs: phase3
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: phase3-data
+          path: data
+
+      - name: Fetch Phase4
+        run: |
+          node scripts/fetch-w3c-data.js --phase4
+          ls -l data/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase4-data
+          path: data
+  
+  phase5:
+    needs: phase4
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: phase4-data
+          path: data
+
+      - name: Fetch Phase5
+        run: |
+          node scripts/fetch-w3c-data.js --phase5
+          ls -l data/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase5-data
+          path: data
+
+  phase6:
+    needs: phase5
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: phase5-data
+          path: data
+
+      - name: Fetch Phase6
+        run: |
+          node scripts/fetch-w3c-data.js --phase6
+          ls -l data/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase6-data
+          path: data
+
+  release:
+    needs: phase6
+    runs-on: ubuntu-latest
+
+    steps:
+      # リポジトリをチェックアウト
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # phase6 の成果物を取得
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: phase6-data
+          path: data
+
+      # w3c-data.json の存在確認
+      - name: Check w3c-data.json exists
+        id: check_data
+        run: |
+          if [ -f data/w3c-data.json ]; then
+            echo "has_w3c_data=true" >> $GITHUB_OUTPUT
+            echo "w3c-data.json found"
+          else
+            echo "has_w3c_data=false" >> $GITHUB_OUTPUT
+            echo "w3c-data.json not found"
+          fi
+
+      # data/ を commit & push
+      - name: Commit and push data
+        if: steps.check_data.outputs.has_w3c_data == 'true' && github.ref_name == 'main'
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
+          git status
+          git ls-files data/
+          ls -l data/
           git add data/
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "Auto-commit before pull"
-          fi
-      
-      - name: Create Release with data files
-        if: steps.check_changes.outputs.has_release_changes == 'true'
+          git commit --allow-empty -m "Update W3C API data - $(date +'%Y-%m-%d')"
+          git push
+
+      # SHAを取得
+      - name: Get latest commit SHA
+        if: steps.check_data.outputs.has_w3c_data == 'true' && github.ref_name == 'main'
+        id: latest_sha
+        run: |
+          git fetch origin
+          echo "sha=$(git rev-parse origin/main)" >> $GITHUB_OUTPUT
+
+      # Release 作成
+      - name: Create Release 
+        if: steps.check_data.outputs.has_w3c_data == 'true' && github.ref_name == 'main'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG_NAME="data-$(date +'%Y-%m-%d-%H%M%S')"
-          TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
-          
-          echo "=== Creating release with tag: $TAG_NAME ==="
-          echo ""
-          
-          # ファイルを日付付きファイル名でコピー
-          echo "Preparing files with timestamps..."
-          cp data/w3c-groups.json data/w3c-groups-${TIMESTAMP}.json
-          cp data/w3c-participations.json data/w3c-participations-${TIMESTAMP}.json
-          cp data/w3c-affiliations.json data/w3c-affiliations-${TIMESTAMP}.json
-          cp data/w3c-users.json data/w3c-users-${TIMESTAMP}.json
-          cp data/w3c-data.json data/w3c-data-${TIMESTAMP}.json
-          
-          echo "Files to release:"
-          ls -lh data/w3c-*-${TIMESTAMP}.json
-          echo ""
-          
-          # メインのJSONファイルをリリース
-          echo "Creating release..."
+          TAG_NAME="snapshot-$(date +'%Y-%m-%d-%H%M%S')"
+          RELEASE_TITLE="W3C Dash Snapshot - $(date +'%Y-%m-%d %H:%M:%S')"
+
+          echo "Creating release: $TAG_NAME"
+
           gh release create "$TAG_NAME" \
-            data/w3c-groups-${TIMESTAMP}.json \
-            data/w3c-participations-${TIMESTAMP}.json \
-            data/w3c-users-${TIMESTAMP}.json \
-            data/w3c-affiliations-${TIMESTAMP}.json \
-            data/w3c-data-${TIMESTAMP}.json \
-            --title "W3C API Data Snapshot - $(date +'%Y-%m-%d %H:%M:%S')" \
-            --notes "Automated W3C API data snapshot. Each file contains \`_metadata\` with:
-          - **filename**: File name
-          - **lastChecked**: UTC timestamp of the check
-          - **files**: Number of files (optional, only for w3c-data)
-          - **fetchStartTime**: Start time in YYYYMMDD-HHMMSS format (optional)
-          - **duration**: Duration of the fetch operation (optional)
-          - **itemCount**: Number of items in the file (optional)
-          
-          Files included:
-          - **w3c-groups-${TIMESTAMP}.json**: Groups, participations lists of users lists of each group
-          - **w3c-participations-${TIMESTAMP}.json**: Participation details
-          - **w3c-users-${TIMESTAMP}.json**: User details (member participants, IEs, staffs and individual)
-          - **w3c-affiliations-${TIMESTAMP}.json**: Affiliation details
-          - **w3c-data-${TIMESTAMP}.json**: Summary of all the generated/used files in this run."
-          
-          echo ""
+            --target "${{ steps.latest_sha.outputs.sha }}" \
+            --title "$RELEASE_TITLE" \
+            --notes $'Automated W3C Dash snapshot.\n\nThis release is created only when w3c-data.json is created or updated, which indicates a complete and valid data collection run.\n\nThe source archive (zip / tar.gz) contains all generated JSON files under the data/ directory.\n\nEach JSON file includes a _metadata object with filename, lastChecked (UTC), fetchStartTime, duration, and entryCount or itemCount.\n\nFiles generated:\n- w3c-groups.json\n- w3c-participations.json\n- w3c-affiliations.json\n- w3c-users.json\n- w3c-specifications.json\n- w3c-timeline.json\n- w3c-data.json'
+
           echo "✓ Release created: $TAG_NAME"
-          echo ""
-          echo "Release assets:"
-          gh release view "$TAG_NAME" --json assets --jq '.assets[].name'
-          
-          # 一時ファイルを削除
-          rm -f data/w3c-*-${TIMESTAMP}.json
-      
-      - name: Commit and push if changed
-        if: steps.check_changes.outputs.has_changes == 'true'
+
+      # devなのでReleaseしない
+      - name: Skip Release (not main)
+        if: github.ref_name != 'main'
         run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git pull --rebase
-          git commit --allow-empty -m "Update W3C API data - $(date +'%Y-%m-%d')"
-          git push
-      
+          echo "ℹ️ Branch '${{ github.ref_name }}' → Release skipped (main only)." >> $GITHUB_STEP_SUMMARY
+
+      # Summary
       - name: Summary
         run: |
-          echo "### W3C API Data Fetch Complete :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "### W3C API Data Fetch Complete 🚀" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Status**: Success" >> $GITHUB_STEP_SUMMARY
-          echo "- **Has Changes**: ${{ steps.check_changes.outputs.has_changes }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Files in data/**: $(ls -1 data/*.json | wc -l)" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ steps.check_changes.outputs.has_changes }}" == "true" ]; then
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "#### Updated Files:" >> $GITHUB_STEP_SUMMARY
-            echo "- w3c-groups.json" >> $GITHUB_STEP_SUMMARY
-            echo "- w3c-participations.json" >> $GITHUB_STEP_SUMMARY
-            echo "- w3c-affiliations.json" >> $GITHUB_STEP_SUMMARY
-            echo "- w3c-users.json" >> $GITHUB_STEP_SUMMARY
-          fi
+          echo "- **w3c-data.json present**: ${{ steps.check_data.outputs.has_w3c_data }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Files in data/**: $(ls data/*.json 2>/dev/null | wc -l)" >> $GITHUB_STEP_SUMMARY
+

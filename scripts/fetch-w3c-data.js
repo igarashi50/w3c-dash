@@ -1,61 +1,77 @@
 // w3c-fetch-w3c-data.js
-const https = require('https');
-const http = require('http');
-const zlib = require('zlib');
-const fs = require('fs');
 
-// minimist不要: シンプルなフラグ判定
-const VERBOSE = process.argv.includes('--verbose');
+import https from 'node:https';
+import http from 'node:http';
+import zlib from 'node:zlib';
+import fs from 'node:fs';;
+import path from 'node:path';
+import { makeStats, makeTimelineEventData, checkTimelineData } from '../w3c-stats.js';
+
+const forceTestMode = false;   // 本番はこっち
+const forceVerbose = false; // 本番はこちら
+const forceRemakeTimelineJsonFile = false //本番はこちら
+// const forceTestMode = true;   // テスト
+// const forceVerbose = true;  // テスト
+//const forceRemakeTimelineJsonFile = true;    // テスト　for debug, remake the timeline json using data-snapshots files under the 'data-snapshots" directry.
+const isSkipFetchUsersNotInGroups = true // 注意：groupに参加していないparticipantsの多すぎるので、--skipFetchUsersNotInGroupsをつけない限り取得しない。 testModeではparticipationsをgroups参加者に制限するのでUsersもGroups参加者だけになる。githubではtestモードのファイルはcommitもreleaseされないので注意。
+
+const VERBOSE = process.argv.includes('--verbose') || forceVerbose;
+const REMAKE_TIMELINE = process.argv.includes('--remakeTimeline') || forceRemakeTimelineJsonFile;
+
 function logAlways(msg) { console.log(msg); }
 function logVerbose(msg) { if (VERBOSE) console.log(msg); }
 
 // グローバル変数廃止。各Phase関数で都度ファイルロード・ローカル変数化。
-let fetchStartTime = ''; // 取得開始時刻（表示用）
-let fetchStartTimestamp = 0; // 取得開始時刻（タイムスタンプ）p
+let phaseStartTimestamp = 0; // 取得開始時刻（タイムスタンプ）スクリプトの開始、Phaseで変わらない
 let phaseRequestCount = 0; // 各PhaseのfetchJson呼び出し回数
-let phaseStartTimestamp = 0; // 各Phaseの開始時刻
 let totalRequestCount = 0; // 全体のfetchJson呼び出し回数
 let phaseRequestCounts = []; // 各Phaseごとのリクエスト数
 
 function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 // 統一されたリクエスト間隔
-// W3C API制限: 6000 requests per IP every 10 minutes
-// 200ms間隔 = 5 requests/sec = 300 requests/min = 3000 requests/10min (制限の50%使用)
+// W3C API制限: 6000 requests per IP every 10 minutes -> 10 request/sec -> 100ms
+// 200ms間隔 = 5 requests/sec, 300 requests/min = 3000, requests/10min (制限の50%使用)
+// 125ms間隔 = 8 requests/sec, 480 requests/min = 4800, requests/10min (制限の80%使用)
 const REQUEST_INTERVAL = 200;
+let lastRequestTimestamp = 0;   // 最後にRequestした時間
 
-
-forceTestMode = false;   // 本番はこっち
-// forceTestMode = true;   // テストモードフラグ
 // typeごとにshortname配列をまとめる
-const testGroupsOld = [
+const testGroupsListMid = [
   { type: 'wg', shortname: 'css' },
-  //{ type: 'wg', shortname: 'miniapps' },
-  { type: 'wg', shortname: 'did' },
-  { type: 'wg', shortname: 'wot' },
+  { type: 'wg', shortname: 'data-shapes' },
   { type: 'ig', shortname: 'i18n' },
-  //{ type: 'cg', shortname: 'global-inclusion' },
+  { type: 'ig', shortname: 'me' },
+  { type: 'ig', shortname: 'wai' },
+  { type: 'cg', shortname: 'ixml' },
+  { type: 'cg', shortname: 'global-inclusion' },
   { type: 'tf', shortname: 'ab-elected' },
-  { type: 'other', shortname: 'ab' }
 ];
 
-const testGroups = [  // minimal set for quick tests
-  //{type: 'wg', shortname: 'dx'},
+const testGroupsListTiny = [  // minimal set for quick tests
   { type: 'wg', shortname: 'data-shapes' },
   { type: 'ig', shortname: 'wai' },
   { type: 'cg', shortname: 'ixml' },
   { type: 'tf', shortname: 'ab-elected' },
   { type: 'other', shortname: 'ab' },
 ]
-
+const testGroupsList = testGroupsListTiny;
 
 const reGroupsParticipations = /^https:\/\/api\.w3\.org\/groups\/[^\/]+\/[^\/]+\/participations$/;
 const reGroupsUsers = /^https:\/\/api\.w3\.org\/groups\/[^\/]+\/[^\/]+\/users$/;
+const reGroupSpecifications = /^https:\/\/api\.w3\.org\/groups\/[^\/]+\/[^\/]+\/specifications$/;
 const reParticipationsParticipants = /^https:\/\/api\.w3\.org\/participations\/[^\/]+\/participants$/;
 const reUsersAffiliations = /^https:\/\/api\.w3\.org\/users\/[^\/]+\/affiliations$/;
 const reUsersGroups = /^https:\/\/api\.w3\.org\/users\/[^\/]+\/groups$/;
 const reUsers = /^https:\/\/api\.w3\.org\/users\/[^\/]+$/;
 const reAffiliations = /^https:\/\/api\.w3\.org\/affiliations\/[^\/]+$/;
+const reSpecificationsSpec = /^https:\/\/api\.w3\.org\/specifications\/[^\/]+$/;;
+const reSpecificationsSeries = /^https:\/\/api\.w3\.org\/specification-series\/[^\/]+$/;
+const reSpecificationSeriesSpecs = /^https:\/\/api\.w3\.org\/specification-series\/[^\/]+\/specifications$/;
+const reSpecificationsVersionHistory = /^https:\/\/api\.w3\.org\/specifications\/[^\/]+\/versions$/;
+const reSpecificationsSuperseded = /^https:\/\/api\.w3\.org\/specifications\/[^\/]+\/superseded$/;
+const reSpecificationsSupersedes = /^https:\/\/api\.w3\.org\/specifications\/[^\/]+\/supersedes$/;
+const reSpecificationsVersion = /^https:\/\/api\.w3\.org\/specifications\/[^\/]+\/versions\/[^\/]+$/;
 
 function formatDuration(ms) {
   const seconds = Math.floor(ms / 1000);
@@ -71,39 +87,110 @@ function formatDuration(ms) {
   }
 }
 
-async function compareAndWriteJson(dirPath, filename, collectedData) {
-  ;
+
+function splitFilename(filename) {
+  const lastDot = filename.lastIndexOf('.');
+  if (lastDot === -1) {
+    return { body: filename, ext: '' };
+  }
+  return {
+    body: filename.slice(0, lastDot),
+    ext: filename.slice(lastDot + 1)
+  };
+}
+
+function makeFilename(filename, isLatest, isTestMode = false) {
+  const { body, ext } = splitFilename(filename);
+  const latest = isLatest ? "-latest" : "";
+  const test = isTestMode ? "-test" : "";
+
+  return body + test + latest + "." + ext;
+}
+
+function readJsonFile(dirPath, filename) {
   const filePath = `${dirPath}/${filename}`;
-  // 所要時間を計算
-  const duration = Date.now() - fetchStartTimestamp;
-  const durationStr = formatDuration(duration);
-  let hasChanges = false;
+  try {
+    const text = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(text);
+  } catch (e) {
+    if (e.code === 'ENOENT') {
+      return undefined;
+    }
+    throw new Error(`Invalid JSON: ${filename}`, { cause: e });
+  }
+}
+function removeJsonFile(dirPath, filename) {
+  fs.unlinkSync(`${dirPath}/${filename}`);
+}
+function createJsonFile(fileType, dirPath, filename, collectedData, createTime, phaseStartTime, phaseDuration, testGroups = undefined) {
+  try {
+    const finalDataWithMetadata = {
+      _metadata: {
+        fileType,
+        filename: filename,
+        lastChecked: createTime, // HTTP-date, currentTime
+        startTime: phaseStartTime, // HTTP-date
+        duration: phaseDuration,
+        entryCount: Object.keys(collectedData).length, // except _metadata
+        testGroups
+      },
+      ...collectedData
+    };
+
+    const finalContent = JSON.stringify(finalDataWithMetadata, null, 2);
+    const filePath = `${dirPath}/${filename}`;
+    fs.writeFileSync(filePath, finalContent, 'utf8');
+    console.log(`✓ ${filePath} is created.`);
+  } catch (e) {
+    throw e;
+  }
+  return true;
+}
+
+function compareWithLatestAndWriteJsonFile(fileType, dirPath, filename, collectedData, isTestMode) {
+  const metadata = collectedData._metadata;
+  const testGroups = metadata.testGroups;
+  const phaseStartTime = metadata.startTime;
+  const phaseDuration = metadata.duration;
   let mergedData = {};
+  let isNotFound = false;
+  let changedCount = 0;
+  const isTimeline = fileType == "timeline";
+
+  const currFilename = makeFilename(filename, false, isTestMode);  // isLatest=false
   try {
     // 既存ファイルがあれば比較
-    if (fs.existsSync(filePath)) {
-      const prevContent = fs.readFileSync(filePath, 'utf8');
-      const prevJson = JSON.parse(prevContent);
-      const prevData = { ...prevJson };
-      delete prevData._metadata;
+    const currData = readJsonFile(dirPath, currFilename);
+    isNotFound = currData == undefined;
+    // the other json files
+    if (isNotFound) {
+      // 既存ファイルなければ、新しいデータをそのまま記録
+      delete collectedData._metadata; // メタデータは新規につけるのでいらない
+      // sortする
+      Object.keys(collectedData).sort().forEach(k => { mergedData[k] = collectedData[k]; });
+    } else {
+      delete currData._metadata; // metadataは保続比較しない
       // キーごとに比較し、dataが同じなら古いfetchedAtを引き継ぐ
-      const newData = { ...collectedData };
-      delete newData._metadata;
-      const allKeys = Array.from(new Set([...Object.keys(prevData), ...Object.keys(newData)]));
-      let changedCount = 0;
+      const newData = { ...collectedData };  // copy
+      delete newData._metadata; // metadataは除く、比較しない
+      const allKeys = Array.from(new Set([...Object.keys(currData), ...Object.keys(newData)]));
       for (const k of allKeys.sort()) {
-        const prevEntry = prevData[k];
+        const currEntry = currData[k];
         const newEntry = newData[k];
         // どちらも存在する場合のみdata比較
-        if (prevEntry && newEntry && prevEntry.data && newEntry.data) {
-          // fetchedAtを除いたdataで比較
-          const prevDataStripped = JSON.stringify(prevEntry.data);
-          const newDataStripped = JSON.stringify(newEntry.data);
-          if (prevDataStripped === newDataStripped) {
-            // dataが同じなら古いfetchedAtとlastModifiedを使う
-            mergedData[k] = { ...newEntry, fetchedAt: prevEntry.fetchedAt, lastModified: prevEntry.lastModified };
+        if (currEntry && newEntry && currEntry.data && newEntry.data) {
+          const stripFetchedAt = (entry) => {
+            const { fetchedAt, ...rest } = entry;
+            return rest;
+          };
+          // 比較ではfetchedAtは除く
+          const currDataStripped = JSON.stringify(stripFetchedAt(currEntry));
+          const newDataStripped = JSON.stringify(stripFetchedAt(newEntry));
+          if (currDataStripped === newDataStripped) {
+            // dataが同じなら古いEntryを使う
+            mergedData[k] = currEntry;
           } else {
-            // dataが違う場合は新しいまま
+            // dataが違う場合は新しいEntryを使う
             mergedData[k] = newEntry;
             changedCount++;
           }
@@ -112,46 +199,47 @@ async function compareAndWriteJson(dirPath, filename, collectedData) {
           mergedData[k] = newEntry;
           changedCount++;
         } else {
-          // 削除（古い方にはあるが、新しい方にはない）ー＞mergedDataに入れない
-          changedCount++
+          // 古い方にはあるが、新しい方にはない
+          if (isTimeline) {　// timelineでは古いものを新しい方に追加
+            mergedData[k] = currEntry;
+          } // timelineでなければ削除（）ー＞mergedDataに入れない
+          changedCount++;
         }
       }
-      hasChanges = changedCount > 0;
-    } else {
-      // 既存ファイルがなければ新規
-      Object.keys(collectedData).sort().forEach(k => { mergedData[k] = collectedData[k]; });
-      hasChanges = true;
     }
-    // _metadataは後で付与
   } catch (e) {
-    console.error(`Failed to write ${filePath}: ${e.message}`);
-    return false; // not finished
+    throw e;
   }
-  // データが変わっていない場合はファイル保存を行わない
-  if (!hasChanges) {
-    console.log(`✓ No changes detected: ${filePath} not updated.`);
+
+  if (isTimeline) {
+    // The timeline json file
+    if (isNotFound) {
+      console.log(`✓  Not found, create ${currFilename}.`);
+    } else {
+      console.log(`✓  Append new Timeline Event to ${currFilename}.`);
+    }
   } else {
-    const finalDataWithMetadata = {
-      _metadata: {
-        filename: filename,
-        lastChecked: new Date(fetchStartTimestamp).toUTCString(), // HTTP-date
-        fetchStartTime: fetchStartTime,
-        duration: durationStr,
-        itemCount: Object.keys(mergedData).length
-      },
-      ...mergedData
-    };
-    const finalContent = JSON.stringify(finalDataWithMetadata, null, 2);
-    fs.writeFileSync(filePath, finalContent, 'utf8');
-    console.log(`✓ File updated with data changes: ${filePath}`);
+    // Fetched data json files.
+    if (isNotFound) {
+      console.log(`✓  Not found, create ${currFilename}.`);
+    } else {
+      if (changedCount == 0) {
+        console.log(`✓  no entry changed, no update ${currFilename}.`);
+        return 0;
+      }
+      console.log(`✓ ${changedCount} entries changed, update ${currFilename}.`);
+    }
   }
-  return true;  // finished
-};
+  const createTime = new Date(Date.now()).toUTCString();
+  createJsonFile(fileType, dirPath, currFilename, mergedData, createTime, phaseStartTime, phaseDuration, testGroups); // throw error
+  return changedCount;
+}
 
 function fetchJson(url, retries = 6, backoffMs = 60000, timeoutMs = 180000, redirects = 5, verbose = false) {
   phaseRequestCount++;
   totalRequestCount++;
-  return new Promise((resolve, reject) => {
+
+  return new Promise(async (resolve, reject) => {
     try {
       const target = new URL(url);
       const lib = target.protocol === 'http:' ? http : https;
@@ -162,8 +250,25 @@ function fetchJson(url, retries = 6, backoffMs = 60000, timeoutMs = 180000, redi
         'User-Agent': 'curl/8.0.1'
       };
 
+      // adjust interval not to less than REQUEST_INTERVAL
+      let requestTimestamp = Date.now();
+      let requestInterval = requestTimestamp - lastRequestTimestamp;
+      const sleepMs = REQUEST_INTERVAL - requestInterval;
+      if (sleepMs > 0) {
+        await sleep(sleepMs);
+        requestTimestamp = Date.now()
+        requestInterval = requestTimestamp - lastRequestTimestamp;
+        if (verbose) { console.log(`    [INFO] interval ${requestInterval}ms sleep ${sleepMs}ms`); }
+      } else {
+        if (verbose) { console.log(`    [INFO] interval ${requestInterval}ms over ${-sleepMs} ms`); }
+      }
+      lastRequestTimestamp = requestTimestamp
+
+
       if (verbose) console.log(`    [REQUEST] ${url}`);
       const req = lib.get(url, { headers, timeout: timeoutMs }, res => {
+        const responseTime = Date.now() - requestTimestamp
+
         if (res.statusCode >= 300 && res.statusCode < 400 && redirects > 0 && res.headers.location) {
           const next = new URL(res.headers.location, url).toString();
           res.resume();
@@ -181,7 +286,7 @@ function fetchJson(url, retries = 6, backoffMs = 60000, timeoutMs = 180000, redi
             const status = res.statusCode;
             const clen = res.headers['content-length'] || raw.length;
             const lastModified = res.headers['last-modified'] || '';
-            console.log(`    [RESPONSE] status=${status} content-length=${clen} last-modified=${lastModified}`);
+            console.log(`    [RESPONSE] responseTime=${responseTime}ms status=${status} content-length=${clen} last-modified=${lastModified}`);
           }
 
           // HTTPエラー時はレスポンスボディも記録
@@ -196,7 +301,7 @@ function fetchJson(url, retries = 6, backoffMs = 60000, timeoutMs = 180000, redi
             // 5xx系はリトライ対象
             if (res.statusCode >= 500 && res.statusCode < 600 && retries > 0) {
               const retryNum = 7 - retries;
-              const msg = `[RETRY] ${url} (HTTP ${res.statusCode}) (${retryNum}/6) wait ${backoffMs}ms`;
+              const msg = `[RETRY] responseTime=${responseTime}ms status=${res.statusCode} retry:(${retryNum}/6) wait ${backoffMs}ms`;
               if (verbose) {
                 console.warn(msg + ` [RESPONSE BODY]`);
               } else {
@@ -311,8 +416,7 @@ async function fetchApiData(startUrl, verbose = false) {
   let page = 1; // 初期ページ
   let lastModified = null;
   while (url) {
-    let fetchStart = Date.now();
-    let fetchEnd;
+
     try {
       const result = await fetchJson(url, 6, 60000, 120000, 5, verbose);
       if (result.data == undefined) {
@@ -337,15 +441,7 @@ async function fetchApiData(startUrl, verbose = false) {
     } catch (err) {
       console.log(`    [ERROR] fetchApiData error for ${url}: ${JSON.stringify(err).substring(0, 200)}`);
       throw (err);
-    } finally {
-      fetchEnd = Date.now();
     }
-    const elapsed = fetchEnd - fetchStart;
-    const sleepMs = REQUEST_INTERVAL - elapsed;
-    if (sleepMs > 0) {
-      await sleep(sleepMs);
-    }
-    if (verbose) { console.log(`    [INFO] elapsed ${elapsed}ms  sleep ${sleepMs}ms`); }
   }
 
   let data = undefined;
@@ -403,7 +499,7 @@ async function fetchApiData(startUrl, verbose = false) {
     data: data,
   };
 
-  return ret
+  return ret;
 }
 
 
@@ -490,6 +586,14 @@ async function fetchTypeGroups(type, testGroupShortNames = null) {
           }
           urls.add(usersHref);
         }
+        const specsHref = data._links?.specifications?.href;
+        if (specsHref) {  // // https://api.w3.org/groups/{type}/{shortname}/specifications
+          if (!reGroupSpecifications.test(specsHref)) {
+            console.warn(`Warning: Unexpected groups specifications URL format: ${specsHref}`);
+          }
+          urls.add(specsHref);
+        }
+
         if (VERBOSE) console.log(`    ✓ Group data fetched from ${groupHref}`);
         fetchedCount++;
       } catch (e) {
@@ -530,15 +634,17 @@ async function fetchTypeGroups(type, testGroupShortNames = null) {
     }
     // 100件ごとにProgress
     if (fetchCount % 100 === 0 || i === groupsArray.length - 1) {
-      const duration = Date.now() - fetchStartTimestamp;
+      const duration = Date.now() - phaseStartTimestamp;
       console.log(`    --- Progress: ${i + 1}/${groupsArray.length} fetches (${formatDuration(duration)})`);
     }
   }
-  console.log(`✓ Finished: Fetched ${fetchedCount}/${fetchCount} groups data (Errors: ${errorCount})`);
+  console.log(`✓ Finished: Fetched ${fetchedCount}/${fetchCount} groups data (Errors: ${errorCount}) CollectedTypeGroupsData entries:`, Object.keys(collectedTypeGroupsData).length);
   return collectedTypeGroupsData;
 }
 
-async function fetchParticipations(collectedGroupsData, collectedParticipationsData) {
+async function fetchParticipations(collectedGroupsData) {
+  const collectedParticipationsData = {}
+
   console.log('Start fetching Participations');
   // w3c-groups.jsonから全participationsのリストを抽出
   const allParticipationsSet = new Set();
@@ -599,7 +705,7 @@ async function fetchParticipations(collectedGroupsData, collectedParticipationsD
 
     // 進捗表示（100件ごと, 最後の1件）
     if (i % 100 === 0 || i === allParticipationsArray.length - 1) {
-      const duration = Date.now() - fetchStartTimestamp;
+      const duration = Date.now() - phaseStartTimestamp;
       console.log(`    --- Progress: ${i + 1}/${allParticipationsArray.length} fetches (${formatDuration(duration)}) ---`);
     }
   }
@@ -647,7 +753,7 @@ async function fetchParticipations(collectedGroupsData, collectedParticipationsD
 
     // 進捗表示（100件ごと, 最後の1件）
     if (i % 100 === 0 || i === participationsArray.length - 1) {
-      const duration = Date.now() - fetchStartTimestamp;
+      const duration = Date.now() - phaseStartTimestamp;
       console.log(`    --- Progress: ${i + 1}/${participationsArray.length} fetches (${formatDuration(duration)}) ---`);
     }
   }
@@ -682,93 +788,12 @@ async function fetchParticipations(collectedGroupsData, collectedParticipationsD
     collectedParticipationsData[participantsHref] = dataEntry;
     // 進捗表示（100件ごと, 最後の1件）
     if (i % 100 === 0 || i === participantsArray.length - 1) {
-      const duration = Date.now() - fetchStartTimestamp;
+      const duration = Date.now() - phaseStartTimestamp;
       console.log(`    --- Progress: ${i + 1}/${participantsArray.length} fetches (${formatDuration(duration)}) ---`);
     }
   }
-  console.log(`✓ Finished: Fetched ${fetchedCount}/${fetchCount} participations data (Errors: ${errorCount})`);
+  console.log(`✓ Finished: Fetched ${fetchedCount}/${fetchCount} participations data (Errors: ${errorCount}) CollectedParticipationsData entries:`, Object.keys(collectedParticipationsData).length);
   return collectedParticipationsData;
-}
-
-async function fetchUsers(collectedGroupsData, collectedParticipationsData) {
-  console.log('Start fetching Users');
-
-  // groupsの/usersエンドポイントからもユーザーURLを抽出, これはCGの個人参加の人、例外のIGのメンバーも含まれる
-  const usersFromGroups = new Set();
-  if (collectedGroupsData) {
-    for (const url in collectedGroupsData) {
-      if (!reGroupsUsers.test(url)) {
-        // console.log(`Skipping non-/users URL: ${url}`);
-        continue;
-      }
-      const entry = collectedGroupsData[url];
-      if (!entry || !entry.data) continue;
-      const data = entry.data;
-      // links.usersがある場合はそのhrefを追加
-      if (data._links && data._links.users) {
-        const users = data._links.users;
-        if (Array.isArray(users)) {
-          // https://api.w3.org/users/{hash}
-          for (const user of users) {
-            if (user && user.href) {
-              usersFromGroups.add(user.href);
-            }
-          }
-        } else if (users && typeof users === 'object') {
-          for (const user of Object.values(users)) {
-            if (user && user.href) {
-              usersFromGroups.add(user.href);
-            }
-          }
-        }
-      }
-    }
-  }
-  // participationsから全てのユーザーを抽出、Groupsに参加する組織メンバーは取得
-  const usersFromParticipants = new Set();
-  for (const url in collectedParticipationsData) {
-    const entry = collectedParticipationsData[url];
-    if (!entry || !entry.data) continue;
-    const data = entry.data;
-    // links.userがある場合はそのhrefを追加
-
-    if (data._links && data._links.user && data._links.user.href) {
-      // https://api.w3.org/users/${hash}
-      usersFromParticipants.add(data._links.user.href);
-    }
-
-    // /participantsで終わる場合はparticipantsの中のhrefが/users/で始まるものだけ追加
-    if (url.endsWith('/participants') && data._links && data._links.participants) {
-      const participants = data._links.participants;
-      if (Array.isArray(participants)) {
-        // e.g. https://api.w3.org/users/${hash}
-        for (const participant of participants) {
-          if (participant && participant.href) {
-            usersFromParticipants.add(participant.href);
-          }
-        }
-      } else if (participants && typeof participants === 'object') {
-        // e.g. https://api.w3.org/users/${hash}
-        for (const participant of Object.values(participants)) {
-          if (participant && participant.href) {
-            usersFromParticipants.add(participant.href);
-          }
-        }
-      }
-    }
-  }
-
-  // 抽出した全ユーザーURLを配列化してfetch
-  console.log('Found users from groups: ' + usersFromGroups.size);
-  console.log('Found users from participations: ' + usersFromParticipants.size);
-  const allUsers = new Set([
-    ...usersFromGroups,
-    ...usersFromParticipants,
-  ]);
-
-  let collectedUsersData = await fetchUsersData(allUsers);
-
-  return collectedUsersData;
 }
 
 async function fetchUsersData(allUsers) {
@@ -852,12 +877,12 @@ async function fetchUsersData(allUsers) {
     }
     // 進捗表示（100件ごと、または最後）
     if (i % 100 === 0 || i === allUsersArray.length - 1) {
-      console.log(`    --- Progress: ${i + 1}/${allUsersArray.length} user data (${formatDuration(Date.now() - fetchStartTimestamp)})`);
+      console.log(`    --- Progress: ${i + 1}/${allUsersArray.length} user data (${formatDuration(Date.now() - phaseStartTimestamp)})`);
     }
   }
   // 取得したuserAfflicationsのURLからafflicationの情報をfetch
   const userAfflicationsArray = Array.from(userAfflications);
-  console.log(`Found ${userAfflicationsArray.length} user affiliations to fetch`);
+  console.log(`Found ${userAfflicationsArray.length} users extracted from affiliations`);
   for (let i = 0; i < userAfflicationsArray.length; i++) {
     const affHref = userAfflicationsArray[i];
     let dataEntry = {
@@ -884,7 +909,7 @@ async function fetchUsersData(allUsers) {
     collectedUsersData[affHref] = dataEntry;
 
     if (fetchCount % 100 === 0 || i === userAfflicationsArray.length - 1) {
-      const duration = Date.now() - fetchStartTimestamp;
+      const duration = Date.now() - phaseStartTimestamp;
       console.log(`    --- Progress: ${i + 1}/${userAfflicationsArray.length} user affiliations (${formatDuration(duration)})`);
     }
   }
@@ -918,111 +943,68 @@ async function fetchUsersData(allUsers) {
     collectedUsersData[groupHref] = dataEntry;
 
     if (fetchCount % 100 === 0 || i === userGroupsArray.length - 1) {
-      const duration = Date.now() - fetchStartTimestamp;
+      const duration = Date.now() - phaseStartTimestamp;
       console.log(`    --- Progress: ${i + 1}/${userGroupsArray.length} groups (${formatDuration(duration)})`);
     }
   }
 
-  console.log(`✓ Finished: Fetched ${fetchedCount}/${fetchCount} users data (Errors: ${errorCount})`);
+  console.log(`✓ Finished: Fetched ${fetchedCount}/${fetchCount} users data (Errors: ${errorCount}) CollectedUsersData entries:`, Object.keys(collectedUsersData).length);
   return collectedUsersData;
 }
 
-async function fetchAffiliations(collectedParticipationsData, collectedUsersData, isTestMode) {
+async function fetchAffiliations(collectedParticipationsData = undefined) {
   console.log('start fetching Affiliations');
   // 戻り値のaffiliationsデータ格納用オブジェクトを初期化
   let collectedAffiliationsData = {};
-
-  // 1. participationsからorganization affiliationを抽出
-  const affiliationsFromParticipations = new Set();
-  for (const url in collectedParticipationsData) {
-    if (url.endsWith('/participants')) continue; // participantsのデータは除外
-    const entry = collectedParticipationsData[url];
-    if (!entry || !entry.data) continue;
-    const data = entry.data;
-    if (data._links && data._links.organization && data._links.organization.href) {
-      affiliationsFromParticipations.add(data._links.organization.href);
-    }
-  }
-  console.log(`Found ${affiliationsFromParticipations.size} affiliations from participations`);
-
-  // 2. usersのaffiliationsエンドポイントから_links.affiliations配下のhrefを抽出（配列・オブジェクト両対応）
-  const affiliationsFromUsers = new Set();
-  for (const url in collectedUsersData) {
-    if (!url.endsWith('/affiliations')) continue; // affiliationsのデータのみ対象
-    const entry = collectedUsersData[url];
-    // 2重構造対応: { [url]: { [url]: { data: ... } } } の場合も考慮
-    let data = entry && entry.data;
-    if (!data && entry && typeof entry === 'object') {
-      // 2重構造: entry[url].
-      if (entry[url] && entry[url].data) {
-        data = entry[url].data;
-      }
-    }
-    if (!data) continue;
-    if (data._links && data._links.affiliations) {
-      const affiliations = data._links.affiliations;
-      if (Array.isArray(affiliations)) {
-        for (const aff of affiliations) {
-          if (aff && aff.href) {
-            affiliationsFromUsers.add(aff.href);
-          }
-        }
-      } else if (typeof affiliations === 'object') {
-        for (const key of Object.keys(affiliations)) {
-          const aff = affiliations[key];
-          if (aff && aff.href) {
-            affiliationsFromUsers.add(aff.href);
-          }
-        }
-      }
-    }
-  }
-  console.log(`Found ${affiliationsFromUsers.size} affiliations from users`);
-
-  const combiedAffiliations = new Set([...affiliationsFromParticipations, ...affiliationsFromUsers]);
-  console.log(`Combined affiliations from participations and users: ${combiedAffiliations.size}`);
-
-  // フェッチの開始
   let fetchCount = 0, fetchedCount = 0, errorCount = 0;
-  let affiliationsArray = [];
-  if (isTestMode) {
-    // console.log('Running in TEST mode - fetching only affiliations found from participations and users');
-    // affiliationsArray = Array.from(combiedAffiliations);
-    console.log('Running in TEST mode - fetching only affiliations found from participations');  // membersとIEのみ、indivaidualのaffiliationsはfetchしない
+
+  // affiliationsリストをfetchして全affiliationsのURLを取得
+  const affUrl = `https://api.w3.org/affiliations/`;
+  let dataEntry = {
+    fetchedAt: new Date().toUTCString(), // HTTP-date形式
+    lastModified: undefined,
+    data: undefined
+  }
+  let affiliationsArrayFromList = [];
+  console.log(`Fetching the list of all affiliations: ${affUrl}, this may take a few minutes`);
+  try {
+    fetchCount++;
+    const { lastModified, data } = await fetchApiData(affUrl, VERBOSE);
+    dataEntry.lastModified = lastModified;
+    dataEntry.data = data;
+    for (const affiliation of data._links.affiliations) {
+      affiliationsArrayFromList.push(affiliation.href);
+    }
+    if (VERBOSE) console.log(`    ✓ the affiliation list fetched`);
+    fetchedCount++;
+  } catch (e) {
+    if (VERBOSE) {
+      console.warn(`error fetching the affiliation list ${affUrl}: ${String(e)}`);
+    }
+    errorCount++;
+
+    dataEntry.data = { error: String(e) };
+  }
+  collectedAffiliationsData[affUrl] = dataEntry;
+
+  // 4. フェッチするaffiliationsリストを決定
+  console.log(`Found ${affiliationsArrayFromList.length} affiliations from the affiliation list`);
+  let affiliationsArray = affiliationsArrayFromList;
+
+  if (collectedParticipationsData) {
+    // participationsからorganization affiliationを抽出,  users(indivisuals)のaffilicationはTestModeでは取得されないので注意。
+    const affiliationsFromParticipations = new Set();
+    for (const url in collectedParticipationsData) {
+      if (url.endsWith('/participants')) continue; // participantsのデータは除外
+      const entry = collectedParticipationsData[url];
+      if (!entry || !entry.data) continue;
+      const data = entry.data;
+      if (data._links && data._links.organization && data._links.organization.href) {
+        affiliationsFromParticipations.add(data._links.organization.href);
+      }
+    }
     affiliationsArray = Array.from(affiliationsFromParticipations);
-  } else {
-    // 3. affiliationsリストをfetchして全affiliationsのURLを取得
-    const affUrl = `https://api.w3.org/affiliations/`;
-    let dataEntry = {
-      fetchedAt: new Date().toUTCString(), // HTTP-date形式
-      lastModified: undefined,
-      data: undefined
-    }
-    let affiliationsArrayFromList = [];
-    console.log(`Fetching the list of all affiliations: ${affUrl}, this may take a few minutes`);
-    try {
-      fetchCount++;
-      const { lastModified, data } = await fetchApiData(affUrl, VERBOSE);
-      dataEntry.lastModified = lastModified;
-      dataEntry.data = data;
-      for (const affiliation of data._links.affiliations) {
-        affiliationsArrayFromList.push(affiliation.href);
-      }
-      if (VERBOSE) console.log(`    ✓ the affiliation list fetched`);
-      fetchedCount++;
-    } catch (e) {
-      if (VERBOSE) {
-        console.warn(`error fetching the affiliation list ${affUrl}: ${String(e)}`);
-      }
-      errorCount++;
-
-      dataEntry = { error: String(e) };
-    }
-    collectedAffiliationsData[affUrl] = dataEntry;
-
-    // 4. フェッチするaffiliationsリストを決定
-    console.log(`Found ${affiliationsArrayFromList.length} affiliations from the affiliation list`);
-    affiliationsArray = affiliationsArrayFromList;
+    console.log(`Found ${affiliationsArray.length} affiliations from participations`);
   }
 
   // 5. affiliationsをfetch
@@ -1061,12 +1043,12 @@ async function fetchAffiliations(collectedParticipationsData, collectedUsersData
     collectedAffiliationsData[affHref] = dataEntry
 
     if (i % 100 === 0 || i === affiliationsArray.length - 1) {
-      const duration = Date.now() - fetchStartTimestamp;
+      const duration = Date.now() - phaseStartTimestamp;
       console.log(`    --- Progress: ${i + 1}/${affiliationsArray.length} affiliations (${formatDuration(duration)})`);
     }
   }
 
-  // groupに参加していないMPをPhase4で読むためにはAfflicationsのparticipationのurlもe.g. https://api.w3.org/affiliations/1057/participants"読んでデータを保存する
+  // Afflicationsのparticipationのurlもe.g. https://api.w3.org/affiliations/1057/participants"読んでデータを保存する
   const participantsArray = Array.from(participantsFromAffiliations);
   console.log(`Found ${participantsArray.length} affiliation participants to fetch`);
   for (let i = 0; i < participantsArray.length; i++) {
@@ -1096,19 +1078,88 @@ async function fetchAffiliations(collectedParticipationsData, collectedUsersData
     collectedAffiliationsData[participantsHref] = dataEntry;
 
     if (fetchCount % 100 === 0 || i === participantsArray.length - 1) {
-      const duration = Date.now() - fetchStartTimestamp;
+      const duration = Date.now() - phaseStartTimestamp;
       console.log(`    --- Progress: ${i + 1}/${participantsArray.length} affiliation participants (${formatDuration(duration)})`);
     }
   }
 
-  console.log(`✓ Finished: Fetched ${fetchedCount}/${fetchCount} affiliations data (Errors: ${errorCount})`);
+  console.log(`✓ Finished: Fetched ${fetchedCount}/${fetchCount} affiliations data (Errors: ${errorCount}) CollectedAffiliationsData entries:`, Object.keys(collectedAffiliationsData).length);
   return collectedAffiliationsData;
 }
 
-async function fetchUsersWhoAreNotInGroups(collectedAffiliationsData, collectedUsersData, isSkipFetchUsersNotInGroups) {
-  console.log('Start fetching Users who are not in any Groups');
+async function fetchUsers(collectedGroupsData, collectedParticipationsData, collectedAffiliationsData) {
+  console.log('Start fetching Users');
+
+  // groupsの/usersエンドポイントからもユーザーURLを抽出, これはCGの個人参加の人、例外のIGのメンバーも含まれる
+  const usersFromGroups = new Set();
+  if (collectedGroupsData) {
+    for (const url in collectedGroupsData) {
+      if (!reGroupsUsers.test(url)) {
+        // console.log(`Skipping non-/users URL: ${url}`);
+        continue;
+      }
+      const entry = collectedGroupsData[url];
+      if (!entry || !entry.data) continue;
+      const data = entry.data;
+      // links.usersがある場合はそのhrefを追加, これはindivisuals
+      if (data._links && data._links.users) {
+        const users = data._links.users;
+        if (Array.isArray(users)) {
+          // https://api.w3.org/users/{hash}
+          for (const user of users) {
+            if (user && user.href) {
+              usersFromGroups.add(user.href);
+            }
+          }
+        } else if (users && typeof users === 'object') {
+          for (const user of Object.values(users)) {
+            if (user && user.href) {
+              usersFromGroups.add(user.href);
+            }
+          }
+        }
+      }
+    }
+  }
+  console.log('Found users from groups: ' + usersFromGroups.size);
+
+  // patticipationsから全てのユーザーを抽出、Groupsに参加する組織メンバーは取得
+  const usersFromParticipations = new Set();
+  for (const url in collectedParticipationsData) {
+    const entry = collectedParticipationsData[url];
+    if (!entry || !entry.data) continue;
+    const data = entry.data;
+    // links.userがある場合はそのhrefを追加
+
+    if (data._links && data._links.user && data._links.user.href) {
+      // https://api.w3.org/users/${hash}
+      usersFromParticipations.add(data._links.user.href);
+    }
+
+    // /participantsで終わる場合はparticipantsの中のhrefが/users/で始まるものだけ追加, member participations or IEs
+    if (url.endsWith('/participants') && data._links && data._links.participants) {
+      const participants = data._links.participants;
+      if (Array.isArray(participants)) {
+        // e.g. https://api.w3.org/users/${hash}
+        for (const participant of participants) {
+          if (participant && participant.href) {
+            usersFromParticipations.add(participant.href);
+          }
+        }
+      } else if (participants && typeof participants === 'object') {
+        // e.g. https://api.w3.org/users/${hash}
+        for (const participant of Object.values(participants)) {
+          if (participant && participant.href) {
+            usersFromParticipations.add(participant.href);
+          }
+        }
+      }
+    }
+  }
+  console.log('Found users from participations: ' + usersFromParticipations.size);
+
   // collectedAffiliationsDataから全参加者(users)を抽出
-  const userHrefsFromAffiliations = new Set();
+  const usersFromAffiliations = new Set();
   for (const url in collectedAffiliationsData) {
     // urlはhttps://api.w3.org/affiliations/{hash}の形式
     if (!reAffiliations.test(url)) continue;
@@ -1131,13 +1182,13 @@ async function fetchUsersWhoAreNotInGroups(collectedAffiliationsData, collectedU
           if (Array.isArray(participants)) {
             for (const participant of participants) {
               if (participant && participant.href) {
-                userHrefsFromAffiliations.add(participant.href);
+                usersFromAffiliations.add(participant.href);
               }
             }
           } else if (participants && typeof participants === 'object') {
             for (const participant of Object.values(participants)) {
               if (participant && participant.href) {
-                userHrefsFromAffiliations.add(participant.href);
+                usersFromAffiliations.add(participant.href);
               }
             }
           }
@@ -1147,59 +1198,622 @@ async function fetchUsersWhoAreNotInGroups(collectedAffiliationsData, collectedU
       }
     }
   }
-  console.log(`Total users extracted from affiliations: ${userHrefsFromAffiliations.size}`);
-  // collectedUsersDataから全ユーザーを抽出
-  const userHrefsFromUsers = new Set(Object.keys(collectedUsersData).filter(href => reUsers.test(href)));
-  console.log(`Users who are in any groups (i.e. already fetched users)): ${userHrefsFromUsers.size}`);
-  // affiliationsから抽出したユーザーのうち、collectedUsersDataに存在しないユーザーを抽出
-  const userHrefsWhoAreNotInGroups = new Set([...userHrefsFromAffiliations].filter(x => !userHrefsFromUsers.has(x)));
-  console.log(`Users who are not in any groups (i.e. not yet fetched users): ${userHrefsWhoAreNotInGroups.size}`);
-  let fetchUserHrefs = Array.from(userHrefsWhoAreNotInGroups);
+  console.log(`Found users from affiliations: ${usersFromAffiliations.size}`);
 
+  const usersInGroups = new Set([...usersFromGroups, ...usersFromParticipations])
+  console.log('usersInGroup(i.e. users extracted in groups or participations:', usersInGroups.size)
+  const usersNotInGroups = new Set([...usersFromAffiliations].filter(x => !usersFromParticipations.has(x)));
+  console.log('usersNotInGroup(i.e. users in neither groups nor participations:', usersNotInGroups.size)
+
+  let fetchUsers = usersFromParticipations;
   if (isSkipFetchUsersNotInGroups) {
-    console.log('--- isSkipFetchUsersNotInGroups = true');
-    return collectedUsersData
+    console.log('--- isSkipFetchUsersNotInGroups = true, fetch UsersData only groupParticipations');
+    fetchUsers = usersInGroups;
   }
 
-  // 抽出したユーザーをfetch    
-  let additionalUsersData = await fetchUsersData(fetchUserHrefs);
-  const newCollectedUsersData = { ...collectedUsersData, ...additionalUsersData };
-  console.log(`Total users data collected after merging users who are not in any Groups: ${newCollectedUsersData.length}`);
+  const fetchUserHrefs = Array.from(fetchUsers);
+  console.log("users to fetch:", fetchUserHrefs.length);
 
-  return newCollectedUsersData;
+  let collectedUsersData = await fetchUsersData(fetchUserHrefs);
+
+  return collectedUsersData
 }
 
 
-async function phase1_fetchGroups(dirPath, groupsFilename, isTestMode) {
-  const groupsFilePath = dirPath + '/' + groupsFilename;
+// global counters
+let fetchCount = 0;
+let fetchedCount = 0;
+let errorCount = 0;
+async function fetchCollectionDataAndUrlsSet(urlSet, processFunction) {
+  const urlArray = Array.from(urlSet);
+  let collectedData = {};
+  let collectedUrlsSetList = [];
+  for (let i = 0; i < urlArray.length; i++) {
+    const url = urlArray[i];
+    if (VERBOSE) console.log(`[${i + 1}/${urlArray.length}] Fetching: ${url}`);
+    const { dataEntry, collectedUrlsArrayList } = await fetchDataEntryAndUrls(url, processFunction);
+    collectedData[url] = dataEntry;
+    // create set for each urlsArray
+    for (const [index, urlsArray] of collectedUrlsArrayList.entries()) {
+      if (!collectedUrlsSetList[index]) {
+        collectedUrlsSetList[index] = new Set();
+      }
+      for (const u of urlsArray) {
+        collectedUrlsSetList[index].add(u);
+      }
+    }
+    if (VERBOSE) console.log(`    ✓ data fetched`);
+    if (i % 100 === 0 || i === urlArray.length - 1) {
+      const duration = Date.now() - phaseStartTimestamp;
+      console.log(`    --- Progress: ${i + 1}/${urlArray.length} (${formatDuration(duration)})`);
+    }
+  }
+  return { collectedData, collectedUrlsSetList };
+}
+
+async function fetchDataEntryAndUrls(url, processFunction) {
+  let dataEntry = {
+    fetchedAt: new Date().toUTCString(), // HTTP-date形式
+    lastModified: undefined,
+    data: undefined
+  }
+  let collectedUrlsArrayList = []
+  try {
+    fetchCount++;
+
+    const { lastModified, data } = await fetchApiData(url, VERBOSE);
+    dataEntry.lastModified = lastModified;
+    dataEntry.data = data;
+
+    collectedUrlsArrayList = processFunction(url, data);
+
+    fetchedCount++;
+  } catch (e) {
+    if (VERBOSE) {
+      console.warn(`error fetching ${url}: ${String(e)}`);
+    }
+    errorCount++;
+
+    dataEntry.data = { error: String(e) };
+  }
+  return { dataEntry: dataEntry, collectedUrlsArrayList: collectedUrlsArrayList }
+}
+
+function processSpecificationLinks(url, data) {
+  const seriesUrls = [];
+  const versionHistoryUrls = [];
+  const supercededUrls = [];
+  const supercedesUrls = [];
+  if (data?._links) {
+    const links = data._links;
+    if (links.series?.href) {
+      const seriesUrl = links.series.href;
+      if (!reSpecificationsSeries.test(seriesUrl)) {  // https://api.w3.org/specification-series/${short}
+        console.log(`  → Warning illegal specification series URL: ${seriesUrl} at ${url}`);
+      }
+      seriesUrls.push(seriesUrl);
+    }
+    if (links['version-history']?.href) {
+      const versionHistoryUrl = links['version-history'].href;
+      if (!reSpecificationsVersionHistory.test(versionHistoryUrl)) { // https://api.w3.org/specifications/{short}/versions
+        console.log(`  → Warning illegal specification version history URL: ${versionHistoryUrl} at ${url}`);
+      }
+      versionHistoryUrls.push(versionHistoryUrl);
+    }
+    if (links['superseded-by']) {
+      const supersededByUrl = links['superseded-by'].href;
+      if (!reSpecificationsSuperseded.test(supersededByUrl)) { // https://api.w3.org/specifications/{short}/supercededs
+        console.log(`  → Warning illegal specification version superseded-by URL: ${supersededByUrl} at ${url}`);
+      }
+      supercededUrls.push(supersededByUrl);
+    }
+    if (links['supersedes']) {
+      const supersedesUrl = links['supersedes'].href;
+      if (!reSpecificationsSupersedes.test(supersedesUrl)) { // https://api.w3.org/specifications/{short}/supersedes
+        console.log(`  → Warning illegal specification version supersedes URL: ${supersedesUrl} at ${url}`);
+      }
+      supercedesUrls.push(supersedesUrl);
+    }
+  }
+  return [seriesUrls, versionHistoryUrls, supercededUrls, supercedesUrls]
+}
+
+async function collectSpecifications(collectSpecSet, currentSpecsSet) { // currentSpecsSet are already collected Set which is used to avoid duplicate fetches
+  console.log(`collectSpecifications: start collectSpec: `, collectSpecSet.size);
+  const {
+    collectedData: collectedSpecsData,
+    collectedUrlsSetList: collectedUrlsSetList
+  } = await fetchCollectionDataAndUrlsSet(
+    collectSpecSet, processSpecificationLinks // common function for specifications
+  );
+  const collectedSpecificationsData = collectedSpecsData
+  const collectedSeriesSet = collectedUrlsSetList[0]; // series URL set
+  const collectedVersionHistoriesSet = collectedUrlsSetList[1]; // version-history URL set
+  const collectedSupersededSet = collectedUrlsSetList[2]; // superceeded-by URL set
+  const collectedSupersedesSet = collectedUrlsSetList[3]; // supersedes URL set 
+
+  // series　URLのfetchループで、series entriesのURLを収集
+  console.log(`Finished fetching specifications. CollectedSpecsData entries:`, Object.keys(collectedSpecsData).length);
+  console.log(`Found ${collectedSeriesSet.size} specification series to fetch`);
+  console.log(`Found ${collectedVersionHistoriesSet.size} version histories to fetch`);
+  console.log(`Found ${collectedSupersededSet.size} superseded to fetch`);
+  console.log(`Found ${collectedSupersedesSet.size} supersedes to fetch`);
+
+  console.log(`Fetching series specifications:`, collectedSeriesSet.size);
+  // seriesのURLのfetchループで、 series specificationsのURLを収集
+  const {
+    collectedData: collectedSeriesSpecsData,
+    collectedUrlsSetList: collectedSeriesSpecsSetList
+  } = await fetchCollectionDataAndUrlsSet(
+    collectedSeriesSet,
+    (url, data) => {
+      const seriesUrls = [];
+      if (data && data._links && data._links.specifications && data._links.specifications.href) {
+        const seriesSpecUrl = data._links.specifications.href;
+        if (!reSpecificationSeriesSpecs.test(seriesSpecUrl)) {  // https://api.w3.org/specification-series/${short}/specifications
+          console.log(`  → Warning illegal specifications series specifications URL: ${seriesSpecUrl} at ${url}`);
+        }
+        seriesUrls.push(seriesSpecUrl);
+      }
+      return [seriesUrls]
+    }
+  );
+  Object.assign(collectedSpecificationsData, collectedSeriesSpecsData);
+  const collectedSeriesSpecsListSet = collectedSeriesSpecsSetList[0]; // series specs URL set
+  console.log(`Finish fetching series specifications. CollectedSeriesSpecsData entries:`, Object.keys(collectedSeriesSpecsData).length);
+  console.log(`Found ${collectedSeriesSpecsListSet.size} series specs list to fetch`);
+
+  // series specsのURLのfetchループで、 specs of series specのURLを収集（seriessuperceededされたspecsもとれる)
+  console.log(`Start fetching series specs list:`, collectedSeriesSpecsListSet.size);
+
+  const {
+    collectedData: collectedSpecsInSeriesSpecsData,
+    collectedUrlsSetList: collectedSpecsInSeriesSpecsSetList
+  } = await fetchCollectionDataAndUrlsSet(
+    collectedSeriesSpecsListSet,
+    (url, data) => {
+      const specUrls = [];
+      if (data?._links?.specifications) {
+        const specifications = data._links.specifications;
+        if (!Array.isArray(specifications)) {
+          console.log(`  → Warning: specifications is not an array at ${url}`);
+        } else {
+          for (const spec of data._links.specifications) {
+            if (spec && spec.href) {
+              const specUrl = spec.href;
+              if (!reSpecificationsSpec.test(specUrl)) {  // https://api.w3.org/specifications/{short}
+                console.log(`  → Warning illegal spec URL: ${specUrl} at ${url}`);
+              }
+              specUrls.push(specUrl);
+            }
+          }
+        }
+      }
+      return [specUrls]
+    }
+  );
+  Object.assign(collectedSpecificationsData, collectedSpecsInSeriesSpecsData);
+  const collectedSpecsInSeriesSpecs = collectedSpecsInSeriesSpecsSetList[0]; // specs from series specs URL set
+  console.log(`Finish fetching series specs list. CllectedSpecsInSeriesSpecsData entries:`, Object.keys(collectedSpecsInSeriesSpecsData).length);
+  console.log(`Found ${collectedSpecsInSeriesSpecs.size} specs in series specs`);
+
+  // series specsから取得したspecsでspecsSetに含まれていないものを抽出し、fetchして、再起的にseriesSet, versionHistoriesSet, supercededSet, supersedesSetを拡張する
+
+  if (collectedSpecsInSeriesSpecs.size > 0) {
+    const specsOnlyInSeriesSpecsSet = new Set([...collectedSpecsInSeriesSpecs].filter(url => !currentSpecsSet.has(url)));
+    console.log(`Found specs only in the series specs: ${specsOnlyInSeriesSpecsSet.size}`);
+    const specsOnlyInCurrentSpecsSet = new Set([...currentSpecsSet].filter(url => !collectedSpecsInSeriesSpecs.has(url)));
+    console.log(`Found specs only in the current specs(informative): ${specsOnlyInCurrentSpecsSet.size}`);
+    if (specsOnlyInSeriesSpecsSet.size === 0) {
+      console.log('Info: Not found specs only in the series specs, no need to continue collection recursively.');
+    } else {
+      console.log(`Info: Found specs only in the series specs ${specsOnlyInSeriesSpecsSet.size}, continuing collection recursively.`);
+      console.log('Total collected specs before merge: ' + currentSpecsSet.size);
+
+      specsOnlyInSeriesSpecsSet.forEach(item => currentSpecsSet.add(item)); // add specsOnlyInSeriesSpecsSet before calling collectSpecifications again
+      console.log('Total collected specs after merge: ' + currentSpecsSet.size);
+      // call collectSpecifications with specsOnlyInSeriesSpecsSet recursively until no more new specs are found in series specs
+      console.log(`Fetching ${specsOnlyInSeriesSpecsSet.size} specifications only in the series specs`);
+      const {
+        collectedSpecificationsData: additionalCollectedSpecsData,
+        collectedSeriesSet: additionalSeriesSet,
+        collectedVersionHistoriesSet: additionalVersionHistoriesSet,
+        collectedSupersededSet: additionalSupersededSet,
+        collectedSupersedesSet: additionalSupersedesSet
+      } = await collectSpecifications(specsOnlyInSeriesSpecsSet, currentSpecsSet);
+
+      // add all collected data to the return objects
+      Object.assign(collectedSpecificationsData, additionalCollectedSpecsData); // add collected specs data
+      additionalSeriesSet.forEach(item => collectedSeriesSet.add(item)); // update collectedSeriesSet
+      additionalVersionHistoriesSet.forEach(item => collectedVersionHistoriesSet.add(item)); // update collectedVersionHistoriesSet
+      additionalSupersededSet.forEach(item => collectedSupersededSet.add(item)); // update collectedSupersededSet
+      additionalSupersedesSet.forEach(item => collectedSupersedesSet.add(item)); // update collectedSupersedesSet
+    }
+  }
+  console.log(`collectSpecifications: finish collectSpecSet.size: `, collectSpecSet.size);
+  return ({ collectedSpecificationsData, collectedSeriesSet, collectedVersionHistoriesSet, collectedSupersededSet, collectedSupersedesSet });
+}
+
+async function fetchSpecifications(collectedGroupsData = undefined) {
+  console.log('start fetching Specifications');
+  // 戻り値のaffiliationsデータ格納用オブジェクトを初期化
+  let collectedSpecificationsData = {};
+  fetchCount = 0, fetchedCount = 0, errorCount = 0; // reset global counters in each phases
+
+  // specのリストのフェッチの開始
+  const specUrl = `https://api.w3.org/specifications/`;
+  console.log(`Start fetching the list of all specifications: ${specUrl}`);
+  const {
+    dataEntry,
+    collectedUrlsArrayList
+  } = await fetchDataEntryAndUrls(specUrl, (url, data) => {
+    const specUrls = [];
+    if (data?._links?.specifications) {
+      const specifications = data._links.specifications;
+      if (!Array.isArray(data._links.specifications)) {
+        console.log(`  → Warning: specifications is not an array at ${url}`);
+      } else {
+        for (const specification of data._links.specifications) {
+          if (specification && specification.href) {
+            if (!reSpecificationsSpec.test(specification.href)) {  // https://api.w3.org/specifications/${short}
+              console.log(`  → Warning illegal specification URL: ${specification.href} at ${url}`);
+            }
+            specUrls.push(specification.href);
+          }
+        }
+      }
+    }
+    return [specUrls];
+  });
+  collectedSpecificationsData[specUrl] = dataEntry;
+  let collectedSpecsSet = new Set(collectedUrlsArrayList[0]);
+  console.log(`Finished fetching the specification list, collectedSpecsSet.size:`, collectedSpecsSet.size);
+  console.log(`Found ${collectedSpecsSet.size} specifications from the specification list`);
+
+  if (collectedGroupsData) { // フェッチするspecificationsリストをテストモード用に絞り込み 
+    const groupsSpecsSet = new Set();
+    // groupsの仕様(specifications)を収集
+    for (const url in collectedGroupsData) {
+      if (!reGroupSpecifications.test(url)) continue; // exclude not  https://api.w3.org/groups/{type}/{short}/specifications'
+      const entry = collectedGroupsData[url];
+      if (!entry || !entry.data) continue;
+      const data = entry.data;
+      if (!data) {
+        console.log(`  → Warning: No data found for group specifications in collectedGroupsData: ${url}`);
+        continue;
+      }
+      if (data._links?.specifications) {
+        const specifications = data._links.specifications;
+        if (!Array.isArray(specifications)) {
+          console.log(`  → Warning: specifications is not an array at ${url}`);
+        } else {
+          for (const spec of data._links.specifications) {
+            if (spec && spec.href) {
+              if (!reSpecificationsSpec.test(spec.href)) {  // https://api.w3.org/specifications/{short}
+                console.log(`  → Warning illegal specification URL: ${spec.href} at ${url}`);
+              }
+              groupsSpecsSet.add(spec.href);
+            }
+          }
+        }
+      }
+    }
+    collectedSpecsSet = groupsSpecsSet;  // change specsSet to only specs linked from groups
+    console.log(`Running in TEST mode - fetching only specifications linked from the test groups:`, collectedSpecsSet.size);
+  }
+
+  // collectSpecifications、 series, version-history, superseded-by, supersedesのURLを収集
+  console.log(`Start collectSpecifications for collectedSpecsSet.size:`, collectedSpecsSet.size);
+  const {
+    collectedSpecificationsData: collectedSpecsData,
+    collectedSeriesSet: collectedSeriesSet,  // do not use collectedSeriesSet in the following processing
+    collectedVersionHistoriesSet: collectedVersionHistoriesSet,
+    collectedSupersededSet: collectedSupersededSet,
+    collectedSupersedesSet: collectedSupersedesSet
+  } = await collectSpecifications(collectedSpecsSet, collectedSpecsSet, new Set());
+  Object.assign(collectedSpecificationsData, collectedSpecsData); // add collected specs data
+
+  // version historyのfetchループ,  versionsのURLを収集
+  console.log(`Finish collectSpecifications, collectedSpecsData entries:`, Object.keys(collectedSpecsData).length);
+  console.log(`Found ${collectedSeriesSet.size} specification series (already fetched)`);
+  console.log(`Found ${collectedVersionHistoriesSet.size} specification version histories to fetch`);
+  console.log(`Found ${collectedSupersededSet.size} superseded to fetch`);
+  console.log(`Found ${collectedSupersedesSet.size} supersedes to fetch`);
+
+  console.log(`Start fetching specification version histories:`, collectedVersionHistoriesSet.size);
+  const {
+    collectedData: collectedVersionsData,
+    collectedUrlsSetList: collectedVersionsSetList
+  } = await fetchCollectionDataAndUrlsSet(
+    collectedVersionHistoriesSet,
+    (url, data) => {
+      const versionUrls = [];
+      if (data?._links['version-history']) {
+        const versionHistory = data._links['version-history'];
+        if (!Array.isArray(versionHistory)) {
+          console.warn(`  → Warning: version-history is not an array at ${url}`);
+        } else {
+          for (const version of versionHistory) {  // array
+            if (version && version.href) {
+              if (!reSpecificationsVersion.test(version.href)) {   // https://api.w3.org/specifications/{short}/versions/{version}
+                console.log(`  → Warning illegal specification version URL: ${version.href} at ${url}`);
+              }
+              versionUrls.push(version.href);
+            }
+          }
+
+        }
+      }
+      return [versionUrls]
+    }
+  );
+  Object.assign(collectedSpecificationsData, collectedVersionsData); // add collected histories data
+  const collectedVersionsSet = collectedVersionsSetList[0]; // versions URL set
+  console.log(`Finish fetching version histories:`, Object.keys(collectedVersionsData).length);
+  console.log(`Found ${collectedVersionsSet.size} specification versions to fetch`);
+
+  // superseded byのfetchループ,  supersededのデータを収集
+  console.log(`Start fetching supersededs`, collectedSupersededSet.size);
+  const {
+    collectedData: collectedSupersededData,
+    collectedUrlsSetList: collectedSupersededSpecsSetList // always empty
+  } = await fetchCollectionDataAndUrlsSet(
+    collectedSupersededSet,
+    (url, data) => {
+      // 追加で抽出するURLがなければ空配列を返す
+      return [];  // return empty array
+    }
+  );
+  Object.assign(collectedSpecificationsData, collectedSupersededData);  // add collected superseded data
+  console.log(`Finished fetching supersededs, collectedSupersededData entries:`, Object.keys(collectedSupersededData).length);
+
+  // superseded byのfetchループ,  supersededのデータを収集
+  console.log(`Start fetching supersedes:`, collectedSupersedesSet.size);
+  const {
+    collectedData: collectedSupersedesData,
+    collectedUrlsSetList: collectedSupersedesSpecsSetList // always empty
+  } = await fetchCollectionDataAndUrlsSet(
+    collectedSupersedesSet,
+    (url, data) => {
+      // 追加で抽出するURLがなければ空配列を返す
+      return []; // return empty array
+    }
+  );
+  Object.assign(collectedSpecificationsData, collectedSupersedesData);  // add collected supersedes data
+  console.log(`Finished fetching supersedes, collectedSupersedesData entries:`, Object.keys(collectedSupersedesData).length);
+
+  // 最後にspecification versionsのfetchループ, 一番時間かかる
+  console.log(`Start fetching specifications verions:`, collectedVersionsSet.size);
+  const {
+    collectedData: collectedVersionDetailsData,
+    collectedUrlsSetList: collectedVersionsDetailsSetList // always empty
+  } = await fetchCollectionDataAndUrlsSet(
+    collectedVersionsSet,
+    (url, data) => {
+      // 追加で抽出するURLがなければ空配列を返す
+      return []; // return empty array
+    }
+  );
+  Object.assign(collectedSpecificationsData, collectedVersionDetailsData); // add collected versions data
+  console.log(`Finished fetching specification versions. collectedVersionDetailsData entries:`, Object.keys(collectedVersionDetailsData).length);
+
+  // 終了
+  console.log(`✓ Finished: Fetched ${fetchedCount}/${fetchCount} specification data (Errors: ${errorCount}) CollectedSpecificationsData entries:`, Object.keys(collectedSpecificationsData).length);
+  return collectedSpecificationsData;
+}
+
+function loadApiData(dirPath, filenames, isLatest, isTestMode = false) {
+  try {
+    const dataFilename = makeFilename(filenames.data, isLatest, isTestMode);
+    const mainData = readJsonFile(dirPath, dataFilename);
+    if (mainData == undefined) {
+      console.warn("Warrning: cannot read ", dataFilename);
+
+      if (!isLatest) {
+        return undefined;  // if isLatest false, error since the data file does not exist previous json data files
+      }
+      // if isLatest true, read the other json files.
+    }
+
+    const groupsFilename = makeFilename(filenames.groups, isLatest, isTestMode);
+    const groupsData = readJsonFile(dirPath, groupsFilename);
+    if (groupsData == undefined) {
+      console.error("Error: cannot read ", groupsFilename)
+      return undefined;
+    }
+
+    const participationsFilename = makeFilename(filenames.participations, isLatest, isTestMode);
+    const participationsData = readJsonFile(dirPath, participationsFilename);
+    if (participationsData == undefined) {
+      console.error("Error: cannot read ", participationsFilename);
+      return undefined;
+    }
+
+    const affiliationsFilename = makeFilename(filenames.affiliations, isLatest, isTestMode);
+    const affiliationsData = readJsonFile(dirPath, affiliationsFilename);
+    if (affiliationsData == undefined) {
+      console.error("Error: cannot read ", affiliationsFilename);
+      return undefined;
+    }
+
+    const usersFilename = makeFilename(filenames.users, isLatest, isTestMode);
+    const usersData = readJsonFile(dirPath, usersFilename);
+    if (usersData == undefined) {
+      console.error("Error: cannot read ", usersFilename);
+      return undefined;
+    }
+
+    const specificationsFilename = makeFilename(filenames.specifications, isLatest, isTestMode);
+    const specificationsData = readJsonFile(dirPath, specificationsFilename);
+    if (specificationsData == undefined) {
+      console.warn("Warning: cannot read ", specificationsFilename);
+    }
+
+    const timelineFilename = makeFilename(filenames.timeline, isLatest, isTestMode);
+    const timelineData = readJsonFile(dirPath, timelineFilename);
+    if (timelineData == undefined) {
+      console.warn("Warning: cannot read ", timelineFilename);
+    }
+
+    return { mainData, groupsData, participationsData, affiliationsData, usersData, specificationsData, timelineData };
+  } catch (e) {
+    console.log(e);
+    return undefined;
+  }
+}
+
+function createTimelineJsonFile(dirPath, filenames, finalizeTimestamp, testGroups, isTestMode) {
+  logAlways('✓ creating a timeline json file');
+
+  const eventApiData = loadApiData(dirPath, filenames, true, isTestMode);   // isLatest=true
+  if (eventApiData == undefined) {
+    return false;
+  }
+  const eventStats = makeStats(eventApiData);
+
+  const prevApiData = loadApiData(dirPath, filenames, false, isTestMode);  // isLatest=false
+  if (prevApiData == undefined) {
+    // OK go thru since there is not previous data
+  }
+  const prevStats = prevApiData ? makeStats(prevApiData) : undefined;
+
+  const prevTime = prevApiData?.mainData?._metadata.lastChecked; // round down
+  const prevTimestamp = prevTime ? new Date(prevTime).getTime() : 0;
+  const eventTime = new Date(finalizeTimestamp).toUTCString();
+  const eventTimestamp = new Date(eventTime).getTime(); // this round-down ms to consistest prevTime made from lastChecked.
+  const eventData = makeTimelineEventData(prevTimestamp, prevStats, eventTimestamp, eventStats);
+
+  const collectedTimelineData = { ...eventData };
+
+  const outputFilename = makeFilename(filenames.timeline, true, isTestMode);   // latest=true
+  const createTime = eventTime;
+  const phaseStartTime = eventTime;
+  const phaseDuration = 0;
+  const isFinished = createJsonFile("timeline", dirPath, outputFilename, collectedTimelineData,
+    createTime, phaseStartTime, phaseDuration, testGroups);
+  if (isFinished) {
+    logAlways('✓ Finished.');
+  }
+  return isFinished;
+}
+
+function createDataJsonFile(dirPath, filenames, finalizeTimestamp, isTestMode) {
+  const usedFilenames = [filenames.groups, filenames.participations, filenames.affiliations, filenames.users, filenames.specifications, filenames.timeline];
+  const dataFilename = makeFilename(filenames.data, false, isTestMode);   // isLatest=false
+  const files = [];
+  let testGroups = undefined;
+  let phase1StartTime = undefined;
+  let numUsedFiles = usedFilenames.length;
+
+  let errorCount = 0;
+  for (const filename of usedFilenames) {
+    const latestFilename = makeFilename(filename, true, isTestMode); // isLatest=true
+    try {
+      const json = readJsonFile(dirPath, latestFilename);
+      if (json == undefined) {
+        if (filename == filenames.specifications) {
+          console.warn("Warning: not found specification data file, skip", latestFilename)
+          numUsedFiles--;
+          continue;
+        } else {
+          console.error("Error: can not read ", latestFilename)
+          return false;
+        }
+      }
+      if (json.fileType === "groups") { // save the information in metadata of the groups file
+        testGroups = json._metadata.testGroups; // this is from groups.
+        phase1StartTime = json._metadata.startTime;
+      }
+      if (!json._metadata) {
+        console.error(`Error: Missing _metadata in ${latestFilename}`);
+        errorCount++;
+      }
+      if (json._metadata.filename != latestFilename) {
+        // This causes since the just copy json files to latest json files, e.g. using copy-files-to-latest-files.sh
+        console.warn(`Warning: The _metadata.filename ${json._metadata.filename} is not for ${latestFilename}. The latest file may be copyed using the copy-files-to-latest-files.sh.`);
+      }
+
+      if (!json._metadata.filename.includes(json._metadata.fileType)) {
+        // old set file does not have fileType
+        console.warn(`Warning: The _metadata.fileType ${json._metadata.type} of ${latestFilename} is not for ${filename}.`);
+      }
+
+      // change the filename
+      const outputFilename = makeFilename(filename, false, isTestMode); // isLatest=false
+      json._metadata.filename = outputFilename;
+
+      files.push({ _metadata: json._metadata });
+    } catch (e) {
+      console.error(`Error: reading/parsing ${latestFilename}: ${e.message}`);
+      errorCount++;
+    }
+  }
+
+  if (errorCount != 0) {
+    console.error(`Error: ${dataFilename} is not created errorCount=${errorCount}`)
+    return false;
+  }
+
+  if (files.length == numUsedFiles) {
+    const duration = phase1StartTime ? (finalizeTimestamp - new Date(phase1StartTime).getTime()) : 0;
+    const metadata = {
+      fileType: "data",
+      filename: dataFilename,
+      lastChecked: new Date(finalizeTimestamp).toUTCString(), // HTTP-date
+      phaseStartTime: phase1StartTime,
+      duration: formatDuration(duration),
+      testGroups
+    };
+    const w3cData = {
+      _metadata: metadata,
+      files
+    };
+    const path = dirPath + '/' + dataFilename
+    fs.writeFileSync(path, JSON.stringify(w3cData, null, 2), 'utf8');
+    console.log(`✓ ${path} created successfully.`);
+    return true;
+  } else {
+    console.error(`Error: ${dataFilename} not created because all files are not created the previous phases.`);
+  }
+  return false
+}
+
+async function phase1_fetchGroups(dirPath, groupsFilename, isTestMode = false) {
   // shouldFetchGroupsはmainで判定。isTestModeのみ引数で受け取る。
   logAlways('\n========== PHASE 1 (groups): Started ==========\n');
   phaseRequestCount = 0;
-  phaseStartTimestamp = Date.now();
+  const phaseStartTimestamp = Date.now();
+
   let collectedGroupsData = {};
   let testGroupsShortNamesMap = {};  // テストでのtypeごとのshortname配列を格納するオブジェクト
   if (isTestMode) {
     // typeごとにshortnameリストを作成
-    for (const { type, shortname } of testGroups) {
+    for (const { type, shortname } of testGroupsList) {
       if (!testGroupsShortNamesMap[type]) testGroupsShortNamesMap[type] = [];
       testGroupsShortNamesMap[type].push(shortname);
     }
-    logAlways(`Running in TEST mode - fetching ${testGroups.length} sample groups\n`);
+    logAlways(`Running in TEST mode - fetching ${testGroupsList.length} sample groups\n`);
   }
   // groupをフェッチ
   const groupTypes = ['wg', 'ig', 'cg', 'tf', 'other'];
+  const testGroups = [];
   for (let i = 0; i < groupTypes.length; i++) {
     const type = groupTypes[i];
-    const testGroupShortNames = testGroupsShortNamesMap[type];　// テストモード時のみshortname配列を渡す
-    if (isTestMode && testGroupShortNames == undefined) {
-      // テストモードでかつ該当typeのshortnameがundefinedの場合はスキップ
-      continue;
+    const testGroupShortNames = testGroupsShortNamesMap[type]; // テストモード時のみshortname配列を渡す
+    if (isTestMode) {
+      if (testGroupShortNames == undefined) {
+        // テストモードでかつ該当typeのshortnameがundefinedの場合はスキップ
+        continue;
+      }
+      testGroups.push(...testGroupShortNames);
     }
     // logAlwaysはfetchTypeGroups側で出力するため、ここでは出さない
     const typeGroupsData = await fetchTypeGroups(type, testGroupShortNames);
     Object.assign(collectedGroupsData, typeGroupsData);
   }
+
   logAlways(`\n========== PHASE 1 (groups): Finished ==========`);
+
   // 全グループ数（リストページから集計）
   let totalGroupCount = 0;
   for (const key of Object.keys(collectedGroupsData)) {
@@ -1224,229 +1838,433 @@ async function phase1_fetchGroups(dirPath, groupsFilename, isTestMode) {
     logAlways(`Total groups fetched (Test Mode) : ${testedGroupsCount}`);
   }
   logAlways(`Total groups data collected: ${Object.keys(collectedGroupsData).length}`);
-  const phaseDurationSec = (Date.now() - phaseStartTimestamp) / 1000;
-  logAlways(`Phase duration (sec): ${phaseDurationSec.toFixed(2)}`);
+  const currentTimestamp = Date.now();
+  const phaseDurationMs = (currentTimestamp - phaseStartTimestamp);
+  const phaseDuration = formatDuration(phaseDurationMs);
+  logAlways(`Phase duration: ${phaseDuration}`);
   logAlways(`Total requests: ${phaseRequestCount}`);
-  logAlways(`Average requests/sec: ${(phaseRequestCount / phaseDurationSec).toFixed(2)}`);
+  logAlways(`Average requests/sec: ${(phaseRequestCount / (phaseDurationMs / 1000.0)).toFixed(2)}`);
   phaseRequestCounts[0] = phaseRequestCount;
-  const isFinished = await compareAndWriteJson(dirPath, groupsFilename, collectedGroupsData);
+
+  const latestFilename = makeFilename(groupsFilename, true, isTestMode);  //isLatest=true
+  const createTime = new Date(currentTimestamp).toUTCString();
+  const phaseStartTime = new Date(phaseStartTimestamp).toISOString();
+  const isFinished = createJsonFile("groups", dirPath, latestFilename, collectedGroupsData,
+    createTime, phaseStartTime, phaseDuration,
+    testGroups.length > 0 ? testGroups : undefined,
+  );
   if (isFinished) {
-    logAlways('✓ The latest Groups data is up to date.');
+    logAlways('✓ Finished.');
   }
   return isFinished;
 }
 
-async function phase2_fetchParticipations(dirPath, groupsFilename, participationFilename) {
-  const groupsFilePath = dirPath + '/' + groupsFilename;
+async function phase2_fetchParticipations(dirPath, participationsFilename, groupsFilename, isTestMode) {
   logAlways('\n========== PHASE 2: Fetching Participations ==========\n');
   phaseRequestCount = 0;
-  phaseStartTimestamp = Date.now();
+  const phaseStartTimestamp = Date.now();
+
+  if (isTestMode) {
+    console.log('Running in TEST mode - fetching participations only of the sample groups data.\n');  // membersとIEのみ、indivaidualのaffiliationsはfetchしない
+  }
+
   // groupsデータを都度ロード
   let collectedGroupsData = {};
+  let testGroups = undefined;
   try {
-    const groupsContent = fs.readFileSync(groupsFilePath, 'utf8');
-    collectedGroupsData = JSON.parse(groupsContent);
-    logAlways(`Loaded ${Object.keys(collectedGroupsData).length} items from w3c-groups.json`);
+    const latestFilename = makeFilename(groupsFilename, true, isTestMode);  // isLatest=true
+    collectedGroupsData = readJsonFile(dirPath, latestFilename);
+    testGroups = collectedGroupsData._metadata.testGroups;
+    logAlways(`Loaded ${Object.keys(collectedGroupsData).length} entries of groups data.`);
+    if (!testGroups) {
+      if (isTestMode) {
+        console.error(`Error: running in TestMode, but the group data file ${latestFilename} was not generated in TestMode.`);
+        process.exit(1);
+      }
+    }
   } catch (e) {
-    console.error(`Error: Cannot load ${groupsFilePath}: ${e.message}`);
+    console.error(`Error: Cannot load the group file: ${e.message}`);
     process.exit(1);
   }
   // participationデータは空で開始
-  let collectedParticipationsData = await fetchParticipations(collectedGroupsData, {});
+  let collectedParticipationsData = await fetchParticipations(collectedGroupsData); // fetch participations based on the collectedGroupsData
   logAlways(`\n========== PHASE 2 (participations): Finished ==========`);
   logAlways(`Total participations data collected: ${Object.keys(collectedParticipationsData).length}`);
-  const phaseDurationSec = (Date.now() - phaseStartTimestamp) / 1000;
-  logAlways(`Phase duration (sec): ${phaseDurationSec.toFixed(2)}`);
+  const currentTimestamp = Date.now();
+  const phaseDurationMs = (currentTimestamp - phaseStartTimestamp);
+  const phaseDuration = formatDuration(phaseDurationMs);
+  logAlways(`Phase duration: ${phaseDuration}`);
   logAlways(`Total requests: ${phaseRequestCount}`);
-  logAlways(`Average requests/sec: ${(phaseRequestCount / phaseDurationSec).toFixed(2)}`);
-  phaseRequestCounts[1] = phaseRequestCount;
-  const isFinished = await compareAndWriteJson(dirPath, participationFilename, collectedParticipationsData);
-  if (isFinished) {
-    logAlways('✓ The latest Participations data is up to date.');
-  }
-  return isFinished;
-}
-
-// PHASE 3: Users
-
-async function phase3_fetchUsers(dirPath, groupsFilename, participationFilename, usersFilename) {
-  const groupsFilePath = dirPath + '/' + groupsFilename;
-  const participationFilePath = dirPath + '/' + participationFilename;
-  logAlways('\n========== PHASE 3 (users): Started ==========\n');
-  phaseRequestCount = 0;
-  phaseStartTimestamp = Date.now();
-  let collectedGroupsData = {};
-  let collectedParticipationsData = {};
-  let collectedAffiliationsData = {};
-
-  // groupsデータロード
-  try {
-    const groupsContent = fs.readFileSync(groupsFilePath, 'utf8');
-    collectedGroupsData = JSON.parse(groupsContent);
-    logAlways(`Loaded ${Object.keys(collectedGroupsData).length} items from w3c-groups.json`);
-  } catch (e) {
-    console.error(`Error: Cannot load w3c-groups.json: ${e.message}`);
-    process.exit(1);
-  }
-
-  // participationsデータを都度ロード
-  try {
-    const participationsContent = fs.readFileSync(participationFilePath, 'utf8');
-    collectedParticipationsData = JSON.parse(participationsContent);
-    logAlways(`Loaded ${Object.keys(collectedParticipationsData).length} items from w3c-participations.json`);
-  } catch (e) {
-    console.error(`Error: Cannot load w3c-participations.json: ${e.message}`);
-    process.exit(1);
-  }
-
-  // usersデータは空で開始
-  let collectedUsersData = await fetchUsers(collectedGroupsData, collectedParticipationsData, collectedAffiliationsData);
-  logAlways(`\n========== PHASE 3 (users): Finished ==========`);
-  logAlways(`Total users data collected: ${Object.keys(collectedUsersData).length}`);
-  const phaseDurationSec = (Date.now() - phaseStartTimestamp) / 1000;
-  logAlways(`Phase duration (sec): ${phaseDurationSec.toFixed(2)}`);
-  logAlways(`Total requests: ${phaseRequestCount}`);
-  logAlways(`Average requests/sec: ${(phaseRequestCount / phaseDurationSec).toFixed(2)}`);
+  logAlways(`Average requests/sec: ${(phaseRequestCount / (phaseDurationMs / 1000.0)).toFixed(2)}`);
   phaseRequestCounts[2] = phaseRequestCount;
-  const isFinished = await compareAndWriteJson(dirPath, usersFilename, collectedUsersData);
+
+  const latestFilename = makeFilename(participationsFilename, true, isTestMode);  // isLatest=true
+  const createTime = new Date(currentTimestamp).toUTCString();
+  const phaseStartTime = new Date(phaseStartTimestamp).toISOString();
+  const isFinished = createJsonFile("participations", dirPath, latestFilename, collectedParticipationsData,
+    createTime, phaseStartTime, phaseDuration,
+    testGroups);
   if (isFinished) {
-    logAlways('✓ The latest Users data is up to date.');
+    logAlways('✓ Finished.');
   }
   return isFinished;
 }
 
-// PHASE 4: Affiliations
-async function phase4_fetchAffiliations(dirPath, participationFilename, usersFilename, affiliationsFilename, isTestMode) {
-  const participationFilePath = dirPath + '/' + participationFilename;
-  const usersFilePath = dirPath + '/' + usersFilename;
-  logAlways('\n========== PHASE 4 (affiliations): Started ==========\n');
-  phaseRequestCount = 0;
-  phaseStartTimestamp = Date.now();
 
-  // participationsデータを都度ロード
+// PHASE 3 Affiliations
+async function phase3_fetchAffiliations(dirPath, affiliationsFilename, participationFilename, isTestMode) {
+  logAlways('\n========== PHASE 3 (affiliations): Started ==========\n');
+  phaseRequestCount = 0;
+  const phaseStartTimestamp = Date.now();
+
+  let collectedParticipationsData = undefined
+  let testGroups = undefined;
+
+  if (isTestMode) {
+    console.log('Running in TEST mode - fetching only affiliations only of the sample groups.\n');  // membersとIEのみ、indivaidualのaffiliationsはfetchしない
+    console.log(' - Note that TEST mode can not correctly handle W3C staff and  member participations of the exception groups who has no member participation list, since it does not fetch affiliations of thems..\n');
+
+    // テストモードではparticipationsデータを都度ロード, participataionsだけのAfflicationsをとるのに利用。
+    try {
+      const latestFilename = makeFilename(participationFilename, true, isTestMode); // isLatest=true
+      collectedParticipationsData = readJsonFile(dirPath, latestFilename);
+      testGroups = collectedParticipationsData._metadata.testGroups;
+      logAlways(`Loaded ${Object.keys(collectedParticipationsData).length} entries of participations data.`);
+    } catch (e) {
+      console.error(`Error: Cannot load the participation file: ${e.message}`);
+      process.exit(1);
+    }
+  }
+
+  const collectedAffiliationsData = await fetchAffiliations(collectedParticipationsData);
+  logAlways(`\n========== PHASE 3 (affiliations): Finished ==========`);
+  logAlways(`Total affiliations data collected: ${Object.keys(collectedAffiliationsData).length}`);
+  const currentTimestamp = Date.now();
+  const phaseDurationMs = (currentTimestamp - phaseStartTimestamp);
+  const phaseDuration = formatDuration(phaseDurationMs);
+  logAlways(`Phase duration: ${phaseDuration}`);
+  logAlways(`Total requests: ${phaseRequestCount}`);
+  logAlways(`Average requests/sec: ${(phaseRequestCount / (phaseDurationMs / 1000.0)).toFixed(2)}`);
+  phaseRequestCounts[4] = phaseRequestCount;
+
+  const latestFilename = makeFilename(affiliationsFilename, true, isTestMode); // isLatest=true
+  const createTime = new Date(currentTimestamp).toUTCString();
+  const phaseStartTime = new Date(phaseStartTimestamp).toISOString();
+  const isFinished = createJsonFile("affiliations", dirPath, latestFilename, collectedAffiliationsData,
+    createTime, phaseStartTime, phaseDuration,
+    testGroups);
+  if (isFinished) {
+    logAlways('✓ Finished.');
+  }
+  return isFinished;
+}
+
+// PHASE 4: Users
+async function phase4_fetchUsers(dirPath, usersFilename, groupsFilename, participationsFilename, affiliationsFilename, isTestMode) {
+  logAlways('\n========== PHASE 4 (users): Started ==========\n');
+  phaseRequestCount = 0;
+  const phaseStartTimestamp = Date.now();
+
+  if (isTestMode) {
+    console.log('Running in TEST mode - fetching only users found of the sample groups.\n');
+  }
+
+  // groups データを都度ロード
+  let collectedGroupsData = {};
+  let testGroups = undefined;
+  try {
+    const latestFilename = makeFilename(groupsFilename, true, isTestMode);  // isLatest=true
+    collectedGroupsData = readJsonFile(dirPath, latestFilename);
+    logAlways(`Loaded ${Object.keys(collectedGroupsData).length} entries of groups data.`);
+    testGroups = collectedGroupsData._metadata.testGroups;
+    if (!testGroups) {
+      if (isTestMode) {
+        logAlways(`The groups data is about ${testGroups.length} sample groups\n`);
+      } else {
+        console.error(`Error: running in TestMode, but the group data file ${latestFilename} was not generated in TestMode.`);
+      }
+    }
+  } catch (e) {
+    console.error(`Error: Cannot load the affilication file:  ${e.message}`);
+    process.exit(1);
+  }
+
   let collectedParticipationsData = {};
   try {
-    const participationsContent = fs.readFileSync(participationFilePath, 'utf8');
-    collectedParticipationsData = JSON.parse(participationsContent);
-    logAlways(`Loaded ${Object.keys(collectedParticipationsData).length} items from ${participationFilePath}`);
+    const latestFilename = makeFilename(participationsFilename, true, isTestMode);  // isLatest=true
+    collectedParticipationsData = readJsonFile(dirPath, latestFilename);
+    logAlways(`Loaded ${Object.keys(collectedParticipationsData).length} entries of participations data.`);
+    if (!testGroups) {
+      if (isTestMode) {
+        logAlways(`The participations data is about ${testGroups.length} sample groups\n`);
+      } else {
+        console.error(`Error: running in TestMode, but the participations data file ${latestFilename} was not generated in TestMode.`);
+      }
+    }
+    if (JSON.stringify(testGroups) !== JSON.stringify(collectedParticipationsData?._metadata?.testGroups)) {
+      console.error('Error: : The participations data has a mismatched testGroups of the groups data.');
+      return false;
+    }
   } catch (e) {
-    console.error(`Error: Cannot load ${participationFilePath}: ${e.message}`);
+    console.error(`Error: Cannot load the affilication file:  ${e.message}`);
     process.exit(1);
   }
-
-  // usersデータを都度ロード
-  let collectedUsersData = {};
-  try {
-    const usersContent = fs.readFileSync(usersFilePath, 'utf8');
-    collectedUsersData = JSON.parse(usersContent);
-    logAlways(`Loaded ${Object.keys(collectedUsersData).length} items ${usersFilePath}`);
-  } catch (e) {
-    console.error(`Error: Cannot load w3c-users.json: ${e.message}`);
-    process.exit(1);
-  }
-
-  const collectedAffiliationsData = await fetchAffiliations(collectedParticipationsData, collectedUsersData, isTestMode);
-  logAlways(`\n========== PHASE 4 (affiliations): Finished ==========`);
-  logAlways(`Total affiliations data collected: ${Object.keys(collectedAffiliationsData).length}`);
-  const phaseDurationSec = (Date.now() - phaseStartTimestamp) / 1000;
-  logAlways(`Phase duration (sec): ${phaseDurationSec.toFixed(2)}`);
-  logAlways(`Total requests: ${phaseRequestCount}`);
-  logAlways(`Average requests/sec: ${(phaseRequestCount / phaseDurationSec).toFixed(2)}`);
-  phaseRequestCounts[3] = phaseRequestCount;
-  const isFinished = await compareAndWriteJson(dirPath, affiliationsFilename, collectedAffiliationsData);
-  if (isFinished) {
-    logAlways('✓ The latest Affiliations data is up to date.');
-  }
-  return isFinished;
-}
-
-async function phase5_fetchUsersWhoAreNotInGroups(dirPath, affiliationsFilename, usersFilename, isSkipFetchUsersNotInGroups) {
-  const affiliationsFilePath = dirPath + '/' + affiliationsFilename;
-  const usersFilePath = dirPath + '/' + usersFilename;
-  logAlways('\n========== PHASE 5 (users-not-in-groups): Started ==========\n');
-  phaseRequestCount = 0;
-  phaseStartTimestamp = Date.now();
 
   // affiliationsデータを都度ロード
   let collectedAffiliationsData = {};
   try {
-    const affiliationsContent = fs.readFileSync(affiliationsFilePath, 'utf8');
-    collectedAffiliationsData = JSON.parse(affiliationsContent);
-    logAlways(`Loaded ${Object.keys(collectedAffiliationsData).length} items from ${affiliationsFilePath}`);
+    const latestFilename = makeFilename(affiliationsFilename, true, isTestMode); // isLatest=true
+    collectedAffiliationsData = readJsonFile(dirPath, latestFilename);
+    logAlways(`Loaded ${Object.keys(collectedAffiliationsData).length} entries of affiliations data.`);
+    if (!testGroups) {
+      if (isTestMode) {
+        logAlways(`The affiliation data is about ${testGroups.length} sample groups\n`);
+      } else {
+        console.error(`Error: running in TestMode, but the affliation data file ${latestFilename} was not generated in TestMode.`);
+      }
+    }
+    if (JSON.stringify(testGroups) !== JSON.stringify(collectedAffiliationsData?._metadata?.testGroups)) {
+      console.error('Error: affiliationsData has a mismatched testGroups of the group data.');
+      return false;
+    }
   } catch (e) {
-    console.error(`Error: Cannot load ${affiliationsFilePath}: ${e.message}`);
-    process.exit(1);
+    console.error(`Error: Cannot load the affilication file:  ${e.message}`);
+    return false;
   }
+  // usersデータは空で開始
+  let collectedUsersData = await fetchUsers(collectedGroupsData, collectedParticipationsData, collectedAffiliationsData);
+  logAlways(`\n========== PHASE 4 (users): Finished ==========`);
+  logAlways(`Total users data collected: ${Object.keys(collectedUsersData).length}`);
+  const currentTimestamp = Date.now();
+  const phaseDurationMs = (currentTimestamp - phaseStartTimestamp);
+  const phaseDuration = formatDuration(phaseDurationMs);
+  logAlways(`Phase duration: ${phaseDuration}`);
+  logAlways(`Total requests: ${phaseRequestCount}`);
+  logAlways(`Average requests/sec: ${(phaseRequestCount / (phaseDurationMs / 1000.0)).toFixed(2)}`);
+  phaseRequestCounts[3] = phaseRequestCount;
 
-  // usersデータを都度ロード
-  let collectedUsersData = {};
-  try {
-    const usersContent = fs.readFileSync(usersFilePath, 'utf8');
-    collectedUsersData = JSON.parse(usersContent);
-    logAlways(`Loaded ${Object.keys(collectedUsersData).length} items ${usersFilePath}`);
-  } catch (e) {
-    console.error(`Error: Cannot load w3c-users.json: ${e.message}`);
-    process.exit(1);
-  }
-
-  const newCollectedUsersData = await fetchUsersWhoAreNotInGroups(collectedAffiliationsData, collectedUsersData, isSkipFetchUsersNotInGroups);
-  logAlways(`\n========== PHASE 5 (users-not-in-groups): Finished  ==========`);
-  let isFinished = true
-  if (isSkipFetchUsersNotInGroups) {
-    logAlways(`Skipped fetching users who are not in any Groups since it will take a long time.`);
-  } else {
-    logAlways(`Total users data collected after merging users who are not in any Groups: ${newCollectedUsersData.length}`);
-    const phaseDurationSec = (Date.now() - phaseStartTimestamp) / 1000;
-    logAlways(`Phase duration (sec): ${phaseDurationSec.toFixed(2)}`);
-    logAlways(`Total requests: ${phaseRequestCount}`);
-    logAlways(`Average requests/sec: ${(phaseRequestCount / phaseDurationSec).toFixed(2)}`);
-    phaseRequestCounts[4] = phaseRequestCount;
-    // usersデータを再書き込み
-    isFinished = await compareAndWriteJson(dirPath, usersFilename, newCollectedUsersData);
-  }
+  const latestFilename = makeFilename(usersFilename, true, isTestMode);  // isLatest=true
+  const createTime = new Date(currentTimestamp).toUTCString();
+  const phaseStartTime = new Date(phaseStartTimestamp).toISOString();
+  const isFinished = createJsonFile("users", dirPath, latestFilename, collectedUsersData,
+    createTime, phaseStartTime, phaseDuration,
+    testGroups);
   if (isFinished) {
-    logAlways('✓ The latest Users data is up to date.');
+    logAlways('✓ Finished.');
   }
   return isFinished;
 }
 
-async function createDataJson(dirPath, usedFilenames, dataFileName, testGroups) {
-  const files = [];
-  for (const filename of usedFilenames) {
-    let path = dirPath + '/' + filename;
+async function phase5_fetchSpecifications(dirPath, specificationsFilename, groupsFilename, isTestMode) {
+  logAlways('\n========== PHASE 5: Fetching Specifications ==========\n');
+
+  phaseRequestCount = 0;
+  const phaseStartTimestamp = Date.now();
+
+  if (isTestMode) {
+    console.log('Running in TEST mode - fetching specifications only of the sample groups.\n');
+  }
+
+
+  let collectedGroupsData = undefined;
+  let testGroups = undefined;
+  if (isTestMode) {
     try {
-      const content = fs.readFileSync(path, 'utf8');
-      const json = JSON.parse(content);
-      if (!json._metadata) {
-        console.warn(`Warning: Missing _metadata in ${path}`);
-        continue;
+      const latestFilename = makeFilename(groupsFilename, true, isTestMode);  // isLatest = true
+      collectedGroupsData = readJsonFile(dirPath, latestFilename);
+      testGroups = collectedGroupsData._metadata.testGroups;
+      logAlways(`Loaded ${Object.keys(collectedGroupsData).length} entries of groups data.`);
+      if (!testGroups) {
+        if (isTestMode) {
+          logAlways(`The group data is about ${testGroups.length} sample groups\n`);
+        } else {
+          console.error(`Error: running in TestMode, but the group data file ${latestFilename} was not generated in TestMode.`);
+          return false;
+        }
       }
-      files.push({ _metadata: json._metadata });
     } catch (e) {
-      console.error(`Error: reading/parsing ${path}: ${e.message}`);
-      break
+      console.error(`Error: Cannot load w3c-groups.json: ${e.message}`);
+      process.exit(1);
     }
   }
-  if (files.length == usedFilenames.length) {
-    // testMode時はtestGroupsリストを_metadataに追加
-    const metadata = {
-      filename: dataFileName,
-      lastChecked: new Date().toUTCString() // HTTP-date
-    };
-    if (testGroups) {
-      metadata.testGroups = testGroups;
-    }
-    const w3cData = {
-      _metadata: metadata,
-      files
-    };
-    const path = dirPath + '/' + dataFileName
-    fs.writeFileSync(path, JSON.stringify(w3cData, null, 2), 'utf8');
-    console.log(`✓ ${path} created successfully.`);
-  } else {
-    console.error(`Error: ${dataFileName} not created due to errors in the previous phases.`);
+
+  // specificationsデータは空で開始
+  let collectedSpecificationsData = await fetchSpecifications(collectedGroupsData);
+  logAlways(`\n========== PHASE 5 (specifications): Finished ==========`);
+  logAlways(`Total specifications data collected: ${Object.keys(collectedSpecificationsData).length}`);
+  const currentTimestamp = Date.now();
+  const phaseDurationMs = (currentTimestamp - phaseStartTimestamp);
+  const phaseDuration = formatDuration(phaseDurationMs);
+  logAlways(`Phase duration: ${phaseDuration}`);
+  logAlways(`Total requests: ${phaseRequestCount}`);
+  logAlways(`Average requests/sec: ${(phaseRequestCount / (phaseDurationMs / 1000.0)).toFixed(2)}`);
+  phaseRequestCounts[6] = phaseRequestCount;
+
+  const latestFilename = makeFilename(specificationsFilename, true, isTestMode);  // isLatest=true
+  const createTime = new Date(currentTimestamp).toUTCString();
+  const phaseStartTime = new Date(phaseStartTimestamp).toISOString();
+  const isFinished = createJsonFile("specifications", dirPath, latestFilename, collectedSpecificationsData,
+    createTime, phaseStartTime, phaseDuration,
+    testGroups);
+  if (isFinished) {
+    logAlways('✓ Finished.');
   }
+  return isFinished;
 }
+
+async function phase6_finalize(dirPath, filenames, isTestMode) {
+  logAlways('\n========== PHASE 6: Finalizing ==========\n');
+  if (isTestMode) {
+    console.log('Running in TEST mode - generating a data file and a timeline file only of the sample groups.\n');
+  }
+
+  try {
+    let prevEpochSeconds = 0;
+    const finalizeTimestamp = Date.now();
+
+    if (REMAKE_TIMELINE) {
+      if (isTestMode) {
+        console.warn('Warning: can not remake a timeline json file in TestMode');
+      } else {
+        if (!remakeTimelineJsonFile(dirPath, filenames)) {
+          logAlways('\n========== PHASE 6: Failed remaking timeline json file in phase6_finalize ==========');
+          return false;
+        }
+        // check the remaked timeline
+        if (!checkTimelineJsonFile(dirPath, filenames, false, isTestMode)) { // isLetest=false
+          logAlways('\n========== PHASE 6: Failed checking remakeTimeline in phase6_finalize ==========');
+          return false;
+        }
+        logAlways(`✓ The timeline json file is remade.`)
+      }
+    }
+
+    logAlways(`✓ checking the timestamps in order json files and reading the json files.`);
+
+    // check if files are created in the order of phases
+    const latestGroupsFilename = makeFilename(filenames.groups, true, isTestMode);  // isLatest=true
+    const collectedGroupsData = readJsonFile(dirPath, latestGroupsFilename);
+    if (!collectedGroupsData) {
+      console.error(`Error: a latest groups json file ${latestGroupsFilename} is not created, please run phase1.`)
+      return false;
+    } else {
+      const lastChecked = collectedGroupsData._metadata.lastChecked;
+      const epochSeconds = Math.floor(new Date(lastChecked).getTime() / 1000);
+      prevEpochSeconds = epochSeconds;
+    }
+    const latestParticipationsFilename = makeFilename(filenames.participations, true, isTestMode);  // isLatest=true
+    const collectedParticipationsData = readJsonFile(dirPath, latestParticipationsFilename);
+    if (!collectedParticipationsData) {
+      console.error(`Error: a latest participations json file ${latestParticipationsFilename}  is not created, please run from phase2.`);
+      return false;
+    } else {
+      const lastChecked = collectedParticipationsData._metadata.lastChecked;
+      const epochSeconds = Math.floor(new Date(lastChecked).getTime() / 1000);
+      if (prevEpochSeconds > epochSeconds) {
+        console.error(`Error: The latest groups json file ${latestGroupsFilename} is newer than the partipations json, please run from phase2.`);
+        return false;
+      }
+      prevEpochSeconds = epochSeconds;
+    }
+
+    const latestAffiliationsFilename = makeFilename(filenames.affiliations, true, isTestMode);  // isLatest=true
+    const collectedAffiliationsData = readJsonFile(dirPath, latestAffiliationsFilename);
+    if (!collectedAffiliationsData) {
+      console.error(`Error: a latest affiliations json file ${latestAffiliationsFilename} is not created, please run from phase3.`);
+      errorCount++;
+    } else {
+      const lastChecked = collectedAffiliationsData._metadata.lastChecked;
+      const epochSeconds = Math.floor(new Date(lastChecked).getTime() / 1000);
+      if (prevEpochSeconds > epochSeconds) {
+        console.error(`Error: The latest paticipations json file ${latestParticipationsFilename} is newer than the affiliations json, please run from phase3.`);
+        return false;
+      }
+      prevEpochSeconds = epochSeconds;
+    }
+
+    const latestUsersFilename = makeFilename(filenames.users, true, isTestMode);  // isLatest=true
+    const collectedUsersData = readJsonFile(dirPath, latestUsersFilename);
+    if (!collectedUsersData) {
+      console.error(`Error: a latest users json file {latestUsersFilename} is not created, please run phase4.`);
+      errorCount++;
+    } else {
+      const lastChecked = collectedUsersData._metadata.lastChecked;
+      const epochSeconds = Math.floor(new Date(lastChecked).getTime() / 1000);
+      if (prevEpochSeconds > epochSeconds) {
+        console.error(`Error: The latest users json file ${latestUsersFilename} is newer than the participations json, please run from phase4.`)
+        return false;
+      }
+      prevEpochSeconds = epochSeconds;
+    }
+
+    const latestSpecificationsFilename = makeFilename(filenames.specifications, true, isTestMode); // isLatest=true
+    const collectedSpecificationsData = readJsonFile(dirPath, latestSpecificationsFilename);
+    if (!collectedSpecificationsData) {
+      console.error(`Error: a latest specifications json file$ {latestSpecificationsFilename} is not created, please run from phase5.`);
+      errorCount++;
+    } else {
+      const lastChecked = collectedSpecificationsData._metadata.lastChecked;
+      const epochSeconds = Math.floor(new Date(lastChecked).getTime() / 1000);
+      if (prevEpochSeconds > epochSeconds) {
+        console.error(`Error: The latest users json file ${latestSpecificationsFilename} is newer than the specifications json, please run from phase5.`);
+        return false;
+      }
+      prevEpochSeconds = epochSeconds;
+    }
+    logAlways(`✓ ok with the all json files.`);
+
+    const testGroups = collectedGroupsData._metadata.testGroups;
+    if (!createTimelineJsonFile(dirPath, filenames, finalizeTimestamp, testGroups, isTestMode)) {
+      logAlways('\n========== PHASE 6: Failed at createTimelineJsonFile ==========');
+      return false;
+    };
+
+    if (!checkTimelineJsonFile(dirPath, filenames, true, isTestMode)) {  // isLatest=true
+      logAlways('\n========== PHASE 6: Failed at checkTimelineJsonFile ==========');
+      return false;
+    }
+
+    // read the created timeline json file again
+    const latestTimelineFilename = makeFilename(filenames.timeline, true, isTestMode); // isLatest = true
+    const collectedTimelineData = readJsonFile(dirPath, latestTimelineFilename);
+
+    // update  json files with the latest json files
+    logAlways('✓ update all the json files by comparing with all the latest json files.');
+    compareWithLatestAndWriteJsonFile("groups", dirPath, filenames.groups, collectedGroupsData, isTestMode);
+    compareWithLatestAndWriteJsonFile("participations", dirPath, filenames.participations, collectedParticipationsData, isTestMode);
+    compareWithLatestAndWriteJsonFile("affiliations", dirPath, filenames.affiliations, collectedAffiliationsData, isTestMode);
+    compareWithLatestAndWriteJsonFile("users", dirPath, filenames.users, collectedUsersData, isTestMode);
+    if (collectedSpecificationsData == undefined) {
+      // Note that an old data set does not have the spec json data
+      console.warn("Warning skip updating specification json file since no latest json files.")
+    } else {
+      compareWithLatestAndWriteJsonFile("specifications", dirPath, filenames.specifications, collectedSpecificationsData, isTestMode);
+    }
+    compareWithLatestAndWriteJsonFile("timeline", dirPath, filenames.timeline, collectedTimelineData, isTestMode);
+
+    // alreays createDataJson files, regardless other json files are updated or not. Because all fetch is done.
+    if (!createDataJsonFile(dirPath, filenames, finalizeTimestamp, isTestMode)) {
+      logAlways('\n========== PHASE 6: Failed at createDataJsonFile ==========');
+    } else {
+      logAlways('✓ remove all latest json files.');
+      removeJsonFile(dirPath, latestGroupsFilename, isTestMode);
+      removeJsonFile(dirPath, latestParticipationsFilename, isTestMode);
+      removeJsonFile(dirPath, latestAffiliationsFilename, isTestMode);
+      removeJsonFile(dirPath, latestUsersFilename, isTestMode);
+      if (collectedSpecificationsData != undefined) {
+        removeJsonFile(dirPath, latestSpecificationsFilename, isTestMode);
+      }
+      removeJsonFile(dirPath, latestTimelineFilename, isTestMode);
+      logAlways('✓ Finished.');
+    }
+    logAlways('\n========== PHASE 6: Finished ==========');
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+  return true;
+}
+
 
 function printUsage() {
   console.log(`\nUsage:
@@ -1456,23 +2274,24 @@ function printUsage() {
   node scripts/fetch-w3c-data.js --participations   # Only Phase2: update participation details in w3c-participations.json (requires w3c-groups.json)
    node scripts/fetch-w3c-data.js --users           # Only Phase3: update user details in w3c-users.json (requires w3c-participations.json and w3c-affiliations.json)
   node scripts/fetch-w3c-data.js --affiliations     # Only Phase4: update affiliations in w3c-affiliations.json (requires w3c-participations.json)
-
-  node scripts/fetch-w3c-data.js --users-not-in-groups  # Only Phase5: update users who are not in any groups  in w3c-users.json (requires w3c-participations.json and w3c-users.json)
+  node scripts/fetch-w3c-data.js --specifications  # Only Phase6: update specifications in w3c-specifications.json (requires w3c-participations.json and w3c-users.json)
   node scripts/fetch-w3c-data.js --groups --participations  # Only Phase1 and Phase2: update groups and participations
+   node scripts/fetch-w3c-data.js --remakeTimeline # RemakeTimeline json file on Phase6
   node scripts/fetch-w3c-data.js --verbose          # Show detailed fetch logs\n`);
 }
 
 async function main() {
   const dirPath = './data';
-  fetchStartTimestamp = Date.now();
-  const now = new Date(fetchStartTimestamp);
-  fetchStartTime = now.toISOString()
+  phaseStartTimestamp = Date.now();
+  const now = new Date(phaseStartTimestamp);
+  const phaseStartTime = now.toISOString()
     .replace(/[-:]/g, '')
     .replace(/T/, '-')
     .split('.')[0];
-  console.log(`Fetch started at: ${fetchStartTime}`);
+  console.log(`Fetch started at: ${phaseStartTime}`);
   const allowedOptions = [
-    '--groups', '--test', '--participations', '--users', '--affiliations', '--users-not-in-groups', '--phase1', '--phase2', '--phase3', '--phase4', '--phase5', '--verbose', '--help', '-h'
+    '--groups', '--test', '--participations', '--users', '--affiliations', '--phase1', '--phase2', '--phase3', '--phase4', '--phase5', '--phase6',
+    '--remakeTimeline', '--verbose', '--help', '-h'
   ];
   // 未対応の--option
   const unknownOptions = process.argv.slice(2).filter(opt => opt.startsWith('--') && !allowedOptions.includes(opt));
@@ -1490,75 +2309,214 @@ async function main() {
   }
   fs.mkdirSync(dirPath, { recursive: true });
   const isTestMode = process.argv.includes('--test') || forceTestMode;
-  const fetchGroups = process.argv.includes('--groups') || process.argv.includes('--phase1');
-  const fetchParticipations = process.argv.includes('--participations') || process.argv.includes('--phase2');
-  const fetchUsers = process.argv.includes('--users') || process.argv.includes('--phase3');
-  const fetchAffiliations = process.argv.includes('--affiliations') || process.argv.includes('--phase4');
-  const fetchUsersNotInGroups = process.argv.includes('--users-not-in-groups') || process.argv.includes('--phase5')
-  const fetchAll = !fetchGroups && !fetchParticipations && !fetchAffiliations && !fetchUsers && !fetchUsersNotInGroups;
-  const isSkipFetchUsersNotInGroups = true // 注意：groupに参加していないparticipantsの多すぎるので、--skipFetchUsersNotInGroupsをつけない限り取得しない。
-  // const isSkipFetchUsersNotInGroups = false // テストはこちら。
+  const isFetchGroups = process.argv.includes('--groups') || process.argv.includes('--phase1');
+  const isFetchParticipations = process.argv.includes('--participations') || process.argv.includes('--phase2');
+  const isFetchAffiliations = process.argv.includes('--affiliations') || process.argv.includes('--phase3');
+  const isFetchUsers = process.argv.includes('--users') || process.argv.includes('--phase4');
+  const isFetchSpecifications = process.argv.includes('--specifications') || process.argv.includes('--phase5');
+  const isFinalize = process.argv.includes('--finanize') || process.argv.includes('--phase6')
+  const isAllPhases = !isFetchGroups && !isFetchParticipations && !isFetchAffiliations && !isFetchUsers && !isFetchSpecifications && !isFinalize;
+
   const fileNames = {
     data: 'w3c-data.json',
+    timeline: 'w3c-timeline.json',
     groups: 'w3c-groups.json',
     participations: 'w3c-participations.json',
     users: 'w3c-users.json',
-    affiliations: 'w3c-affiliations.json'
+    affiliations: 'w3c-affiliations.json',
+    specifications: 'w3c-specifications.json',
   };
-  let usedFileSet = new Set();
 
   let phase1Finished = false;
   let phase2Finished = false;
   let phase3Finished = false;
   let phase4Finished = false;
-  if (fetchAll || fetchGroups) {
-    usedFileSet.add(fileNames.groups);
+  let phase5Finished = false;
+  let phase6Finished = false;
+
+  if (isAllPhases || isFetchGroups) {
     phase1Finished = await phase1_fetchGroups(dirPath, fileNames.groups, isTestMode);
+    if (!phase1Finished) {
+      console.log('Phase1 failed');
+    }
   }
-  if (fetchAll || fetchParticipations) {
-    usedFileSet.add(fileNames.groups);
-    usedFileSet.add(fileNames.participations);
-    phase2Finished = await phase2_fetchParticipations(dirPath, fileNames.groups, fileNames.participations);
+  if ((isAllPhases && phase1Finished) || isFetchParticipations) {
+    phase2Finished = await phase2_fetchParticipations(dirPath, fileNames.participations, fileNames.groups, isTestMode);
+    if (!phase2Finished) {
+      console.log('Phase2 failed');
+    }
   }
-  if (fetchAll || fetchUsers) {
-    usedFileSet.add(fileNames.groups);
-    usedFileSet.add(fileNames.participations);
-    usedFileSet.add(fileNames.users);
-    phase3Finished = await phase3_fetchUsers(dirPath, fileNames.groups, fileNames.participations, fileNames.users);
+  if ((isAllPhases && phase2Finished) || isFetchAffiliations) {
+    phase3Finished = await phase3_fetchAffiliations(dirPath, fileNames.affiliations, fileNames.participations, isTestMode);
+    if (!phase3Finished) {
+      console.log('Phase3 failed');
+    }
   }
-
-  if (fetchAll || fetchAffiliations) {
-    usedFileSet.add(fileNames.participations);
-    usedFileSet.add(fileNames.users);
-    usedFileSet.add(fileNames.affiliations);
-    phase4Finished = await phase4_fetchAffiliations(dirPath, fileNames.participations, fileNames.users, fileNames.affiliations, isTestMode);
-  }
-
-  if (fetchAll || fetchUsersNotInGroups) {
-    usedFileSet.add(fileNames.participations);
-    usedFileSet.add(fileNames.affiliations);
-    phase3Finished = await phase5_fetchUsersWhoAreNotInGroups(dirPath, fileNames.affiliations, fileNames.users, isSkipFetchUsersNotInGroups);
+  if ((isAllPhases && phase3Finished) || isFetchUsers) {
+    phase4Finished = await phase4_fetchUsers(dirPath, fileNames.users, fileNames.groups, fileNames.participations, fileNames.affiliations, isTestMode);
+    if (!phase4Finished) {
+      console.log('Phase4 failed');
+    }
   }
 
-  const duration = Date.now() - fetchStartTimestamp;
-  console.log(`\n========== All Summary ==========`);
-  console.log(`Total duration: ${formatDuration(duration)}`);
-  // トータルリクエスト数と平均
-  console.log(`Total requests (all phases): ${totalRequestCount}`);
-  const totalDurationSec = duration / 1000;
-  console.log(`Average requests/sec (all phases): ${(totalRequestCount / totalDurationSec).toFixed(2)}`);
-
-  // w3c-data.json生成は全Phase（groups, participations, users, affiliations）を実行した場合のみ
-  if (phase1Finished && phase2Finished && phase3Finished && phase4Finished) {
-    // files配列構築
-    await createDataJson(dirPath, Array.from(usedFileSet), fileNames.data, isTestMode ? testGroups : null);
-  } else {
-    console.log('w3c-data.json not created because not all phases ran.');
+  if ((isAllPhases && phase4Finished) || isFetchSpecifications) {
+    phase5Finished = await phase5_fetchSpecifications(dirPath, fileNames.specifications, fileNames.groups, isTestMode);
+    if (!phase5Finished) {
+      console.log('Phase5 failed');
+    }
   }
-  console.log('All done.');
+  if ((isAllPhases && phase5Finished) || isFinalize) {
+    phase6Finished = await phase6_finalize(dirPath, fileNames, isTestMode);
+    if (!phase6Finished) {
+      console.log('Phase6 failed');
+    }
+  }
+
+  if (phase1Finished && phase2Finished && phase3Finished && phase4Finished && phase5Finished && phase6Finished) {
+    console.log('All done.');
+  }
 }
 
 main().catch(e => {
   console.error('Fatal error:', e);
   process.exit(1);
 });
+
+
+// remake the w3c-timeline.json using the snapshot data under './data-snapshots'.
+
+function remakeTimelineJsonFile(dirPath, filenames) {
+  const DATA_DIR = 'data';
+  const SNAPSHOTS_DIR = 'data-snapshots';
+  const SNAPSHOT_DIR_PREFIX = 'w3c-data-';
+
+  logAlways(`✓ remakeTimelineJsonFiles with json files under the dir ${SNAPSHOTS_DIR} and ${DATA_DIR}.`);
+  // all files including the data json must be exists in ${DIR_DIR} to remake timeline
+  const dataPaths = fs
+    .readdirSync(SNAPSHOTS_DIR, { withFileTypes: true })
+    .filter(d =>
+      d.isDirectory() &&
+      d.name.startsWith(SNAPSHOT_DIR_PREFIX)
+    )
+    .sort() // YYYY-MM-DD 形式なので文字列ソート = 時系列
+    .map(d => path.join(SNAPSHOTS_DIR, d.name));
+
+  if (dataPaths.length == 0) {
+    console.error(`No snapshot directory with prefix=${SNAPSHOT_DIR_PREFIX} found under ${SNAPSHOTS_DIR}`);
+    return false;
+  }
+
+  dataPaths.push(DATA_DIR);
+
+  for (const [i, path] of Object.entries(dataPaths)) {
+    logAlways(` Info: dataPath[${i}]: ${path}`);
+  }
+
+  let eventTimestamp = 0;
+  const collectedTimelineData = {};
+  for (let i = 0; i < dataPaths.length; i++) {
+    const eventPath = dataPaths[i];
+    const prevPath = i === 0 ? undefined : dataPaths[i - 1];
+
+    const eventApiData = loadApiData(eventPath, filenames, false, false);  //  isLatest=false, isTestMode = false
+    if (eventApiData == undefined) {
+      console.error("Error: can not load api data", eventPath);
+      return false;
+    }
+
+    const eventStats = makeStats(eventApiData);
+    const eventTime = eventApiData.mainData?._metadata.lastChecked   // use mainData latestCheckedtime for eventTime
+    eventTimestamp = new Date(eventTime).getTime();
+
+    let prevStats = undefined;
+    let prevTimestamp = 0;
+    if (prevPath) {
+      const prevApiData = loadApiData(prevPath, filenames, false, false);  //  isLatest=false, isTestMode = false
+      if (prevApiData == undefined) {
+        console.error("Error: can not load api data", prevData);
+        return false;
+      }
+      prevStats = makeStats(prevApiData);
+      const prevTime = prevApiData.mainData?._metadata.lastChecked;
+      prevTimestamp = new Date(prevTime).getTime();
+
+      // check consistency of timestamp
+      if (prevTimestamp > eventTimestamp) {
+        console.error(`Warning: prevTimestamp=${prevTimestamp}: ${new Date(prevTimestamp)} of ${prevPath} is bigger than the eventTimestamp=${eventTimestamp}: ${new Date(eventTimestamp)} ${eventPath}`)
+        return false;
+      }
+
+      function checkDataTimestamp(filename, eventData, prevData) {
+        const eventTime = new Date(eventData?._metadata.lastChecked ?? 0);
+        const prevTime = new Date(prevData?._metadata.lastChecked ?? 0);
+        if (eventTime.getTime() >= prevTime.getTime()) {
+          return true;
+        }
+        console.error(`Error: prevTime ${prevTime} is older than the eventTime: ${eventTime}:`, filename);
+        return false;
+      }
+
+      if (!checkDataTimestamp(filenames.groups, eventApiData.groupsData, prevApiData.groupsData) &&
+        !checkDataTimestamp(filenames.participations, eventApiData.participationsData, prevApiData.participationsData) &&
+        !checkDataTimestamp(filenames.affiliations, eventApiData.affiliationsData, prevApiData.affiliationsData) &&
+        !checkDataTimestamp(filenames.users, eventApiData.usersData, prevApiData.usersData) &&
+        !checkDataTimestamp(filenames.specifications, eventApiData.specificationsData, prevApiData.specificationsData)) {
+        return false;
+      }
+    }
+
+    const eventData = makeTimelineEventData(prevTimestamp, prevStats, eventTimestamp, eventStats);
+    if (eventData == undefined) {
+      return false;
+    }
+
+    Object.assign(collectedTimelineData, eventData); // add eventData
+  }
+
+  const timelineFilename = makeFilename(filenames.timeline, false, false); // isLatest=false, isTestMode=false, no need to create latest file and no TestMode in remakeTimelinefiles();
+  const createTime = new Date(eventTimestamp).toUTCString();
+  const phaseStartTime = createTime;
+  const phaseDuration = formatDuration(0);
+  const isFinished = createJsonFile("timeline", dirPath, timelineFilename, collectedTimelineData,
+    createTime, phaseStartTime, phaseDuration, undefined); // eventTimestamp is the last eventTimestamp
+  if (isFinished) {
+    logAlways('✓ Finished.');
+  }
+  return isFinished;
+
+}
+
+function checkTimelineJsonFile(dirPath, filenames, isLatest, isTestMode) {
+  logAlways(`✓ checkTimelineJsonFile under ${dirPath}.`);
+
+  try {
+    const timelineFilename = makeFilename(filenames.timeline, isLatest, isTestMode); // isLatest=fale
+    if (!fs.existsSync(`${dirPath}/${timelineFilename}`)) {
+      console.error(`Error: Not found the timeline json file ${timelineFilename}.`)
+      return false;
+    }
+    const apiData = loadApiData(dirPath, filenames, isLatest, isTestMode);  //  isLatest=false
+    if (apiData == undefined) {
+      console.error("Error: can not load api data", dirPath);
+      return false;
+    }
+
+    const collectedTimelineData = apiData.timelineData;
+    if (collectedTimelineData == undefined) {
+      console.error("Error checkTimelineJsonFile no timeline");
+      return false;
+    }
+
+    if (!checkTimelineData(collectedTimelineData)) {
+      console.error("Error checkTimelineJsonFile checkTimelineData failed.");
+      return false;
+    }
+    logAlways(`✓ checkTimelineJsonFile ok.`);
+    return true;
+  } catch (e) {
+    console.error(e);
+  }
+
+  logAlways(`✓ checkTimelineJsonFile ng.`);
+  return false;
+}
