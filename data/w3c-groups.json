@@ -2,8 +2,8 @@
   "_metadata": {
     "fileType": "groups",
     "filename": "w3c-groups.json",
-    "lastChecked": "Sat, 14 Mar 2026 07:44:15 GMT",
-    "startTime": "2026-03-14T00:41:29.152Z",
+    "lastChecked": "Sat, 14 Mar 2026 15:51:30 GMT",
+    "startTime": "2026-03-14T08:53:58.023Z",
     "duration": "4m7s",
     "entryCount": 871
   },
@@ -2272,13 +2272,13 @@
     }
   },
   "https://api.w3.org/groups/cg/act-r/participations": {
-    "fetchedAt": "Sat, 14 Mar 2026 00:42:36 GMT",
+    "fetchedAt": "Sat, 14 Mar 2026 08:55:05 GMT",
     "lastModified": null,
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 128,
+      "total": 129,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/act-r"
@@ -2795,6 +2795,10 @@
           {
             "href": "https://api.w3.org/participations/47438",
             "title": "Nicholas Cook"
+          },
+          {
+            "href": "https://api.w3.org/participations/47448",
+            "title": "Tawsif Ahmed"
           }
         ],
         "self": {
@@ -2810,13 +2814,13 @@
     }
   },
   "https://api.w3.org/groups/cg/act-r/users": {
-    "fetchedAt": "Sat, 14 Mar 2026 00:42:36 GMT",
+    "fetchedAt": "Sat, 14 Mar 2026 08:55:06 GMT",
     "lastModified": null,
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 142,
+      "total": 143,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/act-r"
@@ -2835,6 +2839,11 @@
           {
             "href": "https://api.w3.org/users/oz03obrx3asc4484084sccsg48c008c",
             "title": "Christina Adams",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/nowqljexoiswgcggwsgs0g8wsow480w",
+            "title": "Tawsif Ahmed",
             "former": false
           },
           {
@@ -3584,13 +3593,13 @@
     }
   },
   "https://api.w3.org/groups/cg/adva11yresources/participations": {
-    "fetchedAt": "Sun, 08 Mar 2026 02:25:28 GMT",
+    "fetchedAt": "Sat, 14 Mar 2026 08:55:06 GMT",
     "lastModified": null,
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 46,
+      "total": 47,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/adva11yresources"
@@ -3779,6 +3788,10 @@
           {
             "href": "https://api.w3.org/participations/46181",
             "title": "Lancaster University"
+          },
+          {
+            "href": "https://api.w3.org/participations/47447",
+            "title": "Tawsif Ahmed"
           }
         ],
         "self": {
@@ -3794,18 +3807,23 @@
     }
   },
   "https://api.w3.org/groups/cg/adva11yresources/users": {
-    "fetchedAt": "Fri, 27 Feb 2026 12:32:18 GMT",
+    "fetchedAt": "Sat, 14 Mar 2026 08:55:06 GMT",
     "lastModified": null,
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 44,
+      "total": 45,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/adva11yresources"
         },
         "users": [
+          {
+            "href": "https://api.w3.org/users/nowqljexoiswgcggwsgs0g8wsow480w",
+            "title": "Tawsif Ahmed",
+            "former": false
+          },
           {
             "href": "https://api.w3.org/users/odw1hbfba5w8w400oo4ckowsw0s4og0",
             "title": "Andrew Arch",
@@ -19258,13 +19276,13 @@
     }
   },
   "https://api.w3.org/groups/cg/coga-community/participations": {
-    "fetchedAt": "Sat, 14 Mar 2026 00:42:56 GMT",
+    "fetchedAt": "Sat, 14 Mar 2026 08:55:25 GMT",
     "lastModified": null,
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 144,
+      "total": 145,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/coga-community"
@@ -19845,6 +19863,10 @@
           {
             "href": "https://api.w3.org/participations/47384",
             "title": "Jayathma Juwandarage"
+          },
+          {
+            "href": "https://api.w3.org/participations/47446",
+            "title": "Tawsif Ahmed"
           }
         ],
         "self": {
@@ -19860,13 +19882,13 @@
     }
   },
   "https://api.w3.org/groups/cg/coga-community/users": {
-    "fetchedAt": "Sat, 14 Mar 2026 00:42:56 GMT",
+    "fetchedAt": "Sat, 14 Mar 2026 08:55:25 GMT",
     "lastModified": null,
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 145,
+      "total": 146,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/coga-community"
@@ -19880,6 +19902,11 @@
           {
             "href": "https://api.w3.org/users/q57urr4pho0osokock0o4okogo4ko4s",
             "title": "Daniel Adams",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/nowqljexoiswgcggwsgs0g8wsow480w",
+            "title": "Tawsif Ahmed",
             "former": false
           },
           {
