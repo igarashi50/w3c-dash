@@ -26,7 +26,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 'lts/*'
 
       - name: Remove w3c-data.json to check for release
         run: |
@@ -56,7 +56,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 'lts/*'
 
       - name: Download artifact
         uses: actions/download-artifact@v4
@@ -86,7 +86,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 'lts/*'
 
       - name: Download artifact
         uses: actions/download-artifact@v4
@@ -116,7 +116,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 'lts/*'
 
       - name: Download artifact
         uses: actions/download-artifact@v4
@@ -146,7 +146,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 'lts/*'
 
       - name: Download artifact
         uses: actions/download-artifact@v4
@@ -176,7 +176,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 'lts/*'
 
       - name: Download artifact
         uses: actions/download-artifact@v4
@@ -225,7 +225,7 @@ jobs:
 
       # data/ を commit & push
       - name: Commit and push data
-        if: steps.check_data.outputs.has_w3c_data == 'true' && github.ref_name == 'main'
+        if: steps.check_data.outputs.has_w3c_data == 'true'
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
@@ -238,7 +238,7 @@ jobs:
 
       # SHAを取得
       - name: Get latest commit SHA
-        if: steps.check_data.outputs.has_w3c_data == 'true' && github.ref_name == 'main'
+        if: steps.check_data.outputs.has_w3c_data == 'true'
         id: latest_sha
         run: |
           git fetch origin
@@ -246,7 +246,7 @@ jobs:
 
       # Release 作成
       - name: Create Release 
-        if: steps.check_data.outputs.has_w3c_data == 'true' && github.ref_name == 'main'
+        if: steps.check_data.outputs.has_w3c_data == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -261,12 +261,6 @@ jobs:
             --notes $'Automated W3C Dash snapshot.\n\nThis release is created only when w3c-data.json is created or updated, which indicates a complete and valid data collection run.\n\nThe source archive (zip / tar.gz) contains all generated JSON files under the data/ directory.\n\nEach JSON file includes a _metadata object with filename, lastChecked (UTC), fetchStartTime, duration, and entryCount or itemCount.\n\nFiles generated:\n- w3c-groups.json\n- w3c-participations.json\n- w3c-affiliations.json\n- w3c-users.json\n- w3c-specifications.json\n- w3c-timeline.json\n- w3c-data.json'
 
           echo "✓ Release created: $TAG_NAME"
-
-      # devなのでReleaseしない
-      - name: Skip Release (not main)
-        if: github.ref_name != 'main'
-        run: |
-          echo "ℹ️ Branch '${{ github.ref_name }}' → Release skipped (main only)." >> $GITHUB_STEP_SUMMARY
 
       # Summary
       - name: Summary
