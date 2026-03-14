@@ -45,97 +45,226 @@
     "applicationCategory": "Data visualization"
   }
   </script>
+
+  <!-- ES Module -->
+  <script type="module" src="./w3c-dash.js"></script> 
 </head>
 
 <body>
   <div id="main">
-    <div id="titleRow" style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.5em;">
 
+    <div id="titleRow">
       <!-- Left side: Logo + Title + Subtitle -->
-      <div style="display: flex; align-items: center; gap: 1em;">
-        <img src="w3c-dash.svg" width="32px" height="32px" alt="W3C Dash Logo" style="margin-left: 10px;">
-
-        <section style="display: flex; align-items: baseline; gap: 0.5em;">
-          <h1 id="title" style="font-size:1.5em; font-weight:700; margin: 0;">
+      <div class="title-left">
+        <img src="w3c-dash.svg" width="32" height="32" alt="W3C Dash Logo" class="title-logo">
+        <section class="title-text">
+          <h1 id="title">
             W3C Dash
           </h1>
-          <span style="font-size: 0.85em; color: #888; font-weight: 400; letter-spacing: 0.01em;">
-            - a dashboard of <a href="https://www.w3.org" target="_blank"
-              style="color: #0969da; text-decoration: underline;">W3C</a> statistics -
+
+          <span class="title-sub">
+            - a dashboard of
+            <a href="https://www.w3.org" target="_blank" rel="noopener">
+              W3C
+            </a>
+            statistics -
           </span>
-          <p style="display: none;">W3C Dash is a dashboard for visualizing W3C statistics. Explore group participations
-            of members, member participants, invited experts, W3C staffs and individuals interactively.</p>
+
+          <p class="title-description">
+            W3C Dash is a dashboard for visualizing W3C statistics. Explore group
+            participations of members, member participants, invited experts, W3C
+            staffs and individuals interactively.
+          </p>
         </section>
       </div>
+
       <!-- Right side: Date -->
-      <span id="dateStr" style="font-size: 0.8em; color: #666; white-space: nowrap;">Updated date</span>
+      <span id="dateStr" class="title-date">
+        Updated date
+      </span>
     </div>
+
     <div id="status"></div>
-    <div id="summary">
-      <!-- Summary Row -->
-      <section id="summarySection"
-        style="border: 1px solid #ddd; border-radius: 4px; padding: 10px; background: #f8f9fa; margin-bottom: 1.5px; display: flex; flex-direction: column; gap: 2px;">
-        <div
-          style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; width: 100%;">
-          <span style="font-size: 1.15em; font-weight: 700;">Summary <span id="dateStr"
-              style="font-size:0.95em; font-weight:400; color:#666; margin-left:8px;"></span></span>
-          <button id="toggleOnlyGroupParticipations" type="button"
-            style="padding: 0 3px; height: 12px; font-size: 0.65em; border: 1px solid #bbb; border-radius: 3px; background: #f3f3f3; cursor: pointer; display: flex; align-items: center; gap: 2px; min-width: 0; box-sizing: border-box; margin-left: auto;">
-            <span id="toggleOnlyGroupParticipationsCheck"
-              style="display: inline-block; width: 8px; height: 8px; border: 1px solid #bbb; border-radius: 2px; background: #fff; text-align: center; font-size: 0.7em; line-height: 7px; color: #0969da; transition: background 0.2s; margin-right: 2px;">
+
+    <section id="summary" class="panel">
+      <div class="summary-header">
+        <span class="summary-title">Summary</span>
+
+        <div class="toggle-wrap">
+          <button id="toggleOnlyGroupParticipations" type="button" class="toggle">
+            <span class="toggle-check"></span>
+            <span class="toggle-label">
+              Only Group Participations
             </span>
-            <span style="font-size: 1.15em; color: #222; font-weight: 400; user-select: none;">Only Group
-              Participations</span>
           </button>
         </div>
-        <div
-          style="display: flex; font-size: 0.82em; gap: 7px; flex-wrap: wrap; line-height: 1.18; row-gap: 2px; margin-left: 10px;">
-          <span>Groups (G): <span id="summaryGroups" class="summary-count"></span></span>
-          <span>Members (M): <span class="clickable summary-count" id="summaryMembers"
-              data-summary-type="members"></span></span>
-          <span>Member Participants (MP): <span class="clickable summary-count" id="summaryMemberParticipants"
-              data-summary-type="memberParticipants"></span></span>
-          <span>Invited Experts (IE): <span class="clickable summary-count" id="summaryInvitedExperts"
-              data-summary-type="invitedExperts"></span></span>
-          <span>Staffs (S): <span class="clickable summary-count" id="summaryStaffs"
-              data-summary-type="staffs"></span></span>
-          <span>Individuals (Ind): <span class="clickable summary-count" id="summaryIndividuals"
-              data-summary-type="individuals"></span></span>
-          <span>Participants (P): <span class="clickable summary-count" id="summaryAllParticipants"
-              data-summary-type="allParticipants"></span></span>
-          <span style="font-size: 0.9em; color: #666;">Note: P=MP+IE+S+Ind</span>
-        </div>
-      </section>
-      <div id="summary-stats"></div>
-    </div>
-    <section class="groupsSection"
-      style="border: 1px solid #ddd; border-radius: 4px; padding: 10px; background: #f8f9fa; margin-bottom: 1.5px; display: flex; flex-direction: column; gap: 2px;">
-      <div>
-        <div style="font-size: 1.15em; font-weight: 600; margin-bottom: 5px;">Groups</div>
-        <div id="groupTypeFilter"
-          style="font-size: 0.95em; display: flex; gap: 1.5px; flex-wrap: wrap; margin-left: 10px;">
-          <button class="filter-btn" data-type="wg">Working Groups</button>
-          <button class="filter-btn" data-type="ig">Interest Groups</button>
-          <button class="filter-btn" data-type="cg">Community Groups</button>
-          <button class="filter-btn" data-type="tf">Task Forces</button>
-          <button class="filter-btn" data-type="other">Other Groups</button>
-          <button class="filter-btn" data-type="all">All Groups</button>
-        </div>
+      </div>
+
+      <div class="summary-list">
+        <span>Groups (G): <span id="summaryGroups" class="summary-count"></span></span>
+        <span>Members (M): <span id="summaryMembers" class="clickable summary-count"
+            data-summary-type="members"></span></span>
+        <span>Member Participants (MP): <span id="summaryMemberParticipants" class="clickable summary-count"
+            data-summary-type="memberParticipants"></span></span>
+        <span>Invited Experts (IE): <span id="summaryInvitedExperts" class="clickable summary-count"
+            data-summary-type="invitedExperts"></span></span>
+        <span>Staffs (S): <span id="summaryStaffs" class="clickable summary-count"
+            data-summary-type="staffs"></span></span>
+        <span>Individuals (Ind): <span id="summaryIndividuals" class="clickable summary-count"
+            data-summary-type="individuals"></span></span>
+        <span>Participants (P): <span id="summaryAllParticipants" class="clickable summary-count"
+            data-summary-type="allParticipants"></span></span>
+        <span class="summary-note">Note: P=MP+IE+S+Ind</span>
+      </div>
+
+      <hr class="summary-divider">
+
+      <div class="summary-list">
+        <span>Specifications (Spec): <span id="summarySpecifications" class="clickable summary-count"
+            data-summary-type="specifications"></span></span>
+        <span>Recommendations (Rec): <span id="summaryRecommendations" class="clickable summary-count"
+            data-summary-type="recommendations"></span></span>
+        <span>Candidate Recommendations (CR): <span id="summaryCandidateRecommendations" class="clickable summary-count"
+            data-summary-type="candidateRecommendations"></span></span>
+        <span>Draft Standards (DS): <span id="summaryDraftStandards" class="clickable summary-count"
+            data-summary-type="draftStandards"></span></span>
+        <span>Retired Specs (Ret): <span id="summaryRetiredSpecs" class="clickable summary-count"
+            data-summary-type="retiredSpecs"></span></span>
+        <span>Other Specs (Oth): <span id="summaryOtherSpecs" class="clickable summary-count"
+            data-summary-type="otherSpecs"></span></span>
+        <span>Versions (Vers): <span id="summaryAllVersions" class="clickable summary-count"
+            data-summary-type="allVersions"></span></span>
+        <span class="summary-note">Note: Spec=Rec+CR+DS+Ret+Oth</span>
       </div>
     </section>
-    <!-- Hidden select for groupsList sort -->
-    <select id="groupsListSortBy" style="display: none;">
-      <option value="name">Group Name ↑</option>
-      <option value="members">Members ↓</option>
-      <option value="memberParticipants">Member Participants ↓</option>
-      <option value="invitedExperts">Invited Experts ↓</option>
-      <option value="staffs">Staffs ↓</option>
-      <option value="individuals">Individuals ↓</option>
-      <option value="allParticipants">All Participants ↓</option>
-    </select>
-    <div id="groupsList">
-      <p style='display: none;'>- groups content will be added here -</p>
-    </div>
+
+
+    <section id="groups">
+      <div class="groups-top">
+        <div id="groupsHeader">
+          <span class="groups-title">Groups</span>
+
+          <div id="tableSwitcher">
+            <div class="segmented-control" role="tablist">
+              <button class="segment active" data-show="participations" role="tab" aria-selected="true">
+                Participations
+              </button>
+              <button class="segment" data-show="specifications" role="tab" aria-selected="false">
+                Specifications
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="groupTypeFilter">
+          <button class="filter-btn" data-type="wg">Working Groups: <span class="count">0</span></button>
+          <button class="filter-btn" data-type="ig">Interest Groups: <span class="count">0</span></button>
+          <button class="filter-btn" data-type="cg">Community Groups: <span class="count">0</span></button>
+          <button class="filter-btn" data-type="tf">Task Forces: <span class="count">0</span></button>
+          <button class="filter-btn" data-type="other">Other Groups: <span class="count">0</span></button>
+          <button class="filter-btn" data-type="all">All Groups: <span class="count">0</span></button>
+        </div>
+      </div>
+
+      <!-- Groups List -->
+      <div id="groupsList">
+        <!-- class="only-participants"をつけるとparticipantsのみ、class="only-specificationsだとspecificationsだけに" -->
+        <!-- ヘッダー -->
+        <div id="groupsListHeader">
+          <table class="groups-table groups-table-header">
+            <thead>
+              <tr id="groupsHeaderRow">
+                <!-- Name -->
+                <th class="name-cell col-name sortable" data-key="name">
+                  <span class="label">Groups</span>
+                  <span class="sort-icon">↓</span>
+                </th>
+                <!-- Participants -->
+                <th class="number-cell col-m col-participations sortable" data-key="members">M<span
+                    class="sort-icon">↓</span>
+                </th>
+                <th class="number-cell col-mp col-participations sortable" data-key="memberParticipants">MP<span
+                    class="sort-icon">↓</span></th>
+                <th class="number-cell col-ie col-participations sortable" data-key="invitedExperts">IE<span
+                    class="sort-icon">↓</span></th>
+                <th class="number-cell col-s col-participations sortable" data-key="staffs">S<span
+                    class="sort-icon">↓</span>
+                </th>
+                <th class="number-cell col-ind col-participations sortable" data-key="individuals">Ind<span
+                    class="sort-icon">↓</span></th>
+                <th class="number-cell col-p col-participations sortable" data-key="allParticipants">P<span
+                    class="sort-icon">↓</span></th>
+
+                <!-- Specifications -->
+                <th class="number-cell col-spec col-specifications sortable" data-key="specifications">Spec<span
+                    class="sort-icon">↓</span></th>
+                <th class="number-cell col-rec col-specifications sortable" data-key="recommendations">Rec<span
+                    class="sort-icon">↓</span></th>
+                <th class="number-cell col-cr col-specifications sortable" data-key="candidateRecommendations">CR<span
+                    class="sort-icon">↓</span></th>
+                <th class="number-cell col-ds col-specifications sortable" data-key="draftStandards">DS<span
+                    class="sort-icon">↓</span></th>
+                <th class="number-cell col-ret col-specifications sortable" data-key="retiredSpecs">Ret<span
+                    class="sort-icon">↓</span></th>
+                <th class="number-cell col-oth col-specifications sortable" data-key="otherSpecs">Oth<span
+                    class="sort-icon">↓</span></th>
+                <th class="number-cell col-vers col-specifications sortable" data-key="allVersions">Vers<span
+                    class="sort-icon">↓</span></th>
+
+                <th class="chart-cell col-charts col-participations">
+                  <div class="chart-legend">
+                    <div class="legend-item">
+                      <span class="legend-box chart-color-members"></span>M
+                    </div>
+                    <div class="legend-item">
+                      <span class="legend-box chart-color-memberParticipants"></span>MP
+                    </div>
+                    <div class="legend-item">
+                      <span class="legend-box chart-color-invitedExperts"></span>IE
+                    </div>
+                    <div class="legend-item">
+                      <span class="legend-box chart-color-staffs"></span>S
+                    </div>
+                    <div class="legend-item">
+                      <span class="legend-box chart-color-individuals"></span>Ind
+                    </div>
+                    <div class="legend-item">
+                      <span class="legend-box chart-color-participations"></span>P = MP+IE+S+Ind
+                    </div>
+                  </div>
+                </th>
+
+                <th class="chart-cell col-charts col-specifications">
+                  <div class="chart-legend">
+                    <div class="legend-item">
+                      <span class="legend-box chart-color-recommendations"></span>Rec
+                    </div>
+                    <div class="legend-item">
+                      <span class="legend-box chart-color-candidateRecommendations"></span>CR
+                    </div>
+                    <div class="legend-item">
+                      <span class="legend-box chart-color-draftStandards"></span>DS
+                    </div>
+                    <div class="legend-item">
+                      <span class="legend-box chart-color-retiredSpecs"></span>Ret
+                    </div>
+                    <div class="legend-item">
+                      <span class="legend-box chart-color-otherSpecs"></span>Oth
+                    </div>
+                    <div class="legend-item">
+                      <span class="legend-box chart-color-specifications"></span>
+                      Spec = Rec+CR+DS+Ret+Oth
+                    </div>
+                  </div>
+                </th>
+
+              </tr>
+            </thead>
+          </table>
+        </div>
+        <!-- body 描画用 -->
+        <div id="groupsListContainer"></div>
+    </section> <!-- end of #groups -->
     <div
       style="padding: 0.5em; text-align: center; color: #aaa; font-size: 0.7em; border-top: 1px solid #eee; background: #fafbfc;">
       The source code of this web application is maintained at:
@@ -149,72 +278,176 @@
       <div id="popupClose">[Close]</div>
     </div>
     <div id="popupBody">
-      <div id="popupContent"></div>
-    </div>
+
+      <div id="popupParticipationsBody">
+        <div id="participationsFilter"
+          style="padding: 8px 12px; background: #f6f8fa; border-bottom: 1px solid #ddd; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+            <span style="font-size: 1.15em; font-weight: 700;">Participations</span>
+            <div>
+              <div class="toggle-wrap">
+                <button id="popupToggleOnlyGroupParticipations" type="button" class="toggle">
+                  <span class="toggle-check"></span>
+                  <span class="toggle-label">
+                    Only Group Participations
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div id="participationsButtonContainer" style="display: flex; gap: 4px; flex-wrap: wrap;">
+            <button class="filter-btn" data-filter="members">Members: <span class="filter-count"
+                id="filterCountMembers"></span></button>
+            <button class="filter-btn" data-filter="memberParticipants">Member participants: <span class="filter-count"
+                id="filterCountMemberParticipants"></span></button>
+            <button class="filter-btn" data-filter="invitedExperts">Invited Experts: <span class="filter-count"
+                id="filterCountInvitedExperts"></span></button>
+            <button class="filter-btn" data-filter="staffs">Staffs: <span class="filter-count"
+                id="filterCountStaffs"></span></button>
+            <button class="filter-btn" data-filter="individuals">Individuals: <span class="filter-count"
+                id="filterCountIndividuals"></span></button>
+            <button class="filter-btn" data-filter="allParticipants">Participants: <span class="filter-count"
+                id="filterCountAllParticipants"></span></button>
+          </div>
+        </div>
+
+        <div id="participationsContent">
+
+          <div id="membersListWrapper" class="pane-wrapper">
+            <div id="membersList" class="pane">
+              <div class="header">
+                <div class="title">Affiliations</div>
+                <div class="list-sort-bar">
+                  <button class="sort-btn name-sort-btn" data-sort="name">abc<span
+                      class="arrow-btn">&#8595</span></button>
+                  <button class="sort-btn gCount-sort-btn" data-sort="num">G<span class="arrow-btn">&#8595</span></button>
+                  <button class="sort-btn mpCount-sort-btn" data-sort="num">MP<span class="arrow-btn">&#8595</span></button>
+                </div>
+              </div>
+              <div id="membersListContent" class="list-content">
+                <p style='display: none;'>- members list will be added here -</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="participantsListWrapper" class="pane-wrapper">
+            <div class="pane-resizer" data-left="membersListWrapper" data-right="participantsListWrapper"></div>
+            <div id="participantsList" class="pane">
+              <div class="header">
+                <div class="title">Participants</div>
+                <div class="list-sort-bar">
+                  <button class="sort-btn name-sort-btn" data-sort="name">abc<span
+                      class="arrow-btn">&#8595</span></button>
+                  <button class="sort-btn gCount-sort-btn" data-sort="num">G<span class="arrow-btn">&#8595</span></button>
+                </div>
+              </div>
+              <div id="participantsListContent" class="list-content">
+                <p style='display: none;'>- participants list will be added here -</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="userDetailsWrapper" class="pane-wrapper">
+            <div class="pane-resizer" data-left="participantsListWrapper" data-right="userDetailsWrapper"></div>
+            <div id="userDetails" class="pane">
+              <div class="header">
+                <div class="title">User Details</div>
+              </div>
+              <div id="userDetailsContent" class="details-content">
+                <p style='display: none;'>- user details will be added here -</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div> <!-- end of #popupParticipationsBody -->
+      <div id="popupSpecificationsBody">
+        
+        <div id="specificationsFilter"
+          style="padding: 8px 12px; background: #f6f8fa; border-bottom: 1px solid #ddd; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+            <span style="font-size: 1.15em; font-weight: 700;">Specifications</span>
+          </div>
+          <div id="specificationsButtonContainer" style="display: flex; gap: 4px; flex-wrap: wrap;">
+            <button class="filter-btn" data-filter="specifications">Specifications: <span class="filter-count"
+                id="filterCountSpecifications"></span></button>
+            <button class="filter-btn" data-filter="recommendations">Recommendations: <span class="filter-count"
+                id="filterCountRecommendations"></span></button>
+            <button class="filter-btn" data-filter="candidateRecommendations">Candidate Recommendations: <span
+                class="filter-count" id="filterCountCandidateRecommendations"></span></button>
+            <button class="filter-btn" data-filter="draftStandards">Draft Standards: <span class="filter-count"
+                id="filterCountDraftStandards"></span></button>
+            <button class="filter-btn" data-filter="retiredSpecs">Retired Specs: <span class="filter-count"
+                id="filterCountRetiredSpecs"></span></button>
+            <button class="filter-btn" data-filter="otherSpecs">Other Specs: <span class="filter-count"
+                id="filterCountOtherSpecs"></span></button>
+            <button class="filter-btn" data-filter="allVersions">Versions: <span class="filter-count"
+                id="filterCountAllVersions"></span></button>
+          </div>
+        </div>
+
+        <div id="specificationsContent" class="panes">
+
+          <div id="specificationsListWrapper" , class="pane-wrapper">
+            <div id="specificationsList" class="pane">
+              <div class="header">
+                <h4 class="title">Specifications</h4>
+                <div class="list-sort-bar">
+                  <button class="sort-btn name-sort-btn" data-sort="name">abc<span
+                      class="arrow-btn">&#8595</span></button>
+                  <button class="sort-btn stat-sort-btn" data-sort="stat">stat<span
+                      class="arrow-btn">&#8595</span></button>
+                  <button class="sort-btn year-sort-btn" data-sort="year">year<span
+                      class="arrow-btn">&#8595</span></button>
+                </div>
+              </div>
+
+              <div id="specificationsListContent" class="list-content">
+                <p style='display: none;'>- specifications list will be added here -</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="versionsListWrapper" class="pane-wrapper">
+            <div class="pane-resizer" data-left="specificationsListWrapper" data-right="versionsListWrapper"></div>
+            <div id="versionsList" class="pane">
+              <div class="header">
+                <h4 class="title">Versions</h4>
+                <div class="list-sort-bar">
+                  <button class="sort-btn name-sort-btn" data-sort="name">abc<span
+                      class="arrow-btn">&#8595</span></button>
+                  <button class="sort-btn stat-sort-btn" data-sort="stat">stat<span
+                      class="arrow-btn">&#8595</span></button>
+                  <button class="sort-btn year-sort-btn" data-sort="year">year<span
+                      class="arrow-btn">&#8595</span></button>
+                </div>
+              </div>
+              <div id="versionsListContent" class="list-content">
+                <p style='display: none;'>- veersions list will be added here -</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="versionDetailsWrapper" class="pane-wrapper">
+            <div class="pane-resizer" data-left="versionsListWrapper" data-right="versionDetailsWrapper"></div>
+            <div id="versionDetails" class="pane">
+              <div class="header">
+                <h4 class="title">Versions Details</h4>
+              </div>
+              <div id="versionDetailsContent" class="details-content">
+                <p style='display: none;'>- version details will be added here -</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div> <!-- end of #popupSpecificationsBody -->
+    </div> <!-- end of #popup  -->
+  </div>
   </div>
 
-  <div id="popupOverlay" class="popup-overlay"></div>
-
-  <div id="participationsPopup">
-    <div id="participationsPopupHeader">
-      <div id="participationsPopupTitle"></div>
-      <div id="participationsPopupClose">[Close]</div>
-    </div>
-    <div id="participationsFilter"
-      style="padding: 8px 12px; background: #f6f8fa; border-bottom: 1px solid #ddd; display: flex; flex-direction: column; gap: 8px;">
-      <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-        <span style="font-size: 1.15em; font-weight: 700;">Participations</span>
-        <div>
-          <button id="toggleOnlyGroupParticipationsPopup" type="button"
-            style="padding: 0 3px; height: 12px; font-size: 0.65em; border: 1px solid #bbb; border-radius: 3px; background: #f3f3f3; cursor: pointer; display: flex; align-items: center; gap: 2px; min-width: 0; box-sizing: border-box; margin-left: auto;">
-            <span id="toggleOnlyGroupParticipationsPopupCheck"
-              style="display: inline-block; width: 8px; height: 8px; border: 1px solid #bbb; border-radius: 2px; background: #fff; text-align: center; font-size: 0.7em; line-height: 7px; color: #0969da; transition: background 0.2s; margin-right: 2px;">
-            </span>
-            <span style="font-size: 1.15em; color: #222; font-weight: 400; user-select: none;">Only Group
-              Participations</span>
-          </button>
-        </div>
-      </div>
-      <div id="participationsButtonContainer" style="display: flex; gap: 4px; flex-wrap: wrap;">
-        <button class="filter-btn" data-filter="members">Members: <span class="filter-count"
-            id="filterCountMembers"></span></button>
-        <button class="filter-btn" data-filter="memberParticipants">Member participants: <span class="filter-count"
-            id="filterCountMemberParticipants"></span></button>
-        <button class="filter-btn" data-filter="invitedExperts">Invited Experts: <span class="filter-count"
-            id="filterCountInvitedExperts"></span></button>
-        <button class="filter-btn" data-filter="staffs">Staffs: <span class="filter-count"
-            id="filterCountStaffs"></span></button>
-        <button class="filter-btn" data-filter="individuals">Individuals: <span class="filter-count"
-            id="filterCountIndividuals"></span></button>
-        <button class="filter-btn" data-filter="allParticipants">All participants: <span class="filter-count"
-            id="filterCountAllParticipants"></span></button>
-      </div>
-    </div>
-    <div id="participationsPopupBody">
-      <div id="membersList" class="pane">
-        <h3>Affiliations</h3>
-        <div id="membersListContent">
-          <p style='display: none;'>- members content will be added here -</p>
-        </div>
-      </div>
-      <div id="participantsList" class="pane">
-        <h3>Participants</h3>
-        <div id="participantsListContent">
-          <p style='display: none;'>- participants content will be added here -</p>
-        </div>
-      </div>
-      <div id="userDetails" class="pane">
-        <h3>User Details</h3>
-        <div id="userDetailsContent">
-          <p style='display: none;'>- user details content will be added here -</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="participationsPopupOverlay" class="popup-overlay"></div>
-  <script src="w3c-api.js"></script>
-  <script src="w3c-dash.js"></script>
+  <div id="popupOverlay"></div>
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js');
