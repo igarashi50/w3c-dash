@@ -2,9 +2,9 @@
   "_metadata": {
     "fileType": "groups",
     "filename": "w3c-groups.json",
-    "lastChecked": "Sat, 14 Mar 2026 15:51:30 GMT",
-    "startTime": "2026-03-14T08:53:58.023Z",
-    "duration": "4m7s",
+    "lastChecked": "Sun, 15 Mar 2026 09:30:48 GMT",
+    "startTime": "2026-03-15T02:30:39.234Z",
+    "duration": "4m27s",
     "entryCount": 871
   },
   "https://api.w3.org/groups/cg": {
@@ -40352,13 +40352,13 @@
     }
   },
   "https://api.w3.org/groups/cg/ethicalpresence/participations": {
-    "fetchedAt": "Sat, 14 Mar 2026 00:43:17 GMT",
+    "fetchedAt": "Sun, 15 Mar 2026 02:32:37 GMT",
     "lastModified": null,
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 2,
+      "total": 3,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/ethicalpresence"
@@ -40371,6 +40371,10 @@
           {
             "href": "https://api.w3.org/participations/47423",
             "title": "Steven Kou"
+          },
+          {
+            "href": "https://api.w3.org/participations/47450",
+            "title": "Robert Guzman"
           }
         ],
         "self": {
@@ -40386,18 +40390,23 @@
     }
   },
   "https://api.w3.org/groups/cg/ethicalpresence/users": {
-    "fetchedAt": "Sat, 14 Mar 2026 00:43:18 GMT",
+    "fetchedAt": "Sun, 15 Mar 2026 02:32:37 GMT",
     "lastModified": null,
     "data": {
       "page": 1,
       "limit": 500,
       "pages": 1,
-      "total": 2,
+      "total": 3,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/ethicalpresence"
         },
         "users": [
+          {
+            "href": "https://api.w3.org/users/asay6nu2vz4kw48k84koo4ocw0g44sw",
+            "title": "Robert Guzman",
+            "former": false
+          },
           {
             "href": "https://api.w3.org/users/2vgq30izer404o0wcowo0s404swsk8c",
             "title": "Steven Kou",
@@ -126926,13 +126935,13 @@
     }
   },
   "https://api.w3.org/groups/cg/webassembly/participations": {
-    "fetchedAt": "Sat, 14 Mar 2026 00:44:52 GMT",
+    "fetchedAt": "Sun, 15 Mar 2026 02:34:18 GMT",
     "lastModified": null,
     "data": {
       "page": 1,
-      "limit": 1500,
+      "limit": 1501,
       "pages": 1,
-      "total": 1500,
+      "total": 1501,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/webassembly"
@@ -132937,6 +132946,10 @@
           {
             "href": "https://api.w3.org/participations/47406",
             "title": "Xiaojia Rao"
+          },
+          {
+            "href": "https://api.w3.org/participations/47449",
+            "title": "Lukas Barragan Torres"
           }
         ],
         "self": {
@@ -132952,13 +132965,13 @@
     }
   },
   "https://api.w3.org/groups/cg/webassembly/users": {
-    "fetchedAt": "Sat, 14 Mar 2026 00:45:01 GMT",
+    "fetchedAt": "Sun, 15 Mar 2026 02:34:30 GMT",
     "lastModified": null,
     "data": {
       "page": 1,
-      "limit": 1748,
+      "limit": 1749,
       "pages": 1,
-      "total": 1748,
+      "total": 1749,
       "_links": {
         "up": {
           "href": "https://api.w3.org/groups/cg/webassembly"
@@ -133447,6 +133460,11 @@
           {
             "href": "https://api.w3.org/users/sjheksqhslws40c0kokosowgogs4488",
             "title": "Rani Barbara",
+            "former": false
+          },
+          {
+            "href": "https://api.w3.org/users/d63cyqjhrk8488w80okc8c0g8w84oo8",
+            "title": "Lukas Barragan Torres",
             "former": false
           },
           {
@@ -197106,7 +197124,7 @@
     }
   },
   "https://api.w3.org/groups/wg/vc": {
-    "fetchedAt": "Sun, 22 Feb 2026 02:13:17 GMT",
+    "fetchedAt": "Sun, 15 Mar 2026 02:31:18 GMT",
     "lastModified": "Mon, 28 Apr 2025 04:25:19 GMT",
     "data": {
       "id": 98922,
@@ -197139,7 +197157,7 @@
           "href": "https://api.w3.org/groups/wg/vc/charters"
         },
         "active-charter": {
-          "href": "https://api.w3.org/groups/wg/vc/charters/515"
+          "href": "https://api.w3.org/groups/wg/vc/charters/551"
         },
         "join": {
           "href": "https://www.w3.org/groups/wg/vc/join"
@@ -197156,7 +197174,7 @@
       },
       "type": "working group",
       "start-date": "2017-04-14",
-      "end-date": "2026-10-11"
+      "end-date": "2028-03-31"
     }
   },
   "https://api.w3.org/groups/wg/vc/participations": {
