@@ -313,7 +313,16 @@ export async function loadApiDataAsync(url) { // URL
       console.warn(`Warning: no specifications is loaded since it may be an old snapshot data.`);
       // thru
     }
-    const apiData = { mainData, groupsData, participationsData, usersData, affiliationsData, specificationsData };
+
+    let timelineData = {};
+    if (timelineResponse.ok) {
+      timelineData = await timelineResponse.json();
+    } else {
+      console.warn(`Warning: no timeline is loaded since it may be an old snapshot data.`);
+      // thru
+    }
+
+    const apiData = { mainData, groupsData, participationsData, usersData, affiliationsData, specificationsData, timelineData};
 
     const endedTime = performance.now();
     console.log(`Data loaded successfully in ${(endedTime - startedTime).toFixed(2)} ms`);

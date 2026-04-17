@@ -103,6 +103,9 @@ export function getDataEntry(targetUrl) {
   }
 }
 
+export function getTimelineData() {
+  return globalApiData.timelineData;
+}
 
 // WG, IG, CG, TF, Other のグループリストを取得
 function extractGroups(apiData) {
@@ -719,7 +722,7 @@ function createAllParticipationsMapsFromGroupsMaps(groups) {
     if (group.allParticipants) addParticipantsArrayToMap(group.allParticipants, gpParticipantsMap);
   });
 
-    // exclude gpInvitedExperts from gpIndivusuals 
+  // exclude gpInvitedExperts from gpIndivusuals 
   const gpInvitedExpertsAndIndivisualsMap = new Map([...gpIndividualsMap].filter(([key]) => gpInvitedExpertsMap.has(key))); // for debug
   gpIndividualsMap = new Map([...gpIndividualsMap].filter(([key]) => !gpInvitedExpertsMap.has(key)));
   console.log(`Info: Exclude Invited Experts who participate any group participates from participatting indivisuals=${gpInvitedExpertsAndIndivisualsMap.size}`);
@@ -733,104 +736,6 @@ function createAllParticipationsMapsFromGroupsMaps(groups) {
     gpIndividualsMap,
     gpStaffsMap,
     gpParticipantsMap
-  }
-}
-
-
-function createAllParticipationsMapsFromAfflications() {
-  const allMembersMap = new Map();
-  const allMemberParticipantsMap = new Map();
-  const allInvitedExpertsMap = new Map();
-  const allStaffsMap = new Map();
-  const allIndividualsMap = new Map();
-  const groupParticipationsMembersMap = new Map(summaryOfParticipationsFromGroups.membersMap)
-  const noParticipationMembersMap = new Map();
-
-  const allAffEntry = getDataEntry('https://api.w3.org/affiliations/');
-  if (!allAffEntry || allAffEntry.length === 0) {
-    console.error('Error: cannot get affilications');
-    return undefined
-  }
-
-  const afflications = allAffEntry._links?.affiliations || [];
-  for (const affEntry of afflications) {
-    const participantsArray = [];
-    const affData = getDataEntry(affEntry.href);
-    const affName = affData?.name || 'Unknown';
-    if (affData) {
-      const participantsHref = affData._links?.participants?.href;
-      if (participantsHref) {
-        const participantsData = getDataEntry(participantsHref);  // // participatonsの場合はaffiliationsは一つだけ
-        let participantItems = participantsData?._links?.participants || [];
-        if (participantItems && typeof participantItems === 'object' && !Array.isArray(participantItems)) {
-          participantItems = Object.values(participantItems);
-        }
-        for (const pItem of participantItems) {
-          const { participant, memberAffiliation } = makeParticipant(pItem)
-          participantsArray.push(participant);
-        }
-      }
-    }
-    if (affData == undefined) {
-      continue;
-    }
-    if (affData['is-member'] == true) {
-      if (!groupParticipationsMembersMap.has(affEntry.href)) {
-        noParticipationMembersMap.set(affEntry.href, affEntry);
-        console.log("no partificatition affilication", affName);
-      }
-      addParticipantsArrayToMembersMap(undefined, affEntry, participantsArray, allMembersMap);
-      addParticipantsArrayToMap(participantsArray, allMemberParticipantsMap);
-    } else if (affData.name == 'W3C') {
-      addParticipantsArrayToMap(participantsArray, allStaffsMap);
-    } else if (affData.name == 'W3C Invited Experts') {
-      addParticipantsArrayToMap(participantsArray, allInvitedExpertsMap);
-    } else {
-      addParticipantsArrayToMap(participantsArray, allIndividualsMap);
-    }
-  }
-
-  // IEの場合は、自分でaffiliationを持つ場合があるので、Individualsから重複を削除する
-  const overlappedInvitedExpertsMap = new Map
-  let overlapInvitedExpertsCount = 0;
-  for (const [userHref, participant] of allInvitedExpertsMap.entries()) {
-    if (allIndividualsMap.has(userHref)) {
-      // console.log(`  Info: Removing Invited experts from Individuals : ${participant.name}, ${userHref}`);
-      allIndividualsMap.delete(userHref);
-      overlapInvitedExpertsCount++;
-      if (!overlappedInvitedExpertsMap.has(userHref)) {
-        overlappedInvitedExpertsMap.set(userHref, participant);
-      }
-    }
-  }
-  /* dump names of overrupped Indivisuals
-  if (overlappedInvitedExpertsMap.size > 0) {
-    console.log(`  Info: Found ${overlappedInvitedExpertsMap.size} overlapping Invited Experts in Individuals:`);
-    const names = Array.from(overlappedInvitedExpertsMap.values()).map(p => `${p.name}`)
-    names.sort();
-    for (let i = 0; i < names.length; i++) {
-      console.log(`    ${i + 1}. ${names[i]}`);
-    }
-  }
-  */
-  if (overlapInvitedExpertsCount > 0) {
-    console.log(`  Info: Removed ${overlapInvitedExpertsCount} overlapping Invited Experts from Individuals`);
-  }
-  // make allParticipantsMap 
-  const allParticipantsMap = new Map([
-    ...allMemberParticipantsMap,
-    ...allInvitedExpertsMap,
-    ...allStaffsMap,
-    ...allIndividualsMap
-  ])
-
-  return {
-    allMembersMap,
-    allMemberParticipantsMap,
-    allInvitedExpertsMap,
-    allIndividualsMap,
-    allStaffsMap,
-    allParticipantsMap
   }
 }
 
@@ -866,6 +771,11 @@ function createSummaryOfParticipations(groupsArray) {
     gpStaffsMap,
     gpParticipantsMap
   } = createAllParticipationsMapsFromGroupsMaps(groupsArray);
+
+  // deepCopy gpMembersMap to gpMembersFromGroupsMap who contains only group participants
+  const gpMembersFromGroupsMap = new Map(
+    [...gpMembersMap].map(([k, v]) => [k, structuredClone(v)])
+  );
 
   // create non group participations(ngp) using affilications
   const ngpMembersMap = new Map();
@@ -921,6 +831,7 @@ function createSummaryOfParticipations(groupsArray) {
         const userHref = participant.userHref;
         if (!gpMemberParticipantsMap.has(userHref)) {
           // add participatants from members who are not participate any groups
+
           addParticipantToMembersMap(undefined, affEntry, participant, memberMap, true);   // isNoGroupParticipants=true
           addParticipantToMap(participant, ngpMemberParticipantsMap, true);     // isNoGroupParticipants=true
         }
@@ -990,7 +901,7 @@ function createSummaryOfParticipations(groupsArray) {
   const allIndividualsMap = new Map([...gpIndividualsMap, ...ngpIndivisualsMap]);
   const allParticipantsMap = new Map([...gpParticipantsMap, ...ngpParticipantsMap]);
 
-  const countAllParticipants = allMemberParticipantsMap.size + allInvitedExpertsMap.size + allIndividualsMap.size;
+  const countAllParticipants = allMemberParticipantsMap.size + allInvitedExpertsMap.size + allStaffsMap.size + allIndividualsMap.size;
   if (countAllParticipants != allParticipantsMap.size) {
     console.error("Error: countAllParticipants", countAllParticipants, allParticipantsMap.size);
     const participantsMap = new Map([...allMemberParticipantsMap, ...allInvitedExpertsMap, ...allStaffsMap, ...allIndividualsMap]);
@@ -1006,8 +917,8 @@ function createSummaryOfParticipations(groupsArray) {
 
   const summaryOfParticipationsFromGroups = {
     // participations
-    membersMap: gpMembersMap,
-    memberParticipants: Array.from(gpMemberParticipantsMap.values()),
+    membersMap: gpMembersFromGroupsMap, // only group participating member participants are included in the membersMap.
+    memberParticipants: Array.from(gpMemberParticipantsMap.values()),  // from Groups
     invitedExperts: Array.from(gpInvitedExpertsMap.values()),
     individuals: Array.from(gpIndividualsMap.values()),
     staffs: Array.from(gpStaffsMap.values()),
@@ -1210,6 +1121,212 @@ function addParticipantToMembersMap(shortname, memberAffiliation, participant, m
   }
 }
 
+// create the statsTimelineData to make it easier to draw timeline graph, and also make diffs of MP and P.
+function createStatsTimeline() {
+  let _metadata = undefined;
+  const timestamps = [];
+  const seriesMap = new Map();
+
+  const timelineData = globalApiData.timelineData;
+  if (timelineData) {
+    // find all groups, all stats, all members in the timeline
+    const groupsSet = new Set();
+    const statsSet = new Set();
+    for (const [eventKey, eventValue] of Object.entries(timelineData)) {
+      if (eventKey == '_metadata') {
+        continue;
+      } else {
+        const groups = Object.keys(eventValue.eventData.groups || {});
+        for (const groupId of groups) {
+          {
+            groupsSet.add(groupId);
+            const stats = Object.keys(eventValue.eventData.groups?.[groupId]?.stats || {});
+            for (const statId of stats) {
+              statsSet.add(statId);
+            }
+          }
+        }
+      }
+    }
+
+    // make timestamps and seriesMap for all groups and all stats(M, MP, etc.)
+    for (const [eventKey, eventValue] of Object.entries(timelineData)) {
+      if (eventKey == '_metadata') {
+        _metadata = eventValue;
+      } else {
+        const timestamp = Number(eventKey)
+        timestamps.push(timestamp);   // key is a timestamp of event
+
+        // add summary stats to SeriesMap
+        const statsForSummary = eventValue.eventData.summary.stats;
+        const diffForSummary = eventValue.eventData.summary.diff;
+        addGroupStatsToSeriesMap(seriesMap, statsSet, "summary", statsForSummary, diffForSummary, false);
+
+        // add summary only group participations related stats
+        const statsForSummaryOnlyGroupParticipations = eventValue.eventData.summary.onlyGroupParticipationsStats;
+        // user summary diff because onlyGroupParticipations=true makes diff for OnlyGroupParticipations from summary diff
+        addGroupStatsToSeriesMap(seriesMap, statsSet, "summaryOnlyGroupParticipations", statsForSummaryOnlyGroupParticipations, diffForSummary, true);
+        // add all stats for each group to SeriesMap
+        for (const groupId of groupsSet) {  // all groups
+          let statsForGroup = eventValue.eventData.groups?.[groupId]?.stats;
+          let diffForGroup = eventValue.eventData.groups?.[groupId]?.diff;
+          /*
+          if ((timestamp == 1768721659000 || timestamp >= 1769326645000) && groupId == "web-networks") {   // last stat is at 1768721659000 Sun, 18 Jan 2026 07:34:19 GMT, no stat is at 1769326645000
+            console.log("debug web-network", timestamp, groupId, eventValue.eventTime);
+            console.log("statsForGroup", JSON.stringify(statsForGroup));
+            console.log("diffForGroup", JSON.stringify(diffForGroup))
+          }
+            */
+          /* This is for debug, makes a gap of line at 2026/3/15(1773567044000)
+          if (timestamp == 1773567044000 && groupId == "social") {  // socal web working group started at 1773567044000(2026/1/18)
+            console.log(timestamp, groupId);
+            console.log("statsForGroup", JSON.stringify(statsForGroup));
+            console.log("diffForGroup", JSON.stringify(diffForGroup))
+            statsForGroup = undefined;
+            diffForGroup = undefined;
+          }
+          */
+          addGroupStatsToSeriesMap(seriesMap, statsSet, groupId, statsForGroup, diffForGroup, false);
+        }
+      }
+    }
+  }
+
+  const statsTimeline = {
+    _metadata,
+    timestamps,
+    seriesMap
+  }
+  return statsTimeline
+}
+
+function addGroupStatsToSeriesMap(seriesMap, statsSet, groupId, groupStats, groupDiff, onlyGroupParticipations = false) {
+  function _addStatToSeriesMap(seriesMap, groupId, statId, value, diff) {
+    let statsMap = seriesMap.get(groupId);
+    if (!statsMap) {
+      statsMap = new Map();
+      seriesMap.set(groupId, statsMap);
+    }
+    let values = statsMap.get(statId);
+    if (!values) {
+      values = [];
+      statsMap.set(statId, values);
+    }
+    const data = {
+      value: value,
+      diff: diff
+    }
+    values.push(data);
+  }
+
+  // make stats for StatsSet except P  
+  const diffDict = {};  // save diffs to make P diff from other diffs
+  for (const statId of statsSet) {  // all stats
+    if (statId == 'P') {
+      continue;  // skip P to make it latter.
+    }
+    const stat = groupStats?.[statId];
+    let diff = statId === 'MP' ? makeMergedDiff(groupDiff?.['MPs']) : // use 'MPs' to to make 'MP' of diff
+      groupDiff?.[statId];
+    if (onlyGroupParticipations) {
+      diff = makeDiffOfOnlyGroupParticipations(diff);  // diff of only group participation
+    }
+    _addStatToSeriesMap(seriesMap, groupId, statId, stat, diff);
+    diffDict[statId] = diff;  // for making P diff
+  }
+
+  // make P diff from other diffs because P diff is not provided in the API, and it is needed to calculate the diff of only group participations related P by makeDiffOfFromDiffOfOthers() which requires diff of MP, IE, S and Ind.  
+  const statP = groupStats?.['P'];
+  const diffP = makeMergedDiff([diffDict.MP, diffDict.IE, diffDict.S, diffDict.Ind]);
+  _addStatToSeriesMap(seriesMap, groupId, 'P', statP, diffP);
+}
+
+function makeMergedDiff(diffArray) {
+  if (!diffArray) {
+    return undefined;  // no diffArray      
+  }
+  if (!Array.isArray(diffArray)) {
+    console.error("Error: makeMergedDiff() diffArray is not an array, cannot merge diffs");
+    return undefined;
+  }
+  const diffPlus = [];
+  const diffMinus = [];
+  const diffChanged = [];
+  for (const diffM of diffArray) {
+    if (!diffM) {
+      continue;  // no diff for this stat, skip
+    }
+    if (Object(diffM).hasOwnProperty('+')) {
+      for (const item of diffM['+']) {
+        diffPlus.push(item);
+      }
+    }
+    if (Object(diffM).hasOwnProperty('~')) { // changed Group participation, e.g. from non group participant to group participant, or vice versa, or change the number of group participations.
+      for (const item of diffM['~']) {
+        diffChanged.push(item);
+      }
+    }
+    if (Object(diffM).hasOwnProperty('-')) {
+      for (const item of diffM['-']) {
+        diffMinus.push(item);
+      }
+    }
+  }
+  const diff = {};
+  if (diffPlus.length != 0) {
+    diff['+'] = diffPlus;
+  }
+  if (diffChanged.length != 0) {
+    diff['~'] = diffChanged;
+  }
+  if (diffMinus.length != 0) {
+    diff['-'] = diffMinus;
+  }
+  return Object.keys(diff).length > 0 ? diff : undefined;  // if diff is empty, return undefined
+}
+
+function makeDiffOfOnlyGroupParticipations(diff) {
+  const onlyGroupParticipationsDiff = {};
+  const diffPlus = [];
+  const diffMinus = [];
+  if (Object(diff).hasOwnProperty('+')) {
+    for (const item of diff['+']) {
+      if (Object(item).hasOwnProperty('G')) {
+        diffPlus.push(item);  // only group participation added
+      }
+    }
+  }
+
+  if (Object(diff).hasOwnProperty('~')) { // changed Group participation, e.g. from non group participant to group participant, or vice versa, or change the number of group participations.
+    for (const item of diff['~']) {
+      if (Object(item).hasOwnProperty('G')) {
+        diffPlus.push(item);  // non group participant -> group participant
+      } else {
+        diffMinus.push(item); // group participant -> non group participant  
+      }
+    }
+  }
+
+  if (Object(diff).hasOwnProperty('-')) {
+    for (const item of diff['-']) {
+      if (Object(item).hasOwnProperty('G')) {
+        diffMinus.push(item);  // only group participation removed
+      }
+    }
+  }
+
+  if (diffPlus.length != 0) {
+    onlyGroupParticipationsDiff['+'] = diffPlus;
+  }
+  if (diffMinus.length != 0) {
+    onlyGroupParticipationsDiff['-'] = diffMinus;
+  }
+  // no '~' diff because it is included in '+' or '-' for only group participations
+
+  return Object.keys(onlyGroupParticipationsDiff).length > 0 ? onlyGroupParticipationsDiff : undefined;  // if diff is empty, return undefined
+}
+
+
 // w3cStats情報を作成（メイン関数）
 export function makeStats(apiData) {  // exportModule
   globalApiData = apiData;    // set globalApiData to use getDataEntry()
@@ -1236,18 +1353,21 @@ export function makeStats(apiData) {  // exportModule
 
   const onlyGroupParticipationsSummaryGroup = summaryOfParticipationsFromGroups ?
     new GroupInfo({
-      name: 'Summary',
-      shortname: 'summary',
+      name: 'Summary - Only Group Participations',
+      shortname: 'summaryOnlyGroupParticipations',
       groupType: 'summary',
       homepage: 'https://www.w3.org/',
       ...summaryOfParticipationsFromGroups, // only group Participations
       ...summaryOfSpecifications
     }) : undefined;   // do not use onlyGroupparticipatsSummaryGroup
 
+  const statsTimeline = createStatsTimeline();
+
   const w3cStats = {
     groupsArray,
     summaryGroup,
     onlyGroupParticipationsSummaryGroup,
+    statsTimeline,
     lastChecked: globalApiData.mainData?._metadata.lastChecked  //mainData may not exist if makeStats() is used by fetch-w3c-data.js
   };
   return w3cStats;
@@ -1384,7 +1504,6 @@ function makeDiffOfGroup(prevGroupInfo, eventGroupInfo) { //eventGroupInfo is un
           }
           if (Object(eventMember).hasOwnProperty('groupsSet')) {
             memberInfo.G = eventMember.groupsSet.size;
-            joinedMembers.push(memberInfo);
           }
           joinedMembers.push(memberInfo);
           // make diff with prevParticipants =[];
@@ -1421,7 +1540,6 @@ function makeDiffOfGroup(prevGroupInfo, eventGroupInfo) { //eventGroupInfo is un
           }
           if (Object(prevMember).hasOwnProperty('groupsSet')) {
             memberInfo.G = prevMember.groupsSet.size;
-            leftMembers.push(memberInfo);
           }
           leftMembers.push(memberInfo);
         } else {
@@ -1431,6 +1549,23 @@ function makeDiffOfGroup(prevGroupInfo, eventGroupInfo) { //eventGroupInfo is un
         }
       }
     }
+
+    for (const [i, a] of Object.entries(joinedMembers)) {
+      for (const [j, b] of Object.entries(joinedMembers)) {
+        if (i != j && a.id == b.id) {
+          console.error(`Error: makeDiffOfGroup ['+'] group=${eventGroupInfo.shortname}`, a.title, b.title);
+        }
+      }
+    }
+
+    for (const [i, a] of Object.entries(leftMembers)) {
+      for (const [j, b] of Object.entries(leftMembers)) {
+        if (i != j && a.id == b.id) {
+          console.error(`Error: makeDiffOfGroup ['-'] group=${prevGroupInfo.shortname}`, a.title, b.title);
+        }
+      }
+    }
+
 
     const M = {};
     if (joinedMembers.length > 0) {
@@ -1451,7 +1586,7 @@ function makeDiffOfGroup(prevGroupInfo, eventGroupInfo) { //eventGroupInfo is un
     //  set properties
     const diff = {
       M,
-      MPs,
+      MPs, // MPs is an array of MP for each members
       IE,
       S,
       Ind
@@ -1488,7 +1623,7 @@ function makeDiffOfGroup(prevGroupInfo, eventGroupInfo) { //eventGroupInfo is un
     return diff;;
   } catch (e) {
     console.error(e);
-    throw(e);
+    throw (e);
   }
 
 }
@@ -1606,13 +1741,14 @@ export function makeTimelineEventData(prevTimestamp, prevStats, eventTimestamp, 
   const summary = {
     stats: summaryStats
   }
+  // onlyGroupParticipationsSummaryStats is set for summary of only group participations
+  summary.onlyGroupParticipationsStats = makeGroupStats(eventStats.onlyGroupParticipationsSummaryGroup);
+  // do not add diff of onlyGroupParticipationsSummaryStats because it can be generated from diff of summaryStats using the numGroups of a user
+
   if (prevStats) {
     const diff = makeDiffOfGroup(prevStats.summaryGroup, eventStats.summaryGroup);
     if (diff) {
       summary.diff = diff;
-      summary.onlyGroupParticipationsStats = makeGroupStats(eventStats.onlyGroupParticipationsSummaryGroup);
-      // do not add diff of onlyGroupParticipationsSummaryStats because it can be generated from diff of summaryStats using the numGroups of a user
-
       /*
       * Note that the following are is for debug to check the diff and onlyGroupparticipationsStats
       */
@@ -1681,10 +1817,12 @@ export function makeTimelineEventData(prevTimestamp, prevStats, eventTimestamp, 
     if (eventGroupsMap.has(shortname)) {
       const eventGroupInfo = eventGroupsMap.get(shortname);
       const stats = makeGroupStats(eventGroupInfo);
+      const name = eventGroupInfo.name;
       if (!prevStats) {
         // if no prevStats, save just stats regardless the groups is new or existing
         const groupData = {
-          stats,
+          name, // group name
+          stats, // stats of the existing group at this event
           // no diff
         }
         groups[shortname] = groupData;
@@ -1700,6 +1838,7 @@ export function makeTimelineEventData(prevTimestamp, prevStats, eventTimestamp, 
         }
         const diff = makeDiffOfGroup(prevGroupInfo, eventGroupInfo)
         const groupData = {
+          name,   // group name
           stats,  // stats of the new and exisiting group at this event
           diff,   // a propety, eg. IE,  in diff is empty {} if no changes
         }
@@ -1711,8 +1850,11 @@ export function makeTimelineEventData(prevTimestamp, prevStats, eventTimestamp, 
         // a closed group, save only the diff to save the last participants of the group
         const prevGroupInfo = prevGroupsMap.get(shortname);
         const diff = makeDiffOfGroup(prevGroupInfo, undefined);
+        const stats = makeGroupStats(undefined);  // all zero
+        const name = prevGroupInfo.name;
         groups[shortname] = {
-          // no stats of group because the group is closed.
+          name,   // group name
+          stats,  // for the closed group, add stats with all zero to show the diff
           diff  //  but record diff to save the participants of the closed group in the previous Stats.
         }
       } else {
@@ -1777,7 +1919,7 @@ function makePrevGroupStats(groupData, isOnlyGroupParticipations = false) {
 
   if (groupData.diff) {
     for (const [statType, diffData] of Object.entries(groupData.diff)) {
-      if (statType == 'MPs') { // MPs is dict. key=member, data= diffOfUsers
+      if (statType == 'MPs') { // MPs is an array of dict. key=member, data= diffOfUsers
         continue; // handle later
       }
       // handle  M, IE, S, Ind
@@ -1786,7 +1928,7 @@ function makePrevGroupStats(groupData, isOnlyGroupParticipations = false) {
       prevStats[statType] -= diffNum; // minus
     }
 
-    // handle MP
+    // handle MPs
     let diffMP = 0;
     const mpsDiffData = groupData.diff['MPs'];
     for (const diffData of mpsDiffData) {
@@ -2110,7 +2252,7 @@ function checkDiffSummaryStats(prevSummaryStats, diff, summaryStats, isOnlyGroup
     // member participations
     const joinedMPMap = new Map();
     const leftMPMap = new Map();
-    const diffMPs = diff['MPs'] ?? [];
+    const diffMPs = diff['MPs'] ?? [];  // diff of MP is an array
     let diffMPJoinedCount = 0;
     let diffMPLeftCount = 0;
     for (const diffData of diffMPs) {
@@ -2134,6 +2276,7 @@ function checkDiffSummaryStats(prevSummaryStats, diff, summaryStats, isOnlyGroup
     const [joinedIEMap, leftIEMap] = makeDiffPartcipantsMaps(diff['IE'], isOnlyGroupParticipations);
     const [joinedSMap, leftSMap] = makeDiffPartcipantsMaps(diff['S'], isOnlyGroupParticipations);
     const [joinedIndMap, leftIndMap] = makeDiffPartcipantsMaps(diff['Ind'], isOnlyGroupParticipations);
+    // do not make diff of P because it can be generated by the diff of MP, IE, S, and Ind.
     const diffCountIE = joinedIEMap.size - leftIEMap.size;
     const diffCountS = joinedSMap.size - leftSMap.size;
     const diffCountInd = joinedIndMap.size - leftIndMap.size;

@@ -2406,7 +2406,7 @@ function remakeTimelineJsonFile(dirPath, filenames) {
     return false;
   }
 
-  dataPaths.push(DATA_DIR);
+  // dataPaths.push(DATA_DIR); // do not add DATA_DIR assuming it is the same as the latest data-snapshot
 
   for (const [i, path] of Object.entries(dataPaths)) {
     logAlways(` Info: dataPath[${i}]: ${path}`);
