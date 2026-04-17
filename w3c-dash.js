@@ -86,34 +86,34 @@ async function renderDashboard() {
   }
 }
 
-document.getElementById('popupClose').addEventListener('click', () => {
+function popupClose() {
+  const tableSwitcher = document.getElementById('popupViewSwitcher');
+  if (tableSwitcher == null) {
+    return;
+  }
+  tableSwitcher.style.display = 'none';  // specification does not support timeline
+
   document.getElementById('popup').style.display = 'none';
   document.getElementById('popupOverlay').style.display = 'none';
   document.body.classList.remove('modal-open');  // enable body scroll
   if (w3cStats) {
     _mainRenderSummaryStats(w3cStats.groupsArray.length, w3cStats.summaryGroup, w3cStats.onlyGroupParticipationsSummaryGroup);
   }
+}
+
+document.getElementById('popupClose').addEventListener('click', () => {
+  popupClose();
 });
 
 document.getElementById('popupOverlay').addEventListener('click', () => {
-  document.getElementById('popup').style.display = 'none';
-  document.getElementById('popupOverlay').style.display = 'none';
-  document.body.classList.remove('modal-open');  // enable body scroll
-  if (w3cStats) {
-    _mainRenderSummaryStats(w3cStats.groupsArray.length, w3cStats.summaryGroup, w3cStats.onlyGroupParticipationsSummaryGroup);
-  }
+  popupClose();
 });
+
 
 // ESCキー対応も同様
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    const popup = document.getElementById('popup');
-    const popupOverlay = document.getElementById('popupOverlay');
-    if (popup.style.display === 'flex') {
-      popup.style.display = 'none';
-      popupOverlay.style.display = 'none';
-      document.body.classList.remove('modal-open'); // ← 追加
-    }
+    popupClose();
   }
 });
 
@@ -179,7 +179,7 @@ function _mainRenderSummary(groupCounts, summaryGroup, onlyGroupParticipationsSu
     if (summaryType) {
       let initialFilter = summaryType;
 
-      const tableSwitcher = document.getElementById('tableSwitcher');
+      const tableSwitcher = document.getElementById('groupTableSwitcher');
       const isShowBoth = tableSwitcher == undefined || tableSwitcher.style.display == 'none';
       popupSheet(summaryGroup, initialFilter, onlyGroupParticipationsSummaryGroup, isShowBoth);
     }
@@ -234,6 +234,12 @@ function _mainRenderSummaryStats(groupCounts, summaryGroup, onlyGroupParticipati
   if (summaryOtherSpecs) summaryOtherSpecs.textContent = useGroupInfo.otherSpecs.length;
   const summaryAllVersions = document.getElementById('summaryAllVersions');
   if (summaryAllVersions) summaryAllVersions.textContent = useGroupInfo.allVersions.length;
+}
+
+function compareByName(a, b) {
+  const nameA = (a || '').toLowerCase();
+  const nameB = (b || '').toLowerCase();
+  return nameA.localeCompare(nameB);
 }
 
 function _mainFilterAndSortGroups(groupsArray, filterType, sortBy) {
@@ -291,11 +297,7 @@ function _mainFilterAndSortGroups(groupsArray, filterType, sortBy) {
 
     case 'name':
     default:
-      sortedResults = [...filteredResults].sort((a, b) => {
-        const nameA = (a.name || '').toLowerCase();
-        const nameB = (b.name || '').toLowerCase();
-        return nameA.localeCompare(nameB);
-      });
+      sortedResults = [...filteredResults].sort((a, b) => compareByName(a.name, b.name));
       break;
   }
   const endTime = performance.now();
@@ -312,7 +314,7 @@ function _mainRenderGroups(groupsArray) {
 }
 
 function _mainInitTableSwitcher() {
-  const tableSwitcher = document.getElementById('tableSwitcher');
+  const tableSwitcher = document.getElementById('groupTableSwitcher');
   if (tableSwitcher == null || tableSwitcher.style.display == 'none') {
     return;
   }
@@ -541,7 +543,7 @@ function _mainCreateTableBody(groupsArray, filterType, sortBy) {
       const index = this.getAttribute('data-index');
       const type = this.getAttribute('data-type');
 
-      const tableSwitcher = document.getElementById('tableSwitcher');
+      const tableSwitcher = document.getElementById('groupTableSwitcher');
       const isShowBoth = tableSwitcher == undefined || tableSwitcher.style.display == 'none';
 
       // 例: 詳細ポップアップ
@@ -736,141 +738,195 @@ async function popupSheet(groupInfo, initialFilter, onlyGroupParticipationsSumma
   }
 }
 
-function popupSetupResizer(container) {
+function setupPaneResizer(container) {
   let isDragging = false;
-  let startX = 0;
-  let leftPane = null;
-  let rightPane = null;
-  let startLeftWidth = 0;
-  let startRightWidth = 0;
-  let MIN_PAIN_WIDTH = 40;  // use this if css is not specified
+  let startPos = 0;
+  let prevPane = null;
+  let basePane = null;
+  let startPrevSize = 0;
+  let startBaseSize = 0;
+  let isH = true; // Horizontalかどうかの判定用
 
-  function startDrag(clientX, resizer) {
-    if (!resizer) {
-      return
+  function startDrag(e, resizer) {
+    if (!resizer) return;
+    
+    // コンテナのクラスで方向を判定
+    isH = container.classList.contains('horizontal');
+    
+    // TouchイベントとMouse/Pointerイベントの両方に対応
+    const clientPos = e.touches ? e.touches[0] : e;
+    startPos = isH ? clientPos.clientX : clientPos.clientY;
+
+ 　　prevPane = document.getElementById(resizer.dataset.prev);
+    basePane = document.getElementById(resizer.dataset.base);
+    if (!prevPane || !basePane) {
+      console.error("Pane not found:", resizer.dataset.prev, resizer.dataset.base);
+      return;
     }
-    isDragging = true;
-    startX = clientX;
 
-    leftPane = document.getElementById(resizer.dataset.left);
-    rightPane = document.getElementById(resizer.dataset.right);
+    const prevRect = prevPane.getBoundingClientRect();
+    const baseRect = basePane.getBoundingClientRect();
 
-    const leftRect = leftPane.getBoundingClientRect();
-    const rightRect = rightPane.getBoundingClientRect();
+    startPrevSize = isH ? prevRect.width : prevRect.height;
+    startBaseSize = isH ? baseRect.width : baseRect.height;
 
-    startLeftWidth = leftRect.width;
-    startRightWidth = rightRect.width;
-
-    container.style.cursor = 'col-resize';
+    container.style.cursor = isH ? 'col-resize' : 'row-resize';
     container.style.userSelect = 'none';
-
     resizer.classList.add('dragging');
+    isDragging = true;
   }
 
-  function doDrag(clientX) {
-    if (!isDragging || !leftPane || !rightPane) return;
+  function doDrag(e) {
+    if (!isDragging || !prevPane|| !basePane) return;
 
-    const dx = clientX - startX;
-    let newLeftWidth = startLeftWidth + dx;
-    let newRightWidth = startRightWidth - dx;
+    const clientPos = e.touches ? e.touches[0] : e;
+    const currentPos = isH ? clientPos.clientX : clientPos.clientY;
+    const diff = currentPos - startPos;
 
-    const leftMin = parseInt(getComputedStyle(leftPane).minWidth) || MIN_PAIN_WIDTH;
-    const rightMin = parseInt(getComputedStyle(rightPane).minWidth) || MIN_PAIN_WIDTH;
+    let newPrevSize = startPrevSize + diff;
+    let newBaseSize = startBaseSize - diff;
 
-    if (newLeftWidth < leftMin) {
-      newLeftWidth = leftMin;
-      newRightWidth = startLeftWidth + startRightWidth - newLeftWidth;
+    // 最小サイズの取得 (CSSの値を優先)
+    const styleL = getComputedStyle(basePane);
+    const styleR = getComputedStyle(basePane);
+    const minL = parseInt(isH ? styleL.minWidth : styleL.minHeight) || 40;
+    const minR = parseInt(isH ? styleR.minWidth : styleR.minHeight) || 40;
+
+    if (newPrevSize < minL) {
+      newPrevSize = minL;
+      newBaseSize = startPrevSize + startBaseSize - newPrevSize;
     }
-    if (newRightWidth < rightMin) {
-      newRightWidth = rightMin;
-      newLeftWidth = startLeftWidth + startRightWidth - newRightWidth;
+    if (newBaseSize < minR) {
+      newBaseSize = minR;
+      newPrevSize = startPrevSize + startBaseSize - newBaseSize;
     }
 
-    leftPane.style.width = newLeftWidth + 'px';
-    rightPane.style.width = newRightWidth + 'px';
-    leftPane.style.flex = 'none';
-    rightPane.style.flex = 'none';
+    // スタイル適用
+    const sizeProp = isH ? 'width' : 'height';
+    prevPane.style[sizeProp] = newPrevSize + 'px';
+    basePane.style[sizeProp] = newBaseSize + 'px';
+    
+    // Flexの影響を無効化
+    prevPane.style.flex = 'none';
+    basePane.style.flex = 'none';
   }
 
   function endDrag() {
     if (!isDragging) return;
     isDragging = false;
-    leftPane = null;
-    rightPane = null;
     container.style.cursor = '';
     container.style.userSelect = '';
-
     container.querySelectorAll('.pane-resizer.dragging').forEach(r => r.classList.remove('dragging'));
+    prevPane= null;
+    basePane = null;
   }
 
+  // イベントリスナーの登録
   container.querySelectorAll('.pane-resizer').forEach(r => {
-    // マウス対応
-    r.addEventListener('mousedown', e => {
-      startDrag(e.clientX, r);
-    });
-
-    // タッチ対応
+    r.addEventListener('mousedown', e => startDrag(e, r));
     r.addEventListener('touchstart', e => {
-      e.preventDefault(); // スクロール防止
-      startDrag(e.touches[0].clientX, r);
+      if (e.cancelable) e.preventDefault();
+      startDrag(e, r);
     }, { passive: false });
-
-    r.addEventListener('pointerdown', startDrag);
   });
 
-  // ドラッグ中
-  function onMove(e) {
-    // ドラッグしていないなら何もしない
-    if (!isDragging) return;
+  document.addEventListener('mousemove', doDrag);
+  document.addEventListener('touchmove', e => {
+    if (isDragging && e.cancelable) e.preventDefault();
+    doDrag(e);
+  }, { passive: false });
 
-    // touch のときだけスクロールを止める
-    if (e.type === 'touchmove') {
-      e.preventDefault(); // ← ドラッグ中のみ
-    }
-
-    const clientX =
-      e.type === 'mousemove'
-        ? e.clientX
-        : e.touches[0].clientX;
-
-    doDrag(clientX);
-  }
-
-
-  document.addEventListener('mousemove', onMove);
-  document.addEventListener('touchmove', onMove, { passive: false });
   document.addEventListener('mouseup', endDrag);
   document.addEventListener('touchend', endDrag);
 
   document.addEventListener('pointerup', endDrag);
   document.addEventListener('pointercancel', endDrag);
-
-
-  // ウィンドウリサイズ時に割合を維持
-  window.addEventListener('resize', () => {
-    const wrappers = container.querySelectorAll('.pane-wrapper');
-    let sumPx = 0;
-
-    wrappers.forEach(wrapper => {
-      const w = wrapper.getBoundingClientRect().width;
-      sumPx += w;
-    })
-
-    wrappers.forEach(wrapper => {
-      const w = wrapper.getBoundingClientRect().width;
-      const percent = (w / sumPx) * 100;
-      wrapper.style.width = percent + '%';
-      wrapper.style.flex = 'none';
-    });
-  });
 }
+
 
 
 // participationsシートの描画をまとめるサブ関数
 async function popupRenderParticipationsSection(groupInfo, initialFilter = 'members', onlyGroupParticipationsSummaryGroup) {
-  const participationsContent = document.getElementById('participationsContent')
-  popupSetupResizer(participationsContent);
+  const tableSwitcher = document.getElementById('popupViewSwitcher');
+  if (tableSwitcher == null) {
+    return;
+  }
+  tableSwitcher.style.display = 'block';
 
+  // 初期状態復元
+  const show = localStorage.getItem('popupParticipationViewMode') || 'list';
+  // active UI
+  tableSwitcher.querySelectorAll('.segment')
+    .forEach(b => {
+      if (b.dataset.show === show) {
+        b.classList.add('active')
+      } else {
+        b.classList.remove('active')
+      }
+    });
+  // aria
+  tableSwitcher.querySelectorAll('.segment')
+    .forEach(b => {
+      if (b.dataset.show === show) {
+        b.setAttribute('aria-selected', 'true');
+      } else {
+        b.setAttribute('aria-selected', 'false');
+      }
+    });
+
+  const participationsList = document.getElementById('participationsList');
+  const participationsTimeline = document.getElementById('participationsTimeline');
+
+  if (show == 'list') {
+    participationsList.style.display = "flex";
+    participationsTimeline.style.display = "none";
+    _popupRenderParticipationsList(groupInfo, initialFilter, onlyGroupParticipationsSummaryGroup);
+
+  } else {
+    participationsList.style.display = "none";
+    participationsTimeline.style.display = "flex"
+    _popupRenderParticipationsTimeline(groupInfo, initialFilter, onlyGroupParticipationsSummaryGroup);
+  }
+
+  tableSwitcher.querySelectorAll('.segment')
+    .forEach(btn => {
+      btn.onclick = () => {
+        const show = btn.dataset.show;
+        const currentViewMode = localStorage.getItem('popupParticipationViewMode');
+        if (currentViewMode != show) {
+          // active UI
+          tableSwitcher.querySelectorAll('.segment')
+            .forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          // aria
+          tableSwitcher.querySelectorAll('.segment')
+            .forEach(b => b.setAttribute('aria-selected', 'false'));
+          btn.setAttribute('aria-selected', 'true');
+
+          const currentFilter = localStorage.getItem('popupParticipationsFilter') || 'members';
+          if (show == 'list') {
+            participationsList.style.display = "flex";
+            participationsTimeline.style.display = "none";
+            _popupRenderParticipationsList(groupInfo, currentFilter, onlyGroupParticipationsSummaryGroup);
+          } else {
+            participationsList.style.display = "none";
+            participationsTimeline.style.display = "flex";
+            _popupRenderParticipationsTimeline(groupInfo, currentFilter, onlyGroupParticipationsSummaryGroup);
+          }
+
+          localStorage.setItem('popupParticipationViewMode', show);
+        }
+      }
+    });
+}
+
+function _popupRenderParticipationsList(groupInfo, initialFilter, onlyGroupParticipationsSummaryGroup) {
+  const participationsListContent = document.getElementById('participationsListContent')
+  if (!participationsListContent.dataset.popupEventListenersSetup) { // only once
+    setupPaneResizer(participationsListContent);
+    participationsListContent.dataset.popupEventListenersSetup = 'true';
+  }
   const affiliationsTitle = document.querySelector('#membersList .title');
   const participantsTitle = document.querySelector('#participantsList .title');
   affiliationsTitle.textContent = 'Affiliations';
@@ -880,7 +936,7 @@ async function popupRenderParticipationsSection(groupInfo, initialFilter = 'memb
   participantsTitle.textContent = 'Participants';
 
   // setup toggleOnlyGoupparticipants
-  const toggleBtn = document.getElementById('popupToggleOnlyGroupParticipations');
+  const toggleBtn = document.querySelector('#participationsList .toggle');
   const toggleBtnWrap = toggleBtn ? toggleBtn.parentElement : null;
   if (onlyGroupParticipationsSummaryGroup != null) {
     // Only Group Participantsトグルボタンの表示制御　toggleBtnWrap
@@ -892,7 +948,7 @@ async function popupRenderParticipationsSection(groupInfo, initialFilter = 'memb
       toggleBtn.onclick = () => {
         flipOnlyGroupParticipationsToggle(toggleBtn)
         // update
-        _popupRenderParticipations(groupInfo, onlyGroupParticipationsSummaryGroup);
+        _popupRenderParticipationsListBody(groupInfo, onlyGroupParticipationsSummaryGroup);
       };
     }
   } else {
@@ -907,7 +963,7 @@ async function popupRenderParticipationsSection(groupInfo, initialFilter = 'memb
       const currentFilter = btn.dataset.filter;
       localStorage.setItem('popupParticipationsFilter', currentFilter);
       // update
-      _popupRenderParticipations(groupInfo, onlyGroupParticipationsSummaryGroup);
+      _popupRenderParticipationsListBody(groupInfo, onlyGroupParticipationsSummaryGroup);
     };
   });
   filterButtons.forEach(b => b.classList.remove('active'));
@@ -917,11 +973,12 @@ async function popupRenderParticipationsSection(groupInfo, initialFilter = 'memb
     localStorage.setItem('popupParticipationsFilter', initialFilter);
   }
   // the inital rendering 
-  _popupRenderParticipations(groupInfo, onlyGroupParticipationsSummaryGroup);
+  _popupRenderParticipationsListBody(groupInfo, onlyGroupParticipationsSummaryGroup);
 }
 
-function _popupRenderParticipations(groupInfo, onlyGroupParticipationsSummaryGroup) {
-  console.log("_popupRenderParticipations called");
+
+function _popupRenderParticipationsListBody(groupInfo, onlyGroupParticipationsSummaryGroup) {
+  console.log("_popupRenderParticipationsListBody called");
   const useGroupInfo = (getOnlyGroupParticipationsToggle() && onlyGroupParticipationsSummaryGroup)
     ? onlyGroupParticipationsSummaryGroup
     : groupInfo
@@ -1001,7 +1058,7 @@ function _popupRenderMembersListContent(groupInfo) {
       }
     }
     // num or count with equals
-    return (entryA?.title || '').localeCompare(entryB?.title || '');
+    return compareByName(entryA?.title, entryB?.title);
   });
 
 
@@ -1071,28 +1128,28 @@ function _popupRenderMembersList(groupInfo) {
     const mpCountSortBtn = sortBtnBar.querySelector('.mpCount-sort-btn');
     // ボタンイベント
     // ボタンイベント
-    nameSortBtn.addEventListener('click', () => {
+    nameSortBtn.onclick = () => {   // change from addEventListener to onclick to avoid multiple event handlers stacking up on repeated calls
       nameSortBtn.classList.add('active');
       gCountSortBtn.classList.remove('active');
       mpCountSortBtn.classList.remove('active');
       localStorage.setItem('popupMembersSortMode', 'name');
       _popupRenderMembersListContent(groupInfo);
-    });
-    gCountSortBtn.addEventListener('click', () => {
+    };
+    gCountSortBtn.onclick = () => {
       gCountSortBtn.classList.add('active');
       nameSortBtn.classList.remove('active');
       mpCountSortBtn.classList.remove('active');
       localStorage.setItem('popupMembersSortMode', 'gCount');
       _popupRenderMembersListContent(groupInfo);
-    });
-    mpCountSortBtn.addEventListener('click', () => {
+    };
+    mpCountSortBtn.onclick = () => {
       nameSortBtn.classList.add('active');
       gCountSortBtn.classList.remove('active');
       mpCountSortBtn.classList.remove('active');
 
       localStorage.setItem('popupMembersSortMode', 'mpCount');
       _popupRenderMembersListContent(groupInfo);
-    });
+    };
   }
 
   let sortMode = localStorage.getItem('popupMembersSortMode');
@@ -1157,7 +1214,6 @@ function _popupRenderParticipantsList(list) {
 
 async function _popupRenderUserDetails(userHref, userName) {
   const userDetailsContent = document.getElementById('userDetailsContent');
-  userDetailsContent.style.overflowY = 'auto';
 
   if (!userHref) {
     userDetailsContent.innerHTML = '<p>No user data available</p>';
@@ -1374,7 +1430,7 @@ function _popupRenderParticipantsListContent(list) {
       }
     }
     // sortMode == 'name' or num with equals
-    return (a.name || '').localeCompare(b.name || '');
+    return compareByName(a.name, b.name);
   });
 
   /* ===== padding 取得 ===== */
@@ -1571,8 +1627,17 @@ async function _popupRenderParticipationsContent(groupInfo) {
 */
 
 async function popupRenderSpecificationsSection(groupInfo, initialFilter = 'specifications', onlyGroupParticipationsSummaryGroup) {
+  const tableSwitcher = document.getElementById('popupViewSwitcher');
+  if (tableSwitcher == null) {
+    return;
+  }
+  tableSwitcher.style.display = 'none';  // specification does not support timeline
+
   const specificationsContent = document.getElementById('specificationsContent')
-  popupSetupResizer(specificationsContent);
+  if (!specificationsContent.dataset.popupEventListenersSetup) { // only once for the first time
+    setupPaneResizer(specificationsContent);
+    specificationsContent.dataset.popupEventListenersSetup = 'true';
+  }
 
   // setup Filter buttons
   const filterButtons = document.querySelectorAll('#specificationsButtonContainer .filter-btn');
@@ -1736,34 +1801,34 @@ async function _popupRenderSpecificationsList(groupInfo) {
     const yearSortBtn = sortBtnBar.querySelector('.year-sort-btn');
 
     // ボタンイベント
-    nameSortBtn.addEventListener('click', () => {
+    nameSortBtn.onclick = () => { // change from addEventListener to onclick to avoid multiple event handlers stacking up on repeated calls
       nameSortBtn.classList.add('active');
       statSortBtn.classList.remove('active');
       yearSortBtn.classList.remove('active');
 
       localStorage.setItem('popupSpecificationsSortMode', 'name');
       _popupRenderSpecificationsListContent(groupInfo);
-    });
+    };
 
     // ボタンイベント
-    statSortBtn.addEventListener('click', () => {
+    statSortBtn.onclick = () => {
       nameSortBtn.classList.remove('active');
       statSortBtn.classList.add('active');
       yearSortBtn.classList.remove('active');
 
       localStorage.setItem('popupSpecificationsSortMode', 'stat');
       _popupRenderSpecificationsListContent(groupInfo);
-    });
+    };
 
 
-    yearSortBtn.addEventListener('click', () => {
+    yearSortBtn.onclick = () => {
       nameSortBtn.classList.remove('active');
       statSortBtn.classList.remove('active');
       yearSortBtn.classList.add('active');
 
       localStorage.setItem('popupSpecificationsSortMode', 'year');
       _popupRenderSpecificationsListContent(groupInfo);
-    });
+    };
   }
 
   let sortMode = localStorage.getItem('popupSpecificationsSortMode');
@@ -1836,7 +1901,6 @@ function _popupRenderVersionsList(list) {
 
 function _popupRenderVersionDetails(versionEntry) {
   const versionDetailsContent = document.getElementById('versionDetailsContent');
-  versionDetailsContent.style.overflowY = 'auto';
 
   let versionHref = versionEntry.url;
   if (!versionHref) {
@@ -1979,7 +2043,7 @@ function _popupRenderVersionsListContent(list) {
   let sortedList = [];
   // ソート
   if (sortMode === 'name') {
-    sortedList = [...list].sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+    sortedList = [...list].sort((a, b) => compareByName(a.title, b.title));
   } else if (sortMode === 'stat') {
     sortedList = [...list].sort((a, b) => {
       const statA = a.statusOrder;
@@ -2217,3 +2281,1054 @@ async function _popupRenderSpecificationsContent(groupInfo) {
     versionDetailsContent.innerHTML = '<p>No information</p>';
   }
 }
+
+function _popupRenderParticipationsTimeline(groupInfo, initialFilter, onlyGroupParticipationsSummaryGroup) {
+  const participationsTimelineContent = document.getElementById('participationsTimelineContent')
+  if (!participationsTimelineContent.dataset.popupEventListenersSetup) { // only once
+    setupPaneResizer(participationsTimelineContent);
+    participationsTimelineContent.dataset.popupEventListenersSetup = 'true';
+  }
+
+  // setup toggleOnlyGoupparticipants
+  const toggleBtn = document.querySelector('#participationsTimeline .toggle');
+  const toggleBtnWrap = toggleBtn ? toggleBtn.parentElement : null;
+  if (onlyGroupParticipationsSummaryGroup != null) {
+    // Only Group Participantsトグルボタンの表示制御　toggleBtnWrap
+    toggleBtnWrap.style.display = '';
+
+    // トグルボタンのイベントハンドラ追加
+    if (toggleBtn) {
+      updateOnlyGroupParticipationsToggle(toggleBtn);
+      toggleBtn.onclick = () => {
+        flipOnlyGroupParticipationsToggle(toggleBtn)
+        // update
+        _popupRenderPaticipationsTimelineBody(groupInfo, onlyGroupParticipationsSummaryGroup);
+      };
+    }
+  } else {
+    toggleBtnWrap.style.display = 'none';
+  }
+  _popupRenderPaticipationsTimelineBody(groupInfo, onlyGroupParticipationsSummaryGroup);
+}
+
+function _popupRenderPaticipationsTimelineBody(groupInfo, onlyGroupParticipationsSummaryGroup) {
+  const statsTimeline = w3cStats.statsTimeline;
+  const isOnlyGroupParticipations = getOnlyGroupParticipationsToggle() && onlyGroupParticipationsSummaryGroup;
+  const useGroupInfo = (isOnlyGroupParticipations)
+    ? onlyGroupParticipationsSummaryGroup
+    : groupInfo
+
+  const seriesList = setupSeriesSelectors(useGroupInfo, (seriesList) => {
+    const chartData = makeChartData(statsTimeline, seriesList); // use the changed seriesList
+    console.log("changed selection -> renderingLineGraphs");
+    renderingLineGraphs(chartData)
+  })
+  const chartData = makeChartData(statsTimeline, seriesList); // use the inital seriesList
+  console.log("initial -> renderingLineGraphs");
+  renderingLineGraphs(chartData);
+}
+
+function makeChartData(statsTimeline, seriesList) {
+  const chartData = {
+    timestamps: statsTimeline.timestamps,
+    series: []
+  }
+  for (const series of seriesList) {
+    const groupId = series.groupId;
+    const statsMap = statsTimeline.seriesMap.get(groupId);
+    if (statsMap) {
+      const statId = series.statId;
+      const values = statsMap.get(statId);
+      const seriesData = {
+        "groupId": groupId,
+        "statId": statId,
+        "values": values,
+        "color": series.color
+      }
+      chartData.series.push(seriesData);
+    } else {
+      console.error(`Error: makeChartDataNo statsMap found for groupId: ${groupId}`);
+    }
+  }
+  return chartData;
+}
+
+function renderingLineGraphs(chartData) {
+  console.log("renderingLineGraph() start ", chartData.series.map((s) => s.groupId));
+  if (!chartData || !chartData.timestamps || !chartData.series) {
+    console.error('Invalid chartData:', chartData);
+    return;
+  }
+  const infoDiv = document.getElementById("timelineInfo");
+  const chartDiv = document.getElementById("timelineChart").querySelector(".chart");
+  chartDiv.innerHTML = '';
+  clearTimeLineInfoDiv(infoDiv);
+
+  const padding = 20;
+  const yAxisLabelWidth = 50;
+  const xAxisLabelHeight = 20;
+
+  // always use default at first time
+  let xScaleData = '3.0';  // 3 months
+  let yScaleData = '1.0';  // x 1.0
+
+  let xCenterPosition = undefined;
+  let yCenterPosition = undefined;
+  let isInital = true;
+  // 🔁 描画関数
+  const render = () => {
+    if (chartDiv.clientWidth == 0 || chartDiv.clientHeight == 0) {
+      console.warn("renderingLineGraphs render() no rendering because clientDiv.clientWidth == 0 or clientHieght == 0");
+      return;
+    }
+
+
+    console.log("#IGA renderingLineGraph() render() rendering")
+    // 中身をクリア（重要）
+    chartDiv.innerHTML = '';
+
+
+    const viewScaleX = parseFloat(xScaleData) || 3.0; // 3 months
+    const viewScaleY = parseFloat(yScaleData) || 1.0;
+
+    // コンテナ作成
+    const { xAxisDivInner, yAxisDivInner, scrollDivInner, scrollDiv, tooltip } = createChartContainer(chartDiv, xAxisLabelHeight, yAxisLabelWidth);
+
+    // SVG生成（ここでwidth/height取り直す）
+    const {
+      minTime, maxTime, minY, maxY,
+      scaleX, scaleY,
+      svg, xAxisSvg, yAxisSvg,
+      crosshair, hoverPoint, leaderLine, viewRangeX, viewRangeY,
+    } = createSVG(chartDiv, chartData, viewScaleX, viewScaleY, scrollDivInner, xAxisDivInner, yAxisDivInner, padding, xAxisLabelHeight, yAxisLabelWidth);
+
+    // グリッド
+    drawLineGraphsGrid(svg, xAxisSvg, yAxisSvg, minTime, maxTime, minY, maxY, scaleX, scaleY, padding, xAxisLabelHeight, yAxisLabelWidth, viewRangeX, viewRangeY);
+
+    // 系列
+    const { seriesLines, hoverElements, pointCircles } =
+      drawLineGraphsSeries(svg, chartData, scaleX, scaleY);
+
+    // イベント
+    setupLineGraphsHoverEvents(
+      svg,
+      hoverElements,
+      seriesLines,
+      chartData,
+      scaleX,
+      scaleY,
+      tooltip,
+      infoDiv,
+      pointCircles,
+      crosshair,
+      hoverPoint,
+      leaderLine
+    );
+
+    scrollDiv.addEventListener('scroll', () => {
+      const y = scrollDiv.scrollTop;
+      const x = scrollDiv.scrollLeft;
+      yAxisDivInner.style.transform = `translateY(-${y}px)`;
+      xAxisDivInner.style.transform = `translateX(-${x}px)`;
+
+      // save centeringPosition
+      xCenterPosition = (scrollDiv.scrollLeft + scrollDiv.clientWidth / 2) / scrollDiv.scrollWidth;
+      yCenterPosition = (scrollDiv.scrollTop + scrollDiv.clientHeight / 2) / scrollDiv.scrollHeight;
+    });
+
+    // 初期スクロール
+    if (isInital) {
+      isInital = false;
+      scrollDiv.scrollLeft = scrollDiv.scrollWidth - scrollDiv.clientWidth;
+      scrollDiv.scrollTop = scrollDiv.scrollHeight - scrollDiv.clientHeight;
+    } else {
+      // centering to the position
+      scrollDiv.scrollLeft = (scrollDiv.scrollWidth * xCenterPosition) - scrollDiv.clientWidth / 2;
+      scrollDiv.scrollTop = (scrollDiv.scrollHeight * yCenterPosition) - scrollDiv.clientHeight / 2;
+    }
+  };
+
+  const xScaleBtn = document.getElementById("timelineChart").querySelector(".xScale");
+  xScaleBtn.querySelectorAll('.scale-btn')
+    .forEach(btn => {
+      const scale = btn.dataset?.scale;
+      // 初期アクティブ状態
+      btn.classList.toggle('active', scale === xScaleData);
+
+      btn.onclick = () => {
+        xScaleBtn
+          .querySelectorAll('.scale-btn')
+          .forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const scale = btn.dataset?.scale
+        if (scale) {
+          xScaleData = scale;
+        }
+        render();
+      }
+    });
+
+  const yScaleBtn = document.getElementById("timelineChart").querySelector(".yScale")
+  yScaleBtn.querySelectorAll('.scale-btn')
+    .forEach(btn => {
+      const scale = btn.dataset?.scale;
+      // 初期アクティブ状態
+      btn.classList.toggle('active', scale === yScaleData);
+
+      btn.onclick = () => {
+
+        yScaleBtn
+          .querySelectorAll('.scale-btn')
+          .forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const scale = btn.dataset?.scale;
+        if (scale) {
+          yScaleData = scale;
+        }
+        render();
+      }
+    });
+
+  // 📏 リサイズ監視
+  if (chartDiv.chartResizeObserver) { // already observed
+    console.log("already has chartObserver");
+    chartDiv.chartResizeObserver.disconnect();
+    chartDiv.chartResizeObserver = undefined;
+  }
+  // create a Observer
+  let timeout;
+  let isInitalRendering = false;
+  const observer = new ResizeObserver(entries => {
+    console.log("resize isInitalRendering=", isInitalRendering);
+    console.log("resize series=", chartData.series.map((s) => s.groupId));
+    if (!isInitalRendering) {
+      isInitalRendering = true;
+    } else {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => render(), 100);
+    }
+  });
+  observer.observe(chartDiv);
+  chartDiv.chartResizeObserver = observer;
+
+  // 初回描画
+  render();
+}
+
+function setupSeriesSelectors(groupInfo, onSeriesListChanged = undefined) {
+  const selectorDiv = document.getElementById("timelineSelector");
+  // 既存要素から色を取得
+  const colors = [];
+  selectorDiv.querySelectorAll('.series').forEach(series => {
+    const seriesBox = series.querySelector('.series-box');
+    if (seriesBox) {
+      const bgColor = window.getComputedStyle(seriesBox).backgroundColor;
+      colors.push(bgColor);
+    }
+  });
+
+  const groupId = groupInfo.shortname;  // use shortName as groupId for simplicity
+  // ドロップダウン定義
+  const seriesSetDict = {
+    "Members": { groupId: groupId, series: [['M']] },
+    "Participants": { groupId: groupId, series: [['MP'], ['IE'], ['S'], ['Ind'], ['P']] }
+  };
+
+  // 最新データを保持
+  selectorDiv._seriesSetDict = seriesSetDict;
+  selectorDiv._onSeriesListChanged = onSeriesListChanged;
+
+  // イベント委譲の設定（一度だけ）
+  if (!selectorDiv.dataset.eventListenersSetup) {
+    setupDropdownDelegation(selectorDiv, (selectedKey, changeType) => {
+      const latestSeriesSetDict = selectorDiv._seriesSetDict;  // 最新の seriesSetDict を取得
+      const latestSeriesDict = latestSeriesSetDict[selectedKey];
+      if (changeType === 'series-set') {
+        // series-set 変更時だけ renderSeriesDropdowns を呼ぶ
+        if (latestSeriesDict) {
+          renderSeriesDropdowns(selectorDiv, latestSeriesDict);
+        }
+        localStorage.setItem('timelineSeries', selectedKey);
+      }
+      // 両方のケースで seriesList 更新
+      const seriesList = getSeriesList(selectorDiv, latestSeriesDict.groupId, colors);
+      // ✅ 保存された最新のコールバックを呼び出す
+      if (selectorDiv._onSeriesListChanged) selectorDiv._onSeriesListChanged(seriesList);
+
+    });
+    selectorDiv.dataset.eventListenersSetup = true;
+  }
+
+  // 初期表示
+  let seriesSetKey = localStorage.getItem('timelineSeries') || "Members";  // default members;
+  const seriesDict = seriesSetDict[seriesSetKey] || seriesSetDict["Members"];
+  renderSeriesSetDropdowns(selectorDiv, seriesSetDict, seriesSetKey);
+  renderSeriesDropdowns(selectorDiv, seriesDict);
+  const seriesList = getSeriesList(selectorDiv, seriesDict.groupId, colors);
+
+  return seriesList;
+}
+
+/**
+ * ドロップダウンのイベント委譲（イベントリスナーは1回だけ登録）
+ */
+function setupDropdownDelegation(selectorDiv, onChanged = undefined) {
+  // ドロップダウントグル開閉
+  selectorDiv.addEventListener('click', (e) => {
+    console.log('Dropdown toggle click:', e.target);
+    const toggle = e.target.closest('.dropdown-toggle');
+    if (!toggle) return;
+
+    console.log('Toggling dropdown for:', toggle);
+    const dropdown = toggle.closest('.dropdown');
+    const isOpen = dropdown.classList.contains('open');
+
+    selectorDiv.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+    console.log('Dropdowns after closing isOpen:', isOpen);
+    if (!isOpen) {
+      dropdown.classList.add('open');
+    }
+  });
+
+  // ドロップダウンアイテム選択（イベント委譲）
+  selectorDiv.addEventListener('click', (e) => {
+    const item = e.target.closest('.dropdown-list .dropdown-list-item');
+    if (!item) return;
+
+    const dropdown = item.closest('.dropdown');
+    const toggle = dropdown.querySelector('.dropdown-toggle');
+    const selectedKey = item.textContent.trim();
+
+    // ✅ テキスト部分だけ更新（icon は残る）
+    const toggleText = toggle.querySelector('.toggle-text');
+    if (toggleText) {
+      toggleText.textContent = selectedKey;
+    }
+
+    dropdown.classList.remove('open');
+
+    // コールバックだけで通知（UI更新は呼び出し側で）
+    if (onChanged) {
+      const changeType = dropdown.closest('.series-set') ? 'series-set' : 'series';
+      onChanged(selectedKey, changeType);  // 変更タイプも渡す
+    }
+  });
+
+  // フィルタ入力
+  selectorDiv.addEventListener('input', (e) => {
+    if (e.target.classList.contains('filter-input')) {
+      const filter = e.target.value.toLowerCase().trim();
+      const dropdownList = e.target.closest('.dropdown-list');
+      dropdownList.querySelectorAll('.list-item').forEach(item => {
+        item.style.display = item.textContent.toLowerCase().includes(filter) ? '' : 'none';
+      });
+    }
+  });
+
+  // 外クリックで閉じる
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.dropdown')) {
+      selectorDiv.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+    }
+  });
+}
+
+/**
+ *  Series-set シリーズセットドロップダウンのリスト描画
+ */
+function renderSeriesSetDropdowns(selectorDiv, seriesSetDict, selectedSetKey) {
+  // series-set ドロップダウン
+  const seriesSetDiv = selectorDiv.querySelector('.series-set');
+  const list = Object.keys(seriesSetDict);
+  const selectedIndex = list.indexOf(selectedSetKey);
+  renderDropdownList(seriesSetDiv, list, selectedIndex);;
+}
+
+/**
+ * series ドロップダウンのリスト描画
+ */
+function renderSeriesDropdowns(selectorDiv, seriesDict) {
+  let index = 0;
+  selectorDiv.querySelectorAll('.series').forEach(seriesDiv => {
+    const seriesOptions = seriesDict.series[index];
+    renderDropdownList(seriesDiv, Array.isArray(seriesOptions) ? seriesOptions : []);
+    index++;
+  });
+}
+
+/**
+ * ドロップダウンリストアイテムを描画
+ */
+function renderDropdownList(dropdownDiv, itemList, selectedIndex = undefined) {
+  const dropdownListDiv = dropdownDiv.querySelector('.dropdown-list');
+
+  // リスト部分のみクリア（フィルタ入力は保持するが値はリセット）
+  dropdownListDiv.querySelectorAll('.dropdown-list-item').forEach(item => item.remove());
+
+  // フィルタ入力値をリセット
+  const filterInput = dropdownListDiv.querySelector('.filter-input');
+  if (filterInput) {
+    filterInput.value = '';
+  }
+
+  for (const itemText of itemList) {
+    const item = document.createElement('div');
+    item.className = 'dropdown-list-item';
+    item.textContent = itemText;
+    dropdownListDiv.appendChild(item);
+  }
+
+  const toggle = dropdownDiv.querySelector('.dropdown-toggle');
+  const dropdownIcon = dropdownDiv.querySelector('.dropdown-icon');
+  if (toggle && dropdownIcon) {
+    if (itemList.length > 1) {
+      dropdownIcon.style.display = 'block';  // hide the icon as well
+      toggle.style.pointerEvents = 'pointer';
+    } else {
+      dropdownIcon.style.display = 'none';  // hide the icon as well
+      toggle.style.pointerEvents = 'none';
+    }
+  }
+
+  // デフォルト値を設定（初回のみ）
+  const toggleText = dropdownDiv.querySelector('.toggle-text');
+  if (toggleText) {
+    if (itemList.length > 0) {
+      toggleText.textContent = itemList[selectedIndex] || itemList[0];
+    } else {
+      toggleText.textContent = '-';  // 選択肢なし
+    }
+  }
+}
+
+/**
+ * 現在のシリーズリストを取得
+ */
+function getSeriesList(selectorDiv, groupId, colors) {
+  const seriesList = [];
+  let index = 0;
+
+  selectorDiv.querySelectorAll('.series').forEach(seriesDiv => {
+    const toggleText = seriesDiv.querySelector('.dropdown-toggle .toggle-text');
+    const statId = toggleText.textContent.trim();
+    const color = index < colors.length ? colors[index] : "gray";
+
+    if (statId !== '-') {  // '-' is no value
+      seriesList.push({
+        groupId: groupId,
+        statId: statId,
+        color: color
+      });
+    }
+
+    index++;
+  });
+
+  return seriesList;
+}
+
+function createChartContainer(chartDiv, xAxisLabelHeight, yAxisLabelWidth) {
+  chartDiv.innerHTML = "";
+  chartDiv.style.display = "flex";
+  chartDiv.style.fontFamily = "sans-serif";
+  chartDiv.style.height = "100%";
+
+  const scrollDiv = document.createElement("div");
+  scrollDiv.id = "scrollDiv";
+  scrollDiv.style.flex = "1";
+  scrollDiv.style.height = "100%";
+  scrollDiv.style.overflow = "auto";
+  scrollDiv.style.position = "relative";
+  scrollDiv.style.border = "1px solid #ccc";
+  chartDiv.appendChild(scrollDiv);
+
+  // --- 1. Y軸の設定 (左端固定) ---
+  const yAxisDiv = document.createElement("div");
+  yAxisDiv.style.position = "sticky";
+  yAxisDiv.style.left = "0";
+  yAxisDiv.style.top = "0";
+  yAxisDiv.style.zIndex = "3";
+  yAxisDiv.style.width = "0px";
+  yAxisDiv.style.height = "0px";
+  yAxisDiv.style.overflow = "visible";
+  scrollDiv.appendChild(yAxisDiv);
+
+  const yAxisDivInner = document.createElement("div");
+  yAxisDivInner.style.position = "absolute";
+  yAxisDivInner.style.left = "0";
+  yAxisDivInner.style.top = "0";
+  yAxisDivInner.style.width = yAxisLabelWidth;
+  yAxisDivInner.style.whiteSpace = "nowrap";
+  yAxisDivInner.style.background = "white";
+  yAxisDivInner.style.borderRight = "1px solid #ccc";
+  yAxisDiv.appendChild(yAxisDivInner);
+
+  // --- 2. メインコンテンツ領域 ---
+  const scrollDivInner = document.createElement("div");
+  scrollDivInner.style.position = "relative";
+  scrollDivInner.style.width = "100%";
+  // ★重要: height: 100% をやめる。中身が入った時にスクロールさせるため。
+  // テスト用に大きな高さを設定してみると sticky の挙動が確認できます。
+  // scrollDivInner.style.height = "1000px"; 
+  scrollDiv.appendChild(scrollDivInner);
+
+  // --- 3. X軸の設定 (下端固定) ---
+  const xAxisDiv = document.createElement("div");
+  xAxisDiv.style.position = "sticky";
+  xAxisDiv.style.left = "0";
+  xAxisDiv.style.bottom = "0";
+  xAxisDiv.style.zIndex = "2";
+  xAxisDiv.style.width = "100%";
+  xAxisDiv.style.height = "0px";    // 本体は高さを持たせず、Innerを浮かす
+  xAxisDiv.style.overflow = "visible";
+  xAxisDiv.style.pointerEvents = "none";
+  // ★重要: yAxisDiv や scrollDivInner より後に append することで、
+  // 常に「コンテンツの底」に位置させる
+  scrollDiv.appendChild(xAxisDiv);
+
+  const xAxisDivInner = document.createElement("div");
+  xAxisDivInner.style.position = "absolute";
+  xAxisDivInner.style.left = "0";
+  xAxisDivInner.style.bottom = "0";
+  xAxisDivInner.style.background = "white";
+  xAxisDivInner.style.borderTop = "1px solid #ccc";
+
+  xAxisDivInner.style.height = xAxisLabelHeight;
+  xAxisDiv.appendChild(xAxisDivInner);
+
+  // --- 4. tooltip ---
+  const tooltip = document.createElement("div");
+  // クラス名の設定
+  tooltip.className = "tooltip"; // CSS側の .tooltip 設定が反映される
+  tooltip.style.display = "none";
+  tooltip.style.position = "absolute";
+  scrollDiv.appendChild(tooltip);
+
+  return { xAxisDivInner, yAxisDivInner, scrollDivInner, scrollDiv, tooltip };
+}
+
+// サブ関数: SVG作成とスケーリング
+function createSVG(chartDiv, chartData, viewScaleX, viewScaleY, scrollDiv, xAxisDivInner, yAxisDivInner, padding, xAxisLabelHeight, yAxisLabelWidth) {
+  let maxY = -Infinity;
+  let minY = 0;
+  chartData.series.forEach(s => {
+    s.values.forEach(v => {
+      if (v.value) {
+        maxY = Math.max(maxY, v.value);
+      }
+    });
+  });
+  let roundY = Math.pow(10, Math.floor(Math.log10(maxY)) - 1); // e.g. 100 for maxY=345
+  maxY = Math.ceil(maxY / roundY) * roundY; // round up to nearest roundY
+  const minTime = Math.min(...chartData.timestamps);
+  const maxTime = Math.max(...chartData.timestamps);
+  const viewRangeY = (maxY - minY) / viewScaleY;   // scaleY = 1.0 -> show the max of data.
+  const viewRangeX = (86400000 * 30) * viewScaleX;   // default, 30days -> 1 month
+
+  const viewWidthPx = chartDiv.clientWidth - yAxisLabelWidth;
+  const viewHeightPx = chartDiv.clientHeight - xAxisLabelHeight;
+  const pxPerMs = viewWidthPx / viewRangeX;
+  const svgWidth = Math.max(viewWidthPx, (maxTime - minTime) * pxPerMs);
+  const svgTime = Math.max(maxTime - minTime, viewWidthPx / pxPerMs);
+  // const svgHeight = (maxY - minY) > 0 ? viewHeightPx / (viewRangeY / (maxY - minY)) : viewHeightPx;
+  const pxPerValue = viewHeightPx / viewRangeY;
+  const svgHeight = Math.max(viewHeightPx, (maxY - minY) * (pxPerValue));
+
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("width", svgWidth);
+  svg.setAttribute("height", svgHeight);
+  scrollDiv.appendChild(svg);
+
+  const yAxisSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  yAxisSvg.setAttribute("width", yAxisLabelWidth);
+  yAxisSvg.setAttribute("height", svgHeight);
+  yAxisDivInner.appendChild(yAxisSvg);
+
+  const xAxisSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  xAxisSvg.setAttribute("width", svgWidth);
+  xAxisSvg.setAttribute("height", xAxisLabelHeight);
+  xAxisDivInner.appendChild(xAxisSvg);
+
+  function scaleX(time) {
+    return yAxisLabelWidth + padding + (time - minTime) / svgTime * (svgWidth - yAxisLabelWidth - padding * 2);
+  }
+
+  function scaleY(v) {
+    return svgHeight - xAxisLabelHeight - padding - (v - minY) / (maxY - minY) * (svgHeight - xAxisLabelHeight - padding * 2);
+  }
+
+  // hover crosshair
+  const crosshair = document.createElementNS("http://www.w3.org/2000/svg", "line")
+  crosshair.setAttribute("y1", padding)
+  crosshair.setAttribute("y2", svgHeight - padding)
+  crosshair.setAttribute("stroke", "#888")
+  crosshair.setAttribute("stroke-dasharray", "4")
+  crosshair.style.display = "none"
+
+  svg.appendChild(crosshair)
+
+  const hoverPoint = document.createElementNS("http://www.w3.org/2000/svg", "circle")
+
+  hoverPoint.setAttribute("r", 5)
+  hoverPoint.setAttribute("fill", "gray")
+  hoverPoint.style.display = "none"
+
+  svg.appendChild(hoverPoint)
+
+  const leaderLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  leaderLine.setAttribute("stroke", "gray");
+  leaderLine.setAttribute("stroke-width", "1");
+  leaderLine.style.display = "none";
+  svg.appendChild(leaderLine);
+
+
+  return { minTime, maxTime, minY, maxY, scaleX, scaleY, svg, xAxisSvg, yAxisSvg, crosshair, hoverPoint, leaderLine, viewRangeX, viewRangeY };
+}
+
+// サブ関数: グリッド描画
+function drawLineGraphsGrid(svg, xAxisSvg, yAxisSvg, minTime, maxTime, minY, maxY, scaleX, scaleY, padding, xAxisLabelHeight, yAxisLabelWidth, viewRangeX, viewRangeY) {
+  yAxisSvg.innerHTML = "";
+
+  const svgWidth = svg.clientWidth;
+  const svgHeight = svg.clientHeight;
+
+  // Y grid
+  const rawTick = viewRangeY / 5;
+  // 桁を取得
+  const pow = Math.pow(10, Math.floor(Math.log10(rawTick)));
+  // 正規化（1〜10にする）
+  const normalized = rawTick / pow;
+  // 1 or 5 に丸める
+  let nice;
+  if (normalized <= 1) {
+    nice = 1;
+  } else if (normalized <= 5) {
+    nice = 5;
+  } else {
+    nice = 10;
+  }
+  // 元のスケールに戻す
+  const yTick = nice * pow;
+
+  for (let v = minY; v <= maxY; v += yTick) {
+    const y = scaleY(v);
+
+    const grid = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    grid.setAttribute("x1", yAxisLabelWidth);
+    grid.setAttribute("x2", svgWidth - padding);  // add padding to have a space at the right edge
+    grid.setAttribute("y1", y);
+    grid.setAttribute("y2", y);
+    grid.setAttribute("stroke", "#eee");
+    svg.appendChild(grid);
+
+    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    text.setAttribute("x", yAxisLabelWidth - 10);
+    text.setAttribute("y", y + 4);
+    text.setAttribute("text-anchor", "end");
+    text.setAttribute("font-size", "10");
+    text.textContent = v.toFixed(0);
+    yAxisSvg.appendChild(text);
+  }
+
+  // X grid（そのままでOK）
+  let xNextLabel = 0;
+  let d = new Date(minTime);
+  d = new Date(d.getFullYear(), d.getMonth(), 1); // one month
+  while (d.getTime() <= maxTime) {
+    const t = Math.floor(d.getTime());
+    const x = scaleX(t);
+
+    const grid = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    grid.setAttribute("x1", x);
+    grid.setAttribute("x2", x);
+    grid.setAttribute("y1", xAxisLabelHeight);
+    grid.setAttribute("y2", svgHeight);
+    grid.setAttribute("stroke", "#eee");
+    svg.appendChild(grid);
+
+    if (x >= xNextLabel) {  // 100px for test
+      const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      label.setAttribute("x", x);
+      label.setAttribute("y", 18);
+      label.setAttribute("text-anchor", "middle");
+      label.setAttribute("font-size", "10");
+      label.textContent =
+        d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+
+      xAxisSvg.appendChild(label);
+
+      const bbox = label.getBBox();
+      const margin = 20;
+      xNextLabel = x + bbox.width / 2 + margin;
+    }
+
+    d.setMonth(d.getMonth() + 1);
+  }
+}
+
+// サブ関数: 系列描画
+function drawLineGraphsSeries(svg, chartData, scaleX, scaleY) {
+  const seriesLines = [];
+  const hoverElements = [];
+  const pointCircles = [];
+
+  console.log("drawLineGraphsSeries() start ", chartData.series.map((s) => s.groupId));
+
+  chartData.series.forEach(series => {
+    let path = "";
+    let isFirstValidPoint = true; // そのセクションでの最初の点かどうか
+
+    series.values.forEach((v, i) => {
+      if (v.value === undefined) {
+        // データがないので、次の有効なデータは「新しい始点(M)」にする必要がある
+        isFirstValidPoint = true;
+        return; // このループを抜けて次の点へ
+      }
+
+      const t = chartData.timestamps[i];
+      const x = scaleX(t);
+      const y = scaleY(v.value);
+
+      if (isFirstValidPoint) {
+        path += `M ${x},${y} `;
+        isFirstValidPoint = false;
+      } else {
+        path += `L ${x},${y} `;
+      }
+    });
+    // 線描画
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    line.setAttribute("d", path);
+    line.setAttribute("fill", "none");
+    line.setAttribute("stroke", series.color || "blue");
+    line.setAttribute("stroke-width", "2");
+    svg.appendChild(line);
+    seriesLines.push(line);
+
+    // ポイント描画
+    // ポイント描画部分の修正案
+    const seriesPointCircles = [];
+    series.values.forEach((v, i) => {
+      // 1. 値が undefined または null なら何もしない
+      if (v.value === undefined || v.value === null) {
+        seriesPointCircles.push(null); // 配列のインデックスを維持するために null を入れておくと管理しやすいです
+        return;
+      }
+      // 2. 有効なデータがある場合のみ要素を作成
+      const t = chartData.timestamps[i];
+      const x = scaleX(t);
+      const y = scaleY(v.value);
+
+      const pointCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      pointCircle.setAttribute("cx", x);
+      pointCircle.setAttribute("cy", y);
+      pointCircle.setAttribute("r", 3);
+      pointCircle.setAttribute("fill", series.color || "blue");
+
+      svg.appendChild(pointCircle);
+      seriesPointCircles.push(pointCircle);
+    });
+    pointCircles.push(seriesPointCircles);
+
+    // ホバー要素
+    const hover = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    hover.setAttribute("d", path);
+    hover.setAttribute("fill", "none");
+    hover.setAttribute("stroke", "transparent");
+    hover.setAttribute("stroke-width", "12");
+    svg.appendChild(hover);
+    hoverElements.push(hover);
+  });
+
+  return { seriesLines, hoverElements, pointCircles };
+}
+
+function formatDateTime(epoch) {
+
+  const d = new Date(epoch)
+
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, "0")
+  const day = String(d.getDate()).padStart(2, "0")
+  const h = String(d.getHours()).padStart(2, "0")
+  const min = String(d.getMinutes()).padStart(2, "0")
+
+  return `${y}-${m}-${day} ${h}:${min}`
+}
+
+// サブ関数: イベント設定
+function setupLineGraphsHoverEvents(svg, hoverElements, seriesLines, chartData, scaleX, scaleY, tooltip, infoDiv, pointCircles, crosshair, hoverPoint, leaderLine) {
+  let selectedPoint = null;
+  let targetNearest = null;
+  let prevX = 0;
+  let prevY = 0;
+
+  hoverElements.forEach((hover, seriesIndex) => {
+    const series = chartData.series[seriesIndex];
+    const line = seriesLines[seriesIndex];
+
+
+    hover.addEventListener("mousemove", e => {
+      const rect = svg.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+
+      // 1. データの検索ロジック
+      let nearest = 0;
+      let dist = Infinity;
+      chartData.timestamps.forEach((t, i) => {
+        const x = scaleX(t);
+        const d = Math.abs(mouseX - x);
+        if (d < dist) {
+          dist = d;
+          nearest = i;
+        }
+      });
+      targetNearest = nearest;
+
+      const currVal = series.values[nearest].value;
+      const currTime = chartData.timestamps[nearest];
+      const statId = series.statId;
+
+      if (currVal === undefined || currVal === null) {
+        // データがない場合はすべて隠す
+        tooltip.style.display = "none";
+        leaderLine.style.display = "none";
+        crosshair.style.display = "none";
+        hoverPoint.style.display = "none";
+        return; // 以降の計算（座標計算など）をスキップ
+      }
+
+      // 2. グラフ上の点(x, y)を取得
+      const x = scaleX(currTime);
+      const y = scaleY(currVal);
+
+      if (x !== prevX || y !== prevY) {
+        prevX = x;
+        prevY = y;
+
+        // 内容更新と表示
+        tooltip.innerHTML = `stat: ${statId}<br>value: ${currVal}<br>date: ${formatDateTime(currTime)}`;
+        tooltip.style.display = "block";
+        leaderLine.style.display = "block"; // 線を表示
+
+        // 3. 座標計算の準備
+        const scrollX = scrollDiv.scrollLeft;
+        const scrollY = scrollDiv.scrollTop;
+        const scrollRect = scrollDiv.getBoundingClientRect();
+        const svgRect = svg.getBoundingClientRect();
+        const svgOffsetX = svgRect.left - scrollRect.left;
+        const svgOffsetY = svgRect.top - scrollRect.top;
+
+        const tooltipWidth = tooltip.offsetWidth;
+        const tooltipHeight = tooltip.offsetHeight;
+        const margin = 20;
+
+        // 判定フラグ
+        let isRight = true;  // ポイントより右に表示
+        let isBottom = true; // ポイントより下に表示
+
+        // 基本位置（右下）
+        let tooltipLeft = svgOffsetX + x + margin + scrollX;
+        let tooltipTop = svgOffsetY + y + margin + scrollY;
+
+        // 右側のはみ出し判定
+        if (tooltipLeft + tooltipWidth > scrollX + scrollDiv.clientWidth) {
+          tooltipLeft = svgOffsetX + x - tooltipWidth - margin + scrollX;
+          isRight = false; // 左側に反転
+        }
+
+        // 下側のはみ出し判定
+        if (tooltipTop + tooltipHeight > scrollY + scrollDiv.clientHeight) {
+          tooltipTop = svgOffsetY + y - tooltipHeight - margin + scrollY;
+          isBottom = false; // 上側に反転
+        }
+
+        // 5. 適用
+        tooltip.style.left = tooltipLeft + "px";
+        tooltip.style.top = tooltipTop + "px";
+
+        // --- 線の終点（角）を決定するロジック ---
+
+        // ツールチップの左上角の座標（SVG基準）
+        let targetX = tooltipLeft - svgOffsetX - scrollX;
+        let targetY = tooltipTop - svgOffsetY - scrollY;
+
+        // ツールチップの位置に応じて、結ぶ「角」をずらす
+        if (!isRight) {
+          // ツールチップが左にあるなら、結ぶのは「右角」
+          targetX += tooltipWidth;
+        }
+        if (!isBottom) {
+          // ツールチップが上にあるなら、結ぶのは「下角」
+          targetY += tooltipHeight;
+        }
+
+        // 始点はポイント、終点は計算した角
+        leaderLine.setAttribute("x1", x);
+        leaderLine.setAttribute("y1", y);
+        leaderLine.setAttribute("x2", targetX);
+        leaderLine.setAttribute("y2", targetY);
+
+        // --- インジケーター（十字線・点）の描画 ---
+        crosshair.setAttribute("x1", x);
+        crosshair.setAttribute("x2", x);
+        crosshair.style.display = "block";
+        hoverPoint.setAttribute("cx", x);
+        hoverPoint.setAttribute("cy", y);
+        hoverPoint.style.display = "block";
+
+        seriesLines.forEach(l => {
+          l.style.opacity = 0.3;
+          l.style.strokeWidth = 2;
+        });
+        line.style.opacity = 1;
+        line.style.strokeWidth = 4;
+      }
+    });
+    hover.addEventListener("click", e => {
+      e.stopPropagation();
+
+      if (targetNearest != null) {
+        const nearest = targetNearest;
+        const targetPointCircle = pointCircles[seriesIndex][nearest];
+
+        // ★ ここで null チェック！
+        if (!targetPointCircle) {
+          // データが undefined の場所をクリックした場合は、
+          // 以前の選択を解除するだけにするか、何もしないようにします。
+          return;
+        }
+
+        if (selectedPoint) {
+          selectedPoint.setAttribute("fill", selectedPoint.originalColor);
+          selectedPoint.classList.remove("selected");
+        }
+        selectedPoint = targetPointCircle;
+        selectedPoint.originalColor = series.color || "blue";
+        selectedPoint.setAttribute("fill", "black");
+        selectedPoint.classList.add("selected");
+
+        const values = series.values[nearest];
+        const selectedVal = values.value;
+        const selectedTime = chartData.timestamps[nearest];
+        let prevVal = null;
+        let prevTime = null;
+        if (nearest > 0) {
+          prevVal = series.values[nearest - 1].value;
+          prevTime = chartData.timestamps[nearest - 1];
+        }
+        const diffCount = prevVal !== null ? selectedVal - prevVal : 0;
+        const diffMinus = values.diff?.['-'] || [];
+        const diffPlus = values.diff?.['+'] || [];
+        drawTimelineInfoDiv(infoDiv, series.statId, selectedVal, selectedTime, prevVal, prevTime, diffCount, diffMinus, diffPlus);
+      }
+    });
+
+    hover.addEventListener("mouseleave", () => {
+      tooltip.style.display = "none";
+      leaderLine.style.display = "none"; // 線を表示
+      crosshair.style.display = "none";
+      hoverPoint.style.display = "none";
+      prevX = 0;
+      prevY = 0;
+      seriesLines.forEach(l => {
+        l.style.opacity = 1;
+        l.style.strokeWidth = 2;
+      });
+      targetNearest = null;
+    });
+  });
+  svg.addEventListener("click", e => {
+    if (e.target === svg && selectedPoint) {
+      targetNearest = null;
+      tooltip.style.display = "none";
+      leaderLine.style.display = "none"; // 線を表示
+      crosshair.style.display = "none";
+      hoverPoint.style.display = "none";
+      prevX = 0;
+      prevY = 0;
+    }
+  });
+}
+
+function clearTimeLineInfoDiv(infoDiv) {
+  drawTimelineInfoDiv(infoDiv);
+}
+
+function drawTimelineInfoDiv(infoDiv, statId = undefined, selectedVal = undefined, selectedTime = undefined, prevVal = undefined, prevTime = undefined, diffCount = undefined, diffMinus = undefined, diffPlus = undefined) {
+  const statDict = {
+    "M": "Members (M)",
+    "MP": "Member Participants (MP)",
+    "IE": "Invited Experts (IE)",
+    "S": "Staff (S)",
+    "Ind": "Indivisuals (Ind)",
+    "P": "Participants (P)"
+  }
+
+  const titleDiv = infoDiv.querySelector('.info-title');
+  const infoPrev = infoDiv.querySelector('.info-content #info-prev');
+  const infoSelected = infoDiv.querySelector('.info-content #info-selected');
+  const infoDiff = infoDiv.querySelector('.info-content #info-diff');
+  const infoLeft = infoDiv.querySelector('.info-diff #info-left');
+  const infoLeftValue = infoDiv.querySelector('.info-diff #info-left-value');
+  const infoJoined = infoDiv.querySelector('.info-diff #info-joined');
+  const infoJoinedValue = infoDiv.querySelector('.info-diff #info-joined-value');
+
+  if (statId) {
+    const title = statDict[statId] || statId;
+    if (titleDiv) {
+      titleDiv.innerHTML = title;
+    }
+    if (infoPrev) {
+      infoPrev.innerHTML = (prevVal !== null ? `${prevVal}<br/>(${formatDateTime(prevTime)})` : " N/A");
+    }
+    if (infoSelected) {
+      infoSelected.innerHTML = `${selectedVal}<br/>(${formatDateTime(selectedTime)})`;
+    }
+    if (infoDiff) {
+      infoDiff.innerHTML = prevVal !== null ? `${diffCount > 0 ? "+" : ""}${diffCount}` : " N/A";
+    }
+    const leftTitles = diffMinus.map(item => (item.title || item.name)).sort((a, b) => compareByName(a, b));
+    if (infoLeftValue) {
+      infoLeftValue.innerHTML = leftTitles.length;
+    }
+    if (infoLeft) {
+      infoLeft.innerHTML = (leftTitles.length > 0 ? leftTitles.join("<br/>") : "None");
+    }
+    const joinedTitles = diffPlus.map(item => (item.title || item.name)).sort((a, b) => compareByName(a, b));
+    if (infoJoinedValue) {
+      infoJoinedValue.innerHTML = joinedTitles.length;
+    }
+    if (infoJoined) {
+      infoJoined.innerHTML = (joinedTitles.length > 0 ? joinedTitles.join("<br/>") : "None");
+    }
+  } else {
+    if (titleDiv) {
+      titleDiv.innerHTML = "Please select a data point on the chart to show changes"
+    }
+    if (infoPrev) {
+      infoPrev.innerHTML = "";
+    }
+    if (infoSelected) {
+      infoSelected.innerHTML = "";
+    }
+    if (infoDiff) {
+      infoDiff.innerHTML = "";
+    }
+    if (infoLeftValue) {
+      infoLeftValue.innerHTML = "";
+    }
+    if (infoLeft) {
+      infoLeft.innerHTML = "";
+    }
+    if (infoJoinedValue) {
+      infoJoinedValue.innerHTML = "";
+    }
+    if (infoJoined) {
+      infoJoined.innerHTML = "";
+    }
+  }
+}
+

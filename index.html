@@ -47,7 +47,7 @@
   </script>
 
   <!-- ES Module -->
-  <script type="module" src="./w3c-dash.js"></script> 
+  <script type="module" src="./w3c-dash.js"></script>
 </head>
 
 <body>
@@ -136,7 +136,7 @@
             data-summary-type="allVersions"></span></span>
         <span class="summary-note">Note: Spec=Rec+CR+DS+Ret+Oth</span>
       </div>
-    </section>
+    </section> <!-- end of #section -->
 
 
     <section id="groups">
@@ -144,7 +144,7 @@
         <div id="groupsHeader">
           <span class="groups-title">Groups</span>
 
-          <div id="tableSwitcher">
+          <div id="groupTableSwitcher" class="tab-switcher">
             <div class="segmented-control" role="tablist">
               <button class="segment active" data-show="participations" role="tab" aria-selected="true">
                 Participations
@@ -275,184 +275,390 @@
   <div id="popup">
     <div id="popupHeader">
       <div id="popupTitle"></div>
+      <div id="popupViewSwitcher" class="tab-switcher" style="display: block">
+        <div class="segmented-control" role="tablist">
+          <button class="segment active" data-show="list" role="tab" aria-selected="true">
+            list
+          </button>
+          <button class="segment" data-show="timeline" role="tab" aria-selected="false">
+            timeline
+          </button>
+        </div>
+      </div>
       <div id="popupClose">[Close]</div>
-    </div>
+    </div> <!-- end of #popupHeader -->
     <div id="popupBody">
-
       <div id="popupParticipationsBody">
-        <div id="participationsFilter"
-          style="padding: 8px 12px; background: #f6f8fa; border-bottom: 1px solid #ddd; display: flex; flex-direction: column; gap: 8px;">
-          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-            <span style="font-size: 1.15em; font-weight: 700;">Participations</span>
-            <div>
-              <div class="toggle-wrap">
-                <button id="popupToggleOnlyGroupParticipations" type="button" class="toggle">
-                  <span class="toggle-check"></span>
-                  <span class="toggle-label">
-                    Only Group Participations
-                  </span>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div id="participationsButtonContainer" style="display: flex; gap: 4px; flex-wrap: wrap;">
-            <button class="filter-btn" data-filter="members">Members: <span class="filter-count"
-                id="filterCountMembers"></span></button>
-            <button class="filter-btn" data-filter="memberParticipants">Member participants: <span class="filter-count"
-                id="filterCountMemberParticipants"></span></button>
-            <button class="filter-btn" data-filter="invitedExperts">Invited Experts: <span class="filter-count"
-                id="filterCountInvitedExperts"></span></button>
-            <button class="filter-btn" data-filter="staffs">Staffs: <span class="filter-count"
-                id="filterCountStaffs"></span></button>
-            <button class="filter-btn" data-filter="individuals">Individuals: <span class="filter-count"
-                id="filterCountIndividuals"></span></button>
-            <button class="filter-btn" data-filter="allParticipants">Participants: <span class="filter-count"
-                id="filterCountAllParticipants"></span></button>
-          </div>
-        </div>
-
-        <div id="participationsContent">
-
-          <div id="membersListWrapper" class="pane-wrapper">
-            <div id="membersList" class="pane">
-              <div class="header">
-                <div class="title">Affiliations</div>
-                <div class="list-sort-bar">
-                  <button class="sort-btn name-sort-btn" data-sort="name">abc<span
-                      class="arrow-btn">&#8595</span></button>
-                  <button class="sort-btn gCount-sort-btn" data-sort="num">G<span class="arrow-btn">&#8595</span></button>
-                  <button class="sort-btn mpCount-sort-btn" data-sort="num">MP<span class="arrow-btn">&#8595</span></button>
+        <div id="participationsTimeline">
+          <div id="timelineSelector">
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+              <span style="font-size: 1.15em; font-weight: 700;">Participations</span>
+              <div>
+                <div class="toggle-wrap">
+                  <button type="button" class="toggle">
+                    <span class="toggle-check"></span>
+                    <span class="toggle-label">
+                      Only Group Participations
+                    </span>
+                  </button>
                 </div>
               </div>
-              <div id="membersListContent" class="list-content">
-                <p style='display: none;'>- members list will be added here -</p>
-              </div>
             </div>
-          </div>
-
-          <div id="participantsListWrapper" class="pane-wrapper">
-            <div class="pane-resizer" data-left="membersListWrapper" data-right="participantsListWrapper"></div>
-            <div id="participantsList" class="pane">
-              <div class="header">
-                <div class="title">Participants</div>
-                <div class="list-sort-bar">
-                  <button class="sort-btn name-sort-btn" data-sort="name">abc<span
-                      class="arrow-btn">&#8595</span></button>
-                  <button class="sort-btn gCount-sort-btn" data-sort="num">G<span class="arrow-btn">&#8595</span></button>
+            <div id="timelineSelectorContainer" style="display: flex; gap: 4px; flex-direction: row; flex-wrap: wrap;">
+              <!-- selector optionsのドロップダウンを1つ -->
+              <div id="timelineSeries" class="series-set">
+                <div class="dropdown">
+                  <div class="dropdown-toggle">
+                    <span class="toggle-text">-</span>
+                    <span class="dropdown-icon">▼</span>
+                  </div>
+                  <div class="dropdown-menu">
+                    <!-- no filter -->
+                    <div class="dropdown-list">
+                      <!-- items will be added by javascript 
+                    <div class="dropdown-item">Option 1</div>
+                    <div class="dropdown-item">Option 2</div>
+                    <div class="dropdown-item">Option 3</div>
+                  -->
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div id="participantsListContent" class="list-content">
-                <p style='display: none;'>- participants list will be added here -</p>
-              </div>
-            </div>
-          </div>
-
-          <div id="userDetailsWrapper" class="pane-wrapper">
-            <div class="pane-resizer" data-left="participantsListWrapper" data-right="userDetailsWrapper"></div>
-            <div id="userDetails" class="pane">
-              <div class="header">
-                <div class="title">User Details</div>
-              </div>
-              <div id="userDetailsContent" class="details-content">
-                <p style='display: none;'>- user details will be added here -</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-      </div> <!-- end of #popupParticipationsBody -->
-      <div id="popupSpecificationsBody">
-        
-        <div id="specificationsFilter"
-          style="padding: 8px 12px; background: #f6f8fa; border-bottom: 1px solid #ddd; display: flex; flex-direction: column; gap: 8px;">
-          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-            <span style="font-size: 1.15em; font-weight: 700;">Specifications</span>
-          </div>
-          <div id="specificationsButtonContainer" style="display: flex; gap: 4px; flex-wrap: wrap;">
-            <button class="filter-btn" data-filter="specifications">Specifications: <span class="filter-count"
-                id="filterCountSpecifications"></span></button>
-            <button class="filter-btn" data-filter="recommendations">Recommendations: <span class="filter-count"
-                id="filterCountRecommendations"></span></button>
-            <button class="filter-btn" data-filter="candidateRecommendations">Candidate Recommendations: <span
-                class="filter-count" id="filterCountCandidateRecommendations"></span></button>
-            <button class="filter-btn" data-filter="draftStandards">Draft Standards: <span class="filter-count"
-                id="filterCountDraftStandards"></span></button>
-            <button class="filter-btn" data-filter="retiredSpecs">Retired Specs: <span class="filter-count"
-                id="filterCountRetiredSpecs"></span></button>
-            <button class="filter-btn" data-filter="otherSpecs">Other Specs: <span class="filter-count"
-                id="filterCountOtherSpecs"></span></button>
-            <button class="filter-btn" data-filter="allVersions">Versions: <span class="filter-count"
-                id="filterCountAllVersions"></span></button>
-          </div>
-        </div>
-
-        <div id="specificationsContent" class="panes">
-
-          <div id="specificationsListWrapper" , class="pane-wrapper">
-            <div id="specificationsList" class="pane">
-              <div class="header">
-                <h4 class="title">Specifications</h4>
-                <div class="list-sort-bar">
-                  <button class="sort-btn name-sort-btn" data-sort="name">abc<span
-                      class="arrow-btn">&#8595</span></button>
-                  <button class="sort-btn stat-sort-btn" data-sort="stat">stat<span
-                      class="arrow-btn">&#8595</span></button>
-                  <button class="sort-btn year-sort-btn" data-sort="year">year<span
-                      class="arrow-btn">&#8595</span></button>
+              <!-- series selectorのドロップダウンを5つ -->
+              <div id="timelineSeries-1" class="series">
+                <span class="series-box"></span>
+                <div class="dropdown">
+                  <div class="dropdown-toggle" data-value="series1">
+                    <span class="toggle-text">-</span>
+                    <span class="dropdown-icon">▼</span>
+                  </div>
+                  <div class="dropdown-menu">
+                    <input type="text" placeholder="type to search...">
+                    <div class="dropdown-list">
+                      <!-- items will be added by javascript 
+                    <div class="dropdown-item">A</div>
+                    <div class="dropdown-item">B</div>
+                    <div class="dropdown-item">C</div>
+                  -->
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div id="specificationsListContent" class="list-content">
-                <p style='display: none;'>- specifications list will be added here -</p>
-              </div>
-            </div>
-          </div>
-
-          <div id="versionsListWrapper" class="pane-wrapper">
-            <div class="pane-resizer" data-left="specificationsListWrapper" data-right="versionsListWrapper"></div>
-            <div id="versionsList" class="pane">
-              <div class="header">
-                <h4 class="title">Versions</h4>
-                <div class="list-sort-bar">
-                  <button class="sort-btn name-sort-btn" data-sort="name">abc<span
-                      class="arrow-btn">&#8595</span></button>
-                  <button class="sort-btn stat-sort-btn" data-sort="stat">stat<span
-                      class="arrow-btn">&#8595</span></button>
-                  <button class="sort-btn year-sort-btn" data-sort="year">year<span
-                      class="arrow-btn">&#8595</span></button>
+              <div id="timelineSeries-2" class="series">
+                <span class="series-box"></span>
+                <div class="dropdown">
+                  <div class="dropdown-toggle" data-value="series2">
+                    <span class="toggle-text">-</span>
+                    <span class="dropdown-icon">▼</span>
+                  </div>
+                  <div class="dropdown-menu">
+                    <input type="text" placeholder="type to search...">
+                    <div class="dropdown-list">
+                      <!--items will be added by javascript
+                    <div class="dropdown-item">A</div>
+                    <div class="dropdown-item">B</div>
+                    <div class="dropdown-item">C</div>
+                  -->
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div id="versionsListContent" class="list-content">
-                <p style='display: none;'>- veersions list will be added here -</p>
+
+              <div id="timelineSeries-3" class="series">
+                <span class="series-box"></span>
+                <div class="dropdown">
+                  <div class="dropdown-toggle" data-value="series3">
+                    <span class="toggle-text">-</span>
+                    <span class="dropdown-icon">▼</span>
+                  </div>
+                  <div class="dropdown-menu">
+                    <input type="text" placeholder="type to search...">
+                    <div class="dropdown-list">
+                      <!--items will be added by javascript
+                    <div class="dropdown-item">A</div>
+                    <div class="dropdown-item">B</div>
+                    <div class="dropdown-item">C</div>
+                  -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="timelineSeries-4" class="series">
+                <span class="series-box"></span>
+                <div class="dropdown">
+                  <div class="dropdown-toggle" data-value="series4">
+                    <span class="toggle-text">-</span>
+                    <span class="dropdown-icon">▼</span>
+                  </div>
+                  <div class="dropdown-menu">
+                    <input type="text" placeholder="type to search...">
+                    <div class="dropdown-list">
+                      <!--items will be added by javascript
+                    <div class="dropdown-item">A</div>
+                    <div class="dropdown-item">B</div>
+                    <div class="dropdown-item">C</div>
+                  -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="timelineSeries-5" class="series">
+                <span class="series-box"></span>
+                <div class="dropdown">
+                  <div class="dropdown-toggle" data-value="series5 ">
+                    <span class="toggle-text">-</span>
+                    <span class="dropdown-icon">▼</span>
+                  </div>
+                  <div class="dropdown-menu">
+                    <input type="text" placeholder="type to search...">
+                    <div class="dropdown-list">
+                      <!--items will be added by javascript
+                    <div class="dropdown-item">A</div>
+                    <div class="dropdown-item">B</div>
+                    <div class="dropdown-item">C</div>
+                  -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div> <!-- end of #timelineSelectorContainer -->
+          </div> <!-- end of #timelineSelector -->
+
+          <div id="participationsTimelineContent" class="resize-pane-container vertical">
+            <div id="timelineChartWrapper" class="pane-wrapper">
+              <div id="timelineChart" class="pane">
+                <div class="row">
+                  <div class="chart">
+                    <!-- chart will be rendered here -->
+                  </div>
+                  <div class="yScale">
+                    <button class="scale-btn" data-scale="100.0">x 100</button>
+                    <button class="scale-btn" data-scale="10.0">x 10</button>
+                    <button class="scale-btn" data-scale="1.0">x 1</button>
+                  </div>
+                </div>
+                <div class="xScale">
+                  <button class="scale-btn" data-scale="48.0">4 years</button>
+                  <button class="scale-btn" data-scale="12.0">1 years</button>
+                  <button class="scale-btn" data-scale="3.0">3 months</button>
+                </div>
+              </div> <!-- end of #timelineChart -->
+            </div> <!-- pane-wrapper-->
+            <div id="timelineInfoWrapper" class="pane-wrapper">
+              <div class="pane-resizer" data-prev="timelineChartWrapper" data-base="timelineInfoWrapper"></div>
+              <div id="timelineInfo" class="pane">
+                <div class="info-card">
+                  <div class="info-title"></div>
+                  <div class="info-content">
+                    <div class="info-row">
+                      <span class="label">Prev:</span>
+                      <span class="value" id="info-prev"></span>
+                    </div>
+                    <div class="info-row">
+                      <span class="label">Selected:</span>
+                      <span class="value" id="info-selected"></span>
+                    </div>
+                    <div class="info-row">
+                      <span class="label">Diff:</span>
+                      <span class="value" id="info-diff"></span>
+                    </div>
+                  </div>
+                  <div class="info-diff">
+                    <div class="info-list">
+                      <div class="list-header">
+                        <span class="label">Left:</span>
+                        <span class="value" id="info-left-value"></span>
+                      </div>
+                      <div class="list-body" id="info-left"></div>
+                    </div>
+                    <div class="info-list">
+                      <div class="list-header">
+                        <span class="label">Joined:</span>
+                        <span class="value" id="info-joined-value"></span>
+                      </div>
+                      <div class="list-body" id="info-joined"></div>
+                    </div>
+                  </div>
+                </div>
+              </div> <!-- end of #timelineInfo -->
+            </div> <!--plane-wrapper -->
+            </div> <!--#timelineContent -->
+          </div> <!-- end of #participationsTimeline -->
+          <div id="participationsList">
+            <div id="participationsFilter"
+              style="padding: 8px 12px; background: #f6f8fa; border-bottom: 1px solid #ddd; display: flex; flex-direction: column; gap: 8px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                <span style="font-size: 1.15em; font-weight: 700;">Participations</span>
+                <div>
+                  <div class="toggle-wrap">
+                    <button id="popupToggleOnlyGroupParticipations" type="button" class="toggle">
+                      <span class="toggle-check"></span>
+                      <span class="toggle-label">
+                        Only Group Participations
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div id="participationsButtonContainer" style="display: flex; gap: 4px; flex-wrap: wrap;">
+                <button class="filter-btn" data-filter="members">Members: <span class="filter-count"
+                    id="filterCountMembers"></span></button>
+                <button class="filter-btn" data-filter="memberParticipants">Member participants: <span
+                    class="filter-count" id="filterCountMemberParticipants"></span></button>
+                <button class="filter-btn" data-filter="invitedExperts">Invited Experts: <span class="filter-count"
+                    id="filterCountInvitedExperts"></span></button>
+                <button class="filter-btn" data-filter="staffs">Staffs: <span class="filter-count"
+                    id="filterCountStaffs"></span></button>
+                <button class="filter-btn" data-filter="individuals">Individuals: <span class="filter-count"
+                    id="filterCountIndividuals"></span></button>
+                <button class="filter-btn" data-filter="allParticipants">Participants: <span class="filter-count"
+                    id="filterCountAllParticipants"></span></button>
               </div>
             </div>
-          </div>
 
-          <div id="versionDetailsWrapper" class="pane-wrapper">
-            <div class="pane-resizer" data-left="versionsListWrapper" data-right="versionDetailsWrapper"></div>
-            <div id="versionDetails" class="pane">
-              <div class="header">
-                <h4 class="title">Versions Details</h4>
+            <div id="participationsListContent" class="resize-pane-container horizontal">
+              <div id="membersListWrapper" class="pane-wrapper">
+                <div id="membersList" class="pane">
+                  <div class="header">
+                    <div class="title">Affiliations</div>
+                    <div class="list-sort-bar">
+                      <button class="sort-btn name-sort-btn" data-sort="name">abc<span
+                          class="arrow-btn">&#8595</span></button>
+                      <button class="sort-btn gCount-sort-btn" data-sort="num">G<span
+                          class="arrow-btn">&#8595</span></button>
+                      <button class="sort-btn mpCount-sort-btn" data-sort="num">MP<span
+                          class="arrow-btn">&#8595</span></button>
+                    </div>
+                  </div>
+                  <div id="membersListContent" class="list-content">
+                    <p style='display: none;'>- members list will be added here -</p>
+                  </div>
+                </div>
               </div>
-              <div id="versionDetailsContent" class="details-content">
-                <p style='display: none;'>- version details will be added here -</p>
+
+              <div id="participantsListWrapper" class="pane-wrapper">
+                <div class="pane-resizer" data-prev="membersListWrapper" data-base="participantsListWrapper"></div>
+                <div id="participantsList" class="pane">
+                  <div class="header">
+                    <div class="title">Participants</div>
+                    <div class="list-sort-bar">
+                      <button class="sort-btn name-sort-btn" data-sort="name">abc<span
+                          class="arrow-btn">&#8595</span></button>
+                      <button class="sort-btn gCount-sort-btn" data-sort="num">G<span
+                          class="arrow-btn">&#8595</span></button>
+                    </div>
+                  </div>
+                  <div id="participantsListContent" class="list-content">
+                    <p style='display: none;'>- participants list will be added here -</p>
+                  </div>
+                </div>
+              </div>
+
+              <div id="userDetailsWrapper" class="pane-wrapper">
+                <div class="pane-resizer" data-prev="participantsListWrapper" data-base="userDetailsWrapper"></div>
+                <div id="userDetails" class="pane">
+                  <div class="header">
+                    <div class="title">User Details</div>
+                  </div>
+                  <div id="userDetailsContent" class="details-content">
+                    <p style='display: none;'>- user details will be added here -</p>
+                  </div>
+                </div>
+              </div>
+            </div> <!-- end of participations Content -->
+          </div> <!-- end of #participationsList -->
+        </div> <!-- end of #popupParticipationsBody -->
+        <div id="popupSpecificationsBody">
+          <div id="specificationsFilter"
+            style="padding: 8px 12px; background: #f6f8fa; border-bottom: 1px solid #ddd; display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+              <span style="font-size: 1.15em; font-weight: 700;">Specifications</span>
+            </div>
+            <div id="specificationsButtonContainer" style="display: flex; gap: 4px; flex-wrap: wrap;">
+              <button class="filter-btn" data-filter="specifications">Specifications: <span class="filter-count"
+                  id="filterCountSpecifications"></span></button>
+              <button class="filter-btn" data-filter="recommendations">Recommendations: <span class="filter-count"
+                  id="filterCountRecommendations"></span></button>
+              <button class="filter-btn" data-filter="candidateRecommendations">Candidate Recommendations: <span
+                  class="filter-count" id="filterCountCandidateRecommendations"></span></button>
+              <button class="filter-btn" data-filter="draftStandards">Draft Standards: <span class="filter-count"
+                  id="filterCountDraftStandards"></span></button>
+              <button class="filter-btn" data-filter="retiredSpecs">Retired Specs: <span class="filter-count"
+                  id="filterCountRetiredSpecs"></span></button>
+              <button class="filter-btn" data-filter="otherSpecs">Other Specs: <span class="filter-count"
+                  id="filterCountOtherSpecs"></span></button>
+              <button class="filter-btn" data-filter="allVersions">Versions: <span class="filter-count"
+                  id="filterCountAllVersions"></span></button>
+            </div>
+          </div> <!-- end of #specificationsFilter -->
+
+          <div id="specificationsContent" class="resize-pane-container horizontal">
+            <div id="specificationsListWrapper" class="pane-wrapper">
+              <div id="specificationsList" class="pane">
+                <div class="header">
+                  <h4 class="title">Specifications</h4>
+                  <div class="list-sort-bar">
+                    <button class="sort-btn name-sort-btn" data-sort="name">abc<span
+                        class="arrow-btn">&#8595</span></button>
+                    <button class="sort-btn stat-sort-btn" data-sort="stat">stat<span
+                        class="arrow-btn">&#8595</span></button>
+                    <button class="sort-btn year-sort-btn" data-sort="year">year<span
+                        class="arrow-btn">&#8595</span></button>
+                  </div>
+                </div>
+
+                <div id="specificationsListContent" class="list-content">
+                  <p style='display: none;'>- specifications list will be added here -</p>
+                </div>
               </div>
             </div>
-          </div>
 
-        </div>
-      </div> <!-- end of #popupSpecificationsBody -->
+            <div id="versionsListWrapper" class="pane-wrapper">
+              <div class="pane-resizer" data-prev="specificationsListWrapper" data-base="versionsListWrapper"></div>
+              <div id="versionsList" class="pane">
+                <div class="header">
+                  <h4 class="title">Versions</h4>
+                  <div class="list-sort-bar">
+                    <button class="sort-btn name-sort-btn" data-sort="name">abc<span
+                        class="arrow-btn">&#8595</span></button>
+                    <button class="sort-btn stat-sort-btn" data-sort="stat">stat<span
+                        class="arrow-btn">&#8595</span></button>
+                    <button class="sort-btn year-sort-btn" data-sort="year">year<span
+                        class="arrow-btn">&#8595</span></button>
+                  </div>
+                </div>
+                <div id="versionsListContent" class="list-content">
+                  <p style='display: none;'>- versions list will be added here -</p>
+                </div>
+              </div>
+            </div>
+
+            <div id="versionDetailsWrapper" class="pane-wrapper">
+              <div class="pane-resizer" data-prev="versionsListWrapper" data-base="versionDetailsWrapper"></div>
+              <div id="versionDetails" class="pane">
+                <div class="header">
+                  <h4 class="title">Versions Details</h4>
+                </div>
+                <div id="versionDetailsContent" class="details-content">
+                  <p style='display: none;'>- version details will be added here -</p>
+                </div>
+              </div>
+            </div>
+
+          </div> <!-- end of #specificationsContent -->
+        </div> <!-- end of #popupSpecificationsBody -->
+      </div> <!-- end of #popupBody -->
     </div> <!-- end of #popup  -->
-  </div>
-  </div>
 
-  <div id="popupOverlay"></div>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
-    }
-  </script>
+    <div id="popupOverlay"></div>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+      }
+    </script>
 </body>
 
 </html>

@@ -1,12 +1,12 @@
 body {
   font-family:
-  Inter,
-  system-ui,
-  -apple-system,
-  "Segoe UI",
-  Roboto,
-  Arial,
-  sans-serif;
+    Inter,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
 
   margin: 0;
   padding: 0;
@@ -284,11 +284,15 @@ body.modal-open {
 
 /* ---------- table switcher ---------- */
 
-#tableSwitcher {
+#groupTableSwitcher {
   margin-left: auto;
 }
 
-#tableSwitcher .segmented-control {
+#popupViewSwitcher {
+  margin-left: auto;
+}
+
+.tab-switcher .segmented-control {
   display: inline-flex;
   align-items: stretch;
   border: 1px solid #d0d7de;
@@ -297,7 +301,7 @@ body.modal-open {
   overflow: hidden;
 }
 
-#tableSwitcher .segment {
+.tab-switcher .segment {
   display: flex;
   align-items: center;
   appearance: none;
@@ -312,23 +316,23 @@ body.modal-open {
   white-space: nowrap;
 }
 
-#tableSwitcher .segment+.segment {
+.tab-switcher .segment+.segment {
   border-left: 1px solid #d0d7de;
 }
 
-#tableSwitcher .segment:hover {
+.tab-switcher .segment:hover {
   background-color: #eaeef2;
   color: #24292f;
 }
 
-#tableSwitcher .segment.active,
-#tableSwitcher .segment[aria-selected="true"] {
+.tab-switcher .segment.active,
+.tab-switcher .segment[aria-selected="true"] {
   background-color: #0969da;
   color: #ffffff;
   font-weight: 600;
 }
 
-#tableSwitcher .segment:focus-visible {
+.tab-switcher .segment:focus-visible {
   outline: 2px solid #0969da;
   outline-offset: -2px;
 }
@@ -420,7 +424,7 @@ body.modal-open {
 /* ==============================
    groupsList scope
    ============================== */
-   
+
 
 #groupsListContainer {
   display: flex;
@@ -511,7 +515,7 @@ body.modal-open {
 }
 
 .groups-table th.sorted .sort-icon,
-.groups-table th.sorted  {
+.groups-table th.sorted {
   color: #0969da;
   font-weight: bold;
 }
@@ -559,6 +563,7 @@ body.modal-open {
 .charts-cell {
   margin-left: 8px;
 }
+
 /* bar container */
 .chart-bar {
   height: 100%;
@@ -733,7 +738,10 @@ body.modal-open {
 }
 
 #popupParticipationsBody,
-#popupSpecificationsBody {
+#popupSpecificationsBody,
+#participationsTimeline,
+#participationsList,
+#specificationsList {
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -741,64 +749,126 @@ body.modal-open {
   min-height: 0;
   width: 100%;
   border-bottom: 1px solid #ddd;
-  /* 切り替えはJSで display: none/flex */
 }
 
+
 #participationsFilter,
-#specificationsFilter {
+#specificationsFilter,
+#participationsSelector {
   flex: 0 0 auto;
 }
 
-#participationsContent,
-#specificationsContent {
+#participationsTimelineContent {
+  flex: 1 1 0;   /* 余ったスペースをすべて埋める */
+  min-height: 0;  /* これがないと、子要素（グラフ）が溢れた時に親を突き抜けます */
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== wappers, resizers, panes ===== 
+
+#participationsListContent,
+#specificationsContent 
+*/
+.resize-pane-container {
   display: flex;
   flex: 1;
   overflow: hidden;
 }
 
-/* ===== wappers, resizers, panes ===== */
-.pane-wrapper {
+.resize-pane-container.horizontal {
+  flex-direction: row;
+}
+
+/* Horizontal時のパネル */
+.resize-pane-container.horizontal .pane-wrapper {
   position: relative;
   display: flex;
   flex-direction: row;
-  width: 30%;
-  min-width: 40px;        /* 最低限 */
-  flex-grow: 1;           /* 横幅を均等に広げる */
+  
+  /* --- 修正ポイント --- */
+  flex: 1 1 0;    /* flex-grow: 1, flex-shrink: 1, flex-basis: 0 */
+  width: auto;    /* 固定の30%を解除 */
+  min-width: 40px;
+  /* ------------------ */
 }
-
-.pane-resizer {
+.resize-pane-container.horizontal .pane-resizer {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
+  /* right is open */
   z-index: 2;
   border-left: 1px solid #ddd;
 
-  width: 6px;                 /* PC: 見た目＝当たり判定 */
+  width: 6px;
+  /* PC: 見た目＝当たり判定 */
   cursor: col-resize;
   background: transparent;
   touch-action: none;
 }
 
+.resize-pane-container.vertical{
+  flex-direction: column;
+}
+
+/* Vertical時のパネル */
+.resize-pane-container.vertical .pane-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  /* --- 修正ポイント --- */
+  flex: 1 1 0;    /* 縦方向でも同様に均等分配 */
+  height: auto;   /* 固定の30%を解除 */
+  width: 100%;    /* 横幅は常にいっぱい */
+  min-height: 40px;
+  /* ------------------ */
+}
+.resize-pane-container.vertical .pane-resizer {
+  position: absolute;
+  top: 0;
+  /* buttom is open */
+  left: 0;
+  right: 0;
+  z-index: 2;
+  border-top: 1px solid #ddd;
+
+  height: 6px;
+  /* PC: 見た目＝当たり判定 */
+  cursor: row-resize;
+  background: transparent;
+  touch-action: none;
+}
+
 /* 見えるバー（常に 6px） */
+
 .pane-resizer::before {
   content: '';
   position: absolute;
-  top: 0;
-  bottom: 0;
-
-  width: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-
   background: #ccc;
   opacity: 0;
   transition: opacity 0.15s;
-
-  pointer-events: none;       /* ← 超重要 */
+  pointer-events: none;
 }
 
-/* hover / drag */
+/* Horizontal時の線の向き */
+.horizontal .pane-resizer::before {
+  top: 0; bottom: 0; left: 50%; width: 6px;
+  transform: translateX(-50%);
+}
+
+/* Vertical時の線の向き */
+.vertical .pane-resizer::before {
+  left: 0; right: 0; top: 50%; height: 6px;
+  transform: translateY(-50%);
+}
+
+.pane-resizer.dragging::before　{
+  opacity: 1;
+}
+
+/* hover PCなどマウスホバーが可能なデバイスのみ、ホバーで表示 */
 @media (hover: hover) {
   .pane-resizer:hover::before {
     opacity: 1;
@@ -809,14 +879,26 @@ body.modal-open {
   opacity: 1;
 }
 
-/* ===== touch device (iPad etc.) ===== */
+/* ===== touch device (iPad etc.) 向けの調整 ===== */
 @media (hover: none) and (pointer: coarse) {
-  .pane-resizer {
-    width: 48px; /* 当たり判定だけ拡張 */
+  /* 横並び（Horizontal）のとき：左右の判定を広げる */
+  .horizontal .pane-resizer {
+    width: 48px;
+
+  }
+
+  /* 縦並び（Vertical）のとき：上下の判定を広げる */
+  .vertical .pane-resizer {
+    height: 48px;
+  }
+
+  /* タッチ時は、疑似要素（見える線）の位置をリセット */
+  .horizontal .pane-resizer::before {
+    left: 0px;
   }
   
-  .pane-resizer::before { 
-    left: 0px; /* 中央に線 */ 
+  .vertical .pane-resizer::before {
+    top: 0px;
   }
 }
 
@@ -826,6 +908,7 @@ body.modal-open {
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 100%;
   box-sizing: border-box;
 }
 
@@ -869,7 +952,7 @@ body.modal-open {
   gap: 4px
 }
 
-.pane  .list-sort-bar .sort-btn {
+.pane .list-sort-bar .sort-btn {
   font-size: 11px;
   padding: 0 4px;
   line-height: 1.2;
@@ -900,12 +983,12 @@ body.modal-open {
   cursor: pointer;
 }
 
-.pane  .list-item.outdated {
+.pane .list-item.outdated {
   color: #666
     /* appy to all childrens */
 }
 
-.pane  .list-item.retired {
+.pane .list-item.retired {
   color: #666
     /* appy to all childrens */
 }
@@ -918,11 +1001,11 @@ body.modal-open {
 
 /* hover / selected ------------------------------------------------ */
 
-.pane  .list-item:hover {
+.pane .list-item:hover {
   background: #f0f0f0;
 }
 
-.pane  .list-item.selected {
+.pane .list-item.selected {
   background: #e3f2fd;
   font-weight: 500;
 }
@@ -931,11 +1014,12 @@ body.modal-open {
    Left column : name
    ========================================================= */
 
-.pane  .list-item .item-name {
+.pane .list-item .item-name {
   flex: 1 1 auto;
   min-width: 8px;
 
-  white-space: normal;   /* 複数行を許可 */
+  white-space: normal;
+  /* 複数行を許可 */
   /* For the virtual-list-item, the ellipsis and other styles are specifiled by javascript.*/
 }
 
@@ -962,12 +1046,12 @@ body.modal-open {
   font-size: 12px;
 }
 
-.pane  .details-content p {
+.pane .details-content p {
   margin-left: 1.0em;
   margin-bottom: 8px;
 }
 
-.pane  .details-content dl {
+.pane .details-content dl {
   margin-block-start: 4px;
   margin-block-end: 4px;
 }
@@ -986,7 +1070,7 @@ body.modal-open {
   color: red;
 }
 
-.pane  .details-content .github img {
+.pane .details-content .github img {
   height: 32px;
   vertical-align: middle;
   margin-right: 4px;
@@ -1035,3 +1119,287 @@ body.modal-open {
     display: none !important;
   }
 }
+
+
+/* timeline */
+
+/* 横並び */
+#timelineSelector {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 12px; 
+  background: #f6f8fa; 
+  border-bottom: 1px solid #ddd; 
+  gap: 8px;
+}
+
+#timelineChart {
+  flex: 2 1 0;
+  min-height: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  border-bottom: 1px solid #ddd;
+
+  display: flex;              /* ← これ追加 */
+  flex-direction: column;     /* ← これも追加 */
+}
+
+/* 上段（chart + yScale） */
+#timelineChart .row {
+  display: flex;
+  flex: 1;          /* ← 残り高さ全部 */
+  min-height: 0;    /* ← 超重要 */
+}
+
+/* chart */
+#timelineChart .chart {
+  flex: 1;          /* ← 横の余り全部 */
+  min-width: 0;     /* ← はみ出し防止 */
+  min-height: 0;
+}
+
+/* yScale（右） */
+#timelineChart .yScale {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 中央寄せ */
+  gap: 8px;                /* ← これで間隔 */
+  padding-left: 8px;
+}
+
+/* xScale（下） */
+#timelineChart .xScale {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center; /* 中央寄せ */
+  gap: 8px;                /* ← これで間隔 */
+  padding-top: 8px;
+}
+
+#timelineChart .scale-btn.active {
+  background: #0969da;
+  color: #fff;
+  border-color: #0969da;
+  font-weight: bold;
+}
+
+#timelineInfo {
+  flex: 1 1 0;
+  width: 100%;
+  flex-direction: column;
+  min-height: 0px;
+  box-sizing: border-box;
+  padding: 8px 12px;
+}
+
+#timelineSelector .series {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1 1;
+  min-width: 100px;
+  max-width: calc(100%/6 - 12px); /* 6列を上限にする */
+}
+
+
+#timelineSelector .series-box {
+  margin-left: 8px;
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+#timelineSeries-1 .series-box {
+  background-color: #0969da;
+}
+
+#timelineSeries-2 .series-box {
+  background-color: #1f883d;
+}
+
+#timelineSeries-3 .series-box {
+  background-color: #bf8700;
+}
+
+#timelineSeries-4 .series-box {
+  background-color: #cf222e;
+}
+
+#timelineSeries-5 .series-box {
+  background-color: #8250df;
+}
+
+
+/* ドロップダウン */
+.dropdown {
+  position: relative;
+  flex: 1;
+  font-size: 12px;
+  text-overflow: ellipsis;
+}
+
+/* トグル */
+.dropdown-toggle {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #ccc;
+  padding: 4px;
+  cursor: pointer;
+  background: #fff;
+}
+
+.dropdown-toggle .toggle-text {
+  flex: 1;
+}
+
+.dropdown-toggle .dropdown-icon {
+  margin-left: 5px;
+}
+
+
+/* メニュー */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  border: 1px solid #ccc;
+  background: #fff;
+  display: none;
+  z-index: 10;
+}
+
+/* 開いている状態 */
+.dropdown.open .dropdown-menu {
+  display: block;
+}
+
+/* 検索 */
+.dropdown-menu input {
+  width: 100%;
+  padding: 6px;
+  border: none;
+  border-bottom: 1px solid #eee;
+  box-sizing: border-box;
+}
+
+.dropdown-list {
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+/* アイテム */
+.dropdown-list-item {
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+.dropdown-list-item:hover {
+  background: #f0f0f0;
+  cursor: pointer;
+}
+
+
+.info-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* 必要に応じて高さを指定 */
+  height: 100%;      /* 親要素に合わせる場合 */
+  overflow: hidden;  /* 子要素のはみ出し防止 */
+}
+
+
+.info-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.info-content {
+  display: flex;
+  flex-wrap: wrap;    /* 入り切らない場合に折り返す設定 */
+  gap: 10px;          /* 要素間の隙間 */
+  width: 100%;
+}
+
+.info-row {
+/* 均等に広がりつつ、200pxを下回りそうなら折り返す */
+  flex: 1 1 200px;    
+
+  display: flex;
+  font-size: 14px;
+  padding: 5px;  
+  text-align: left;        /* テキスト自体も左寄せ */    
+  border: 1px solid #ddd;
+  background: #f6f8fa;
+}
+
+.info-row .label {
+  color: #555;
+}
+
+.info-row .value {
+  margin-left: 8px;
+}
+
+.info-diff {
+  display: flex;
+  flex-direction: row;
+  gap: 12px; /* 必要に応じて間隔を調整 */
+  flex: 1 1 auto;   /* 追加: 縦方向に伸ばす */
+  min-height: 0;    /* 追加: flexboxの高さ計算バグ防止 */
+}
+
+.info-col {
+  border: 1px solid #ddd;
+  line-height: 1.4;
+  color: #333;
+  font-size: 14px;
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;           /* 追加 */
+  flex-direction: column;  /* 追加 */
+  border-bottom: 1px solid #ddd;
+}
+
+.info-list {
+  line-height: 1.4;
+  font-size: 14px;
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;           /* 追加 */
+  flex-direction: column;  /* 追加 */
+  border: 1px solid #ddd;
+}
+
+.info-list .list-header {
+  background: #f6f8fa;
+  border-bottom: 1px solid #ddd;
+  padding: 5px;
+}
+
+.info-list .list-body {
+  flex: 1 1 auto;          /* 追加: 残りの高さを使う */
+  min-height: 0;           /* 追加: flexboxのバグ防止 */
+  overflow-y: auto;
+  white-space: normal;
+  word-break: break-all;
+  padding: 8px;
+}
+
+.tooltip {
+  padding: 8px;
+  border-radius: 4px;
+  background: #f6f8fa;
+  font-size: 10px;
+  z-index: 1001; /* over popup */
+  pointer-events: none; /* マウスイベントを透過させる */
+  white-space: nowrap;  /* 折り返しを防ぐ */
+  border: 1px solid #ccc;
+}
+
