@@ -2,10 +2,10 @@
   "_metadata": {
     "fileType": "timeline",
     "filename": "w3c-timeline.json",
-    "lastChecked": "Sun, 24 May 2026 10:38:14 GMT",
-    "startTime": "Sun, 24 May 2026 10:38:07 GMT",
+    "lastChecked": "Sun, 31 May 2026 10:55:15 GMT",
+    "startTime": "Sun, 31 May 2026 10:55:08 GMT",
     "duration": 0,
-    "entryCount": 24
+    "entryCount": 25
   },
   "1765670720049": {
     "eventTime": "Sun, 14 Dec 2025 00:05:20 GMT",
@@ -217811,6 +217811,8129 @@
             "IE": {},
             "S": {},
             "Ind": {}
+          }
+        }
+      }
+    }
+  },
+  "1780224908000": {
+    "eventTime": "Sun, 31 May 2026 10:55:08 GMT",
+    "prevTimestamp": 1779619087000,
+    "eventData": {
+      "summary": {
+        "stats": {
+          "M": 328,
+          "MP": 7361,
+          "IE": 425,
+          "S": 52,
+          "Ind": 30449,
+          "P": 38287,
+          "Spec": 1698,
+          "Rec": 317,
+          "CR": 88,
+          "DS": 319,
+          "Ret": 325,
+          "Oth": 649,
+          "Ver": 16836
+        },
+        "onlyGroupParticipationsStats": {
+          "M": 287,
+          "MP": 3341,
+          "IE": 415,
+          "S": 44,
+          "Ind": 9950,
+          "P": 13750,
+          "Spec": 1698,
+          "Rec": 317,
+          "CR": 88,
+          "DS": 319,
+          "Ret": 325,
+          "Oth": 649,
+          "Ver": 16836
+        },
+        "diff": {
+          "M": {
+            "~": [
+              {
+                "id": "165993",
+                "title": "eBOUND Canada",
+                "G": 1
+              }
+            ]
+          },
+          "MPs": [
+            {
+              "id": "34345",
+              "title": "Universidad Politécnica de Madrid",
+              "~": [
+                {
+                  "id": "1751al87g6pwkwgg804400g0swcco4o",
+                  "name": "Javier Conde Díaz",
+                  "G": 1
+                }
+              ]
+            },
+            {
+              "id": "1051",
+              "title": "IBM Corporation",
+              "+": [
+                {
+                  "id": "r0s27s6elzkcw84w8ogggockks0okgk",
+                  "name": "Taufiq Sheik"
+                }
+              ]
+            },
+            {
+              "id": "126211",
+              "title": "The New York Times",
+              "-": [
+                {
+                  "id": "a2om4i9fbg0sk0wkcsg0ckocw48sw84",
+                  "name": "Evan Kirkiles"
+                }
+              ]
+            },
+            {
+              "id": "35662",
+              "title": "Google LLC",
+              "+": [
+                {
+                  "id": "tdf5jqoou6occ0wkoo0o0cc84ogo88k",
+                  "name": "Jan Doerrie",
+                  "G": 1
+                }
+              ]
+            },
+            {
+              "id": "1066",
+              "title": "Microsoft Corporation",
+              "+": [
+                {
+                  "id": "opl36k4n5ioo8cw4c8kgkgogo888s8c",
+                  "name": "Prashant Singh",
+                  "G": 2
+                }
+              ]
+            },
+            {
+              "id": "162507",
+              "title": "Cybozu",
+              "~": [
+                {
+                  "id": "cw26h0163nk08wskkcks0c48wwsc8o0",
+                  "name": "takumi hiramatsu",
+                  "G": 5
+                }
+              ]
+            },
+            {
+              "id": "10911",
+              "title": "Keio University",
+              "-": [
+                {
+                  "id": "29mfpk8i7z0gg8kc8owk8ookg4s0ocs",
+                  "name": "Tatsuya Kurosaka"
+                }
+              ]
+            },
+            {
+              "id": "109668",
+              "title": "Arizona State University",
+              "~": [
+                {
+                  "id": "o16t94nqmsgk0c4g88k004sc4s4go0k",
+                  "name": "Michael Samuelson",
+                  "G": 1
+                }
+              ]
+            },
+            {
+              "id": "16188",
+              "title": "Vrije Universiteit",
+              "~": [
+                {
+                  "id": "dluqvffkmrs4wskos40ws4ckk80w0w0",
+                  "name": "Xander Wilcke",
+                  "G": 1
+                }
+              ]
+            },
+            {
+              "id": "165993",
+              "title": "eBOUND Canada",
+              "~": [
+                {
+                  "id": "hiqp3z73pvwok0ow48kkc8co4ok8skw",
+                  "name": "Amanda Lee",
+                  "G": 1
+                }
+              ]
+            }
+          ],
+          "IE": {
+            "+": [
+              {
+                "id": "5mectv1h99s8oc480g8ssggg44808s8",
+                "name": "Rachael Yomtoob",
+                "G": 1
+              },
+              {
+                "id": "38lkm2e57nwg4040cgks84c4kgwokko",
+                "name": "Stephen Richard",
+                "G": 1
+              }
+            ]
+          },
+          "S": {
+            "-": [
+              {
+                "id": "srffjzgqsxwk04swwwss8wc8cok8wws",
+                "name": "Seth Dobbs",
+                "G": 2
+              }
+            ]
+          },
+          "Ind": {
+            "+": [
+              {
+                "id": "km8he7tl6ds88wogk0wcgosok4k0sww",
+                "name": "Gheorghita Cristea",
+                "G": 1
+              },
+              {
+                "id": "7lvgymbgef4000cw4c0ksc0o0gkg44g",
+                "name": "Gianna Brachetti-Truskawa",
+                "G": 3
+              },
+              {
+                "id": "tu4fox6to288cgso8swcgccg8g8w0g4",
+                "name": "Innocent Onyenonachi",
+                "G": 1
+              },
+              {
+                "id": "msqaid86jfkksggg8s40c08ccwcckco",
+                "name": "DHANANJAY ARYA",
+                "G": 3
+              },
+              {
+                "id": "ext4yj4iu94os0k8800o8c8ckokcsgo",
+                "name": "GIAMPIERO ZITO",
+                "G": 1
+              },
+              {
+                "id": "inixyq1iu1sgockk4s40ocow8kc4ssc",
+                "name": "jabby cornslot",
+                "G": 1
+              },
+              {
+                "id": "m4aw14jbwyogw0osk44cgws8g0owggw",
+                "name": "scormier cormier",
+                "G": 1
+              },
+              {
+                "id": "ecnzo40k0g84wcwkwcgo0gooo8wg8c4",
+                "name": "Dominik Muhs",
+                "G": 1
+              },
+              {
+                "id": "cyii79zz3ps880s0480cks0goocsogs",
+                "name": "Sachin Sankar",
+                "G": 1
+              },
+              {
+                "id": "ibxji8jpn2800cs8ww4wg0w8sgs0c8o",
+                "name": "Aashwin Patki",
+                "G": 1
+              },
+              {
+                "id": "r3tefcyga348cokcc80sss840408g8s",
+                "name": "Kathrin Fischeidl",
+                "G": 1
+              },
+              {
+                "id": "lg89kruljv4c4ckks44ogwg8040wg8c",
+                "name": "Daniel Fernández Daniel Fernández",
+                "G": 1
+              },
+              {
+                "id": "1gonsj8ofxxc8k0kgcg8ww444csg88w",
+                "name": "Rafael Reinehr",
+                "G": 1
+              },
+              {
+                "id": "5841m48dyu80okgskook00g48og0k80",
+                "name": "Katelin DeVencenty",
+                "G": 1
+              },
+              {
+                "id": "29mfpk8i7z0gg8kc8owk8ookg4s0ocs",
+                "name": "Tatsuya Kurosaka",
+                "G": 1
+              },
+              {
+                "id": "dca9d3zpi884gsw8kgk0swgggowgg44",
+                "name": "Austin Larkin"
+              },
+              {
+                "id": "sgber1ohm80w48sog8sw840sosk084c",
+                "name": "Jorge SOUSA"
+              },
+              {
+                "id": "6xi363t2mk08s80w8w4cccc4gsc848o",
+                "name": "Wassim El-Kass"
+              },
+              {
+                "id": "b9x65grh4jk0k0w0kckskogkw8s444w",
+                "name": "Jarred Davies"
+              },
+              {
+                "id": "kobvnwl3ktsooscc488sg4ggsk0s4o4",
+                "name": "Petro Uzbeck"
+              },
+              {
+                "id": "a2om4i9fbg0sk0wkcsg0ckocw48sw84",
+                "name": "Evan Kirkiles"
+              },
+              {
+                "id": "jpn8ukzwzuo04wsw44oos4cgkckwgko",
+                "name": "Maiha Sakamaki"
+              },
+              {
+                "id": "3nxn0rs4pz0g8kg0ggs88wks4cc0448",
+                "name": "JeanYves LEBRUN"
+              },
+              {
+                "id": "r3g92v8vj6sw4scscoc8kosw8co44oo",
+                "name": "Ricardo Fabbri"
+              },
+              {
+                "id": "9d3flr0mk6wwwckg84wg0swkck0go4c",
+                "name": "E M Mohan Anton Wijeratna"
+              },
+              {
+                "id": "1cruym9c6y68skokcc0c08wkco80cog",
+                "name": "Cameron MacDonald"
+              },
+              {
+                "id": "n101eoefc6os8o4c0wgswog8sk84c0o",
+                "name": "Daniel Pohlod"
+              },
+              {
+                "id": "qki8f62yfsgsgsokw8os0ccs00co8gk",
+                "name": "Jonathan Hendler"
+              },
+              {
+                "id": "s0t8mztm8lwscw8gcw4g4wgg4okskg0",
+                "name": "Heather Gardner"
+              },
+              {
+                "id": "ewcx56tayog8w4owos8ok0co4gwokoc",
+                "name": "Steven McEntire"
+              },
+              {
+                "id": "ayqmavpwvrk8k880s8cc4ckck00cs00",
+                "name": "fibinse xavier"
+              },
+              {
+                "id": "cwtnf3ba7fccgsckg40o4w0gkookg00",
+                "name": "kenneth lord"
+              },
+              {
+                "id": "kpabtqcgqhw0gocco4s8w8oos4kg8so",
+                "name": "Tim Parker"
+              },
+              {
+                "id": "6yd8addhn5ogc4w0s4gs4g0wssk40gs",
+                "name": "David Glantz"
+              },
+              {
+                "id": "llaz6o6hlc0wk0ooc0g4k0ok8ow8gwk",
+                "name": "Quinn Henigan Quinn Henigan"
+              },
+              {
+                "id": "9pg4ljr7vako488wsw80k40w488kgwo",
+                "name": "Henrik Bergerbusch"
+              },
+              {
+                "id": "j7qz0binb4g8og4c4gwoo44wwc8goco",
+                "name": "Natacha Fernandez"
+              },
+              {
+                "id": "63lsutm2f0w804gkoc88csok0ocs4wc",
+                "name": "Brian Phillips"
+              }
+            ],
+            "-": [
+              {
+                "id": "mvpayf7avusgwc8800ow8gcg8g8gkgo",
+                "name": "Sascha Deforth",
+                "G": 2
+              },
+              {
+                "id": "38lkm2e57nwg4040cgks84c4kgwokko",
+                "name": "Stephen Richard",
+                "G": 1
+              },
+              {
+                "id": "sb7258zoc6oo0gcc4s8s44ckws04888",
+                "name": "Robin Röper",
+                "G": 1
+              },
+              {
+                "id": "o3ic3u3scxwkooc0kc40cks4w0wg40c",
+                "name": "MoeLwinTun Burma"
+              }
+            ],
+            "~": [
+              {
+                "id": "ph657i6i5vk4ok8w0wgcw0800800os8",
+                "name": "Renato Fabbri",
+                "G": 1
+              },
+              {
+                "id": "5xo7meu0ua8s8w88o40cc0w4ocw8gcs",
+                "name": "Önder Gürcan",
+                "G": 1
+              },
+              {
+                "id": "pt7z2glamyo4kwsgwg08c4g4g04gww4",
+                "name": "Ryan Shub",
+                "G": 1
+              },
+              {
+                "id": "a0lmeh9tgtck4c848wsk0ck88goc080",
+                "name": "Katharina Hefele",
+                "G": 1
+              }
+            ]
+          }
+        }
+      },
+      "groups": {
+        "ag": {
+          "name": "Accessibility Guidelines Working Group",
+          "stats": {
+            "M": 63,
+            "MP": 203,
+            "IE": 74,
+            "S": 7,
+            "Ind": 0,
+            "P": 284,
+            "Spec": 30,
+            "Rec": 5,
+            "CR": 0,
+            "DS": 7,
+            "Ret": 2,
+            "Oth": 16,
+            "Ver": 169
+          },
+          "diff": {
+            "M": {},
+            "MPs": [
+              {
+                "id": "162507",
+                "title": "Cybozu",
+                "+": [
+                  {
+                    "id": "cw26h0163nk08wskkcks0c48wwsc8o0",
+                    "name": "takumi hiramatsu",
+                    "G": 5
+                  }
+                ]
+              }
+            ],
+            "IE": {
+              "+": [
+                {
+                  "id": "5mectv1h99s8oc480g8ssggg44808s8",
+                  "name": "Rachael Yomtoob",
+                  "G": 1
+                }
+              ]
+            },
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "apa": {
+          "name": "Accessible Platform Architectures Working Group",
+          "stats": {
+            "M": 31,
+            "MP": 55,
+            "IE": 41,
+            "S": 2,
+            "Ind": 0,
+            "P": 98,
+            "Spec": 27,
+            "Rec": 0,
+            "CR": 1,
+            "DS": 7,
+            "Ret": 0,
+            "Oth": 19,
+            "Ver": 90
+          },
+          "diff": {
+            "M": {},
+            "MPs": [
+              {
+                "id": "162507",
+                "title": "Cybozu",
+                "+": [
+                  {
+                    "id": "cw26h0163nk08wskkcks0c48wwsc8o0",
+                    "name": "takumi hiramatsu",
+                    "G": 5
+                  }
+                ]
+              }
+            ],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "aria": {
+          "name": "Accessible Rich Internet Applications Working Group",
+          "stats": {
+            "M": 31,
+            "MP": 84,
+            "IE": 17,
+            "S": 4,
+            "Ind": 0,
+            "P": 105,
+            "Spec": 21,
+            "Rec": 11,
+            "CR": 1,
+            "DS": 4,
+            "Ret": 5,
+            "Oth": 0,
+            "Ver": 682
+          },
+          "diff": {
+            "M": {},
+            "MPs": [
+              {
+                "id": "162507",
+                "title": "Cybozu",
+                "+": [
+                  {
+                    "id": "cw26h0163nk08wskkcks0c48wwsc8o0",
+                    "name": "takumi hiramatsu",
+                    "G": 5
+                  }
+                ]
+              }
+            ],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "audio": {
+          "name": "Audio Working Group",
+          "stats": {
+            "M": 16,
+            "MP": 36,
+            "IE": 2,
+            "S": 1,
+            "Ind": 0,
+            "P": 39,
+            "Spec": 7,
+            "Rec": 1,
+            "CR": 0,
+            "DS": 2,
+            "Ret": 2,
+            "Oth": 2,
+            "Ver": 33
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "browser-tools-testing": {
+          "name": "Browser Testing and Tools Working Group",
+          "stats": {
+            "M": 20,
+            "MP": 51,
+            "IE": 5,
+            "S": 1,
+            "Ind": 0,
+            "P": 57,
+            "Spec": 3,
+            "Rec": 1,
+            "CR": 0,
+            "DS": 2,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 267
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "css": {
+          "name": "Cascading Style Sheets (CSS) Working Group",
+          "stats": {
+            "M": 29,
+            "MP": 172,
+            "IE": 17,
+            "S": 2,
+            "Ind": 0,
+            "P": 191,
+            "Spec": 161,
+            "Rec": 12,
+            "CR": 34,
+            "DS": 86,
+            "Ret": 22,
+            "Oth": 7,
+            "Ver": 975
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "data-shapes": {
+          "name": "Data Shapes Working Group",
+          "stats": {
+            "M": 16,
+            "MP": 24,
+            "IE": 6,
+            "S": 1,
+            "Ind": 0,
+            "P": 31,
+            "Spec": 10,
+            "Rec": 1,
+            "CR": 0,
+            "DS": 5,
+            "Ret": 1,
+            "Oth": 3,
+            "Ver": 102
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "dx": {
+          "name": "Dataset Exchange Working Group",
+          "stats": {
+            "M": 8,
+            "MP": 14,
+            "IE": 8,
+            "S": 1,
+            "Ind": 0,
+            "P": 23,
+            "Spec": 5,
+            "Rec": 1,
+            "CR": 0,
+            "DS": 1,
+            "Ret": 1,
+            "Oth": 2,
+            "Ver": 24
+          },
+          "diff": {
+            "M": {
+              "+": [
+                {
+                  "id": "34345",
+                  "title": "Universidad Politécnica de Madrid",
+                  "G": 1
+                },
+                {
+                  "id": "1015",
+                  "title": "Lawrence Berkeley National Laboratory",
+                  "G": 1
+                },
+                {
+                  "id": "16188",
+                  "title": "Vrije Universiteit",
+                  "G": 1
+                }
+              ]
+            },
+            "MPs": [
+              {
+                "id": "34345",
+                "title": "Universidad Politécnica de Madrid",
+                "+": [
+                  {
+                    "id": "hb9oqefqy08osg8o0ockswwog44wc8g",
+                    "name": "Joaquin Salvachua",
+                    "G": 9
+                  },
+                  {
+                    "id": "1751al87g6pwkwgg804400g0swcco4o",
+                    "name": "Javier Conde Díaz",
+                    "G": 1
+                  }
+                ]
+              },
+              {
+                "id": "1015",
+                "title": "Lawrence Berkeley National Laboratory",
+                "+": [
+                  {
+                    "id": "tbbxehrfhhc4wosgow0wwssksws0wk4",
+                    "name": "Annette Greiner",
+                    "G": 4
+                  }
+                ]
+              },
+              {
+                "id": "16188",
+                "title": "Vrije Universiteit",
+                "+": [
+                  {
+                    "id": "o0ry09uk95wwssksc8ko8k8c0ok0gck",
+                    "name": "Antoine Isaac",
+                    "G": 4
+                  },
+                  {
+                    "id": "gv5rt03vp0ggksowkw48og04wsosw4k",
+                    "name": "Michael Cochez",
+                    "G": 2
+                  },
+                  {
+                    "id": "dluqvffkmrs4wskos40ws4ckk80w0w0",
+                    "name": "Xander Wilcke",
+                    "G": 1
+                  }
+                ]
+              }
+            ],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "did": {
+          "name": "Decentralized Identifier Working Group",
+          "stats": {
+            "M": 38,
+            "MP": 86,
+            "IE": 12,
+            "S": 3,
+            "Ind": 0,
+            "P": 101,
+            "Spec": 11,
+            "Rec": 1,
+            "CR": 1,
+            "DS": 1,
+            "Ret": 0,
+            "Oth": 8,
+            "Ver": 296
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "das": {
+          "name": "Devices and Sensors Working Group",
+          "stats": {
+            "M": 10,
+            "MP": 31,
+            "IE": 4,
+            "S": 1,
+            "Ind": 0,
+            "P": 36,
+            "Spec": 36,
+            "Rec": 1,
+            "CR": 8,
+            "DS": 8,
+            "Ret": 12,
+            "Oth": 7,
+            "Ver": 535
+          },
+          "diff": {
+            "M": {
+              "+": [
+                {
+                  "id": "162507",
+                  "title": "Cybozu",
+                  "G": 1
+                }
+              ]
+            },
+            "MPs": [
+              {
+                "id": "162507",
+                "title": "Cybozu",
+                "+": [
+                  {
+                    "id": "cw26h0163nk08wskkcks0c48wwsc8o0",
+                    "name": "takumi hiramatsu",
+                    "G": 5
+                  },
+                  {
+                    "id": "3sl52ri6lv8kcok88cc8gcs4wsogko0",
+                    "name": "Cybozu W3C",
+                    "G": 23
+                  }
+                ]
+              }
+            ],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "distributed-tracing": {
+          "name": "Distributed Tracing Working Group",
+          "stats": {
+            "M": 12,
+            "MP": 22,
+            "IE": 1,
+            "S": 1,
+            "Ind": 0,
+            "P": 24,
+            "Spec": 4,
+            "Rec": 1,
+            "CR": 1,
+            "DS": 1,
+            "Ret": 0,
+            "Oth": 1,
+            "Ver": 35
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "fedid": {
+          "name": "Federated Identity Working Group",
+          "stats": {
+            "M": 35,
+            "MP": 99,
+            "IE": 10,
+            "S": 3,
+            "Ind": 0,
+            "P": 112,
+            "Spec": 2,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 2,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 56
+          },
+          "diff": {
+            "M": {},
+            "MPs": [
+              {
+                "id": "1066",
+                "title": "Microsoft Corporation",
+                "+": [
+                  {
+                    "id": "opl36k4n5ioo8cw4c8kgkgogo888s8c",
+                    "name": "Prashant Singh",
+                    "G": 2
+                  }
+                ]
+              }
+            ],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "gpu": {
+          "name": "GPU for the Web Community Group",
+          "stats": {
+            "M": 18,
+            "MP": 67,
+            "IE": 5,
+            "S": 1,
+            "Ind": 238,
+            "P": 311,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {
+              "-": [
+                {
+                  "id": "sb7258zoc6oo0gcc4s8s44ckws04888",
+                  "name": "Robin Röper",
+                  "G": 1
+                }
+              ]
+            }
+          }
+        },
+        "htmlwg": {
+          "name": "HTML Working Group",
+          "stats": {
+            "M": 12,
+            "MP": 28,
+            "IE": 1,
+            "S": 1,
+            "Ind": 0,
+            "P": 30,
+            "Spec": 12,
+            "Rec": 2,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 10,
+            "Oth": 0,
+            "Ver": 159
+          },
+          "diff": {
+            "M": {},
+            "MPs": [
+              {
+                "id": "162507",
+                "title": "Cybozu",
+                "+": [
+                  {
+                    "id": "cw26h0163nk08wskkcks0c48wwsc8o0",
+                    "name": "takumi hiramatsu",
+                    "G": 5
+                  }
+                ]
+              }
+            ],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "immersive-web": {
+          "name": "Immersive Web Community Group",
+          "stats": {
+            "M": 27,
+            "MP": 73,
+            "IE": 4,
+            "S": 2,
+            "Ind": 224,
+            "P": 303,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "i18n-core": {
+          "name": "Internationalization Working Group",
+          "stats": {
+            "M": 11,
+            "MP": 17,
+            "IE": 12,
+            "S": 4,
+            "Ind": 0,
+            "P": 33,
+            "Spec": 102,
+            "Rec": 2,
+            "CR": 0,
+            "DS": 5,
+            "Ret": 21,
+            "Oth": 74,
+            "Ver": 865
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "json-ld": {
+          "name": "JSON for Linked Data Community Group",
+          "stats": {
+            "M": 12,
+            "MP": 17,
+            "IE": 4,
+            "S": 2,
+            "Ind": 107,
+            "P": 130,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "lws": {
+          "name": "Linked Web Storage Working Group",
+          "stats": {
+            "M": 17,
+            "MP": 32,
+            "IE": 9,
+            "S": 2,
+            "Ind": 0,
+            "P": 43,
+            "Spec": 6,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 5,
+            "Ret": 0,
+            "Oth": 1,
+            "Ver": 14
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "math": {
+          "name": "Math Working Group",
+          "stats": {
+            "M": 6,
+            "MP": 12,
+            "IE": 12,
+            "S": 1,
+            "Ind": 0,
+            "P": 25,
+            "Spec": 12,
+            "Rec": 3,
+            "CR": 1,
+            "DS": 1,
+            "Ret": 2,
+            "Oth": 5,
+            "Ver": 87
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "media": {
+          "name": "Media Working Group",
+          "stats": {
+            "M": 20,
+            "MP": 82,
+            "IE": 0,
+            "S": 1,
+            "Ind": 0,
+            "P": 83,
+            "Spec": 36,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 8,
+            "Ret": 0,
+            "Oth": 28,
+            "Ver": 1771
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "miniapps": {
+          "name": "MiniApps Ecosystem Community Group",
+          "stats": {
+            "M": 12,
+            "MP": 58,
+            "IE": 1,
+            "S": 5,
+            "Ind": 43,
+            "P": 107,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "pointer-events": {
+          "name": "Pointer Events Working Group",
+          "stats": {
+            "M": 5,
+            "MP": 9,
+            "IE": 0,
+            "S": 1,
+            "Ind": 0,
+            "P": 10,
+            "Spec": 4,
+            "Rec": 1,
+            "CR": 1,
+            "DS": 1,
+            "Ret": 1,
+            "Oth": 0,
+            "Ver": 121
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "png": {
+          "name": "Portable Network Graphics (PNG) Working Group",
+          "stats": {
+            "M": 5,
+            "MP": 11,
+            "IE": 2,
+            "S": 1,
+            "Ind": 0,
+            "P": 14,
+            "Spec": 1,
+            "Rec": 1,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 8
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "privacy": {
+          "name": "Privacy Working Group",
+          "stats": {
+            "M": 16,
+            "MP": 38,
+            "IE": 16,
+            "S": 2,
+            "Ind": 0,
+            "P": 56,
+            "Spec": 4,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 1,
+            "Ret": 0,
+            "Oth": 3,
+            "Ver": 39
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "pat": {
+          "name": "Private Advertising Technology Working Group",
+          "stats": {
+            "M": 16,
+            "MP": 55,
+            "IE": 6,
+            "S": 2,
+            "Ind": 0,
+            "P": 63,
+            "Spec": 1,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 1,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 41
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "pm": {
+          "name": "Publishing Maintenance Working Group",
+          "stats": {
+            "M": 17,
+            "MP": 51,
+            "IE": 9,
+            "S": 3,
+            "Ind": 0,
+            "P": 63,
+            "Spec": 19,
+            "Rec": 3,
+            "CR": 0,
+            "DS": 4,
+            "Ret": 0,
+            "Oth": 12,
+            "Ver": 740
+          },
+          "diff": {
+            "M": {
+              "+": [
+                {
+                  "id": "165993",
+                  "title": "eBOUND Canada",
+                  "G": 1
+                }
+              ]
+            },
+            "MPs": [
+              {
+                "id": "165993",
+                "title": "eBOUND Canada",
+                "+": [
+                  {
+                    "id": "hiqp3z73pvwok0ow48kkc8co4ok8skw",
+                    "name": "Amanda Lee",
+                    "G": 1
+                  }
+                ]
+              }
+            ],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "rdf-star": {
+          "name": "RDF & SPARQL Working Group",
+          "stats": {
+            "M": 22,
+            "MP": 29,
+            "IE": 11,
+            "S": 2,
+            "Ind": 0,
+            "P": 42,
+            "Spec": 20,
+            "Rec": 0,
+            "CR": 2,
+            "DS": 16,
+            "Ret": 0,
+            "Oth": 2,
+            "Ver": 527
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "rch": {
+          "name": "RDF Dataset Canonicalization and Hash Working Group",
+          "stats": {
+            "M": 12,
+            "MP": 20,
+            "IE": 3,
+            "S": 1,
+            "Ind": 0,
+            "P": 24,
+            "Spec": 2,
+            "Rec": 1,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 1,
+            "Ver": 50
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "secondscreen": {
+          "name": "Second Screen Working Group",
+          "stats": {
+            "M": 8,
+            "MP": 21,
+            "IE": 2,
+            "S": 1,
+            "Ind": 0,
+            "P": 24,
+            "Spec": 5,
+            "Rec": 0,
+            "CR": 2,
+            "DS": 3,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 52
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "social": {
+          "name": "Social Web Working Group",
+          "stats": {
+            "M": 9,
+            "MP": 9,
+            "IE": 9,
+            "S": 1,
+            "Ind": 0,
+            "P": 19,
+            "Spec": 11,
+            "Rec": 7,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 4,
+            "Ver": 90
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "sdw": {
+          "name": "Spatio-temporal Data on the Web Working Group",
+          "stats": {
+            "M": 8,
+            "MP": 12,
+            "IE": 5,
+            "S": 1,
+            "Ind": 0,
+            "P": 18,
+            "Spec": 9,
+            "Rec": 1,
+            "CR": 1,
+            "DS": 1,
+            "Ret": 0,
+            "Oth": 6,
+            "Ver": 34
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "svg": {
+          "name": "SVG Working Group",
+          "stats": {
+            "M": 10,
+            "MP": 26,
+            "IE": 2,
+            "S": 1,
+            "Ind": 0,
+            "P": 29,
+            "Spec": 30,
+            "Rec": 4,
+            "CR": 1,
+            "DS": 13,
+            "Ret": 11,
+            "Oth": 1,
+            "Ver": 88
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "timed-text": {
+          "name": "Timed Text Working Group",
+          "stats": {
+            "M": 8,
+            "MP": 15,
+            "IE": 8,
+            "S": 1,
+            "Ind": 0,
+            "P": 24,
+            "Spec": 16,
+            "Rec": 6,
+            "CR": 3,
+            "DS": 0,
+            "Ret": 1,
+            "Oth": 6,
+            "Ver": 178
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "vc": {
+          "name": "Verifiable Credentials Working Group",
+          "stats": {
+            "M": 40,
+            "MP": 75,
+            "IE": 23,
+            "S": 3,
+            "Ind": 0,
+            "P": 101,
+            "Spec": 24,
+            "Rec": 8,
+            "CR": 2,
+            "DS": 9,
+            "Ret": 1,
+            "Oth": 4,
+            "Ver": 642
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "webappsec": {
+          "name": "Web Application Security Working Group",
+          "stats": {
+            "M": 34,
+            "MP": 157,
+            "IE": 4,
+            "S": 1,
+            "Ind": 0,
+            "P": 162,
+            "Spec": 27,
+            "Rec": 2,
+            "CR": 4,
+            "DS": 16,
+            "Ret": 5,
+            "Oth": 0,
+            "Ver": 319
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "webapps": {
+          "name": "Web Applications Working Group",
+          "stats": {
+            "M": 17,
+            "MP": 112,
+            "IE": 3,
+            "S": 2,
+            "Ind": 0,
+            "P": 117,
+            "Spec": 22,
+            "Rec": 3,
+            "CR": 3,
+            "DS": 14,
+            "Ret": 1,
+            "Oth": 1,
+            "Ver": 845
+          },
+          "diff": {
+            "M": {},
+            "MPs": [
+              {
+                "id": "1066",
+                "title": "Microsoft Corporation",
+                "+": [
+                  {
+                    "id": "o1smrlqsvn4ooo00gccc0o0owc8c4sw",
+                    "name": "Alexander Kyereboah",
+                    "G": 2
+                  }
+                ]
+              }
+            ],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "webauthn": {
+          "name": "Web Authentication Working Group",
+          "stats": {
+            "M": 38,
+            "MP": 120,
+            "IE": 9,
+            "S": 1,
+            "Ind": 0,
+            "P": 130,
+            "Spec": 3,
+            "Rec": 2,
+            "CR": 1,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 27
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "webediting": {
+          "name": "Web Editing Working Group",
+          "stats": {
+            "M": 8,
+            "MP": 42,
+            "IE": 4,
+            "S": 1,
+            "Ind": 0,
+            "P": 47,
+            "Spec": 7,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 5,
+            "Ret": 2,
+            "Oth": 0,
+            "Ver": 135
+          },
+          "diff": {
+            "M": {},
+            "MPs": [
+              {
+                "id": "1066",
+                "title": "Microsoft Corporation",
+                "+": [
+                  {
+                    "id": "opl36k4n5ioo8cw4c8kgkgogo888s8c",
+                    "name": "Prashant Singh",
+                    "G": 2
+                  }
+                ]
+              }
+            ],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "webfonts": {
+          "name": "Web Fonts Working Group",
+          "stats": {
+            "M": 10,
+            "MP": 32,
+            "IE": 4,
+            "S": 1,
+            "Ind": 0,
+            "P": 37,
+            "Spec": 7,
+            "Rec": 2,
+            "CR": 1,
+            "DS": 0,
+            "Ret": 1,
+            "Oth": 3,
+            "Ver": 29
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "webmachinelearning": {
+          "name": "Web Machine Learning Community Group",
+          "stats": {
+            "M": 35,
+            "MP": 140,
+            "IE": 8,
+            "S": 2,
+            "Ind": 120,
+            "P": 270,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "wot": {
+          "name": "Web of Things Community Group",
+          "stats": {
+            "M": 19,
+            "MP": 37,
+            "IE": 10,
+            "S": 2,
+            "Ind": 214,
+            "P": 263,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "payments": {
+          "name": "Web Payments Working Group",
+          "stats": {
+            "M": 29,
+            "MP": 126,
+            "IE": 4,
+            "S": 1,
+            "Ind": 0,
+            "P": 131,
+            "Spec": 11,
+            "Rec": 1,
+            "CR": 2,
+            "DS": 2,
+            "Ret": 4,
+            "Oth": 2,
+            "Ver": 258
+          },
+          "diff": {
+            "M": {},
+            "MPs": [
+              {
+                "id": "35662",
+                "title": "Google LLC",
+                "+": [
+                  {
+                    "id": "488kc727wskk8ckcc048oskocso8woo",
+                    "name": "Sid Sahoo",
+                    "G": 8
+                  }
+                ]
+              }
+            ],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "webperf": {
+          "name": "Web Performance Working Group",
+          "stats": {
+            "M": 26,
+            "MP": 114,
+            "IE": 7,
+            "S": 1,
+            "Ind": 0,
+            "P": 122,
+            "Spec": 30,
+            "Rec": 3,
+            "CR": 5,
+            "DS": 13,
+            "Ret": 9,
+            "Oth": 0,
+            "Ver": 596
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "webrtc": {
+          "name": "Web Real-Time Communications Working Group",
+          "stats": {
+            "M": 18,
+            "MP": 83,
+            "IE": 0,
+            "S": 2,
+            "Ind": 0,
+            "P": 85,
+            "Spec": 20,
+            "Rec": 1,
+            "CR": 5,
+            "DS": 12,
+            "Ret": 1,
+            "Oth": 1,
+            "Ver": 551
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "wasm": {
+          "name": "WebAssembly Working Group",
+          "stats": {
+            "M": 16,
+            "MP": 46,
+            "IE": 2,
+            "S": 1,
+            "Ind": 0,
+            "P": 49,
+            "Spec": 6,
+            "Rec": 3,
+            "CR": 3,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 247
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "webextensions": {
+          "name": "WebExtensions Community Group",
+          "stats": {
+            "M": 12,
+            "MP": 57,
+            "IE": 6,
+            "S": 1,
+            "Ind": 134,
+            "P": 198,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "webtransport": {
+          "name": "WebTransport Working Group",
+          "stats": {
+            "M": 14,
+            "MP": 39,
+            "IE": 0,
+            "S": 1,
+            "Ind": 0,
+            "P": 40,
+            "Spec": 1,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 1,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 20
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "chinese-web": {
+          "name": "Chinese Web Interest Group",
+          "stats": {
+            "M": 16,
+            "MP": 60,
+            "IE": 0,
+            "S": 4,
+            "Ind": 0,
+            "P": 64,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "exploration": {
+          "name": "Exploration Interest Group",
+          "stats": {
+            "M": 19,
+            "MP": 25,
+            "IE": 1,
+            "S": 4,
+            "Ind": 0,
+            "P": 30,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "i18n": {
+          "name": "Internationalization Interest Group",
+          "stats": {
+            "M": 11,
+            "MP": 14,
+            "IE": 10,
+            "S": 6,
+            "Ind": 51,
+            "P": 81,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "me": {
+          "name": "Media and Entertainment Interest Group",
+          "stats": {
+            "M": 35,
+            "MP": 110,
+            "IE": 3,
+            "S": 4,
+            "Ind": 0,
+            "P": 117,
+            "Spec": 3,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 3,
+            "Ver": 4
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "psig": {
+          "name": "Patents and Standards Interest Group",
+          "stats": {
+            "M": 17,
+            "MP": 23,
+            "IE": 1,
+            "S": 2,
+            "Ind": 0,
+            "P": 26,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "security": {
+          "name": "Security Interest Group",
+          "stats": {
+            "M": 16,
+            "MP": 40,
+            "IE": 11,
+            "S": 2,
+            "Ind": 0,
+            "P": 53,
+            "Spec": 5,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 5,
+            "Ver": 19
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "sustainableweb": {
+          "name": "Sustainable Web Interest Group",
+          "stats": {
+            "M": 12,
+            "MP": 18,
+            "IE": 38,
+            "S": 2,
+            "Ind": 0,
+            "P": 58,
+            "Spec": 1,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 1,
+            "Ver": 15
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "wai": {
+          "name": "WAI Interest Group",
+          "stats": {
+            "M": 1,
+            "MP": 2,
+            "IE": 0,
+            "S": 1,
+            "Ind": 0,
+            "P": 3,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "webai": {
+          "name": "Web & AI Interest Group",
+          "stats": {
+            "M": 24,
+            "MP": 41,
+            "IE": 0,
+            "S": 4,
+            "Ind": 0,
+            "P": 45,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "securepay": {
+          "name": "Web Payment Security Interest Group",
+          "stats": {
+            "M": 30,
+            "MP": 81,
+            "IE": 1,
+            "S": 1,
+            "Ind": 0,
+            "P": 83,
+            "Spec": 1,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 1,
+            "Ver": 2
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "smart-cities": {
+          "name": "Web-based Digital Twins for Smart Cities Interest Group",
+          "stats": {
+            "M": 15,
+            "MP": 16,
+            "IE": 4,
+            "S": 3,
+            "Ind": 0,
+            "P": 23,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "a11yedge": {
+          "name": "Accessibility at the Edge Community Group",
+          "stats": {
+            "M": 6,
+            "MP": 9,
+            "IE": 3,
+            "S": 1,
+            "Ind": 46,
+            "P": 59,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "a11y-discov-vocab": {
+          "name": "Accessibility Discoverability Vocabulary for Schema.org Community Group",
+          "stats": {
+            "M": 4,
+            "MP": 6,
+            "IE": 3,
+            "S": 1,
+            "Ind": 24,
+            "P": 34,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "global-inclusion": {
+          "name": "Accessibility Internationalization Community Group",
+          "stats": {
+            "M": 4,
+            "MP": 4,
+            "IE": 10,
+            "S": 4,
+            "Ind": 44,
+            "P": 62,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "arrm": {
+          "name": "Accessibility Roles and Responsibilities Mapping (ARRM) Community Group",
+          "stats": {
+            "M": 6,
+            "MP": 8,
+            "IE": 2,
+            "S": 2,
+            "Ind": 44,
+            "P": 56,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "act-r": {
+          "name": "ACT Rules Community Group",
+          "stats": {
+            "M": 19,
+            "MP": 33,
+            "IE": 7,
+            "S": 1,
+            "Ind": 105,
+            "P": 146,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "adaptation": {
+          "name": "Adaptation and Personalization Community Group",
+          "stats": {
+            "M": 3,
+            "MP": 5,
+            "IE": 0,
+            "S": 0,
+            "Ind": 3,
+            "P": 8,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "adva11yresources": {
+          "name": "Advancing Accessibility Resources Community Group",
+          "stats": {
+            "M": 6,
+            "MP": 6,
+            "IE": 4,
+            "S": 3,
+            "Ind": 35,
+            "P": 48,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "adorai": {
+          "name": "Advancing Democracy with Ontologies, Reasoning, and Artificial Intelligence (ADORAI)",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 0,
+            "S": 0,
+            "Ind": 12,
+            "P": 12,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {
+              "+": [
+                {
+                  "id": "km8he7tl6ds88wogk0wcgosok4k0sww",
+                  "name": "Gheorghita Cristea",
+                  "G": 1
+                },
+                {
+                  "id": "7lvgymbgef4000cw4c0ksc0o0gkg44g",
+                  "name": "Gianna Brachetti-Truskawa",
+                  "G": 3
+                }
+              ]
+            }
+          }
+        },
+        "agent-identity": {
+          "name": "Agent Identity Registry Protocol Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 2,
+            "S": 0,
+            "Ind": 15,
+            "P": 17,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {
+              "+": [
+                {
+                  "id": "3f9vesj65kmc8cgkg00ggg0848s4400",
+                  "name": "Aaron Grego",
+                  "G": 7
+                },
+                {
+                  "id": "7lvgymbgef4000cw4c0ksc0o0gkg44g",
+                  "name": "Gianna Brachetti-Truskawa",
+                  "G": 3
+                },
+                {
+                  "id": "tu4fox6to288cgso8swcgccg8g8w0g4",
+                  "name": "Innocent Onyenonachi",
+                  "G": 1
+                }
+              ]
+            }
+          }
+        },
+        "a2wf": {
+          "name": "Agent-to-Web Framework (A2WF) Community Group",
+          "stats": {
+            "M": 1,
+            "MP": 4,
+            "IE": 1,
+            "S": 0,
+            "Ind": 14,
+            "P": 19,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {
+              "+": [
+                {
+                  "id": "4bgh41dlfmgws4ccswosk4c0occo8cs",
+                  "name": "Adolfo Grego Micha",
+                  "G": 3
+                },
+                {
+                  "id": "7lvgymbgef4000cw4c0ksc0o0gkg44g",
+                  "name": "Gianna Brachetti-Truskawa",
+                  "G": 3
+                }
+              ],
+              "-": [
+                {
+                  "id": "mvpayf7avusgwc8800ow8gcg8g8gkgo",
+                  "name": "Sascha Deforth",
+                  "G": 2
+                }
+              ]
+            }
+          }
+        },
+        "agentic-arbitration": {
+          "name": "Agentic Arbitration Protocol Community Group",
+          "stats": {
+            "M": 1,
+            "MP": 1,
+            "IE": 0,
+            "S": 0,
+            "Ind": 7,
+            "P": 8,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "aivs": {
+          "name": "Agentic Integrity Verification Specification Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 1,
+            "S": 0,
+            "Ind": 9,
+            "P": 10,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {
+              "-": [
+                {
+                  "id": "mvpayf7avusgwc8800ow8gcg8g8gkgo",
+                  "name": "Sascha Deforth",
+                  "G": 2
+                }
+              ]
+            }
+          }
+        },
+        "agentprotocol": {
+          "name": "AI Agent Protocol Community Group",
+          "stats": {
+            "M": 23,
+            "MP": 69,
+            "IE": 7,
+            "S": 3,
+            "Ind": 152,
+            "P": 231,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "ai-content-disclosure": {
+          "name": "AI Content Disclosure Community Group",
+          "stats": {
+            "M": 4,
+            "MP": 6,
+            "IE": 0,
+            "S": 0,
+            "Ind": 22,
+            "P": 28,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "aije": {
+          "name": "AI Judgement Event Community Group",
+          "stats": {
+            "M": 2,
+            "MP": 2,
+            "IE": 1,
+            "S": 1,
+            "Ind": 5,
+            "P": 9,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "aikr": {
+          "name": "AI KR (Artificial Intelligence Knowledge Representation) Community Group",
+          "stats": {
+            "M": 12,
+            "MP": 17,
+            "IE": 4,
+            "S": 4,
+            "Ind": 88,
+            "P": 113,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "ai-web-visibility": {
+          "name": "AI Visibility Lifecycle Framework Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 0,
+            "S": 1,
+            "Ind": 11,
+            "P": 12,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {
+              "+": [
+                {
+                  "id": "msqaid86jfkksggg8s40c08ccwcckco",
+                  "name": "DHANANJAY ARYA",
+                  "G": 3
+                }
+              ]
+            }
+          }
+        },
+        "aiwss": {
+          "name": "AI-Driven Web Standards Specification Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 0,
+            "S": 0,
+            "Ind": 11,
+            "P": 11,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "antifraud": {
+          "name": "Anti-Fraud Community Group",
+          "stats": {
+            "M": 31,
+            "MP": 143,
+            "IE": 5,
+            "S": 1,
+            "Ind": 89,
+            "P": 238,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "aria-at": {
+          "name": "ARIA and Assistive Technologies Community Group",
+          "stats": {
+            "M": 12,
+            "MP": 23,
+            "IE": 7,
+            "S": 0,
+            "Ind": 103,
+            "P": 133,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "audio-comgp": {
+          "name": "Audio Community Group",
+          "stats": {
+            "M": 9,
+            "MP": 16,
+            "IE": 1,
+            "S": 1,
+            "Ind": 67,
+            "P": 85,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "audio-description": {
+          "name": "Audio Description Community Group",
+          "stats": {
+            "M": 5,
+            "MP": 6,
+            "IE": 2,
+            "S": 1,
+            "Ind": 20,
+            "P": 29,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "atag": {
+          "name": "Authoring Tool Accessibility Guidelines Community Group",
+          "stats": {
+            "M": 6,
+            "MP": 8,
+            "IE": 8,
+            "S": 3,
+            "Ind": 65,
+            "P": 84,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "autofill": {
+          "name": "Autofill Community Group",
+          "stats": {
+            "M": 5,
+            "MP": 17,
+            "IE": 1,
+            "S": 0,
+            "Ind": 9,
+            "P": 27,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "gao": {
+          "name": "Automotive Ontology Community Group",
+          "stats": {
+            "M": 2,
+            "MP": 2,
+            "IE": 1,
+            "S": 0,
+            "Ind": 86,
+            "P": 89,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "webagents": {
+          "name": "Autonomous Agents on the Web Community Group",
+          "stats": {
+            "M": 19,
+            "MP": 42,
+            "IE": 5,
+            "S": 4,
+            "Ind": 116,
+            "P": 167,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {
+              "+": [
+                {
+                  "id": "5xo7meu0ua8s8w88o40cc0w4ocw8gcs",
+                  "name": "Önder Gürcan",
+                  "G": 1
+                },
+                {
+                  "id": "msqaid86jfkksggg8s40c08ccwcckco",
+                  "name": "DHANANJAY ARYA",
+                  "G": 3
+                }
+              ]
+            }
+          }
+        },
+        "bpmlod": {
+          "name": "Best Practices for Multilingual Linked Open Data Community Group",
+          "stats": {
+            "M": 5,
+            "MP": 10,
+            "IE": 1,
+            "S": 3,
+            "Ind": 79,
+            "P": 93,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "bibframe2schema": {
+          "name": "Bibframe2Schema.org Community Group",
+          "stats": {
+            "M": 2,
+            "MP": 2,
+            "IE": 1,
+            "S": 0,
+            "Ind": 19,
+            "P": 22,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "boost-01": {
+          "name": "Biomass Open Origin Specification for Tracking (BOOST) Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 0,
+            "S": 0,
+            "Ind": 19,
+            "P": 19,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "bioschemas": {
+          "name": "Bioschemas for lifesciences Community Group",
+          "stats": {
+            "M": 4,
+            "MP": 4,
+            "IE": 1,
+            "S": 0,
+            "Ind": 77,
+            "P": 82,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "bdns": {
+          "name": "Building Device Naming Standards Community Group",
+          "stats": {
+            "M": 1,
+            "MP": 2,
+            "IE": 0,
+            "S": 0,
+            "Ind": 25,
+            "P": 27,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "chem-web-pub": {
+          "name": "Chemistry for the Web and Publishing Community Group",
+          "stats": {
+            "M": 3,
+            "MP": 4,
+            "IE": 2,
+            "S": 0,
+            "Ind": 21,
+            "P": 27,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "cndid": {
+          "name": "Chinese DID & VC Community Group",
+          "stats": {
+            "M": 6,
+            "MP": 15,
+            "IE": 0,
+            "S": 3,
+            "Ind": 4,
+            "P": 22,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "ce-dpp": {
+          "name": "Circular Economy and Digital Product Passports Community Group",
+          "stats": {
+            "M": 4,
+            "MP": 8,
+            "IE": 5,
+            "S": 0,
+            "Ind": 53,
+            "P": 66,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "civics": {
+          "name": "Civic Technology Community Group",
+          "stats": {
+            "M": 1,
+            "MP": 1,
+            "IE": 1,
+            "S": 0,
+            "Ind": 21,
+            "P": 23,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "coga-community": {
+          "name": "Cognitive Accessibility Community Group",
+          "stats": {
+            "M": 7,
+            "MP": 14,
+            "IE": 9,
+            "S": 1,
+            "Ind": 127,
+            "P": 151,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "cogai": {
+          "name": "Cognitive AI Community Group",
+          "stats": {
+            "M": 5,
+            "MP": 5,
+            "IE": 3,
+            "S": 4,
+            "Ind": 51,
+            "P": 63,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "colorweb": {
+          "name": "Color on the Web Community Group",
+          "stats": {
+            "M": 15,
+            "MP": 37,
+            "IE": 3,
+            "S": 2,
+            "Ind": 39,
+            "P": 81,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "council": {
+          "name": "Community Group Program Community Group",
+          "stats": {
+            "M": 9,
+            "MP": 9,
+            "IE": 5,
+            "S": 4,
+            "Ind": 33,
+            "P": 51,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "context-graph": {
+          "name": "Context Graphs Community Group",
+          "stats": {
+            "M": 6,
+            "MP": 13,
+            "IE": 1,
+            "S": 0,
+            "Ind": 81,
+            "P": 95,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {
+              "+": [
+                {
+                  "id": "pt7z2glamyo4kwsgwg08c4g4g04gww4",
+                  "name": "Ryan Shub",
+                  "G": 1
+                }
+              ]
+            }
+          }
+        },
+        "credentials": {
+          "name": "Credentials Community Group",
+          "stats": {
+            "M": 49,
+            "MP": 81,
+            "IE": 26,
+            "S": 3,
+            "Ind": 486,
+            "P": 596,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {
+              "+": [
+                {
+                  "id": "srtxogt6pu8c0skwg4c0ogw8g40g40g",
+                  "name": "Lanciné TOURE",
+                  "G": 3
+                },
+                {
+                  "id": "ext4yj4iu94os0k8800o8c8ckokcsgo",
+                  "name": "GIAMPIERO ZITO",
+                  "G": 1
+                },
+                {
+                  "id": "inixyq1iu1sgockk4s40ocow8kc4ssc",
+                  "name": "jabby cornslot",
+                  "G": 1
+                },
+                {
+                  "id": "m4aw14jbwyogw0osk44cgws8g0owggw",
+                  "name": "scormier cormier",
+                  "G": 1
+                }
+              ]
+            }
+          }
+        },
+        "credibility": {
+          "name": "Credible Web Community Group",
+          "stats": {
+            "M": 22,
+            "MP": 32,
+            "IE": 6,
+            "S": 5,
+            "Ind": 87,
+            "P": 130,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "css4": {
+          "name": "CSS4 Community Group",
+          "stats": {
+            "M": 7,
+            "MP": 14,
+            "IE": 4,
+            "S": 0,
+            "Ind": 142,
+            "P": 160,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "cacg": {
+          "name": "Cybernetic Avatar Community Group",
+          "stats": {
+            "M": 2,
+            "MP": 4,
+            "IE": 0,
+            "S": 2,
+            "Ind": 4,
+            "P": 10,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "datadoc": {
+          "name": "Data Documentation Community Group",
+          "stats": {
+            "M": 2,
+            "MP": 2,
+            "IE": 5,
+            "S": 1,
+            "Ind": 5,
+            "P": 13,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {
+              "+": [
+                {
+                  "id": "38lkm2e57nwg4040cgks84c4kgwokko",
+                  "name": "Stephen Richard",
+                  "G": 1
+                }
+              ]
+            },
+            "S": {},
+            "Ind": {
+              "-": [
+                {
+                  "id": "38lkm2e57nwg4040cgks84c4kgwokko",
+                  "name": "Stephen Richard",
+                  "G": 1
+                }
+              ]
+            }
+          }
+        },
+        "facade-x": {
+          "name": "Data Façades Community Group",
+          "stats": {
+            "M": 3,
+            "MP": 4,
+            "IE": 1,
+            "S": 0,
+            "Ind": 20,
+            "P": 25,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "dia": {
+          "name": "Data Interoperating Architecture Community Group",
+          "stats": {
+            "M": 2,
+            "MP": 6,
+            "IE": 1,
+            "S": 0,
+            "Ind": 4,
+            "P": 11,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "dpvcg": {
+          "name": "Data Privacy Vocabularies and Controls Community Group",
+          "stats": {
+            "M": 7,
+            "MP": 15,
+            "IE": 3,
+            "S": 2,
+            "Ind": 98,
+            "P": 118,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "dataspaces": {
+          "name": "Dataspaces Community Group",
+          "stats": {
+            "M": 11,
+            "MP": 31,
+            "IE": 3,
+            "S": 2,
+            "Ind": 50,
+            "P": 86,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "dds": {
+          "name": "DDS: Decentralized Deliberation Stack Community Group",
+          "stats": {
+            "M": 1,
+            "MP": 1,
+            "IE": 0,
+            "S": 0,
+            "Ind": 7,
+            "P": 8,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {
+              "+": [
+                {
+                  "id": "n8hz2o74sy88s08k44k0oskw8sgo088",
+                  "name": "sami baismail",
+                  "G": 2
+                }
+              ]
+            }
+          }
+        },
+        "design-tokens": {
+          "name": "Design Tokens Community Group",
+          "stats": {
+            "M": 23,
+            "MP": 51,
+            "IE": 5,
+            "S": 0,
+            "Ind": 478,
+            "P": 534,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "docs-cg": {
+          "name": "Documentation Community Group",
+          "stats": {
+            "M": 9,
+            "MP": 16,
+            "IE": 3,
+            "S": 5,
+            "Ind": 23,
+            "P": 47,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "eocred-schema": {
+          "name": "Educational and Occupational Credentials in schema.org Community Group",
+          "stats": {
+            "M": 2,
+            "MP": 3,
+            "IE": 4,
+            "S": 0,
+            "Ind": 37,
+            "P": 44,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "reconciliation": {
+          "name": "Entity Reconciliation Community Group",
+          "stats": {
+            "M": 5,
+            "MP": 7,
+            "IE": 1,
+            "S": 0,
+            "Ind": 45,
+            "P": 53,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "equity": {
+          "name": "Equity Community Group",
+          "stats": {
+            "M": 3,
+            "MP": 3,
+            "IE": 1,
+            "S": 3,
+            "Ind": 7,
+            "P": 14,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "ethicalpresence": {
+          "name": "Ethical Presence Anchoring Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 1,
+            "S": 0,
+            "Ind": 2,
+            "P": 3,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "ethtrust": {
+          "name": "EthTrust Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 1,
+            "S": 0,
+            "Ind": 5,
+            "P": 6,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {
+              "+": [
+                {
+                  "id": "ecnzo40k0g84wcwkwcgo0gooo8wg8c4",
+                  "name": "Dominik Muhs",
+                  "G": 1
+                }
+              ]
+            }
+          }
+        },
+        "expath": {
+          "name": "EXPath Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 1,
+            "S": 1,
+            "Ind": 27,
+            "P": 29,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "fdp": {
+          "name": "FAIR Data Point Community Group",
+          "stats": {
+            "M": 1,
+            "MP": 1,
+            "IE": 1,
+            "S": 0,
+            "Ind": 11,
+            "P": 13,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "fed-id": {
+          "name": "Federated Identity Community Group",
+          "stats": {
+            "M": 36,
+            "MP": 96,
+            "IE": 11,
+            "S": 2,
+            "Ind": 164,
+            "P": 273,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "fibo": {
+          "name": "Financial Industry Business Ontology Community Group",
+          "stats": {
+            "M": 1,
+            "MP": 1,
+            "IE": 2,
+            "S": 0,
+            "Ind": 54,
+            "P": 57,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "games": {
+          "name": "Games Community Group",
+          "stats": {
+            "M": 6,
+            "MP": 15,
+            "IE": 2,
+            "S": 3,
+            "Ind": 74,
+            "P": 94,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "gen-ui": {
+          "name": "Generative UI Community Group",
+          "stats": {
+            "M": 3,
+            "MP": 8,
+            "IE": 0,
+            "S": 3,
+            "Ind": 12,
+            "P": 23,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {
+              "+": [
+                {
+                  "id": "msqaid86jfkksggg8s40c08ccwcckco",
+                  "name": "DHANANJAY ARYA",
+                  "G": 3
+                },
+                {
+                  "id": "cyii79zz3ps880s0480cks0goocsogs",
+                  "name": "Sachin Sankar",
+                  "G": 1
+                }
+              ]
+            }
+          }
+        },
+        "schemed": {
+          "name": "Healthcare Schema Vocabulary Community Group",
+          "stats": {
+            "M": 1,
+            "MP": 1,
+            "IE": 2,
+            "S": 0,
+            "Ind": 46,
+            "P": 49,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "high-perf-baseline": {
+          "name": "High-Performance Baseline for Web Apps Community Group",
+          "stats": {
+            "M": 5,
+            "MP": 10,
+            "IE": 0,
+            "S": 3,
+            "Ind": 25,
+            "P": 38,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "immersive-captions": {
+          "name": "Immersive Captions Community Group",
+          "stats": {
+            "M": 5,
+            "MP": 7,
+            "IE": 5,
+            "S": 2,
+            "Ind": 39,
+            "P": 53,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "web-adv": {
+          "name": "Improving Web Advertising Community Group",
+          "stats": {
+            "M": 31,
+            "MP": 140,
+            "IE": 4,
+            "S": 3,
+            "Ind": 229,
+            "P": 376,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "idaan": {
+          "name": "India Digital Accessibility Advocacy Network (IDAAN) Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 0,
+            "S": 0,
+            "Ind": 12,
+            "P": 12,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "infinite-canvas": {
+          "name": "Infinite Canvas Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 1,
+            "S": 0,
+            "Ind": 3,
+            "P": 4,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "informationarchitecture": {
+          "name": "Information Architecture Community Group",
+          "stats": {
+            "M": 2,
+            "MP": 2,
+            "IE": 0,
+            "S": 0,
+            "Ind": 55,
+            "P": 57,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "icn": {
+          "name": "Information Centric Networking Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 1,
+            "S": 0,
+            "Ind": 6,
+            "P": 7,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "interledger": {
+          "name": "Interledger Payments Community Group",
+          "stats": {
+            "M": 6,
+            "MP": 14,
+            "IE": 1,
+            "S": 0,
+            "Ind": 389,
+            "P": 404,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "ixml": {
+          "name": "Invisible Markup Community Group",
+          "stats": {
+            "M": 1,
+            "MP": 1,
+            "IE": 1,
+            "S": 0,
+            "Ind": 32,
+            "P": 34,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "kg-construct": {
+          "name": "Knowledge Graph Construction Community Group",
+          "stats": {
+            "M": 17,
+            "MP": 29,
+            "IE": 4,
+            "S": 0,
+            "Ind": 169,
+            "P": 202,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "lbd": {
+          "name": "Linked Building Data Community Group",
+          "stats": {
+            "M": 11,
+            "MP": 24,
+            "IE": 3,
+            "S": 1,
+            "Ind": 230,
+            "P": 258,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "loading-control-games": {
+          "name": "Loading & Control API for Web Games Community Group",
+          "stats": {
+            "M": 2,
+            "MP": 4,
+            "IE": 0,
+            "S": 1,
+            "Ind": 6,
+            "P": 11,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "maps4html": {
+          "name": "Maps For HTML Community Group",
+          "stats": {
+            "M": 4,
+            "MP": 13,
+            "IE": 2,
+            "S": 1,
+            "Ind": 43,
+            "P": 59,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "mcm-jp": {
+          "name": "Media Content Metadata Japanese Community Group",
+          "stats": {
+            "M": 9,
+            "MP": 23,
+            "IE": 1,
+            "S": 1,
+            "Ind": 18,
+            "P": 43,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "meta-layer": {
+          "name": "Meta-Layer Infrastructure Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 0,
+            "S": 0,
+            "Ind": 7,
+            "P": 7,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "metaverse-interop": {
+          "name": "Metaverse Interoperability Community Group",
+          "stats": {
+            "M": 11,
+            "MP": 19,
+            "IE": 2,
+            "S": 1,
+            "Ind": 154,
+            "P": 176,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "mqmcg": {
+          "name": "Multidimensional Quality Metrics (MQM) Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 0,
+            "S": 0,
+            "Ind": 6,
+            "P": 6,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "music-notation": {
+          "name": "Music Notation Community Group",
+          "stats": {
+            "M": 3,
+            "MP": 3,
+            "IE": 0,
+            "S": 2,
+            "Ind": 352,
+            "P": 357,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {
+              "+": [
+                {
+                  "id": "ibxji8jpn2800cs8ww4wg0w8sgs0c8o",
+                  "name": "Aashwin Patki",
+                  "G": 1
+                }
+              ]
+            }
+          }
+        },
+        "nlweb": {
+          "name": "NLWeb Community Group",
+          "stats": {
+            "M": 2,
+            "MP": 5,
+            "IE": 1,
+            "S": 1,
+            "Ind": 8,
+            "P": 15,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "nordic-accessibility": {
+          "name": "Nordic Accessibility Community Group",
+          "stats": {
+            "M": 3,
+            "MP": 6,
+            "IE": 1,
+            "S": 0,
+            "Ind": 41,
+            "P": 48,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "smartcity-nordic": {
+          "name": "Nordic Chapter Smart City / Web of Things Community Group",
+          "stats": {
+            "M": 3,
+            "MP": 4,
+            "IE": 2,
+            "S": 0,
+            "Ind": 12,
+            "P": 18,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "nostr": {
+          "name": "nostr Community Group",
+          "stats": {
+            "M": 3,
+            "MP": 4,
+            "IE": 2,
+            "S": 0,
+            "Ind": 54,
+            "P": 60,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "n3-dev": {
+          "name": "Notation 3 (N3) Community Group",
+          "stats": {
+            "M": 6,
+            "MP": 9,
+            "IE": 6,
+            "S": 3,
+            "Ind": 18,
+            "P": 36,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "odrl": {
+          "name": "ODRL Community Group",
+          "stats": {
+            "M": 11,
+            "MP": 22,
+            "IE": 2,
+            "S": 1,
+            "Ind": 58,
+            "P": 83,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {
+              "+": [
+                {
+                  "id": "a0lmeh9tgtck4c848wsk0ck88goc080",
+                  "name": "Katharina Hefele",
+                  "G": 1
+                },
+                {
+                  "id": "r3tefcyga348cokcc80sss840408g8s",
+                  "name": "Kathrin Fischeidl",
+                  "G": 1
+                }
+              ]
+            }
+          }
+        },
+        "online-safety": {
+          "name": "Online Safety Community Group",
+          "stats": {
+            "M": 6,
+            "MP": 8,
+            "IE": 2,
+            "S": 2,
+            "Ind": 18,
+            "P": 30,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {
+              "+": [
+                {
+                  "id": "39493",
+                  "title": "NIC.br - Brazilian Network Information Center",
+                  "G": 1
+                }
+              ]
+            },
+            "MPs": [
+              {
+                "id": "39493",
+                "title": "NIC.br - Brazilian Network Information Center",
+                "+": [
+                  {
+                    "id": "hjjez8104vswwck80g8owk00ww0c404",
+                    "name": "Beatriz Rocha",
+                    "G": 2
+                  }
+                ]
+              }
+            ],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "oki": {
+          "name": "Ontologies and Knowledge Graphs in Industry Community Group",
+          "stats": {
+            "M": 3,
+            "MP": 4,
+            "IE": 1,
+            "S": 0,
+            "Ind": 25,
+            "P": 30,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "oasis": {
+          "name": "Ontology for Agents, Systems, and Integration of Services Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 1,
+            "S": 0,
+            "Ind": 23,
+            "P": 24,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "ontolex": {
+          "name": "Ontology-Lexica Community Group",
+          "stats": {
+            "M": 5,
+            "MP": 11,
+            "IE": 2,
+            "S": 0,
+            "Ind": 134,
+            "P": 147,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "open-ui": {
+          "name": "Open UI Community Group",
+          "stats": {
+            "M": 20,
+            "MP": 62,
+            "IE": 4,
+            "S": 1,
+            "Ind": 120,
+            "P": 187,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "openactive": {
+          "name": "OpenActive Community Group",
+          "stats": {
+            "M": 2,
+            "MP": 4,
+            "IE": 1,
+            "S": 0,
+            "Ind": 101,
+            "P": 106,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "opentrack": {
+          "name": "OpenTrack Community Group",
+          "stats": {
+            "M": 1,
+            "MP": 1,
+            "IE": 0,
+            "S": 0,
+            "Ind": 46,
+            "P": 47,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "perma-id": {
+          "name": "Permanent Identifier Community Group",
+          "stats": {
+            "M": 3,
+            "MP": 5,
+            "IE": 0,
+            "S": 0,
+            "Ind": 43,
+            "P": 48,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "pwe": {
+          "name": "Positive Work Environment Community Group",
+          "stats": {
+            "M": 11,
+            "MP": 12,
+            "IE": 6,
+            "S": 3,
+            "Ind": 24,
+            "P": 45,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "privacycg": {
+          "name": "Privacy Community Group",
+          "stats": {
+            "M": 45,
+            "MP": 225,
+            "IE": 14,
+            "S": 1,
+            "Ind": 284,
+            "P": 524,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {
+              "+": [
+                {
+                  "id": "lg89kruljv4c4ckks44ogwg8040wg8c",
+                  "name": "Daniel Fernández Daniel Fernández",
+                  "G": 1
+                }
+              ]
+            }
+          }
+        },
+        "patcg": {
+          "name": "Private Advertising Technology Community Group",
+          "stats": {
+            "M": 33,
+            "MP": 194,
+            "IE": 14,
+            "S": 4,
+            "Ind": 190,
+            "P": 402,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "pm-kr": {
+          "name": "Procedural Memory Knowledge Representation Community Group",
+          "stats": {
+            "M": 1,
+            "MP": 1,
+            "IE": 0,
+            "S": 0,
+            "Ind": 24,
+            "P": 25,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "publishingcg": {
+          "name": "Publishing Community Group",
+          "stats": {
+            "M": 16,
+            "MP": 32,
+            "IE": 10,
+            "S": 2,
+            "Ind": 132,
+            "P": 176,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "rdfjs": {
+          "name": "RDF JavaScript Libraries Community Group",
+          "stats": {
+            "M": 9,
+            "MP": 12,
+            "IE": 5,
+            "S": 1,
+            "Ind": 56,
+            "P": 74,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "r2c2": {
+          "name": "RDF Rust Common Crates Community Group",
+          "stats": {
+            "M": 2,
+            "MP": 2,
+            "IE": 1,
+            "S": 1,
+            "Ind": 21,
+            "P": 25,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "rsp": {
+          "name": "RDF Stream Processing Community Group",
+          "stats": {
+            "M": 10,
+            "MP": 20,
+            "IE": 3,
+            "S": 0,
+            "Ind": 76,
+            "P": 99,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "rdf-tests": {
+          "name": "RDF Test Suite Curation Community Group",
+          "stats": {
+            "M": 8,
+            "MP": 9,
+            "IE": 2,
+            "S": 1,
+            "Ind": 6,
+            "P": 18,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "rdf-dev": {
+          "name": "RDF-DEV Community Group",
+          "stats": {
+            "M": 11,
+            "MP": 15,
+            "IE": 7,
+            "S": 1,
+            "Ind": 64,
+            "P": 87,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "md-odrl-profile": {
+          "name": "Rights Automation for Market Data Community Group",
+          "stats": {
+            "M": 3,
+            "MP": 7,
+            "IE": 1,
+            "S": 0,
+            "Ind": 34,
+            "P": 42,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "rumcg": {
+          "name": "RUM Community Group",
+          "stats": {
+            "M": 11,
+            "MP": 20,
+            "IE": 2,
+            "S": 0,
+            "Ind": 59,
+            "P": 81,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "architypes": {
+          "name": "Schema Architypes Community Group",
+          "stats": {
+            "M": 5,
+            "MP": 6,
+            "IE": 1,
+            "S": 0,
+            "Ind": 55,
+            "P": 62,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "schemabibex": {
+          "name": "Schema Bib Extend Community Group",
+          "stats": {
+            "M": 6,
+            "MP": 8,
+            "IE": 1,
+            "S": 0,
+            "Ind": 66,
+            "P": 75,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "schema-course-extend": {
+          "name": "Schema Course extension Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 1,
+            "S": 0,
+            "Ind": 44,
+            "P": 45,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "iotschema": {
+          "name": "Schema Extensions for IoT Community Group",
+          "stats": {
+            "M": 5,
+            "MP": 9,
+            "IE": 4,
+            "S": 0,
+            "Ind": 8,
+            "P": 21,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "schemaorg": {
+          "name": "Schema.org Community Group",
+          "stats": {
+            "M": 21,
+            "MP": 36,
+            "IE": 7,
+            "S": 0,
+            "Ind": 453,
+            "P": 496,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "schemaorg4datasets": {
+          "name": "Schema.org for datasets Community Group",
+          "stats": {
+            "M": 2,
+            "MP": 2,
+            "IE": 1,
+            "S": 0,
+            "Ind": 35,
+            "P": 38,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "sccg": {
+          "name": "Screen Capture Community Group",
+          "stats": {
+            "M": 5,
+            "MP": 24,
+            "IE": 1,
+            "S": 1,
+            "Ind": 23,
+            "P": 49,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "webscreens": {
+          "name": "Second Screen Community Group",
+          "stats": {
+            "M": 13,
+            "MP": 31,
+            "IE": 1,
+            "S": 2,
+            "Ind": 25,
+            "P": 59,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "swag": {
+          "name": "Security Web Application Guidelines Community Group",
+          "stats": {
+            "M": 10,
+            "MP": 28,
+            "IE": 6,
+            "S": 1,
+            "Ind": 35,
+            "P": 70,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "semantic-3d-a11y": {
+          "name": "Semantic 3D Content Accessibility Community Group",
+          "stats": {
+            "M": 1,
+            "MP": 2,
+            "IE": 0,
+            "S": 0,
+            "Ind": 6,
+            "P": 8,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "s-agent-comm": {
+          "name": "Semantic Agent Communication Community Group",
+          "stats": {
+            "M": 1,
+            "MP": 1,
+            "IE": 0,
+            "S": 0,
+            "Ind": 14,
+            "P": 15,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "htmlvoc": {
+          "name": "Semantic HTML-vocabulary Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 3,
+            "S": 0,
+            "Ind": 25,
+            "P": 28,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "hclscg": {
+          "name": "Semantic Web in Health Care and Life Sciences Community Group",
+          "stats": {
+            "M": 7,
+            "MP": 9,
+            "IE": 2,
+            "S": 0,
+            "Ind": 42,
+            "P": 53,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "shex": {
+          "name": "Shape Expressions Community Group",
+          "stats": {
+            "M": 4,
+            "MP": 5,
+            "IE": 2,
+            "S": 0,
+            "Ind": 40,
+            "P": 47,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "socialcg": {
+          "name": "Social Web Incubator Community Group",
+          "stats": {
+            "M": 18,
+            "MP": 26,
+            "IE": 12,
+            "S": 3,
+            "Ind": 178,
+            "P": 219,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "solid": {
+          "name": "Solid Community Group",
+          "stats": {
+            "M": 32,
+            "MP": 62,
+            "IE": 12,
+            "S": 1,
+            "Ind": 245,
+            "P": 320,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "sparql-dev": {
+          "name": "SPARQL-dev Community Group",
+          "stats": {
+            "M": 11,
+            "MP": 19,
+            "IE": 7,
+            "S": 0,
+            "Ind": 85,
+            "P": 111,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "speced-cg": {
+          "name": "Spec Editors Community Group",
+          "stats": {
+            "M": 11,
+            "MP": 26,
+            "IE": 8,
+            "S": 7,
+            "Ind": 16,
+            "P": 57,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "sport-schema": {
+          "name": "Sport Schema Community Group",
+          "stats": {
+            "M": 1,
+            "MP": 2,
+            "IE": 0,
+            "S": 0,
+            "Ind": 18,
+            "P": 20,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "sustainability": {
+          "name": "Sustainability Community Group",
+          "stats": {
+            "M": 15,
+            "MP": 18,
+            "IE": 8,
+            "S": 2,
+            "Ind": 56,
+            "P": 84,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "sync-on-the-web": {
+          "name": "Sync on the Web Community Group",
+          "stats": {
+            "M": 5,
+            "MP": 6,
+            "IE": 1,
+            "S": 0,
+            "Ind": 1,
+            "P": 8,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "talent-signal": {
+          "name": "Talent Marketplace Signaling Community Group",
+          "stats": {
+            "M": 1,
+            "MP": 1,
+            "IE": 1,
+            "S": 0,
+            "Ind": 33,
+            "P": 35,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "tdmrep": {
+          "name": "Text and Data Mining Reservation Protocol Community Group",
+          "stats": {
+            "M": 7,
+            "MP": 11,
+            "IE": 1,
+            "S": 0,
+            "Ind": 54,
+            "P": 66,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "tourismdata": {
+          "name": "The Tourism Structured Web Data Community Group",
+          "stats": {
+            "M": 2,
+            "MP": 2,
+            "IE": 1,
+            "S": 0,
+            "Ind": 54,
+            "P": 57,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "tmcg": {
+          "name": "Threat Modeling Community Group",
+          "stats": {
+            "M": 12,
+            "MP": 23,
+            "IE": 15,
+            "S": 3,
+            "Ind": 36,
+            "P": 77,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "treecg": {
+          "name": "TREE hypermedia Community Group",
+          "stats": {
+            "M": 2,
+            "MP": 5,
+            "IE": 1,
+            "S": 0,
+            "Ind": 13,
+            "P": 19,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "unhosted": {
+          "name": "Unhosted Web Community Group",
+          "stats": {
+            "M": 2,
+            "MP": 4,
+            "IE": 1,
+            "S": 0,
+            "Ind": 18,
+            "P": 23,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "did-native-addr": {
+          "name": "Universal DID-Native Addressing (UDNA) Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 1,
+            "S": 0,
+            "Ind": 5,
+            "P": 6,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "uhds": {
+          "name": "Universal Health Data Schemas for Privacy-Preserving AI Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 1,
+            "S": 0,
+            "Ind": 6,
+            "P": 7,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "ujg": {
+          "name": "User Journey Graph (UJG) Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 1,
+            "S": 0,
+            "Ind": 3,
+            "P": 4,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "vsc": {
+          "name": "Verifiable Supply Chain Community Group",
+          "stats": {
+            "M": 1,
+            "MP": 1,
+            "IE": 1,
+            "S": 0,
+            "Ind": 8,
+            "P": 10,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "voiceinteraction": {
+          "name": "Voice Interaction Community Group",
+          "stats": {
+            "M": 5,
+            "MP": 5,
+            "IE": 1,
+            "S": 0,
+            "Ind": 41,
+            "P": 47,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "w3process": {
+          "name": "W3C Process Community Group",
+          "stats": {
+            "M": 13,
+            "MP": 19,
+            "IE": 7,
+            "S": 7,
+            "Ind": 23,
+            "P": 56,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "web-bluetooth": {
+          "name": "Web Bluetooth Community Group",
+          "stats": {
+            "M": 5,
+            "MP": 22,
+            "IE": 0,
+            "S": 3,
+            "Ind": 75,
+            "P": 100,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "webcomponents": {
+          "name": "Web Components Community Group",
+          "stats": {
+            "M": 15,
+            "MP": 39,
+            "IE": 6,
+            "S": 0,
+            "Ind": 128,
+            "P": 173,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {
+              "+": [
+                {
+                  "id": "109668",
+                  "title": "Arizona State University",
+                  "G": 1
+                }
+              ]
+            },
+            "MPs": [
+              {
+                "id": "109668",
+                "title": "Arizona State University",
+                "+": [
+                  {
+                    "id": "o16t94nqmsgk0c4g88k004sc4s4go0k",
+                    "name": "Michael Samuelson",
+                    "G": 1
+                  }
+                ]
+              }
+            ],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "web-content-browser-ai": {
+          "name": "Web Content Browser for AI Agents Community Group",
+          "stats": {
+            "M": 1,
+            "MP": 1,
+            "IE": 0,
+            "S": 0,
+            "Ind": 7,
+            "P": 8,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {
+              "+": [
+                {
+                  "id": "5841m48dyu80okgskook00g48og0k80",
+                  "name": "Katelin DeVencenty",
+                  "G": 1
+                }
+              ]
+            }
+          }
+        },
+        "webforensics": {
+          "name": "Web Forensics Community Group",
+          "stats": {
+            "M": 2,
+            "MP": 3,
+            "IE": 0,
+            "S": 1,
+            "Ind": 8,
+            "P": 12,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "wfcg": {
+          "name": "Web Frameworks Community Group",
+          "stats": {
+            "M": 2,
+            "MP": 3,
+            "IE": 1,
+            "S": 0,
+            "Ind": 14,
+            "P": 18,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "webhistory": {
+          "name": "Web History Community Group",
+          "stats": {
+            "M": 5,
+            "MP": 6,
+            "IE": 4,
+            "S": 3,
+            "Ind": 47,
+            "P": 60,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "wica": {
+          "name": "Web Identity & Credentials Adoption Community Group",
+          "stats": {
+            "M": 11,
+            "MP": 20,
+            "IE": 6,
+            "S": 0,
+            "Ind": 13,
+            "P": 39,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "webmediaapi": {
+          "name": "Web Media API Community Group",
+          "stats": {
+            "M": 8,
+            "MP": 15,
+            "IE": 1,
+            "S": 1,
+            "Ind": 26,
+            "P": 43,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "texttracks": {
+          "name": "Web Media Text Tracks Community Group",
+          "stats": {
+            "M": 7,
+            "MP": 10,
+            "IE": 3,
+            "S": 0,
+            "Ind": 33,
+            "P": 46,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "web-nfc": {
+          "name": "Web NFC Community Group",
+          "stats": {
+            "M": 5,
+            "MP": 9,
+            "IE": 0,
+            "S": 0,
+            "Ind": 34,
+            "P": 43,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "wot-jp": {
+          "name": "Web of Things Japanese Community Group",
+          "stats": {
+            "M": 9,
+            "MP": 16,
+            "IE": 0,
+            "S": 1,
+            "Ind": 27,
+            "P": 44,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "wicg": {
+          "name": "Web Platform Incubator Community Group",
+          "stats": {
+            "M": 76,
+            "MP": 602,
+            "IE": 20,
+            "S": 9,
+            "Ind": 482,
+            "P": 1113,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [
+              {
+                "id": "35662",
+                "title": "Google LLC",
+                "+": [
+                  {
+                    "id": "tdf5jqoou6occ0wkoo0o0cc84ogo88k",
+                    "name": "Jan Doerrie",
+                    "G": 1
+                  }
+                ]
+              },
+              {
+                "id": "1066",
+                "title": "Microsoft Corporation",
+                "+": [
+                  {
+                    "id": "td53tc0of6s4804k0gggo8wkgw8kk0o",
+                    "name": "Samba Murthy Bandaru",
+                    "G": 3
+                  }
+                ]
+              }
+            ],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "web-thing-protocol": {
+          "name": "Web Thing Protocol Community Group",
+          "stats": {
+            "M": 1,
+            "MP": 1,
+            "IE": 4,
+            "S": 1,
+            "Ind": 20,
+            "P": 26,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "webassembly": {
+          "name": "WebAssembly Community Group",
+          "stats": {
+            "M": 42,
+            "MP": 220,
+            "IE": 7,
+            "S": 1,
+            "Ind": 1520,
+            "P": 1748,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "webdx": {
+          "name": "WebDX Community Group",
+          "stats": {
+            "M": 16,
+            "MP": 50,
+            "IE": 8,
+            "S": 2,
+            "Ind": 52,
+            "P": 112,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "webview": {
+          "name": "WebView Community Group",
+          "stats": {
+            "M": 19,
+            "MP": 54,
+            "IE": 0,
+            "S": 2,
+            "Ind": 34,
+            "P": 90,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "xformsusers": {
+          "name": "XForms Users Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 0,
+            "S": 0,
+            "Ind": 23,
+            "P": 23,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "xproc-next": {
+          "name": "XProc Next Community Group",
+          "stats": {
+            "M": 1,
+            "MP": 1,
+            "IE": 1,
+            "S": 1,
+            "Ind": 20,
+            "P": 23,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "xslt-40": {
+          "name": "XQuery and XSLT Extensions Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 2,
+            "S": 0,
+            "Ind": 45,
+            "P": 47,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "ab-liaisons-to-bod": {
+          "name": "AB Liaisons to the Board of Directors",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 0,
+            "S": 0,
+            "Ind": 0,
+            "P": 0,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "wcag-act": {
+          "name": "Accessibility Conformance Testing (ACT) Task Force",
+          "stats": {
+            "M": 11,
+            "MP": 13,
+            "IE": 5,
+            "S": 2,
+            "Ind": 0,
+            "P": 20,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "ab-elected": {
+          "name": "Advisory Board Elected Members",
+          "stats": {
+            "M": 10,
+            "MP": 10,
+            "IE": 0,
+            "S": 0,
+            "Ind": 1,
+            "P": 11,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "i18n-afrlreq": {
+          "name": "African Layout Task Force",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 2,
+            "S": 2,
+            "Ind": 1,
+            "P": 5,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "i18n-alreq": {
+          "name": "Arabic Layout Task Force",
+          "stats": {
+            "M": 2,
+            "MP": 3,
+            "IE": 2,
+            "S": 2,
+            "Ind": 4,
+            "P": 11,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "aria-practices": {
+          "name": "ARIA Authoring Practices Task Force",
+          "stats": {
+            "M": 8,
+            "MP": 12,
+            "IE": 5,
+            "S": 1,
+            "Ind": 0,
+            "P": 18,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "aria-editors": {
+          "name": "ARIA Editors",
+          "stats": {
+            "M": 8,
+            "MP": 9,
+            "IE": 5,
+            "S": 1,
+            "Ind": 0,
+            "P": 15,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "automotive-pay": {
+          "name": "Automotive Payments Task Force",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 0,
+            "S": 0,
+            "Ind": 0,
+            "P": 0,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "board-audit": {
+          "name": "Board Audit Committee",
+          "stats": {
+            "M": 3,
+            "MP": 3,
+            "IE": 1,
+            "S": 0,
+            "Ind": 2,
+            "P": 6,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "board-development": {
+          "name": "Board Development Committee",
+          "stats": {
+            "M": 4,
+            "MP": 4,
+            "IE": 0,
+            "S": 1,
+            "Ind": 1,
+            "P": 6,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {
+              "-": [
+                {
+                  "id": "srffjzgqsxwk04swwwss8wc8cok8wws",
+                  "name": "Seth Dobbs",
+                  "G": 2
+                }
+              ]
+            },
+            "Ind": {}
+          }
+        },
+        "board-directors": {
+          "name": "Board Directors",
+          "stats": {
+            "M": 4,
+            "MP": 4,
+            "IE": 1,
+            "S": 2,
+            "Ind": 3,
+            "P": 10,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {
+              "+": [
+                {
+                  "id": "29mfpk8i7z0gg8kc8owk8ookg4s0ocs",
+                  "name": "Tatsuya Kurosaka",
+                  "G": 1
+                }
+              ]
+            }
+          }
+        },
+        "board-emergency": {
+          "name": "Board Emergency Committee",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 0,
+            "S": 0,
+            "Ind": 0,
+            "P": 0,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "board-finance": {
+          "name": "Board Finance Committee",
+          "stats": {
+            "M": 2,
+            "MP": 2,
+            "IE": 1,
+            "S": 0,
+            "Ind": 2,
+            "P": 5,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "board-governance": {
+          "name": "Board Governance Committee",
+          "stats": {
+            "M": 4,
+            "MP": 4,
+            "IE": 1,
+            "S": 1,
+            "Ind": 1,
+            "P": 7,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "board-officers": {
+          "name": "Board Officers",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 0,
+            "S": 2,
+            "Ind": 0,
+            "P": 2,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {
+              "-": [
+                {
+                  "id": "srffjzgqsxwk04swwwss8wc8cok8wws",
+                  "name": "Seth Dobbs",
+                  "G": 2
+                }
+              ]
+            },
+            "Ind": {}
+          }
+        },
+        "board-personnel": {
+          "name": "Board Personnel Committee",
+          "stats": {
+            "M": 2,
+            "MP": 2,
+            "IE": 0,
+            "S": 2,
+            "Ind": 2,
+            "P": 6,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "i18n-clreq": {
+          "name": "Chinese Text Layout Task Force | 中文排版需求",
+          "stats": {
+            "M": 1,
+            "MP": 1,
+            "IE": 3,
+            "S": 4,
+            "Ind": 6,
+            "P": 14,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "cognitive-a11y-tf": {
+          "name": "Cognitive and Learning Disabilities Accessibility Task Force",
+          "stats": {
+            "M": 16,
+            "MP": 19,
+            "IE": 17,
+            "S": 1,
+            "Ind": 0,
+            "P": 37,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "dx-dcat": {
+          "name": "DCAT Task Force",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 4,
+            "S": 0,
+            "Ind": 0,
+            "P": 4,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "pm-ann": {
+          "name": "EPUB Annotation Task Force",
+          "stats": {
+            "M": 3,
+            "MP": 4,
+            "IE": 2,
+            "S": 1,
+            "Ind": 0,
+            "P": 7,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "pm-mo": {
+          "name": "EPUB Media Overlays",
+          "stats": {
+            "M": 2,
+            "MP": 4,
+            "IE": 1,
+            "S": 1,
+            "Ind": 0,
+            "P": 6,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "i18n-elreq": {
+          "name": "Ethiopic Layout Task Force",
+          "stats": {
+            "M": 1,
+            "MP": 1,
+            "IE": 2,
+            "S": 2,
+            "Ind": 1,
+            "P": 6,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "i18n-eurlreq": {
+          "name": "European Layout Task Force",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 3,
+            "S": 3,
+            "Ind": 0,
+            "P": 6,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "fast": {
+          "name": "Framework for Accessible Specification of Technologies Task Force",
+          "stats": {
+            "M": 2,
+            "MP": 3,
+            "IE": 3,
+            "S": 1,
+            "Ind": 0,
+            "P": 7,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "i18n-hlreq": {
+          "name": "Hebrew Layout Task Force",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 3,
+            "S": 2,
+            "Ind": 2,
+            "P": 7,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "iip": {
+          "name": "India International Program",
+          "stats": {
+            "M": 2,
+            "MP": 3,
+            "IE": 2,
+            "S": 2,
+            "Ind": 8,
+            "P": 15,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "i18n-jlreq": {
+          "name": "Japanese Layout Task Force | 日本語組版タスクフォース",
+          "stats": {
+            "M": 5,
+            "MP": 6,
+            "IE": 6,
+            "S": 3,
+            "Ind": 11,
+            "P": 26,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "low-vision-a11y-tf": {
+          "name": "Low Vision Accessibility Task Force",
+          "stats": {
+            "M": 4,
+            "MP": 5,
+            "IE": 3,
+            "S": 1,
+            "Ind": 0,
+            "P": 9,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "maturity": {
+          "name": "Maturity Model Task Force",
+          "stats": {
+            "M": 5,
+            "MP": 5,
+            "IE": 17,
+            "S": 1,
+            "Ind": 0,
+            "P": 23,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "mobile-a11y-tf": {
+          "name": "Mobile Accessibility Task Force",
+          "stats": {
+            "M": 11,
+            "MP": 20,
+            "IE": 20,
+            "S": 1,
+            "Ind": 0,
+            "P": 41,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {
+              "+": [
+                {
+                  "id": "5mectv1h99s8oc480g8ssggg44808s8",
+                  "name": "Rachael Yomtoob",
+                  "G": 1
+                }
+              ]
+            },
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "i18n-mlreq": {
+          "name": "Mongolian Layout Task Force",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 2,
+            "S": 2,
+            "Ind": 3,
+            "P": 7,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "pdf-aam": {
+          "name": "PDF Accessibility APIs Mapping (PDF-AAM) Task Force",
+          "stats": {
+            "M": 4,
+            "MP": 4,
+            "IE": 8,
+            "S": 1,
+            "Ind": 0,
+            "P": 13,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "tag-privacy": {
+          "name": "Privacy Principles Task Force",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 0,
+            "S": 0,
+            "Ind": 0,
+            "P": 0,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "pm-a11y": {
+          "name": "Publishing Accessibility Task Force",
+          "stats": {
+            "M": 4,
+            "MP": 6,
+            "IE": 0,
+            "S": 1,
+            "Ind": 0,
+            "P": 7,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "pm-dc": {
+          "name": "Publishing Digital Comics Task Force",
+          "stats": {
+            "M": 6,
+            "MP": 9,
+            "IE": 2,
+            "S": 1,
+            "Ind": 0,
+            "P": 12,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "publ-sc": {
+          "name": "Publishing Steering Committee task force",
+          "stats": {
+            "M": 6,
+            "MP": 9,
+            "IE": 2,
+            "S": 3,
+            "Ind": 5,
+            "P": 19,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "rdf-star-editors": {
+          "name": "RDF-star Editors",
+          "stats": {
+            "M": 3,
+            "MP": 3,
+            "IE": 3,
+            "S": 1,
+            "Ind": 0,
+            "P": 7,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "rdf-star-semantics": {
+          "name": "RDF-star Semantics",
+          "stats": {
+            "M": 3,
+            "MP": 3,
+            "IE": 2,
+            "S": 1,
+            "Ind": 0,
+            "P": 6,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "rdf-star-ucr": {
+          "name": "RDF-star Use Cases",
+          "stats": {
+            "M": 1,
+            "MP": 1,
+            "IE": 1,
+            "S": 0,
+            "Ind": 0,
+            "P": 2,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "rqtf": {
+          "name": "Research Questions Task Force",
+          "stats": {
+            "M": 9,
+            "MP": 10,
+            "IE": 8,
+            "S": 1,
+            "Ind": 0,
+            "P": 19,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "infrules": {
+          "name": "SHACL Inference Rules",
+          "stats": {
+            "M": 5,
+            "MP": 5,
+            "IE": 2,
+            "S": 1,
+            "Ind": 0,
+            "P": 8,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "shacl-profiling": {
+          "name": "SHACL Profiling",
+          "stats": {
+            "M": 3,
+            "MP": 3,
+            "IE": 0,
+            "S": 1,
+            "Ind": 0,
+            "P": 4,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "shacl-ui": {
+          "name": "SHACL UI",
+          "stats": {
+            "M": 6,
+            "MP": 7,
+            "IE": 1,
+            "S": 1,
+            "Ind": 0,
+            "P": 9,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "i18n-sealreq": {
+          "name": "Southeast Asian Layout Task Force",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 3,
+            "S": 2,
+            "Ind": 12,
+            "P": 17,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "rdf-star-sparql": {
+          "name": "SPARQL Task Force",
+          "stats": {
+            "M": 5,
+            "MP": 5,
+            "IE": 3,
+            "S": 1,
+            "Ind": 0,
+            "P": 9,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "pronunciation-tf": {
+          "name": "Spoken Presentation Task Force",
+          "stats": {
+            "M": 4,
+            "MP": 4,
+            "IE": 5,
+            "S": 1,
+            "Ind": 0,
+            "P": 10,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "svg-a11y": {
+          "name": "SVG Accessibility Task Force",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 0,
+            "S": 0,
+            "Ind": 0,
+            "P": 0,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "tag-associates": {
+          "name": "TAG Associates",
+          "stats": {
+            "M": 4,
+            "MP": 4,
+            "IE": 0,
+            "S": 0,
+            "Ind": 0,
+            "P": 4,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "i18n-tlreq": {
+          "name": "Tibetan Layout Task Force",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 2,
+            "S": 3,
+            "Ind": 0,
+            "P": 5,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "vc-alm": {
+          "name": "VC API for Lifecycle Management",
+          "stats": {
+            "M": 6,
+            "MP": 10,
+            "IE": 5,
+            "S": 1,
+            "Ind": 0,
+            "P": 16,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "vc-bcdi": {
+          "name": "VC Barcodes and Data Integrity",
+          "stats": {
+            "M": 6,
+            "MP": 12,
+            "IE": 2,
+            "S": 1,
+            "Ind": 0,
+            "P": 15,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "vc-cfm": {
+          "name": "VC Confidence Method",
+          "stats": {
+            "M": 8,
+            "MP": 11,
+            "IE": 3,
+            "S": 1,
+            "Ind": 0,
+            "P": 15,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "vc-dbw": {
+          "name": "VC DPP & Business Wallet",
+          "stats": {
+            "M": 4,
+            "MP": 7,
+            "IE": 4,
+            "S": 1,
+            "Ind": 0,
+            "P": 12,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "vc-er": {
+          "name": "VC Recognized Entities",
+          "stats": {
+            "M": 7,
+            "MP": 10,
+            "IE": 4,
+            "S": 1,
+            "Ind": 0,
+            "P": 15,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "vc-rem": {
+          "name": "VC Render Method",
+          "stats": {
+            "M": 6,
+            "MP": 10,
+            "IE": 3,
+            "S": 1,
+            "Ind": 0,
+            "P": 14,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "vision": {
+          "name": "Vision Task Force",
+          "stats": {
+            "M": 1,
+            "MP": 1,
+            "IE": 0,
+            "S": 0,
+            "Ind": 0,
+            "P": 1,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "personalization-tf": {
+          "name": "WAI Adapt Task Force",
+          "stats": {
+            "M": 6,
+            "MP": 8,
+            "IE": 8,
+            "S": 1,
+            "Ind": 0,
+            "P": 17,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "wcag2x-backlog": {
+          "name": "WCAG 2.x Backlog Task Force",
+          "stats": {
+            "M": 15,
+            "MP": 19,
+            "IE": 10,
+            "S": 4,
+            "Ind": 0,
+            "P": 33,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "wcag2ict": {
+          "name": "WCAG2ICT Task Force",
+          "stats": {
+            "M": 8,
+            "MP": 10,
+            "IE": 7,
+            "S": 2,
+            "Ind": 0,
+            "P": 19,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "ab": {
+          "name": "Advisory Board",
+          "stats": {
+            "M": 11,
+            "MP": 11,
+            "IE": 0,
+            "S": 4,
+            "Ind": 1,
+            "P": 16,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {
+              "-": [
+                {
+                  "id": "srffjzgqsxwk04swwwss8wc8cok8wws",
+                  "name": "Seth Dobbs",
+                  "G": 2
+                }
+              ]
+            },
+            "Ind": {}
+          }
+        },
+        "ac": {
+          "name": "Advisory Committee",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 0,
+            "S": 0,
+            "Ind": 0,
+            "P": 0,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "board": {
+          "name": "Board of Directors",
+          "stats": {
+            "M": 5,
+            "MP": 5,
+            "IE": 1,
+            "S": 7,
+            "Ind": 3,
+            "P": 16,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {
+              "-": [
+                {
+                  "id": "srffjzgqsxwk04swwwss8wc8cok8wws",
+                  "name": "Seth Dobbs",
+                  "G": 2
+                }
+              ]
+            },
+            "Ind": {
+              "+": [
+                {
+                  "id": "29mfpk8i7z0gg8kc8owk8ookg4s0ocs",
+                  "name": "Tatsuya Kurosaka",
+                  "G": 1
+                }
+              ]
+            }
+          }
+        },
+        "tag": {
+          "name": "Technical Architecture Group",
+          "stats": {
+            "M": 9,
+            "MP": 9,
+            "IE": 2,
+            "S": 1,
+            "Ind": 1,
+            "P": 13,
+            "Spec": 18,
+            "Rec": 1,
+            "CR": 0,
+            "DS": 4,
+            "Ret": 3,
+            "Oth": 10,
+            "Ver": 118
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {}
+          }
+        },
+        "sstim": {
+          "name": "Sensory Stimulation Vocabulary Community Group",
+          "stats": {
+            "M": 0,
+            "MP": 0,
+            "IE": 0,
+            "S": 0,
+            "Ind": 2,
+            "P": 2,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {},
+            "MPs": [],
+            "IE": {},
+            "S": {},
+            "Ind": {
+              "+": [
+                {
+                  "id": "ph657i6i5vk4ok8w0wgcw0800800os8",
+                  "name": "Renato Fabbri",
+                  "G": 1
+                },
+                {
+                  "id": "1gonsj8ofxxc8k0kgcg8ww444csg88w",
+                  "name": "Rafael Reinehr",
+                  "G": 1
+                }
+              ]
+            }
+          }
+        },
+        "board-strategy": {
+          "name": "Board Strategy Committee",
+          "stats": {
+            "M": 4,
+            "MP": 4,
+            "IE": 1,
+            "S": 2,
+            "Ind": 2,
+            "P": 9,
+            "Spec": 0,
+            "Rec": 0,
+            "CR": 0,
+            "DS": 0,
+            "Ret": 0,
+            "Oth": 0,
+            "Ver": 0
+          },
+          "diff": {
+            "M": {
+              "+": [
+                {
+                  "id": "9833",
+                  "title": "NTT, Inc.",
+                  "G": 1
+                },
+                {
+                  "id": "1120",
+                  "title": "British Broadcasting Corporation",
+                  "G": 1
+                },
+                {
+                  "id": "112208",
+                  "title": "TetraLogical Services Ltd",
+                  "G": 1
+                },
+                {
+                  "id": "76452",
+                  "title": "Alibaba Group",
+                  "G": 1
+                }
+              ]
+            },
+            "MPs": [
+              {
+                "id": "9833",
+                "title": "NTT, Inc.",
+                "+": [
+                  {
+                    "id": "gqmu4plwm00kw8gwwokok8gksscowcg",
+                    "name": "Koichi Moriyama",
+                    "G": 2
+                  }
+                ]
+              },
+              {
+                "id": "1120",
+                "title": "British Broadcasting Corporation",
+                "+": [
+                  {
+                    "id": "syiwl2l7ppckgsksc848c4cowc0w4w0",
+                    "name": "Chris Needham",
+                    "G": 38
+                  }
+                ]
+              },
+              {
+                "id": "112208",
+                "title": "TetraLogical Services Ltd",
+                "+": [
+                  {
+                    "id": "p1yfz5si72ocs8w480ggs4wgok84cgk",
+                    "name": "Léonie Watson",
+                    "G": 10
+                  }
+                ]
+              },
+              {
+                "id": "76452",
+                "title": "Alibaba Group",
+                "+": [
+                  {
+                    "id": "otw7kqwc5f4skcocs04wcc4sk4gwcg4",
+                    "name": "Hongru (Judy) Zhu",
+                    "G": 1
+                  }
+                ]
+              }
+            ],
+            "IE": {
+              "+": [
+                {
+                  "id": "mjmlptdvqz4cgccksosw4gok4oowckk",
+                  "name": "Florian Rivoal",
+                  "G": 10
+                }
+              ]
+            },
+            "S": {
+              "+": [
+                {
+                  "id": "ltb258eue0gs0ko0soo4wgwg8k0o4cc",
+                  "name": "Dominique Hazaël-Massieux",
+                  "G": 16
+                },
+                {
+                  "id": "augldpr1xegc84swkocg0kcwo8k4440",
+                  "name": "Chunming Hu",
+                  "G": 6
+                }
+              ]
+            },
+            "Ind": {
+              "+": [
+                {
+                  "id": "prvfnwzd7mokkkogs8so0g8ckoskw4c",
+                  "name": "Eric Siow",
+                  "G": 1
+                },
+                {
+                  "id": "l88ca27n2b4sk00cogosk0skw4s8osc",
+                  "name": "Chris Wilson",
+                  "G": 1
+                }
+              ]
+            }
           }
         }
       }
